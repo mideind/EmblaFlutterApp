@@ -1,39 +1,117 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import './prefs.dart';
+
+class SettingsSwitchWidget extends StatefulWidget {
+  String prefKey;
+  String label;
+
+  SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
+
+  @override
+  _SettingsSwitchWidgetState createState() => _SettingsSwitchWidgetState(this.label, this.prefKey);
+}
+
+class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
+  String prefKey;
+  String label;
+
+  _SettingsSwitchWidgetState(String lab, String key) {
+    this.label = lab;
+    this.prefKey = key;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: MergeSemantics(
+        child: ListTile(
+          title: Text(this.label, style: TextStyle(fontSize: 18.0)),
+          trailing: CupertinoSwitch(
+            value: Prefs().boolForKey(this.prefKey),
+            activeColor: Colors.red,
+            onChanged: (bool value) {
+              setState(() {
+                if (this.prefKey == 'privacy_mode' && value) {
+                  Prefs().setBoolForKey('share_location', false);
+                } else if (this.prefKey == 'share_location' && value) {
+                  Prefs().setBoolForKey('privacy_mode', false);
+                }
+                Prefs().setBoolForKey(this.prefKey, value);
+              });
+            },
+          ),
+          onTap: () {
+            setState(() {
+              Prefs().setBoolForKey(this.prefKey, !Prefs().boolForKey(this.prefKey));
+            });
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class SettingsSegmentedWidget extends StatefulWidget {
+  String label;
+  List<String> items;
+  String prefKey;
+
+  SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
+
+  @override
+  _SettingsSegmentedWidgetState createState() =>
+      _SettingsSegmentedWidgetState(this.label, this.items, this.prefKey);
+}
+
+class _SettingsSegmentedWidgetState extends State<SettingsSwitchWidget> {
+  String label;
+  List<String> items;
+  String prefKey;
+
+  _SettingsSegmentedWidgetState(String lab, List<String> it, String key) {
+    this.label = lab;
+    this.items = it;
+    this.prefKey = key;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: MergeSemantics(
+        child: ListTile(
+          title: Text(this.label),
+          trailing: CupertinoSegmentedControl(
+              children: const <int, Widget>{
+                0: Padding(padding: EdgeInsets.all(10.0), child: Text('Kona')),
+                1: Padding(padding: EdgeInsets.all(10.0), child: Text('Karl')),
+              },
+              groupValue: Prefs().boolForKey(this.prefKey) ? 1 : 0,
+              onValueChanged: (value) {
+                Prefs().setStringForKey(this.prefKey, value);
+              }),
+        ),
+      ),
+    );
+  }
+}
 
 var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>[
+  SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
+  SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
+  SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
   ListTile(
-      title: Text('Virkja með röddu', style: TextStyle(fontSize: 18.0)),
-      trailing: CupertinoSwitch(
-        value: true,
-        activeColor: Colors.red,
-        onChanged: (bool value) {},
-      )),
-  ListTile(
-      title: Text('Deila staðsetningu', style: TextStyle(fontSize: 18.0)),
-      trailing: CupertinoSwitch(
-        value: true,
-        activeColor: Colors.red,
-        onChanged: (bool value) {},
-      )),
-  ListTile(
-      title: Text('Einkahamur', style: TextStyle(fontSize: 18.0)),
-      trailing: CupertinoSwitch(
-        value: true,
-        activeColor: Colors.red,
-        onChanged: (bool value) {},
-      )),
-  ListTile(
-      title: Text('Rödd', style: TextStyle(fontSize: 18.0)),
-      trailing: CupertinoSegmentedControl(
-          children: const <int, Widget>{
-            0: Padding(padding: EdgeInsets.all(8.0), child: Text('Kona')),
-            1: Padding(padding: EdgeInsets.all(8.0), child: Text('Karl')),
-          },
-          groupValue: 0,
-          onValueChanged: (value) {
-            // Do something
-          })),
+    title: Text('Rödd', style: TextStyle(fontSize: 18.0)),
+    trailing: CupertinoSegmentedControl(
+        children: const <int, Widget>{
+          0: Padding(padding: EdgeInsets.all(8.0), child: Text('Kona')),
+          1: Padding(padding: EdgeInsets.all(8.0), child: Text('Karl')),
+        },
+        groupValue: Prefs().boolForKey('voice_id') ? 1 : 0,
+        onValueChanged: (value) {
+          Prefs().setStringForKey('voice_id', value);
+        }),
+  ),
   ListTile(
       title: Text('Talhraði', style: TextStyle(fontSize: 18.0)),
       trailing: CupertinoSlider(onChanged: (double value) {}, value: 50, min: 0, max: 100)),
@@ -45,7 +123,8 @@ var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>
     onPressed: () {},
     child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
   ),
-  TextFormField(initialValue: "https://greynir.is", style: TextStyle(fontSize: 18.0)),
+  TextFormField(
+      initialValue: Prefs().stringForKey('query_server'), style: TextStyle(fontSize: 18.0)),
   CupertinoSegmentedControl(
       children: const <int, Widget>{
         0: Padding(padding: EdgeInsets.all(8.0), child: Text('Greynir')),
@@ -64,7 +143,10 @@ class SettingsRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Stillingar'),
+          title: Text(
+            'Stillingar',
+            style: TextStyle(color: Colors.red),
+          ),
           //backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,

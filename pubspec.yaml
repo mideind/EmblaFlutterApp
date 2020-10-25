@@ -26,6 +26,7 @@ dependencies:
   http: ^0.12.1
   google_speech: ^1.0.1
   sound_stream: ^0.2.0
+  audioplayers: ^0.16.2
   shared_preferences: ^0.5.7
   location: ^3.0.2
   webview_flutter: ^1.0.3

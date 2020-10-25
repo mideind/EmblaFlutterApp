@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'dart:convert' show json;
 import './query.dart';
 import './menu.dart';
+import './prefs.dart';
 
 final defaultTheme = ThemeData(
     // Define the default brightness and colors.
@@ -23,19 +25,31 @@ final defaultTheme = ThemeData(
     ));
 
 final app = MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme);
+var audioPlayer = AudioPlayer();
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
   HttpClient.enableTimelineLogging = true;
+
+  await Prefs().load();
+
+  if (Prefs().boolForKey('launched') == null) {
+    print("Setting default prefs on first launch");
+    Prefs().setDefaults();
+  }
+  Prefs().dump();
+
   runApp(app);
 }
 
-void printResponse(r) {
+void handleResponse(r) async {
   final j = json.decode(r.body);
   print(j["answer"]);
+  int result = await audioPlayer.play(j["audio"]);
 }
 
 class MainRoute extends StatelessWidget {
-  final toggleButton = Text('Toggle recording');
+  final toggleButton = Text('Send query');
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +73,6 @@ class MainRoute extends StatelessWidget {
             )
           ]),
       body: Center(
-          child: Positioned(
         child: Container(
             color: Colors.green,
             child: Column(
@@ -69,12 +82,12 @@ class MainRoute extends StatelessWidget {
                 MaterialButton(
                   child: toggleButton,
                   onPressed: () {
-                    QueryService.sendQuery(["hvað er klukkan"], printResponse);
+                    QueryService.sendQuery(["hvað er klukkan"], handleResponse);
                   },
                 ),
               ],
             )),
-      )),
+      ),
     );
   }
 }

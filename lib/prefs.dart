@@ -1,23 +1,53 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
+// Singleton class
 class Prefs {
-  static bool boolForKey(String key) {
-    SharedPreferences p = await SharedPreferences.getInstance();
-    return p.getBool(key);
+  Prefs._privateConstructor();
+  static final Prefs _instance = Prefs._privateConstructor();
+  static SharedPreferences _sp;
+  factory Prefs() {
+    return _instance;
   }
 
-  static setBoolForKey(String key, bool val) async {
-    SharedPreferences p = await SharedPreferences.getInstance();
-    p.setBool(key, val);
+  Future<void> load() async {
+    _sp = await SharedPreferences.getInstance();
   }
 
-  static String stringForKey(String key) {
-    SharedPreferences p = await SharedPreferences.getInstance();
-    return p.getString(key);
+  bool boolForKey(String key) {
+    return _sp.getBool(key) ?? false;
   }
 
-  static setStringForKey(String key, String val) async {
-    SharedPreferences p = await SharedPreferences.getInstance();
-    p.setString(key, val);
+  void setBoolForKey(String key, bool val) {
+    _sp.setBool(key, val);
+  }
+
+  String stringForKey(String key) {
+    return _sp.getString(key);
+  }
+
+  void setStringForKey(String key, String val) {
+    _sp.setString(key, val);
+  }
+
+  void dump() async {
+    List list = _sp
+        .getKeys()
+        .map<String>((key) => key + ": " + _sp.get(key).toString())
+        .toList(growable: false);
+    print("Shared Preferences: " + list.toString());
+  }
+
+  void clear() {
+    _sp.clear();
+  }
+
+  void setDefaults() {
+    Prefs().setBoolForKey('launched', true);
+    Prefs().setBoolForKey('voice_activation', true);
+    Prefs().setBoolForKey('share_location', true);
+    Prefs().setBoolForKey('privacy_mode', false);
+    Prefs().setBoolForKey('voice_id', false);
+    Prefs().setStringForKey('voice_speed', '1.0');
+    Prefs().setStringForKey('query_server', 'https://greynir.is');
   }
 }

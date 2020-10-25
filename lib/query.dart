@@ -4,6 +4,7 @@ import 'dart:io' show Platform;
 import 'package:http/http.dart' as http;
 import 'package:device_id/device_id.dart';
 import 'package:package_info/package_info.dart';
+import './prefs.dart';
 //import 'package:location/location.dart';
 
 // void _location() {
@@ -32,32 +33,37 @@ import 'package:package_info/package_info.dart';
 // }
 
 class QueryService {
-  static const String queryAPIURL = "https://greynir.is/query.api/v1";
-  static const String speechAPIURL = "https://greynir.is/speech.api/v1";
-  static const String queryHistoryAPIURL = "https://greynir.is/query_history.api/v1";
+  static const String queryAPIPath = "/query.api/v1";
+  static const String speechAPIPath = "/speech.api/v1";
+  static const String queryHistoryAPIPath = "/query_history.api/v1";
 
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
     var qargs = {"q": queries.join("|"), "voice": "1"};
 
-    bool privacyMode = false;
-    if (!privacyMode) {
+    bool privacyMode = Prefs().boolForKey('privacy_mode');
+    if (privacyMode) {
+      qargs["private"] = "1";
+    } else {
       qargs["client_type"] = Platform.operatingSystem;
       qargs["client_id"] = await DeviceId.getID;
       PackageInfo packageInfo = await PackageInfo.fromPlatform();
       qargs["client_version"] = packageInfo.buildNumber;
     }
+    qargs["voice_id"] = Prefs().boolForKey('voice_id') ? "Karl" : "Dora";
+    qargs["voice_speed"] = Prefs().stringForKey('voice_speed');
 
-    bool shareLocation = privacyMode ? false : false;
+    bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation) {
       // LocationData ld = _location();
       // qargs["latitude"] = ld.latitude;
       // qargs["longitude"] = ld.longitude;
     }
 
-    print(qargs);
-    var response = await http.post(queryAPIURL, body: qargs);
-    // print('Response status: ${response.statusCode}');
-    // print('Response body: ${response.body}');
+    print("Sending query POST request: " + qargs.toString());
+    String server = Prefs().stringForKey('query_server');
+    var response = await http.post(server + queryAPIPath, body: qargs);
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
     if (handler != null) {
       handler(response);
     }
