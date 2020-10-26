@@ -123,8 +123,15 @@ var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>
     onPressed: () {},
     child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
   ),
-  TextFormField(
-      initialValue: Prefs().stringForKey('query_server'), style: TextStyle(fontSize: 18.0)),
+  Padding(
+      padding: EdgeInsets.all(8.0),
+      child: TextFormField(
+        initialValue: Prefs().stringForKey('query_server'),
+        style: TextStyle(fontSize: 18.0),
+        onChanged: (var val) {
+          Prefs().setStringForKey('query_server', val);
+        },
+      )),
   CupertinoSegmentedControl(
       children: const <int, Widget>{
         0: Padding(padding: EdgeInsets.all(8.0), child: Text('Greynir')),
@@ -143,13 +150,14 @@ class SettingsRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(
-            'Stillingar',
-            style: TextStyle(color: Colors.red),
-          ),
+          // title: Text(
+          //   'Stillingar',
+          //   style: TextStyle(color: Colors.red),
+          // ),
           //backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,
+          toolbarOpacity: 1.0,
         ),
         body: settingsList);
   }
