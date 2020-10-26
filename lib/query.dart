@@ -82,8 +82,10 @@ class QueryService {
       qargs["client_version"] = await _clientVersion();
     }
     qargs["voice_id"] = Prefs().boolForKey('voice_id') ? "Karl" : "Dora";
-    qargs["voice_speed"] = Prefs().stringForKey('voice_speed');
-
+    var speed = Prefs().stringForKey('voice_speed');
+    if (speed != null) {
+      qargs["voice_speed"] = speed;
+    }
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation) {
       // LocationData ld = _location();

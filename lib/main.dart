@@ -55,8 +55,8 @@ void main() async {
   HttpClient.enableTimelineLogging = true;
 
   await Prefs().load();
-
-  if (Prefs().boolForKey('launched') == null) {
+  bool launched = Prefs().boolForKey('launched');
+  if (launched == null || launched == false) {
     dlog("Setting default prefs on first launch");
     Prefs().setDefaults();
   }
@@ -83,13 +83,13 @@ class MainRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           leading: IconButton(
-            icon: ImageIcon(AssetImage('images/mic.png')),
+            icon: ImageIcon(AssetImage('assets/images/mic.png')),
             onPressed: () {},
           ),
           actions: <Widget>[
             // Action button
             IconButton(
-              icon: ImageIcon(AssetImage('images/menu.png')),
+              icon: ImageIcon(AssetImage('assets/images/menu.png')),
               onPressed: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => MenuRoute()));
               },

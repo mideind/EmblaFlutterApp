@@ -58,19 +58,21 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-    - images/cube.png
-    - images/mic.png
-    - images/mic-slash.png
-    - images/menu.png
-    - rec_begin.wav
-    - conn-dora.wav
-    - conn-karl.wav
-    - dunno-dora.wav
-    - dunno-karl.wav
-    - err-dora.wav
-    - err-karl.wav
-    - rec_cancel.wav
-    - rec_confirm.wav
+    # Images
+    - assets/images/cube.png
+    - assets/images/mic.png
+    - assets/images/mic-slash.png
+    - assets/images/menu.png
+    # Audio
+    - assets/rec_begin.wav
+    - assets/rec_cancel.wav
+    - assets/rec_confirm.wav
+    - assets/conn-dora.wav
+    - assets/conn-karl.wav
+    - assets/dunno-dora.wav
+    - assets/dunno-karl.wav
+    - assets/err-dora.wav
+    - assets/err-karl.wav
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
@@ -86,8 +88,8 @@ flutter:
   fonts:
     - family: Lato
       fonts:
-        - asset: fonts/Lato-Regular.ttf
-        - asset: fonts/Lato-Italic.ttf
+        - asset: assets/fonts/Lato-Regular.ttf
+        - asset: assets/fonts/Lato-Italic.ttf
           style: italic
   #
   # For details regarding fonts from package dependencies,
