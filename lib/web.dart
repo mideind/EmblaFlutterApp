@@ -24,28 +24,32 @@ import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './common.dart';
 
+Widget _webviewForURL(String url) {
+  return Scaffold(
+    appBar: AppBar(
+      backgroundColor: Colors.transparent,
+      bottomOpacity: 0.0,
+      elevation: 0.0,
+    ),
+    body: WebView(
+      initialUrl: url,
+      navigationDelegate: (NavigationRequest request) {
+        // All external URLs should be opened in a browser
+        if (request.url != url) {
+          launch(request.url);
+          return NavigationDecision.prevent;
+        }
+        return NavigationDecision.navigate;
+      },
+    ),
+  );
+}
+
 class AboutRoute extends StatelessWidget {
   final initialURL = ABOUT_URL;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
-      body: WebView(
-        initialUrl: initialURL,
-        navigationDelegate: (NavigationRequest request) {
-          print("NAVDEL");
-          // if (request.url != initialURL) {
-          //   launch(request.url);
-          //   return NavigationDecision.prevent;
-          // }
-          return NavigationDecision.navigate;
-        },
-      ),
-    );
+    return _webviewForURL(initialURL);
   }
 }
 
@@ -53,23 +57,7 @@ class InstructionsRoute extends StatelessWidget {
   final initialURL = INSTRUCTIONS_URL;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
-      body: WebView(
-        initialUrl: initialURL,
-        navigationDelegate: (NavigationRequest request) {
-          if (request.url != initialURL) {
-            launch(request.url);
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    );
+    return _webviewForURL(initialURL);
   }
 }
 
@@ -77,22 +65,6 @@ class PrivacyRoute extends StatelessWidget {
   final initialURL = PRIVACY_URL;
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
-      body: WebView(
-        initialUrl: initialURL,
-        navigationDelegate: (NavigationRequest request) {
-          if (request.url != initialURL) {
-            launch(request.url);
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    );
+    return _webviewForURL(initialURL);
   }
 }

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Main view
+// App & main view
 
 import 'dart:io';
 import 'dart:convert' show json;
@@ -60,7 +60,7 @@ void main() async {
     dlog("Setting default prefs on first launch");
     Prefs().setDefaults();
   }
-  dlog(Prefs().desc());
+  dlog("Prefs: " + Prefs().desc());
 
   runApp(app);
 }
@@ -79,7 +79,7 @@ class MainRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          //backgroundColor: Colors.transparent,
+          backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,
           leading: IconButton(
@@ -87,7 +87,7 @@ class MainRoute extends StatelessWidget {
             onPressed: () {},
           ),
           actions: <Widget>[
-            // action button
+            // Action button
             IconButton(
               icon: ImageIcon(AssetImage('images/menu.png')),
               onPressed: () {

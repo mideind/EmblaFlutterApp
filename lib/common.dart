@@ -35,6 +35,6 @@ const String CLEAR_QHISTORY_API_PATH = "/query_history.api/v1";
 const String SPEECH_API_PATH = "/speech.api/v1";
 
 // Documentation URLs
-const String ABOUT_URL = "http://embla.is/about.html";
-const String INSTRUCTIONS_URL = "http://embla.is/instructions.html";
-const String PRIVACY_URL = "http://embla.is/privacy.html";
+const String ABOUT_URL = "https://embla.is/about.html";
+const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";
+const String PRIVACY_URL = "https://embla.is/privacy.html";

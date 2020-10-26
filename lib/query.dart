@@ -56,6 +56,19 @@ import './common.dart';
 //     return await location.getLocation();
 // }
 
+String _clientType() {
+  return Platform.operatingSystem + "_flutter";
+}
+
+Future<String> _clientID() async {
+  return await DeviceId.getID;
+}
+
+Future<String> _clientVersion() async {
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  return packageInfo.buildNumber;
+}
+
 class QueryService {
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
     var qargs = {"q": queries.join("|"), "voice": "1"};
@@ -64,10 +77,9 @@ class QueryService {
     if (privacyMode) {
       qargs["private"] = "1";
     } else {
-      qargs["client_type"] = Platform.operatingSystem;
-      qargs["client_id"] = await DeviceId.getID;
-      PackageInfo packageInfo = await PackageInfo.fromPlatform();
-      qargs["client_version"] = packageInfo.buildNumber;
+      qargs["client_type"] = _clientType();
+      qargs["client_id"] = await _clientID();
+      qargs["client_version"] = await _clientVersion();
     }
     qargs["voice_id"] = Prefs().boolForKey('voice_id') ? "Karl" : "Dora";
     qargs["voice_speed"] = Prefs().stringForKey('voice_speed');
