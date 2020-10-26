@@ -5,6 +5,8 @@ import 'package:http/http.dart' as http;
 import 'package:device_id/device_id.dart';
 import 'package:package_info/package_info.dart';
 import './prefs.dart';
+import './common.dart';
+
 //import 'package:location/location.dart';
 
 // void _location() {
@@ -59,11 +61,11 @@ class QueryService {
       // qargs["longitude"] = ld.longitude;
     }
 
-    print("Sending query POST request: " + qargs.toString());
+    dlog("Sending query POST request: " + qargs.toString());
     String server = Prefs().stringForKey('query_server');
     var response = await http.post(server + queryAPIPath, body: qargs);
-    print('Response status: ${response.statusCode}');
-    print('Response body: ${response.body}');
+    dlog('Response status: ${response.statusCode}');
+    dlog('Response body: ${response.body}');
     if (handler != null) {
       handler(response);
     }

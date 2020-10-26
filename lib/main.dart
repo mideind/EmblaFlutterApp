@@ -6,6 +6,7 @@ import 'dart:convert' show json;
 import './query.dart';
 import './menu.dart';
 import './prefs.dart';
+import './common.dart';
 
 final defaultTheme = ThemeData(
     // Define the default brightness and colors.
@@ -34,17 +35,17 @@ void main() async {
   await Prefs().load();
 
   if (Prefs().boolForKey('launched') == null) {
-    print("Setting default prefs on first launch");
+    dlog("Setting default prefs on first launch");
     Prefs().setDefaults();
   }
-  Prefs().dump();
+  dlog(Prefs().desc());
 
   runApp(app);
 }
 
 void handleResponse(r) async {
   final j = json.decode(r.body);
-  print(j["answer"]);
+  dlog(j["answer"]);
   int result = await audioPlayer.play(j["audio"]);
 }
 

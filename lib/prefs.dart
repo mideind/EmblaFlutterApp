@@ -1,4 +1,5 @@
 import 'package:shared_preferences/shared_preferences.dart';
+import './common.dart';
 
 // Singleton class
 class Prefs {
@@ -29,12 +30,12 @@ class Prefs {
     _sp.setString(key, val);
   }
 
-  void dump() async {
+  String desc() {
     List list = _sp
         .getKeys()
         .map<String>((key) => key + ": " + _sp.get(key).toString())
         .toList(growable: false);
-    print("Shared Preferences: " + list.toString());
+    return "Shared Preferences: " + list.toString();
   }
 
   void clear() {
@@ -48,6 +49,6 @@ class Prefs {
     Prefs().setBoolForKey('privacy_mode', false);
     Prefs().setBoolForKey('voice_id', false);
     Prefs().setStringForKey('voice_speed', '1.0');
-    Prefs().setStringForKey('query_server', 'https://greynir.is');
+    Prefs().setStringForKey('query_server', DEFAULT_SERVER);
   }
 }
