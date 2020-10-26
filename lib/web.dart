@@ -20,15 +20,16 @@
 
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher.dart' show launch;
+
+import './common.dart';
 
 class AboutRoute extends StatelessWidget {
-  final initialURL = "https://embla.is/about.html";
+  final initialURL = ABOUT_URL;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
         backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,
@@ -36,10 +37,11 @@ class AboutRoute extends StatelessWidget {
       body: WebView(
         initialUrl: initialURL,
         navigationDelegate: (NavigationRequest request) {
-          if (request.url != initialURL) {
-            launch(request.url);
-            return NavigationDecision.prevent;
-          }
+          print("NAVDEL");
+          // if (request.url != initialURL) {
+          //   launch(request.url);
+          //   return NavigationDecision.prevent;
+          // }
           return NavigationDecision.navigate;
         },
       ),
@@ -48,12 +50,11 @@ class AboutRoute extends StatelessWidget {
 }
 
 class InstructionsRoute extends StatelessWidget {
-  final initialURL = "https://embla.is/instructions.html";
+  final initialURL = INSTRUCTIONS_URL;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
         backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,
@@ -73,12 +74,11 @@ class InstructionsRoute extends StatelessWidget {
 }
 
 class PrivacyRoute extends StatelessWidget {
-  final initialURL = "https://embla.is/privacy.html";
+  final initialURL = PRIVACY_URL;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(''),
         backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,

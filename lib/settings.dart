@@ -20,7 +20,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import './prefs.dart';
+
+import './prefs.dart' show Prefs;
 
 class SettingsSwitchWidget extends StatefulWidget {
   String prefKey;

@@ -18,8 +18,9 @@
 
 // Shared constants and utility functions
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 
+// Debug logging
 void dlog(String logStr) {
   if (kReleaseMode) {
     return;
@@ -27,4 +28,13 @@ void dlog(String logStr) {
   print(logStr);
 }
 
+// Server communication
 const String DEFAULT_SERVER = "https://greynir.is";
+const String QUERY_API_PATH = "/query.api/v1";
+const String CLEAR_QHISTORY_API_PATH = "/query_history.api/v1";
+const String SPEECH_API_PATH = "/speech.api/v1";
+
+// Documentation URLs
+const String ABOUT_URL = "http://embla.is/about.html";
+const String INSTRUCTIONS_URL = "http://embla.is/instructions.html";
+const String PRIVACY_URL = "http://embla.is/privacy.html";

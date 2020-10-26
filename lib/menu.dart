@@ -20,7 +20,8 @@
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import './settings.dart';
+
+import './settings.dart' show SettingsRoute;
 import './web.dart';
 
 var menuContext;

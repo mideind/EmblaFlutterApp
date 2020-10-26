@@ -18,14 +18,16 @@
 
 // Main view
 
-import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'dart:io';
 import 'dart:convert' show json;
-import './query.dart';
-import './menu.dart';
-import './prefs.dart';
+
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
+
+import './query.dart' show QueryService;
+import './menu.dart' show MenuRoute;
+import './prefs.dart' show Prefs;
 import './common.dart';
 
 final defaultTheme = ThemeData(
@@ -46,7 +48,7 @@ final defaultTheme = ThemeData(
     ));
 
 final app = MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme);
-var audioPlayer = AudioPlayer();
+final audioPlayer = AudioPlayer();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -67,6 +69,7 @@ void handleResponse(r) async {
   final j = json.decode(r.body);
   dlog(j["answer"]);
   int result = await audioPlayer.play(j["audio"]);
+  print("Audio player result $result");
 }
 
 class MainRoute extends StatelessWidget {
@@ -76,7 +79,6 @@ class MainRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: Text(''),
           //backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,

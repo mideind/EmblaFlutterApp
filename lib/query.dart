@@ -21,10 +21,12 @@
 // import 'package:requests/requests.dart';
 import 'dart:convert' show json;
 import 'dart:io' show Platform;
+
 import 'package:http/http.dart' as http;
-import 'package:device_id/device_id.dart';
-import 'package:package_info/package_info.dart';
-import './prefs.dart';
+import 'package:device_id/device_id.dart' show DeviceId;
+import 'package:package_info/package_info.dart' show PackageInfo;
+
+import './prefs.dart' show Prefs;
 import './common.dart';
 
 //import 'package:location/location.dart';
@@ -55,10 +57,6 @@ import './common.dart';
 // }
 
 class QueryService {
-  static const String queryAPIPath = "/query.api/v1";
-  static const String speechAPIPath = "/speech.api/v1";
-  static const String queryHistoryAPIPath = "/query_history.api/v1";
-
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
     var qargs = {"q": queries.join("|"), "voice": "1"};
 
@@ -83,7 +81,7 @@ class QueryService {
 
     dlog("Sending query POST request: " + qargs.toString());
     String server = Prefs().stringForKey('query_server');
-    var response = await http.post(server + queryAPIPath, body: qargs);
+    var response = await http.post(server + QUERY_API_PATH, body: qargs);
     dlog('Response status: ${response.statusCode}');
     dlog('Response body: ${response.body}');
     if (handler != null) {

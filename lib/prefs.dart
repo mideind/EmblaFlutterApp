@@ -19,7 +19,8 @@
 // Prefs singleton
 
 import 'package:shared_preferences/shared_preferences.dart';
-import './common.dart';
+
+import './common.dart' show DEFAULT_SERVER;
 
 // Singleton class
 class Prefs {
