@@ -26,11 +26,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
 
-import './query.dart' show QueryService;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './common.dart';
-import './session.dart';
+import './session.dart' show AudioRecognize;
 
 final defaultTheme = ThemeData(
     // Define the default brightness and colors.

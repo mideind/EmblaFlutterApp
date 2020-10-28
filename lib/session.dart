@@ -18,9 +18,15 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+// import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:sound_stream/sound_stream.dart';
+import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
+
+import './query.dart' show QueryService;
 import './common.dart';
+
+final audioPlayer = AudioPlayer();
 
 class AudioRecognize extends StatefulWidget {
   @override
@@ -62,16 +68,19 @@ class _AudioRecognizeState extends State<AudioRecognize> {
         dlog("RESULTS--------------");
         dlog(data.results.toString());
         recognizeFinished = true;
-        if (data.results[0].isFinal) {
+        if (data.results.length < 1) {
+          return;
+        }
+        var first = data.results[0];
+        if (first.isFinal) {
           dlog("Final result received, stopping recording");
           stopRecording();
+          handleFinal(first);
         }
       });
     }, onDone: () {
       dlog("Stream done");
-      setState(() {
-        recognizing = false;
-      });
+      stopRecording();
     });
   }
 
@@ -79,6 +88,18 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     await _recorder.stop();
     setState(() {
       recognizing = false;
+    });
+  }
+
+  Future<void> handleFinal(var finalResult) async {
+    print("HANDLING RESPONSE");
+    String res = finalResult.alternatives.first.transcript;
+    QueryService.sendQuery([res], (Map resp) async {
+      print("Playing audio");
+      print(resp["audio"]);
+      int result = await audioPlayer.play(resp["audio"]);
+      print("Audio player result: $result");
+      text = resp["answer"];
     });
   }
 
@@ -106,7 +127,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
             ),
           ],
         ),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+      ),
     );
   }
 }
@@ -122,12 +143,6 @@ class _RecognizeContent extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       child: Column(
         children: <Widget>[
-          Text(
-            'Niðurstaða talgreiningar:',
-          ),
-          SizedBox(
-            height: 20.0,
-          ),
           Text(
             text,
             style: Theme.of(context).textTheme.bodyText1,

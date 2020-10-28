@@ -99,7 +99,7 @@ class QueryService {
     dlog('Response status: ${response.statusCode}');
     dlog('Response body: ${response.body}');
     if (handler != null) {
-      handler(response);
+      handler(json.decode(response.body));
     }
   }
 
