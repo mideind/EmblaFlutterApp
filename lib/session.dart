@@ -38,6 +38,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
 
   bool recognizing = false;
   bool recognizeFinished = false;
+  bool awaitingAnswer = false;
   String text = '';
 
   @override
@@ -48,10 +49,12 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   }
 
   void streamingRecognize() async {
+    audioPlayer.stop();
     await _recorder.start();
 
     setState(() {
       recognizing = true;
+      text = '';
     });
     final serviceAccount = ServiceAccount.fromString(
         '${(await rootBundle.loadString('assets/test_service_account.json'))}');
@@ -92,14 +95,32 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   }
 
   Future<void> handleFinal(var finalResult) async {
+    if (awaitingAnswer) {
+      return;
+    }
     print("HANDLING RESPONSE");
+
+    setState(() {
+      awaitingAnswer = true;
+    });
     String res = finalResult.alternatives.first.transcript;
     QueryService.sendQuery([res], (Map resp) async {
-      print("Playing audio");
-      print(resp["audio"]);
-      int result = await audioPlayer.play(resp["audio"]);
-      print("Audio player result: $result");
-      text = resp["answer"];
+      if (resp["valid"] == true) {
+        dlog("Received valid response to query");
+        print("Playing audio");
+        print(resp["audio"]);
+        await audioPlayer.play(resp["audio"]);
+        setState(() {
+          text = resp["answer"];
+        });
+      } else {
+        setState(() {
+          text = 'Það veit ég ekki.';
+        });
+      }
+      setState(() {
+        awaitingAnswer = false;
+      });
     });
   }
 
@@ -144,7 +165,7 @@ class _RecognizeContent extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Text(
-            text,
+            text != null ? text : '',
             style: Theme.of(context).textTheme.bodyText1,
           ),
         ],

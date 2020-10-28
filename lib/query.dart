@@ -99,7 +99,8 @@ class QueryService {
     dlog('Response status: ${response.statusCode}');
     dlog('Response body: ${response.body}');
     if (handler != null) {
-      handler(json.decode(response.body));
+      var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+      handler(arg);
     }
   }
 
