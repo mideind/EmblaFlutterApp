@@ -23,12 +23,14 @@ import 'dart:convert' show json;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
 
 import './query.dart' show QueryService;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './common.dart';
+import './session.dart';
 
 final defaultTheme = ThemeData(
     // Define the default brightness and colors.
@@ -60,7 +62,7 @@ void main() async {
     dlog("Setting default prefs on first launch");
     Prefs().setDefaults();
   }
-  dlog("Prefs: " + Prefs().desc());
+  dlog(Prefs().desc());
 
   runApp(app);
 }
@@ -69,7 +71,7 @@ void handleResponse(r) async {
   final j = json.decode(r.body);
   dlog(j["answer"]);
   int result = await audioPlayer.play(j["audio"]);
-  print("Audio player result $result");
+  print("Audio player result: $result");
 }
 
 class MainRoute extends StatelessWidget {

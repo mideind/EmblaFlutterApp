@@ -26,8 +26,6 @@ import './web.dart';
 
 var menuContext;
 
-final TextStyle textStyle = TextStyle(fontSize: 20.0);
-
 void pushSettings() {
   Navigator.push(
     menuContext,
@@ -105,7 +103,7 @@ class MenuRoute extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text(""),
-          // leading: const Text("Til baka"),
+          //leading: const Text("Til baka"),
           backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,

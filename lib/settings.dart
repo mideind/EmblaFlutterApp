@@ -24,8 +24,8 @@ import 'package:flutter/cupertino.dart';
 import './prefs.dart' show Prefs;
 
 class SettingsSwitchWidget extends StatefulWidget {
-  String prefKey;
-  String label;
+  final String prefKey;
+  final String label;
 
   SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
@@ -74,9 +74,9 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
 }
 
 class SettingsSegmentedWidget extends StatefulWidget {
-  String label;
-  List<String> items;
-  String prefKey;
+  final String label;
+  final List<String> items;
+  final String prefKey;
 
   SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
 
