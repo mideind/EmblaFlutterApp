@@ -16,25 +16,34 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Shared constants, logging
+// Various utility functions
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
+// String extensions
+extension StringExtension on String {
 
-// Debug logging
-void dlog(String logStr) {
-  if (kReleaseMode) {
-    return;
-  }
-  print(logStr);
+    bool isPunctuationTerminated() {
+      if (this.length == 0) {
+        return false;
+      }
+      List<String> punc = ['.', '?', '!', '."', '.“', ".'"];
+      for (String p in punc) {
+      if (this.endsWith(p)) {
+        return true;
+      }
+      return false;
+    }
+
+    String sentenceCapitalized() {
+      if (this.length == 0) {
+        return this;
+      }
+      return "${this[0].toUpperCase()}${this.substring(1)}";
+    }
+
+    String periodTerminated() {
+      if (this.isPunctuationTerminated() == false) {
+        return this + '.';
+      }
+      return this;
+    }
 }
-
-// Server communication
-const String DEFAULT_SERVER = "https://greynir.is";
-const String QUERY_API_PATH = "/query.api/v1";
-const String CLEAR_QHISTORY_API_PATH = "/query_history.api/v1";
-const String SPEECH_API_PATH = "/speech.api/v1";
-
-// Documentation URLs
-const String ABOUT_URL = "https://embla.is/about.html";
-const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";
-const String PRIVACY_URL = "https://embla.is/privacy.html";
