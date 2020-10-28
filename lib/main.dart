@@ -97,22 +97,7 @@ class MainRoute extends StatelessWidget {
               },
             )
           ]),
-      body: Center(
-        child: Container(
-            color: Colors.green,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: <Widget>[
-                Text("Texti"),
-                MaterialButton(
-                  child: toggleButton,
-                  onPressed: () {
-                    QueryService.sendQuery(["hvað er klukkan"], handleResponse);
-                  },
-                ),
-              ],
-            )),
-      ),
+      body: Center(child: AudioRecognize()),
     );
   }
 }

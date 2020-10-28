@@ -61,15 +61,17 @@ flutter:
     - assets/images/mic-slash.png
     - assets/images/menu.png
     # Audio
-    - assets/rec_begin.wav
-    - assets/rec_cancel.wav
-    - assets/rec_confirm.wav
-    - assets/conn-dora.wav
-    - assets/conn-karl.wav
-    - assets/dunno-dora.wav
-    - assets/dunno-karl.wav
-    - assets/err-dora.wav
-    - assets/err-karl.wav
+    - assets/audio/rec_begin.wav
+    - assets/audio/rec_cancel.wav
+    - assets/audio/rec_confirm.wav
+    - assets/audio/conn-dora.wav
+    - assets/audio/conn-karl.wav
+    - assets/audio/dunno-dora.wav
+    - assets/audio/dunno-karl.wav
+    - assets/audio/err-dora.wav
+    - assets/audio/err-karl.wav
+    # Other
+    - assets/test_service_account.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

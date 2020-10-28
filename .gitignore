@@ -68,3 +68,5 @@ pubspec.lock
 **/ios/Flutter/flutter_assets/
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
+
+*test_service_account.json

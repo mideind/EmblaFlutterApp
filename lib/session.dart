@@ -17,8 +17,10 @@
  */
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:sound_stream/sound_stream.dart';
+import './common.dart';
 
 class AudioRecognize extends StatefulWidget {
   @override
@@ -57,9 +59,16 @@ class _AudioRecognizeState extends State<AudioRecognize> {
     responseStream.listen((data) {
       setState(() {
         text = data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        dlog("RESULTS--------------");
+        dlog(data.results.toString());
         recognizeFinished = true;
+        if (data.results[0].isFinal) {
+          dlog("Final result received, stopping recording");
+          stopRecording();
+        }
       });
     }, onDone: () {
+      dlog("Stream done");
       setState(() {
         recognizing = false;
       });
@@ -83,9 +92,6 @@ class _AudioRecognizeState extends State<AudioRecognize> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Audio File Example'),
-      ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -96,7 +102,7 @@ class _AudioRecognizeState extends State<AudioRecognize> {
               ),
             RaisedButton(
               onPressed: recognizing ? stopRecording : streamingRecognize,
-              child: recognizing ? Text('Stop recording') : Text('Start Streaming from mic'),
+              child: recognizing ? Text('Hætta') : Text('Hlusta'),
             ),
           ],
         ),
@@ -117,10 +123,10 @@ class _RecognizeContent extends StatelessWidget {
       child: Column(
         children: <Widget>[
           Text(
-            'The text recognized by the Google Speech Api:',
+            'Niðurstaða talgreiningar:',
           ),
           SizedBox(
-            height: 16.0,
+            height: 20.0,
           ),
           Text(
             text,
