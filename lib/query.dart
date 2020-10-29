@@ -69,9 +69,20 @@ Future<String> _clientVersion() async {
   return packageInfo.buildNumber;
 }
 
-void _logResponse(Response response) {
+Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async {
+  String apiURL = Prefs().stringForKey('query_server') + path;
+
+  dlog("Sending query POST request to $apiURL: " + qargs.toString());
+  Response response = await http.post(apiURL, body: qargs);
+
   dlog('Response status: ${response.statusCode}');
   dlog('Response body: ${response.body}');
+
+  if (handler != null) {
+    var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+    handler(arg);
+  }
+  return response;
 }
 
 class QueryService {
@@ -104,15 +115,7 @@ class QueryService {
       // qargs["longitude"] = ld.longitude;
     }
 
-    String apiURL = Prefs().stringForKey('query_server') + QUERY_API_PATH;
-    dlog("Sending query POST request to $apiURL: " + qargs.toString());
-    Response response = await http.post(apiURL, body: qargs);
-    _logResponse(response);
-
-    if (handler != null) {
-      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
-      handler(arg);
-    }
+    await _makeRequest(QUERY_API_PATH, qargs, handler);
   }
 
   // Send request to speech synthesis API
@@ -124,15 +127,7 @@ class QueryService {
       "format": "text" // No SSML for now...
     };
 
-    String apiURL = Prefs().stringForKey('query_server') + SPEECH_API_PATH;
-    dlog("Sending speech synthesis POST request to $apiURL: " + qargs.toString());
-    Response response = await http.post(apiURL, body: qargs);
-    _logResponse(response);
-
-    if (handler != null) {
-      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
-      handler(arg);
-    }
+    await _makeRequest(SPEECH_API_PATH, qargs, handler);
   }
 
   // Send request to query history API
@@ -145,14 +140,6 @@ class QueryService {
       "api_key": readQueryServerKey()
     };
 
-    String apiURL = Prefs().stringForKey('query_server') + QUERY_HISTORY_API_PATH;
-    dlog("Sending query history POST request to $apiURL: " + qargs.toString());
-    Response response = await http.post(apiURL, body: qargs);
-    _logResponse(response);
-
-    if (handler != null) {
-      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
-      handler(arg);
-    }
+    await _makeRequest(QUERY_HISTORY_API_PATH, qargs, handler);
   }
 }
