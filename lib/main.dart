@@ -29,8 +29,8 @@ import './prefs.dart' show Prefs;
 import './common.dart';
 import './session.dart' show SessionWidget;
 
+// Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
-    // Define the default brightness and colors.
     // brightness: Brightness.dark,
     // accentColor: Colors.cyan[600],
     scaffoldBackgroundColor: Color(0xFFF9F9F9),
@@ -46,29 +46,32 @@ final defaultTheme = ThemeData(
       iconTheme: IconThemeData(color: Colors.red),
     ));
 
+// App object
 final app = MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   HttpClient.enableTimelineLogging = true;
 
+  // Load prefs and populate with default values if required
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
     dlog("Setting default prefs on first launch");
     Prefs().setDefaults();
   }
-  dlog(Prefs().desc());
+  dlog("Shared prefs: " + Prefs().desc());
 
+  // Launch app
   runApp(app);
 }
 
-class VoiceActivationWidget extends StatefulWidget {
+class ToggleVoiceActivationWidget extends StatefulWidget {
   @override
-  _VoiceActivationWidgetState createState() => _VoiceActivationWidgetState();
+  _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
 }
 
-class _VoiceActivationWidgetState extends State<VoiceActivationWidget> {
+class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -79,9 +82,18 @@ class _VoiceActivationWidgetState extends State<VoiceActivationWidget> {
   }
 }
 
-class MainRoute extends StatelessWidget {
-  final toggleButton = Text('Send query');
+class MenuButtonWidget extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+        icon: ImageIcon(AssetImage('assets/images/menu.png')),
+        onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context) => MenuRoute()));
+        });
+  }
+}
 
+class MainRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,17 +101,9 @@ class MainRoute extends StatelessWidget {
           backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,
-          leading: VoiceActivationWidget(),
-          actions: <Widget>[
-            // Action button
-            IconButton(
-              icon: ImageIcon(AssetImage('assets/images/menu.png')),
-              onPressed: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => MenuRoute()));
-              },
-            )
-          ]),
-      body: Center(child: SessionWidget()),
+          leading: ToggleVoiceActivationWidget(),
+          actions: <Widget>[MenuButtonWidget()]),
+      body: SessionWidget(),
     );
   }
 }

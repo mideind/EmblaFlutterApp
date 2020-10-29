@@ -47,3 +47,13 @@ extension StringExtension on String {
     return this;
   }
 }
+
+// Read Google API key
+String readGoogleKey() {
+  return '';
+}
+
+// Read query server key
+String readQueryServerKey() {
+  return '';
+}

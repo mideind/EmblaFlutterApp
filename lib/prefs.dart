@@ -56,7 +56,7 @@ class Prefs {
         .getKeys()
         .map<String>((key) => key + ": " + _sp.get(key).toString())
         .toList(growable: false);
-    return "Shared Preferences: " + list.toString();
+    return list.toString();
   }
 
   void clear() {
