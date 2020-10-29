@@ -6,5 +6,6 @@ TODO:
     * Local audio playback for UI interaction, errors
     * Update documentation wrt. OS version requirements etc.
     * Add tests + Travis CI integration
+    * Send location with query
     * Unique timestamp-based session identifiers to control callback hell
     * Pocketsphinx

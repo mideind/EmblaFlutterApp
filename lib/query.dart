@@ -18,18 +18,18 @@
 
 // Network communication with query server
 
-// import 'package:requests/requests.dart';
 import 'dart:convert' show json;
 import 'dart:io' show Platform;
 
-import 'package:http/http.dart' as http;
 import 'package:device_id/device_id.dart' show DeviceId;
+import 'package:http/http.dart' show Response;
+import 'package:http/http.dart' as http;
 import 'package:package_info/package_info.dart' show PackageInfo;
+//import 'package:location/location.dart';
 
 import './prefs.dart' show Prefs;
+import './util.dart' show readQueryServerKey;
 import './common.dart';
-
-//import 'package:location/location.dart';
 
 // void _location() {
 //     Location location = new Location();
@@ -69,9 +69,19 @@ Future<String> _clientVersion() async {
   return packageInfo.buildNumber;
 }
 
+void _logResponse(Response response) {
+  dlog('Response status: ${response.statusCode}');
+  dlog('Response body: ${response.body}');
+}
+
 class QueryService {
+  // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
-    var qargs = {"q": queries.join("|"), "voice": "1"};
+    Map qargs = {
+      "q": queries.join("|"),
+      "voice": "1",
+      "voice_id": Prefs().boolForKey('voice_id') ? "Karl" : "Dora"
+    };
 
     bool privacyMode = Prefs().boolForKey('privacy_mode');
     if (privacyMode) {
@@ -81,11 +91,12 @@ class QueryService {
       qargs["client_id"] = await _clientID();
       qargs["client_version"] = await _clientVersion();
     }
-    qargs["voice_id"] = Prefs().boolForKey('voice_id') ? "Karl" : "Dora";
-    var speed = Prefs().stringForKey('voice_speed');
+
+    String speed = Prefs().stringForKey('voice_speed');
     if (speed != null) {
       qargs["voice_speed"] = speed;
     }
+
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation) {
       // LocationData ld = _location();
@@ -93,28 +104,55 @@ class QueryService {
       // qargs["longitude"] = ld.longitude;
     }
 
-    String server = Prefs().stringForKey('query_server');
-    String apiURL = server + QUERY_API_PATH;
+    String apiURL = Prefs().stringForKey('query_server') + QUERY_API_PATH;
     dlog("Sending query POST request to $apiURL: " + qargs.toString());
-    var response = await http.post(apiURL, body: qargs);
-    dlog('Response status: ${response.statusCode}');
-    dlog('Response body: ${response.body}');
+    Response response = await http.post(apiURL, body: qargs);
+    _logResponse(response);
+
     if (handler != null) {
-      var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
       handler(arg);
     }
   }
 
-  static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {}
+  // Send request to speech synthesis API
+  static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
+    Map qargs = {
+      "text": text,
+      "api_key": readQueryServerKey(),
+      "voice_id": Prefs().boolForKey('voice_id') ? "Karl" : "Dora",
+      "format": "text" // No SSML for now...
+    };
 
-  static Future<void> clearUserData(bool allData, [Function handler]) async {}
-}
+    String apiURL = Prefs().stringForKey('query_server') + SPEECH_API_PATH;
+    dlog("Sending speech synthesis POST request to $apiURL: " + qargs.toString());
+    Response response = await http.post(apiURL, body: qargs);
+    _logResponse(response);
 
-void main() {
-  void printResponse(r) {
-    final j = json.decode(r.body);
-    print(j["answer"]);
+    if (handler != null) {
+      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
+      handler(arg);
+    }
   }
 
-  QueryService.sendQuery(["hvað er klukkan"], printResponse);
+  // Send request to query history API
+  static Future<void> clearUserData(bool allData, [Function handler]) async {
+    Map qargs = {
+      "action": allData ? "clear_all" : "clear",
+      "client_id": _clientID(),
+      "client_type": _clientType(),
+      "client_version": _clientVersion(),
+      "api_key": readQueryServerKey()
+    };
+
+    String apiURL = Prefs().stringForKey('query_server') + QUERY_HISTORY_API_PATH;
+    dlog("Sending query history POST request to $apiURL: " + qargs.toString());
+    Response response = await http.post(apiURL, body: qargs);
+    _logResponse(response);
+
+    if (handler != null) {
+      String arg = response.statusCode == 200 ? json.decode(response.body) : null;
+      handler(arg);
+    }
+  }
 }

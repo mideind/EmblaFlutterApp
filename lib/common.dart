@@ -31,7 +31,7 @@ void dlog(String logStr) {
 // Server communication
 const String DEFAULT_SERVER = "https://greynir.is";
 const String QUERY_API_PATH = "/query.api/v1";
-const String CLEAR_QHISTORY_API_PATH = "/query_history.api/v1";
+const String QUERY_HISTORY_API_PATH = "/query_history.api/v1";
 const String SPEECH_API_PATH = "/speech.api/v1";
 
 // Documentation URLs
