@@ -4,6 +4,7 @@ TODO:
     * Implement JS execution w. payload from query server
     * Make interface 100% nice, styling
     * Local audio playback for UI interaction, errors
-    * Pocketsphinx
     * Update documentation wrt. OS version requirements etc.
     * Add tests + Travis CI integration
+    * Unique timestamp-based session identifiers to control callback hell
+    * Pocketsphinx

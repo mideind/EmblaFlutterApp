@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Prefs singleton
+// Prefs singleton object used globally by the app
 
 import 'package:shared_preferences/shared_preferences.dart';
 

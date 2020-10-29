@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Session (main) view
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';

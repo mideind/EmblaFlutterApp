@@ -16,15 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// App & main view
+// App initialization and presentation of session view
 
 import 'dart:io';
-import 'dart:convert' show json;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
@@ -49,7 +47,6 @@ final defaultTheme = ThemeData(
     ));
 
 final app = MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme);
-final audioPlayer = AudioPlayer();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -64,13 +61,6 @@ void main() async {
   dlog(Prefs().desc());
 
   runApp(app);
-}
-
-void handleResponse(r) async {
-  final j = json.decode(r.body);
-  dlog(j["answer"]);
-  int result = await audioPlayer.play(j["audio"]);
-  print("Audio player result: $result");
 }
 
 class VoiceActivationWidget extends StatefulWidget {
