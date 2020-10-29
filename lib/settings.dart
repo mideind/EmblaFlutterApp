@@ -22,6 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import './prefs.dart' show Prefs;
+import './common.dart' show dlog;
 
 class SettingsSwitchWidget extends StatefulWidget {
   final String prefKey;
@@ -58,6 +59,7 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
                 } else if (this.prefKey == 'share_location' && value) {
                   Prefs().setBoolForKey('privacy_mode', false);
                 }
+                dlog("Setting prefs key ${this.prefKey} to $value");
                 Prefs().setBoolForKey(this.prefKey, value);
               });
             },

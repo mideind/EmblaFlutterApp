@@ -93,9 +93,10 @@ class QueryService {
       // qargs["longitude"] = ld.longitude;
     }
 
-    dlog("Sending query POST request: " + qargs.toString());
     String server = Prefs().stringForKey('query_server');
-    var response = await http.post(server + QUERY_API_PATH, body: qargs);
+    String apiURL = server + QUERY_API_PATH;
+    dlog("Sending query POST request to $apiURL: " + qargs.toString());
+    var response = await http.post(apiURL, body: qargs);
     dlog('Response status: ${response.statusCode}');
     dlog('Response body: ${response.body}');
     if (handler != null) {

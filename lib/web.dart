@@ -34,7 +34,7 @@ Widget _webviewForURL(String url) {
     body: WebView(
       initialUrl: url,
       navigationDelegate: (NavigationRequest request) {
-        // All external URLs should be opened in a browser
+        // All external URLs should be opened externally in a browser
         if (request.url != url) {
           launch(request.url);
           return NavigationDecision.prevent;

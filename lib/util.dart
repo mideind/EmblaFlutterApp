@@ -20,30 +20,30 @@
 
 // String extensions
 extension StringExtension on String {
-
-    bool isPunctuationTerminated() {
-      if (this.length == 0) {
-        return false;
-      }
-      List<String> punc = ['.', '?', '!', '."', '.“', ".'"];
-      for (String p in punc) {
+  bool isPunctuationTerminated() {
+    if (this.length == 0) {
+      return false;
+    }
+    List<String> punc = ['.', '?', '!', '."', '.“', ".'"];
+    for (String p in punc) {
       if (this.endsWith(p)) {
         return true;
       }
-      return false;
     }
+    return false;
+  }
 
-    String sentenceCapitalized() {
-      if (this.length == 0) {
-        return this;
-      }
-      return "${this[0].toUpperCase()}${this.substring(1)}";
-    }
-
-    String periodTerminated() {
-      if (this.isPunctuationTerminated() == false) {
-        return this + '.';
-      }
+  String sentenceCapitalized() {
+    if (this.length == 0) {
       return this;
     }
+    return "${this[0].toUpperCase()}${this.substring(1)}";
+  }
+
+  String periodTerminated() {
+    if (this.isPunctuationTerminated() == false) {
+      return this + '.';
+    }
+    return this;
+  }
 }

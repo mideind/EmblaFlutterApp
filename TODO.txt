@@ -1,0 +1,8 @@
+TODO:
+    * Implement animated session button w. APNG + canvas
+    * Finish settings view (custom controls + alerts & network calls for deleting history)
+    * Implement JS execution w. payload from query server
+    * Make interface 100% nice, styling
+    * Local audio playback for UI interaction, errors
+    * Pocketsphinx
+    * Update documentation wrt. OS version requirements etc.
