@@ -6,3 +6,4 @@ TODO:
     * Local audio playback for UI interaction, errors
     * Pocketsphinx
     * Update documentation wrt. OS version requirements etc.
+    * Add tests + Travis CI integration

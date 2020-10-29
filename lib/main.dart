@@ -29,7 +29,7 @@ import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './common.dart';
-import './session.dart' show AudioRecognize;
+import './session.dart' show SessionWidget;
 
 final defaultTheme = ThemeData(
     // Define the default brightness and colors.
@@ -73,6 +73,22 @@ void handleResponse(r) async {
   print("Audio player result: $result");
 }
 
+class VoiceActivationWidget extends StatefulWidget {
+  @override
+  _VoiceActivationWidgetState createState() => _VoiceActivationWidgetState();
+}
+
+class _VoiceActivationWidgetState extends State<VoiceActivationWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: IconButton(
+      icon: ImageIcon(AssetImage('assets/images/mic.png')),
+      onPressed: () {},
+    ));
+  }
+}
+
 class MainRoute extends StatelessWidget {
   final toggleButton = Text('Send query');
 
@@ -83,10 +99,7 @@ class MainRoute extends StatelessWidget {
           backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,
-          leading: IconButton(
-            icon: ImageIcon(AssetImage('assets/images/mic.png')),
-            onPressed: () {},
-          ),
+          leading: VoiceActivationWidget(),
           actions: <Widget>[
             // Action button
             IconButton(
@@ -96,7 +109,7 @@ class MainRoute extends StatelessWidget {
               },
             )
           ]),
-      body: Center(child: AudioRecognize()),
+      body: Center(child: SessionWidget()),
     );
   }
 }

@@ -28,12 +28,12 @@ import './common.dart';
 
 final audioPlayer = AudioPlayer();
 
-class AudioRecognize extends StatefulWidget {
+class SessionWidget extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _AudioRecognizeState();
+  State<StatefulWidget> createState() => _SessionWidgetState();
 }
 
-class _AudioRecognizeState extends State<AudioRecognize> {
+class _SessionWidgetState extends State<SessionWidget> {
   final RecorderStream _recorder = RecorderStream();
 
   bool recognizing = false;
