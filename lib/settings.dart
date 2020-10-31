@@ -22,7 +22,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import './prefs.dart' show Prefs;
-import './common.dart' show dlog;
+import './common.dart';
 
 List queryServerItems = [
   ['Greynir', 'https://greynir.is'],
@@ -163,7 +163,6 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     this.items = it;
     this.prefKey = key;
     this.text = Prefs().stringForKey(key);
-    ;
   }
 
   Map<int, Widget> _genChildren() {
@@ -210,14 +209,72 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
   }
 }
 
+class SettingsSliderWidget extends StatefulWidget {
+  final String label;
+  final String prefKey;
+  final double minValue;
+  final double maxValue;
+
+  SettingsSliderWidget({Key key, this.label, this.prefKey, this.minValue, this.maxValue})
+      : super(key: key);
+
+  @override
+  _SettingsSliderWidgetState createState() =>
+      _SettingsSliderWidgetState(this.label, this.prefKey, this.minValue, this.maxValue);
+}
+
+class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
+  String label;
+  String prefKey;
+  double minValue;
+  double maxValue;
+  double currVal;
+
+  _SettingsSliderWidgetState(String lab, String key, double minv, double maxv) {
+    this.label = lab;
+    this.prefKey = key;
+    this.minValue = minv;
+    this.maxValue = maxv;
+    this.currVal = _validValue(Prefs().floatForKey(key));
+  }
+
+  double _validValue(double pval) {
+    if (pval > this.maxValue) {
+      pval = maxValue;
+    }
+    if (pval < this.minValue) {
+      pval = minValue;
+    }
+    return pval;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(this.label, style: TextStyle(fontSize: 18.0)),
+        trailing: CupertinoSlider(
+            onChanged: (double value) {
+              setState(() {
+                this.currVal = value;
+                Prefs().setFloatForKey(this.prefKey, value);
+              });
+            },
+            value: this.currVal,
+            min: this.minValue,
+            max: this.maxValue));
+  }
+}
+
 var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>[
   SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
   SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
   SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
   SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
-  ListTile(
-      title: Text('Talhraði', style: TextStyle(fontSize: 18.0)),
-      trailing: CupertinoSlider(onChanged: (double value) {}, value: 50, min: 0, max: 100)),
+  SettingsSliderWidget(
+      label: 'Talhraði',
+      prefKey: 'voice_speed',
+      minValue: VOICE_SPEED_MIN,
+      maxValue: VOICE_SPEED_MAX),
   TextButton(
     onPressed: () {},
     child: Text('Hreinsa fyrirspurnasögu', style: TextStyle(fontSize: 18.0)),

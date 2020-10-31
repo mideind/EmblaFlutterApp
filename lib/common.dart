@@ -34,6 +34,10 @@ const String QUERY_API_PATH = "/query.api/v1";
 const String QUERY_HISTORY_API_PATH = "/query_history.api/v1";
 const String SPEECH_API_PATH = "/speech.api/v1";
 
+// Voice speed range
+const double VOICE_SPEED_MIN = 0.7;
+const double VOICE_SPEED_MAX = 1.3;
+
 // Documentation URLs
 const String ABOUT_URL = "https://embla.is/about.html";
 const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";

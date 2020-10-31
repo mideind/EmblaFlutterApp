@@ -40,8 +40,17 @@ class Prefs {
   }
 
   void setBoolForKey(String key, bool val) {
-    dlog("Setting pref key '" + key + "' to '" + val.toString() + "'");
+    dlog("Setting pref key '" + key + "' to bool '" + val.toString() + "'");
     _sp.setBool(key, val);
+  }
+
+  double floatForKey(String key) {
+    return _sp.getDouble(key);
+  }
+
+  void setFloatForKey(String key, double val) {
+    dlog("Setting pref key '" + key + "' to float '" + val.toString() + "'");
+    _sp.setDouble(key, val);
   }
 
   String stringForKey(String key) {
@@ -49,7 +58,7 @@ class Prefs {
   }
 
   void setStringForKey(String key, String val) {
-    dlog("Setting pref key '" + key + "' to '" + val + "'");
+    dlog("Setting pref key '" + key + "' to string '" + val + "'");
     _sp.setString(key, val);
   }
 
@@ -70,8 +79,8 @@ class Prefs {
     Prefs().setBoolForKey('voice_activation', true);
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
+    Prefs().setFloatForKey('voice_speed', 1.0);
     Prefs().setStringForKey('voice_id', 'Kona');
-    Prefs().setStringForKey('voice_speed', '1.0');
     Prefs().setStringForKey('query_server', DEFAULT_SERVER);
   }
 }
