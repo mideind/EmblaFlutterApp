@@ -18,6 +18,7 @@
 
 // Settings view
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -27,8 +28,8 @@ import './common.dart';
 List queryServerItems = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Vinna', 'http://192.168.1.113:5000'],
-  ['Heima', 'http://192.168.1.3:5000']
+  ['Vinna', 'http://192.168.1.114:5000'],
+  ['Heima', 'http://192.168.1.8:5000']
 ];
 
 class SettingsSwitchWidget extends StatefulWidget {
@@ -265,30 +266,36 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   }
 }
 
-var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>[
-  SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
-  SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
-  SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-  SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
-  SettingsSliderWidget(
-      label: 'Talhraði',
-      prefKey: 'voice_speed',
-      minValue: VOICE_SPEED_MIN,
-      maxValue: VOICE_SPEED_MAX),
-  TextButton(
-    onPressed: () {},
-    child: Text('Hreinsa fyrirspurnasögu', style: TextStyle(fontSize: 18.0)),
-  ),
-  TextButton(
-    onPressed: () {},
-    child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
-  ),
-  QueryServerSegmentedWidget(items: queryServerItems, prefKey: 'query_server'),
-]);
+List<Widget> _settings() {
+  return <Widget>[
+    SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
+    SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
+    SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
+    SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
+    SettingsSliderWidget(
+        label: 'Talhraði',
+        prefKey: 'voice_speed',
+        minValue: VOICE_SPEED_MIN,
+        maxValue: VOICE_SPEED_MAX),
+    TextButton(
+      onPressed: () {},
+      child: Text('Hreinsa fyrirspurnasögu', style: TextStyle(fontSize: 18.0)),
+    ),
+    TextButton(
+      onPressed: () {},
+      child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
+    ),
+  ];
+}
 
 class SettingsRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    List<Widget> slist = _settings();
+    if (kReleaseMode == false) {
+      slist.addAll([QueryServerSegmentedWidget(items: queryServerItems, prefKey: 'query_server')]);
+    }
+
     return Scaffold(
         appBar: AppBar(
           // title: Text(
@@ -300,6 +307,6 @@ class SettingsRoute extends StatelessWidget {
           elevation: 0.0,
           toolbarOpacity: 1.0,
         ),
-        body: settingsList);
+        body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }
 }
