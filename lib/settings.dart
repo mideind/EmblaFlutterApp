@@ -266,6 +266,24 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   }
 }
 
+class SettingsButtonWidget extends StatelessWidget {
+  final String label;
+  final String alertText;
+  final List<String> buttons;
+  final handler;
+
+  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttons, this.handler})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: handler,
+      child: Text(this.label, style: TextStyle(fontSize: 18.0)),
+    );
+  }
+}
+
 List<Widget> _settings() {
   return <Widget>[
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
@@ -277,14 +295,8 @@ List<Widget> _settings() {
         prefKey: 'voice_speed',
         minValue: VOICE_SPEED_MIN,
         maxValue: VOICE_SPEED_MAX),
-    TextButton(
-      onPressed: () {},
-      child: Text('Hreinsa fyrirspurnasögu', style: TextStyle(fontSize: 18.0)),
-    ),
-    TextButton(
-      onPressed: () {},
-      child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
-    ),
+    SettingsButtonWidget(label: 'Hreinsa fyrirspurnasögu', alertText: 'Ertu viss?', handler: () {}),
+    SettingsButtonWidget(label: 'Hreinsa öll gögn', alertText: 'Ertu viss?', handler: () {}),
   ];
 }
 
@@ -298,11 +310,6 @@ class SettingsRoute extends StatelessWidget {
 
     return Scaffold(
         appBar: AppBar(
-          // title: Text(
-          //   'Stillingar',
-          //   style: TextStyle(color: Colors.red),
-          // ),
-          //backgroundColor: Colors.transparent,
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
