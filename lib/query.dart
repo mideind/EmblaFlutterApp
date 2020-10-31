@@ -88,7 +88,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 class QueryService {
   // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
-    Map qargs = {
+    Map<String, String> qargs = {
       "q": queries.join("|"),
       "voice": "1",
       "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora"
@@ -103,9 +103,9 @@ class QueryService {
       qargs["client_version"] = await _clientVersion();
     }
 
-    String speed = Prefs().stringForKey('voice_speed');
+    double speed = Prefs().floatForKey('voice_speed');
     if (speed != null) {
-      qargs["voice_speed"] = speed;
+      qargs["voice_speed"] = speed.toString();
     }
 
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
@@ -120,7 +120,7 @@ class QueryService {
 
   // Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
-    Map qargs = {
+    Map<String, String> qargs = {
       "text": text,
       "api_key": readQueryServerKey(),
       "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora",
@@ -132,7 +132,7 @@ class QueryService {
 
   // Send request to query history API
   static Future<void> clearUserData(bool allData, [Function handler]) async {
-    Map qargs = {
+    Map<String, String> qargs = {
       "action": allData ? "clear_all" : "clear",
       "client_id": _clientID(),
       "client_type": _clientType(),
