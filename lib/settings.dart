@@ -87,7 +87,7 @@ class SettingsSegmentedWidget extends StatefulWidget {
       _SettingsSegmentedWidgetState(this.label, this.items, this.prefKey);
 }
 
-class _SettingsSegmentedWidgetState extends State<SettingsSwitchWidget> {
+class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   String label;
   List<String> items;
   String prefKey;
@@ -98,6 +98,23 @@ class _SettingsSegmentedWidgetState extends State<SettingsSwitchWidget> {
     this.prefKey = key;
   }
 
+  Map<int, Widget> _genChildren() {
+    Map<int, Widget> wlist = {};
+    for (int i = 0; i < this.items.length; i++) {
+      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.items[i]));
+    }
+    return wlist;
+  }
+
+  int selectedSegment() {
+    for (int i = 0; i < this.items.length; i++) {
+      if (Prefs().stringForKey(this.prefKey) == this.items[i]) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -105,13 +122,12 @@ class _SettingsSegmentedWidgetState extends State<SettingsSwitchWidget> {
         child: ListTile(
           title: Text(this.label),
           trailing: CupertinoSegmentedControl(
-              children: const <int, Widget>{
-                0: Padding(padding: EdgeInsets.all(10.0), child: Text('Kona')),
-                1: Padding(padding: EdgeInsets.all(10.0), child: Text('Karl')),
-              },
-              groupValue: Prefs().boolForKey(this.prefKey) ? 1 : 0,
+              children: _genChildren(),
+              groupValue: selectedSegment(),
               onValueChanged: (value) {
-                Prefs().setStringForKey(this.prefKey, value);
+                setState(() {
+                  Prefs().setStringForKey(this.prefKey, this.items[value]);
+                });
               }),
         ),
       ),
@@ -123,18 +139,7 @@ var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>
   SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
   SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
   SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-  ListTile(
-    title: Text('Rödd', style: TextStyle(fontSize: 18.0)),
-    trailing: CupertinoSegmentedControl(
-        children: const <int, Widget>{
-          0: Padding(padding: EdgeInsets.all(8.0), child: Text('Kona')),
-          1: Padding(padding: EdgeInsets.all(8.0), child: Text('Karl')),
-        },
-        groupValue: Prefs().boolForKey('voice_id') ? 1 : 0,
-        onValueChanged: (value) {
-          Prefs().setStringForKey('voice_id', value);
-        }),
-  ),
+  SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
   ListTile(
       title: Text('Talhraði', style: TextStyle(fontSize: 18.0)),
       trailing: CupertinoSlider(onChanged: (double value) {}, value: 50, min: 0, max: 100)),

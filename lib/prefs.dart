@@ -20,7 +20,7 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './common.dart' show DEFAULT_SERVER;
+import './common.dart' show DEFAULT_SERVER, dlog;
 
 // Singleton class
 class Prefs {
@@ -40,6 +40,7 @@ class Prefs {
   }
 
   void setBoolForKey(String key, bool val) {
+    dlog("Setting pref key '" + key + "' to '" + val.toString() + "'");
     _sp.setBool(key, val);
   }
 
@@ -48,6 +49,7 @@ class Prefs {
   }
 
   void setStringForKey(String key, String val) {
+    dlog("Setting pref key '" + key + "' to '" + val + "'");
     _sp.setString(key, val);
   }
 
@@ -68,7 +70,7 @@ class Prefs {
     Prefs().setBoolForKey('voice_activation', true);
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
-    Prefs().setBoolForKey('voice_id', false);
+    Prefs().setStringForKey('voice_id', 'Kona');
     Prefs().setStringForKey('voice_speed', '1.0');
     Prefs().setStringForKey('query_server', DEFAULT_SERVER);
   }

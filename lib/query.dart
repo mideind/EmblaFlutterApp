@@ -91,7 +91,7 @@ class QueryService {
     Map qargs = {
       "q": queries.join("|"),
       "voice": "1",
-      "voice_id": Prefs().boolForKey('voice_id') ? "Karl" : "Dora"
+      "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora"
     };
 
     bool privacyMode = Prefs().boolForKey('privacy_mode');
@@ -123,7 +123,7 @@ class QueryService {
     Map qargs = {
       "text": text,
       "api_key": readQueryServerKey(),
-      "voice_id": Prefs().boolForKey('voice_id') ? "Karl" : "Dora",
+      "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora",
       "format": "text" // No SSML for now...
     };
 
