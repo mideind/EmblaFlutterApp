@@ -135,6 +135,62 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   }
 }
 
+class QueryServerSegmentedWidget extends StatefulWidget {
+  final List items;
+  final String prefKey;
+
+  QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
+
+  @override
+  _QueryServerSegmentedWidgetState createState() =>
+      _QueryServerSegmentedWidgetState(this.items, this.prefKey);
+}
+
+class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
+  String label;
+  List items;
+  String prefKey;
+
+  _QueryServerSegmentedWidgetState(List it, String key) {
+    this.items = it;
+    this.prefKey = key;
+    print(this.items.toString());
+  }
+
+  Map<int, Widget> _genChildren() {
+    Map<int, Widget> wlist = {};
+    for (int i = 0; i < this.items.length; i++) {
+      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.items[i][0]));
+    }
+    return wlist;
+  }
+
+  int selectedSegment() {
+    for (int i = 0; i < this.items.length; i++) {
+      if (Prefs().stringForKey(this.prefKey) == this.items[i][1]) {
+        return i;
+      }
+    }
+    return 0;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      child: MergeSemantics(
+        child: CupertinoSegmentedControl(
+            children: _genChildren(),
+            groupValue: selectedSegment(),
+            onValueChanged: (value) {
+              setState(() {
+                Prefs().setStringForKey(this.prefKey, this.items[value][1]);
+              });
+            }),
+      ),
+    );
+  }
+}
+
 var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>[
   SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
   SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
@@ -160,17 +216,12 @@ var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>
           Prefs().setStringForKey('query_server', val);
         },
       )),
-  CupertinoSegmentedControl(
-      children: const <int, Widget>{
-        0: Padding(padding: EdgeInsets.all(8.0), child: Text('Greynir')),
-        1: Padding(padding: EdgeInsets.all(8.0), child: Text('Brandur')),
-        2: Padding(padding: EdgeInsets.all(8.0), child: Text('Vinna')),
-        3: Padding(padding: EdgeInsets.all(8.0), child: Text('Heima')),
-      },
-      groupValue: 0,
-      onValueChanged: (value) {
-        // Do something
-      }),
+  QueryServerSegmentedWidget(items: [
+    ['Greynir', 'https://greynir.is'],
+    ['Brandur', 'http://brandur.mideind.is:5000'],
+    ['Vinna', 'http://192.168.1.113:5000'],
+    ['Heima', 'http://192.168.1.3:5000']
+  ], prefKey: 'query_server'),
 ]);
 
 class SettingsRoute extends StatelessWidget {
