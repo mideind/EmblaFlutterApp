@@ -24,6 +24,13 @@ import 'package:flutter/cupertino.dart';
 import './prefs.dart' show Prefs;
 import './common.dart' show dlog;
 
+List queryServerItems = [
+  ['Greynir', 'https://greynir.is'],
+  ['Brandur', 'http://brandur.mideind.is:5000'],
+  ['Vinna', 'http://192.168.1.113:5000'],
+  ['Heima', 'http://192.168.1.3:5000']
+];
+
 class SettingsSwitchWidget extends StatefulWidget {
   final String prefKey;
   final String label;
@@ -147,14 +154,16 @@ class QueryServerSegmentedWidget extends StatefulWidget {
 }
 
 class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
-  String label;
   List items;
   String prefKey;
+  String text;
+  final textController = TextEditingController();
 
   _QueryServerSegmentedWidgetState(List it, String key) {
     this.items = it;
     this.prefKey = key;
-    print(this.items.toString());
+    this.text = Prefs().stringForKey(key);
+    ;
   }
 
   Map<int, Widget> _genChildren() {
@@ -174,20 +183,30 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     return 0;
   }
 
+  void _changed(var val) {
+    String finalVal = '';
+    if (val is String) {
+      finalVal = val;
+    } else {
+      finalVal = this.items[val][1];
+    }
+    setState(() {
+      this.text = finalVal;
+      Prefs().setStringForKey(this.prefKey, this.text);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: MergeSemantics(
-        child: CupertinoSegmentedControl(
-            children: _genChildren(),
-            groupValue: selectedSegment(),
-            onValueChanged: (value) {
-              setState(() {
-                Prefs().setStringForKey(this.prefKey, this.items[value][1]);
-              });
-            }),
-      ),
-    );
+    textController.text = text;
+    return Column(children: [
+      Padding(
+          padding: EdgeInsets.all(8.0),
+          child: TextField(
+              controller: textController, style: TextStyle(fontSize: 18.0), onChanged: _changed)),
+      CupertinoSegmentedControl(
+          children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _changed),
+    ]);
   }
 }
 
@@ -207,21 +226,7 @@ var settingsList = ListView(padding: const EdgeInsets.all(8), children: <Widget>
     onPressed: () {},
     child: Text('Hreinsa öll gögn', style: TextStyle(fontSize: 18.0)),
   ),
-  Padding(
-      padding: EdgeInsets.all(8.0),
-      child: TextFormField(
-        initialValue: Prefs().stringForKey('query_server'),
-        style: TextStyle(fontSize: 18.0),
-        onChanged: (var val) {
-          Prefs().setStringForKey('query_server', val);
-        },
-      )),
-  QueryServerSegmentedWidget(items: [
-    ['Greynir', 'https://greynir.is'],
-    ['Brandur', 'http://brandur.mideind.is:5000'],
-    ['Vinna', 'http://192.168.1.113:5000'],
-    ['Heima', 'http://192.168.1.3:5000']
-  ], prefKey: 'query_server'),
+  QueryServerSegmentedWidget(items: queryServerItems, prefKey: 'query_server'),
 ]);
 
 class SettingsRoute extends StatelessWidget {
