@@ -122,9 +122,9 @@ class QueryService {
   static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
     Map<String, String> qargs = {
       "text": text,
-      "api_key": readQueryServerKey(),
       "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora",
-      "format": "text" // No SSML for now...
+      "format": "text", // No SSML for now...
+      "api_key": readQueryServerKey(),
     };
 
     await _makeRequest(SPEECH_API_PATH, qargs, handler);
@@ -134,9 +134,9 @@ class QueryService {
   static Future<void> clearUserData(bool allData, [Function handler]) async {
     Map<String, String> qargs = {
       "action": allData ? "clear_all" : "clear",
-      "client_id": _clientID(),
+      "client_id": await _clientID(),
       "client_type": _clientType(),
-      "client_version": _clientVersion(),
+      "client_version": await _clientVersion(),
       "api_key": readQueryServerKey()
     };
 

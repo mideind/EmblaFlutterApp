@@ -22,6 +22,7 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './common.dart';
 
@@ -269,20 +270,61 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 class SettingsButtonWidget extends StatelessWidget {
   final String label;
   final String alertText;
-  final List<String> buttons;
+  final String buttonTitle;
   final handler;
 
-  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttons, this.handler})
+  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
+
+  Future<void> _showMyDialog(var context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(this.label + '?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(this.alertText),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hætta við'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(this.buttonTitle),
+              onPressed: () {
+                this.handler();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      onPressed: handler,
+      onPressed: () {
+        _showMyDialog(context);
+      },
       child: Text(this.label, style: TextStyle(fontSize: 18.0)),
     );
   }
 }
+
+String clearHistoryText = '''Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis.
+Fyrirspurnir eru aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.''';
+String clearAllText = '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki.
+Gögnin eru einungis nýtt til þess að bæta svör.''';
 
 List<Widget> _settings() {
   return <Widget>[
@@ -295,8 +337,20 @@ List<Widget> _settings() {
         prefKey: 'voice_speed',
         minValue: VOICE_SPEED_MIN,
         maxValue: VOICE_SPEED_MAX),
-    SettingsButtonWidget(label: 'Hreinsa fyrirspurnasögu', alertText: 'Ertu viss?', handler: () {}),
-    SettingsButtonWidget(label: 'Hreinsa öll gögn', alertText: 'Ertu viss?', handler: () {}),
+    SettingsButtonWidget(
+        label: 'Hreinsa fyrirspurnasögu',
+        alertText: clearHistoryText,
+        buttonTitle: 'Hreinsa',
+        handler: () {
+          QueryService.clearUserData(false);
+        }),
+    SettingsButtonWidget(
+        label: 'Hreinsa öll gögn',
+        alertText: clearAllText,
+        buttonTitle: 'Hreinsa',
+        handler: () {
+          QueryService.clearUserData(true);
+        }),
   ];
 }
 
