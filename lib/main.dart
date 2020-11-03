@@ -27,13 +27,14 @@ import 'package:flutter/services.dart';
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './common.dart';
+import './util.dart';
 import './session.dart' show SessionWidget;
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
     // brightness: Brightness.dark,
     // accentColor: Colors.cyan[600],
-    scaffoldBackgroundColor: Color(0xFFF9F9F9),
+    scaffoldBackgroundColor: HexColor.fromHex('#F9F9F9'),
     primarySwatch: Colors.red,
     fontFamily: 'Lato',
     primaryColor: Colors.red,

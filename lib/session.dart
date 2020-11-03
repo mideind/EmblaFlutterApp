@@ -18,6 +18,12 @@
 
 // Session (main) view
 
+import 'dart:math';
+import 'dart:async';
+import 'dart:ui' as ui;
+import 'dart:typed_data';
+
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 // import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
@@ -26,6 +32,7 @@ import 'package:sound_stream/sound_stream.dart';
 import 'package:audioplayers/audioplayers.dart' show AudioPlayer;
 
 import './query.dart' show QueryService;
+import './util.dart';
 import './common.dart';
 
 final audioPlayer = AudioPlayer();
@@ -42,12 +49,28 @@ class _SessionWidgetState extends State<SessionWidget> {
   bool recognizeFinished = false;
   bool awaitingAnswer = false;
   String text = '';
+  ui.Image image;
 
   @override
   void initState() {
     super.initState();
-
     _recorder.initialize();
+  }
+
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    var img = await loadImageAsset("assets/images/logo.png");
+    setState(() {
+      this.image = img;
+      dlog("Loaded image " + image.toString());
+    });
+  }
+
+  Future<ui.Image> loadImageAsset(String asset) async {
+    ByteData data = await rootBundle.load(asset);
+    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
+    ui.FrameInfo fi = await codec.getNextFrame();
+    return fi.image;
   }
 
   void streamingRecognize() async {
@@ -100,7 +123,6 @@ class _SessionWidgetState extends State<SessionWidget> {
     if (awaitingAnswer) {
       return;
     }
-    print("HANDLING RESPONSE");
 
     setState(() {
       awaitingAnswer = true;
@@ -109,8 +131,8 @@ class _SessionWidgetState extends State<SessionWidget> {
     QueryService.sendQuery([res], (Map resp) async {
       if (resp["valid"] == true) {
         dlog("Received valid response to query");
-        print("Playing audio");
-        print(resp["audio"]);
+        dlog("Playing audio" + resp["audio"]);
+        audioPlayer.stop();
         await audioPlayer.play(resp["audio"]);
         setState(() {
           text = resp["answer"];
@@ -126,12 +148,14 @@ class _SessionWidgetState extends State<SessionWidget> {
     });
   }
 
-  RecognitionConfig _getConfig() => RecognitionConfig(
-      encoding: AudioEncoding.LINEAR16,
-      model: RecognitionModel.command_and_search,
-      enableAutomaticPunctuation: true,
-      sampleRateHertz: 16000,
-      languageCode: 'is-IS');
+  RecognitionConfig _getConfig() {
+    return RecognitionConfig(
+        encoding: AudioEncoding.LINEAR16,
+        model: RecognitionModel.command_and_search,
+        enableAutomaticPunctuation: true,
+        sampleRateHertz: 16000,
+        languageCode: 'is-IS');
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -141,13 +165,18 @@ class _SessionWidgetState extends State<SessionWidget> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
             if (recognizeFinished)
-              _RecognizeContent(
+              _RecognizedSpeechWidget(
                 text: text,
               ),
             RaisedButton(
               onPressed: recognizing ? stopRecording : streamingRecognize,
               child: recognizing ? Text('Hætta') : Text('Hlusta'),
             ),
+            FittedBox(
+                child: SizedBox(
+                    width: 200,
+                    height: 200,
+                    child: CustomPaint(painter: SessionButtonPainter(image))))
           ],
         ),
       ),
@@ -155,10 +184,56 @@ class _SessionWidgetState extends State<SessionWidget> {
   }
 }
 
-class _RecognizeContent extends StatelessWidget {
+class SessionButtonPainter extends CustomPainter {
+  ui.Image image;
+
+  // Outermost to innermost
+  final circleColor1 = HexColor.fromHex("#F9F0F0");
+  final circleColor2 = HexColor.fromHex("#F9E2E1");
+  final circleColor3 = HexColor.fromHex("#F9DCDB");
+
+  SessionButtonPainter(this.image);
+
+  @override
+  void paint(Canvas canvas, Size size) async {
+    final radius = min(size.width, size.height) / 2;
+    final center = Offset(size.width / 2, size.height / 2);
+    // First circle
+    var paint = Paint()..color = circleColor1;
+    canvas.drawCircle(center, radius, paint);
+    // Second circle
+    paint = Paint()..color = circleColor2;
+    canvas.drawCircle(center, radius / 1.25, paint);
+    // Third circle
+    paint = Paint()..color = circleColor3;
+    canvas.drawCircle(center, radius / 1.75, paint);
+    // Draw logo if image is already asynchronously loaded
+    if (image != null) {
+      // Source image rect
+      double imgWidth = image.width.toDouble();
+      double imgHeight = image.height.toDouble();
+      Rect src = const Offset(0, 0) & Size(imgWidth, imgHeight);
+      // Destination rect
+      double w = size.width.toDouble() / 2.5;
+      double h = size.height.toDouble() / 2.5;
+      // Centered in canvas
+      Rect dst =
+          Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
+              Size(w, h);
+      canvas.drawImageRect(image, src, dst, Paint());
+    }
+  }
+
+  @override
+  bool shouldRepaint(SessionButtonPainter oldDelegate) {
+    return false;
+  }
+}
+
+class _RecognizedSpeechWidget extends StatelessWidget {
   final String text;
 
-  const _RecognizeContent({Key key, this.text}) : super(key: key);
+  const _RecognizedSpeechWidget({Key key, this.text}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
