@@ -20,7 +20,7 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './common.dart' show DEFAULT_SERVER, dlog;
+import './common.dart';
 
 // Singleton class
 class Prefs {

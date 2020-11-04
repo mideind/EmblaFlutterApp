@@ -70,3 +70,4 @@ pubspec.lock
 **/ios/Runner/GeneratedPluginRegistrant.*
 
 *test_service_account.json
+*.last_build_id

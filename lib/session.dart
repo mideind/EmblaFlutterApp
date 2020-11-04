@@ -213,10 +213,9 @@ class SessionButtonPainter extends CustomPainter {
       double imgWidth = image.width.toDouble();
       double imgHeight = image.height.toDouble();
       Rect src = const Offset(0, 0) & Size(imgWidth, imgHeight);
-      // Destination rect
+      // Destination rect centered in canvas
       double w = size.width.toDouble() / 2.5;
       double h = size.height.toDouble() / 2.5;
-      // Centered in canvas
       Rect dst =
           Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
               Size(w, h);

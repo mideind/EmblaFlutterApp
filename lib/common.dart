@@ -42,3 +42,11 @@ const double VOICE_SPEED_MAX = 1.3;
 const String ABOUT_URL = "https://embla.is/about.html";
 const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";
 const String PRIVACY_URL = "https://embla.is/privacy.html";
+
+// Debug stuff
+const List QUERY_SERVER_OPTIONS = [
+  ['Greynir', 'https://greynir.is'],
+  ['Brandur', 'http://brandur.mideind.is:5000'],
+  ['Vinna', 'http://192.168.1.114:5000'],
+  ['Heima', 'http://192.168.1.8:5000']
+];

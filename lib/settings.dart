@@ -26,13 +26,7 @@ import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './common.dart';
 
-List queryServerItems = [
-  ['Greynir', 'https://greynir.is'],
-  ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Vinna', 'http://192.168.1.114:5000'],
-  ['Heima', 'http://192.168.1.8:5000']
-];
-
+// Switch control associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String prefKey;
   final String label;
@@ -84,6 +78,7 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   }
 }
 
+// Segmented control associated with a string value pref
 class SettingsSegmentedWidget extends StatefulWidget {
   final String label;
   final List<String> items;
@@ -144,6 +139,119 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   }
 }
 
+// Slider widget associated with a pref value
+class SettingsSliderWidget extends StatefulWidget {
+  final String label;
+  final String prefKey;
+  final double minValue;
+  final double maxValue;
+
+  SettingsSliderWidget({Key key, this.label, this.prefKey, this.minValue, this.maxValue})
+      : super(key: key);
+
+  @override
+  _SettingsSliderWidgetState createState() =>
+      _SettingsSliderWidgetState(this.label, this.prefKey, this.minValue, this.maxValue);
+}
+
+class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
+  String label;
+  String prefKey;
+  double minValue;
+  double maxValue;
+  double currVal;
+
+  _SettingsSliderWidgetState(String lab, String key, double minv, double maxv) {
+    this.label = lab;
+    this.prefKey = key;
+    this.minValue = minv;
+    this.maxValue = maxv;
+    this.currVal = _validValue(Prefs().floatForKey(key));
+  }
+
+  double _validValue(double pval) {
+    if (pval > this.maxValue) {
+      pval = maxValue;
+    }
+    if (pval < this.minValue) {
+      pval = minValue;
+    }
+    return pval;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(this.label, style: TextStyle(fontSize: 18.0)),
+        trailing: CupertinoSlider(
+            onChanged: (double value) {
+              setState(() {
+                this.currVal = value;
+                Prefs().setFloatForKey(this.prefKey, value);
+              });
+            },
+            value: this.currVal,
+            min: this.minValue,
+            max: this.maxValue));
+  }
+}
+
+// Button that presents an alert with an action name + handler
+class SettingsButtonWidget extends StatelessWidget {
+  final String label;
+  final String alertText;
+  final String buttonTitle;
+  final handler;
+
+  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+      : super(key: key);
+
+  Future<void> _showMyDialog(var context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(this.label + '?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(this.alertText),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hætta við'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(this.buttonTitle),
+              onPressed: () {
+                this.handler();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        _showMyDialog(context);
+      },
+      child: Text(this.label, style: TextStyle(fontSize: 18.0)),
+    );
+  }
+}
+
+// Widget that controls query server prefs i.e. text field + preset buttons
 class QueryServerSegmentedWidget extends StatefulWidget {
   final List items;
   final String prefKey;
@@ -211,121 +319,13 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
   }
 }
 
-class SettingsSliderWidget extends StatefulWidget {
-  final String label;
-  final String prefKey;
-  final double minValue;
-  final double maxValue;
-
-  SettingsSliderWidget({Key key, this.label, this.prefKey, this.minValue, this.maxValue})
-      : super(key: key);
-
-  @override
-  _SettingsSliderWidgetState createState() =>
-      _SettingsSliderWidgetState(this.label, this.prefKey, this.minValue, this.maxValue);
-}
-
-class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
-  String label;
-  String prefKey;
-  double minValue;
-  double maxValue;
-  double currVal;
-
-  _SettingsSliderWidgetState(String lab, String key, double minv, double maxv) {
-    this.label = lab;
-    this.prefKey = key;
-    this.minValue = minv;
-    this.maxValue = maxv;
-    this.currVal = _validValue(Prefs().floatForKey(key));
-  }
-
-  double _validValue(double pval) {
-    if (pval > this.maxValue) {
-      pval = maxValue;
-    }
-    if (pval < this.minValue) {
-      pval = minValue;
-    }
-    return pval;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-        title: Text(this.label, style: TextStyle(fontSize: 18.0)),
-        trailing: CupertinoSlider(
-            onChanged: (double value) {
-              setState(() {
-                this.currVal = value;
-                Prefs().setFloatForKey(this.prefKey, value);
-              });
-            },
-            value: this.currVal,
-            min: this.minValue,
-            max: this.maxValue));
-  }
-}
-
-class SettingsButtonWidget extends StatelessWidget {
-  final String label;
-  final String alertText;
-  final String buttonTitle;
-  final handler;
-
-  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
-      : super(key: key);
-
-  Future<void> _showMyDialog(var context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // user must tap button!
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(this.label + '?'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(this.alertText),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Hætta við'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(this.buttonTitle),
-              onPressed: () {
-                this.handler();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        _showMyDialog(context);
-      },
-      child: Text(this.label, style: TextStyle(fontSize: 18.0)),
-    );
-  }
-}
-
+// Alert messages for clear history buttons
 String clearHistoryText = '''Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis.
 Fyrirspurnir eru aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.''';
 String clearAllText = '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki.
 Gögnin eru einungis nýtt til þess að bæta svör.''';
 
+// List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
@@ -358,8 +358,10 @@ class SettingsRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> slist = _settings();
+    // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
-      slist.addAll([QueryServerSegmentedWidget(items: queryServerItems, prefKey: 'query_server')]);
+      slist.addAll(
+          [QueryServerSegmentedWidget(items: QUERY_SERVER_OPTIONS, prefKey: 'query_server')]);
     }
 
     return Scaffold(

@@ -26,9 +26,9 @@ import 'package:flutter/services.dart';
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
+import './session.dart' show SessionWidget;
 import './common.dart';
 import './util.dart';
-import './session.dart' show SessionWidget;
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
@@ -67,6 +67,7 @@ void main() async {
   runApp(app);
 }
 
+// Top left button to turn voice activation on or off
 class ToggleVoiceActivationWidget extends StatefulWidget {
   @override
   _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
@@ -83,6 +84,7 @@ class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidge
   }
 }
 
+// Top right button to show menu route
 class MenuButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -94,6 +96,7 @@ class MenuButtonWidget extends StatelessWidget {
   }
 }
 
+// Initial view
 class MainRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
