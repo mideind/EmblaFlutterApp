@@ -28,8 +28,13 @@ void dlog(String logStr) {
   print(logStr);
 }
 
+// Software info
+const String SOFTWARE_NAME = "Embla";
+const String SOFTWARE_VERSION = "1.0.0";
+
 // Server communication
 const String DEFAULT_SERVER = "https://greynir.is";
+// API paths
 const String QUERY_API_PATH = "/query.api/v1";
 const String QUERY_HISTORY_API_PATH = "/query_history.api/v1";
 const String SPEECH_API_PATH = "/speech.api/v1";
