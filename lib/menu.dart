@@ -18,6 +18,7 @@
 
 // Menu view
 
+import 'package:Embla/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ void pushAbout() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => AboutRoute(),
+      builder: (context) => WebViewRoute(initialURL: ABOUT_URL),
     ),
   );
 }
@@ -48,7 +49,7 @@ void pushInstructions() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => InstructionsRoute(),
+      builder: (context) => WebViewRoute(initialURL: INSTRUCTIONS_URL),
     ),
   );
 }
@@ -57,7 +58,7 @@ void pushPrivacy() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => PrivacyRoute(),
+      builder: (context) => WebViewRoute(initialURL: PRIVACY_URL),
     ),
   );
 }

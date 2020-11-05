@@ -19,57 +19,77 @@
 // Documentation web views
 
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/platform_interface.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import './common.dart';
 
-Widget _webviewForURL(String url) {
-  return Scaffold(
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      bottomOpacity: 0.0,
-      elevation: 0.0,
-    ),
-    body: WebView(
-      initialUrl: url,
-      navigationDelegate: (NavigationRequest request) {
-        // All external URLs should be opened externally in a browser
-        if (request.url != url) {
-          launch(request.url);
-          return NavigationDecision.prevent;
-        }
-        return NavigationDecision.navigate;
-      },
-      onWebResourceError: (WebResourceError error) {
-        // Uri uri = Uri.parse(url);
-        // String filename = uri.pathSegments.last;
-      },
-    ),
-  );
+class WebViewRoute extends StatefulWidget {
+  final String initialURL;
+
+  WebViewRoute({Key key, this.initialURL}) : super(key: key);
+
+  @override
+  _WebViewRouteState createState() => new _WebViewRouteState();
 }
 
-class AboutRoute extends StatelessWidget {
-  final initialURL = ABOUT_URL;
-  @override
-  Widget build(BuildContext context) {
-    return _webviewForURL(initialURL);
+class _WebViewRouteState extends State<WebViewRoute> {
+  InAppWebViewController webView;
+
+  String _assetFilenameFromURL(String url) {
+    Uri uri = Uri.parse(url);
+    return "docs/" + uri.pathSegments.last;
   }
-}
 
-class InstructionsRoute extends StatelessWidget {
-  final initialURL = INSTRUCTIONS_URL;
   @override
   Widget build(BuildContext context) {
-    return _webviewForURL(initialURL);
-  }
-}
-
-class PrivacyRoute extends StatelessWidget {
-  final initialURL = PRIVACY_URL;
-  @override
-  Widget build(BuildContext context) {
-    return _webviewForURL(initialURL);
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        bottomOpacity: 0.0,
+        elevation: 0.0,
+      ),
+      body: InAppWebView(
+        initialUrl: this.widget.initialURL,
+        //initialFile: "docs/about.html",
+        initialOptions: InAppWebViewGroupOptions(
+            crossPlatform: InAppWebViewOptions(
+          debuggingEnabled: true,
+          useShouldOverrideUrlLoading: true,
+          transparentBackground: true,
+        )),
+        onWebViewCreated: (InAppWebViewController controller) {
+          webView = controller;
+        },
+        onLoadStart: (InAppWebViewController controller, String url) {
+          dlog('Loading URL $url');
+        },
+        onLoadError: (InAppWebViewController controller, String url, int i, String s) async {
+          dlog('Page load error for $url: $i, $s');
+          String path = _assetFilenameFromURL(url);
+          dlog('Falling back to local asset $path');
+          setState(() {
+            controller.loadFile(assetFilePath: path);
+          });
+        },
+        onLoadHttpError: (InAppWebViewController controller, String url, int i, String s) async {
+          dlog('Page load error for $url: $i, $s');
+          String path = _assetFilenameFromURL(url);
+          dlog('Falling back to local asset $path');
+          setState(() {
+            controller.loadFile(assetFilePath: path);
+          });
+        },
+        shouldOverrideUrlLoading:
+            (InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
+          dlog("Opening external URL ${req.url}");
+          if (req.url != this.widget.initialURL) {
+            launch(req.url);
+            return ShouldOverrideUrlLoadingAction.CANCEL;
+          }
+          return ShouldOverrideUrlLoadingAction.ALLOW;
+        },
+      ),
+    );
   }
 }

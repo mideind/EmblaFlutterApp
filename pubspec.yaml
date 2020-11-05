@@ -34,6 +34,7 @@ dependencies:
   url_launcher: ^5.7.8
   google_speech: '>=1.2.1'
   connectivity: ^2.0.1
+  flutter_inappwebview: ^4.0.0+4
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -78,6 +79,9 @@ flutter:
     - docs/instructions.html
     - docs/privacy.html
     - docs/style.css
+    - docs/Lato-Regular.woff2
+    - docs/Lato-Italic.woff2
+    - docs/Lato-Bold.woff2
     # Other
     - assets/test_service_account.json
 
