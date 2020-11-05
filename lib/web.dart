@@ -19,8 +19,8 @@
 // Documentation web views
 
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './common.dart';
 
@@ -36,9 +36,28 @@ class WebViewRoute extends StatefulWidget {
 class _WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
-  String _assetFilenameFromURL(String url) {
+  String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
     return "docs/" + uri.pathSegments.last;
+  }
+
+  void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
+    dlog('Page load error for $url: $errCode, $desc');
+    String path = _fallbackAssetForURL(url);
+    dlog('Falling back to local asset $path');
+    setState(() {
+      controller.loadFile(assetFilePath: path);
+    });
+  }
+
+  Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
+      InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
+    if (req.url != this.widget.initialURL) {
+      dlog("Opening external URL ${req.url}");
+      launch(req.url);
+      return ShouldOverrideUrlLoadingAction.CANCEL;
+    }
+    return ShouldOverrideUrlLoadingAction.ALLOW;
   }
 
   @override
@@ -64,31 +83,9 @@ class _WebViewRouteState extends State<WebViewRoute> {
         onLoadStart: (InAppWebViewController controller, String url) {
           dlog('Loading URL $url');
         },
-        onLoadError: (InAppWebViewController controller, String url, int i, String s) async {
-          dlog('Page load error for $url: $i, $s');
-          String path = _assetFilenameFromURL(url);
-          dlog('Falling back to local asset $path');
-          setState(() {
-            controller.loadFile(assetFilePath: path);
-          });
-        },
-        onLoadHttpError: (InAppWebViewController controller, String url, int i, String s) async {
-          dlog('Page load error for $url: $i, $s');
-          String path = _assetFilenameFromURL(url);
-          dlog('Falling back to local asset $path');
-          setState(() {
-            controller.loadFile(assetFilePath: path);
-          });
-        },
-        shouldOverrideUrlLoading:
-            (InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
-          dlog("Opening external URL ${req.url}");
-          if (req.url != this.widget.initialURL) {
-            launch(req.url);
-            return ShouldOverrideUrlLoadingAction.CANCEL;
-          }
-          return ShouldOverrideUrlLoadingAction.ALLOW;
-        },
+        onLoadError: errHandler,
+        onLoadHttpError: errHandler,
+        shouldOverrideUrlLoading: urlClickHandler,
       ),
     );
   }
