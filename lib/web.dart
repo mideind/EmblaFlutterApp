@@ -19,6 +19,7 @@
 // Documentation web views
 
 import 'package:flutter/material.dart';
+import 'package:webview_flutter/platform_interface.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
@@ -40,6 +41,10 @@ Widget _webviewForURL(String url) {
           return NavigationDecision.prevent;
         }
         return NavigationDecision.navigate;
+      },
+      onWebResourceError: (WebResourceError error) {
+        // Uri uri = Uri.parse(url);
+        // String filename = uri.pathSegments.last;
       },
     ),
   );

@@ -26,7 +26,6 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:sound_stream/sound_stream.dart';
 import 'package:audioplayers/audioplayers.dart' show AudioPlayer;

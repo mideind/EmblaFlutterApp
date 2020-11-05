@@ -33,6 +33,7 @@ dependencies:
   device_id: '>=0.0.1'
   url_launcher: ^5.7.8
   google_speech: '>=1.2.1'
+  connectivity: ^2.0.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -72,6 +73,11 @@ flutter:
     - assets/audio/dunno-karl.wav
     - assets/audio/err-dora.wav
     - assets/audio/err-karl.wav
+    # Docs
+    - docs/about.html
+    - docs/instructions.html
+    - docs/privacy.html
+    - docs/style.css
     # Other
     - assets/test_service_account.json
 
