@@ -42,9 +42,10 @@ class SessionWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _SessionWidgetState();
 }
 
-class _SessionWidgetState extends State<SessionWidget> {
+class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   final RecorderStream _recorder = RecorderStream();
 
+  double buttonSize = 200;
   bool recognizing = false;
   bool recognizeFinished = false;
   bool awaitingAnswer = false;
@@ -80,6 +81,7 @@ class _SessionWidgetState extends State<SessionWidget> {
     setState(() {
       recognizing = true;
       text = '';
+      buttonSize = 300;
     });
     final serviceAccount = ServiceAccount.fromString(
         '${(await rootBundle.loadString('assets/test_service_account.json'))}');
@@ -126,6 +128,7 @@ class _SessionWidgetState extends State<SessionWidget> {
 
     setState(() {
       awaitingAnswer = true;
+      buttonSize = 200;
     });
     String res = finalResult.alternatives.first.transcript;
     QueryService.sendQuery([res], (Map resp) async {
@@ -172,11 +175,22 @@ class _SessionWidgetState extends State<SessionWidget> {
               onPressed: recognizing ? stopRecording : streamingRecognize,
               child: recognizing ? Text('Hætta') : Text('Hlusta'),
             ),
-            FittedBox(
-                child: SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: CustomPaint(painter: SessionButtonPainter(image))))
+            AnimatedSize(
+                curve: Curves.elasticInOut,
+                duration: Duration(seconds: 2),
+                vsync: this,
+                alignment: Alignment.center,
+                child: new SizedBox(
+                  width: buttonSize,
+                  height: buttonSize,
+                  child: CustomPaint(painter: SessionButtonPainter(image)),
+                )),
+            // AnimatedContainer(
+            //     duration: Duration(seconds: 2),
+            //     child: SizedBox(
+            //         width: buttonSize,
+            //         height: buttonSize,
+            //         child: CustomPaint(painter: SessionButtonPainter(image))))
           ],
         ),
       ),
