@@ -33,7 +33,7 @@ class LocationTracking {
 
   double lat;
   double lon;
-  bool known;
+  bool known = false;
   StreamSubscription<Position> positionStream;
 
   void start() {
@@ -62,7 +62,7 @@ class LocationTracking {
     }
   }
 
-  List get location {
+  List<double> get location {
     if (!known || lat == null || lon == null) {
       return null;
     }

@@ -28,33 +28,9 @@ import 'package:package_info/package_info.dart' show PackageInfo;
 //import 'package:location/location.dart';
 
 import './prefs.dart' show Prefs;
+import './loc.dart' show LocationTracking;
 import './util.dart' show readQueryServerKey;
 import './common.dart';
-
-// void _location() {
-//     Location location = new Location();
-
-//     bool _serviceEnabled;
-//     PermissionStatus _permissionGranted;
-//     LocationData _locationData;
-
-//     _serviceEnabled = await location.serviceEnabled();
-//     if (!_serviceEnabled) {
-//         _serviceEnabled = await location.requestService();
-//         if (!_serviceEnabled) {
-//             return;
-//         }
-//     }
-
-//     _permissionGranted = await location.hasPermission();
-//     if (_permissionGranted == PermissionStatus.denied) {
-//         _permissionGranted = await location.requestPermission();
-//         if (_permissionGranted != PermissionStatus.granted) {
-//             return;
-//         }
-//     }
-//     return await location.getLocation();
-// }
 
 String _clientType() {
   return Platform.operatingSystem + "_flutter";
@@ -110,9 +86,11 @@ class QueryService {
 
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation) {
-      // LocationData ld = _location();
-      // qargs["latitude"] = ld.latitude;
-      // qargs["longitude"] = ld.longitude;
+      List<double> latlon = LocationTracking().location;
+      if (latlon != null) {
+        qargs["latitude"] = latlon[0].toString();
+        qargs["longitude"] = latlon[1].toString();
+      }
     }
 
     await _makeRequest(QUERY_API_PATH, qargs, handler);

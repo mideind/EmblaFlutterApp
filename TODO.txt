@@ -6,9 +6,9 @@ TODO:
     * Local audio playback for UI interaction, errors
     * Update documentation wrt. OS version requirements, building, etc.
     * Add tests + Travis CI integration
-    * Send location with query
     * Unique timestamp-based session identifiers to control callbacks
     * Pocketsphinx voice activation
     * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
     * Set timeout of HTTP requests to query server, handle timeout
-    * Local documentation fallback for documentation web views
+    DONE * Local documentation fallback for documentation web views
+    DONE * Send location with query

@@ -55,7 +55,6 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
                 } else if (prefKey == 'share_location' && value) {
                   Prefs().setBoolForKey('privacy_mode', false);
                 }
-                dlog("Setting prefs key ${prefKey} to $value");
                 Prefs().setBoolForKey(prefKey, value);
               });
             },
@@ -140,8 +139,6 @@ class SettingsSliderWidget extends StatefulWidget {
 
 class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   double currVal;
-
-  _SettingsSliderWidgetState() {}
 
   double _constrainValue(double pval) {
     pval = pval > this.widget.maxValue ? this.widget.maxValue : pval;
@@ -236,8 +233,6 @@ class QueryServerSegmentedWidget extends StatefulWidget {
 class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
   String text;
   final textController = TextEditingController();
-
-  _QueryServerSegmentedWidgetState() {}
 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
