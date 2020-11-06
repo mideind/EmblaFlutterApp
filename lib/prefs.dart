@@ -20,9 +20,9 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
+import './loc.dart';
 import './common.dart';
 
-// Singleton class
 class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
@@ -42,6 +42,13 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '" + key + "' to bool '" + val.toString() + "'");
     _sp.setBool(key, val);
+    if (key == 'share_location') {
+      if (val == true) {
+        LocationTracking().start();
+      } else {
+        LocationTracking().stop();
+      }
+    }
   }
 
   double floatForKey(String key) {

@@ -27,7 +27,7 @@ dependencies:
   sound_stream: ^0.2.0
   audioplayers: ^0.16.2
   shared_preferences: ^0.5.7
-  location: ^3.0.2
+  geolocator: ^6.1.4
   webview_flutter: ^1.0.3
   package_info: ^0.4.3
   device_id: '>=0.0.1'
@@ -91,11 +91,6 @@ flutter:
   # For details regarding adding assets from package dependencies, see
   # https://flutter.dev/assets-and-images/#from-packages
 
-  # To add custom fonts to your application, add a fonts section here,
-  # in this "flutter" section. Each entry in this list should have a
-  # "family" key with the font family name, and a "fonts" key with a
-  # list giving the asset and other descriptors for the font. For
-  # example:
   fonts:
     - family: Lato
       fonts:

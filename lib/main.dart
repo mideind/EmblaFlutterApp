@@ -23,10 +23,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
+import 'package:geolocator/geolocator.dart';
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionWidget;
+import './loc.dart' show LocationTracking;
 import './common.dart';
 import './util.dart';
 
@@ -62,6 +64,14 @@ void main() async {
     Prefs().setDefaults();
   }
   dlog("Shared prefs: " + Prefs().desc());
+
+  // Set up location tracking
+  if (Prefs().boolForKey('share_location')) {
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+      LocationTracking().start();
+    }
+  }
 
   // Launch app
   runApp(app);

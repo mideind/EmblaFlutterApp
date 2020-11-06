@@ -55,7 +55,7 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
                 } else if (prefKey == 'share_location' && value) {
                   Prefs().setBoolForKey('privacy_mode', false);
                 }
-                dlog("Setting prefs key ${this.widget.prefKey} to $value");
+                dlog("Setting prefs key ${prefKey} to $value");
                 Prefs().setBoolForKey(prefKey, value);
               });
             },
@@ -141,9 +141,7 @@ class SettingsSliderWidget extends StatefulWidget {
 class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   double currVal;
 
-  _SettingsSliderWidgetState() {
-    this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
-  }
+  _SettingsSliderWidgetState() {}
 
   double _constrainValue(double pval) {
     pval = pval > this.widget.maxValue ? this.widget.maxValue : pval;
@@ -153,6 +151,7 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 
   @override
   Widget build(BuildContext context) {
+    this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
     return ListTile(
         title: Text(this.widget.label, style: TextStyle(fontSize: 18.0)),
         trailing: CupertinoSlider(
@@ -238,9 +237,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
   String text;
   final textController = TextEditingController();
 
-  _QueryServerSegmentedWidgetState() {
-    this.text = Prefs().stringForKey(this.widget.prefKey);
-  }
+  _QueryServerSegmentedWidgetState() {}
 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
@@ -274,6 +271,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
 
   @override
   Widget build(BuildContext context) {
+    this.text = Prefs().stringForKey(this.widget.prefKey);
     textController.text = text;
     return Column(children: [
       Padding(
