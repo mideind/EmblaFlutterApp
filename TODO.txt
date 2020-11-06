@@ -6,6 +6,7 @@ TODO:
     * Local audio playback for UI interaction, errors
     * Update documentation wrt. OS version requirements, building, etc.
     * Add tests + Travis CI integration
+    * Spin up local webserver and test QueryService functions against them
     * Unique timestamp-based session identifiers to control callbacks
     * Pocketsphinx voice activation
     * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
