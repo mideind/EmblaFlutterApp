@@ -28,48 +28,41 @@ import './common.dart';
 
 // Switch control associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
-  final String prefKey;
   final String label;
+  final String prefKey;
 
   SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
   @override
-  _SettingsSwitchWidgetState createState() => _SettingsSwitchWidgetState(this.label, this.prefKey);
+  _SettingsSwitchWidgetState createState() => _SettingsSwitchWidgetState();
 }
 
 class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
-  String prefKey;
-  String label;
-
-  _SettingsSwitchWidgetState(String lab, String key) {
-    this.label = lab;
-    this.prefKey = key;
-  }
-
   @override
   Widget build(BuildContext context) {
+    String prefKey = this.widget.prefKey;
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.label, style: TextStyle(fontSize: 18.0)),
+          title: Text(this.widget.label, style: TextStyle(fontSize: 18.0)),
           trailing: CupertinoSwitch(
-            value: Prefs().boolForKey(this.prefKey),
+            value: Prefs().boolForKey(prefKey),
             activeColor: Colors.red,
             onChanged: (bool value) {
               setState(() {
-                if (this.prefKey == 'privacy_mode' && value) {
+                if (prefKey == 'privacy_mode' && value) {
                   Prefs().setBoolForKey('share_location', false);
-                } else if (this.prefKey == 'share_location' && value) {
+                } else if (prefKey == 'share_location' && value) {
                   Prefs().setBoolForKey('privacy_mode', false);
                 }
-                dlog("Setting prefs key ${this.prefKey} to $value");
-                Prefs().setBoolForKey(this.prefKey, value);
+                dlog("Setting prefs key ${this.widget.prefKey} to $value");
+                Prefs().setBoolForKey(prefKey, value);
               });
             },
           ),
           onTap: () {
             setState(() {
-              Prefs().setBoolForKey(this.prefKey, !Prefs().boolForKey(this.prefKey));
+              Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
             });
           },
         ),
@@ -87,32 +80,24 @@ class SettingsSegmentedWidget extends StatefulWidget {
   SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
 
   @override
-  _SettingsSegmentedWidgetState createState() =>
-      _SettingsSegmentedWidgetState(this.label, this.items, this.prefKey);
+  _SettingsSegmentedWidgetState createState() => _SettingsSegmentedWidgetState();
 }
 
 class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
-  String label;
-  List<String> items;
-  String prefKey;
-
-  _SettingsSegmentedWidgetState(String lab, List<String> it, String key) {
-    this.label = lab;
-    this.items = it;
-    this.prefKey = key;
-  }
-
   Map<int, Widget> _genChildren() {
+    List<String> items = this.widget.items;
     Map<int, Widget> wlist = {};
-    for (int i = 0; i < this.items.length; i++) {
-      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.items[i]));
+    for (int i = 0; i < items.length; i++) {
+      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(items[i]));
     }
     return wlist;
   }
 
   int selectedSegment() {
-    for (int i = 0; i < this.items.length; i++) {
-      if (Prefs().stringForKey(this.prefKey) == this.items[i]) {
+    List<String> items = this.widget.items;
+    String prefKey = this.widget.prefKey;
+    for (int i = 0; i < items.length; i++) {
+      if (Prefs().stringForKey(prefKey) == items[i]) {
         return i;
       }
     }
@@ -124,13 +109,13 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.label),
+          title: Text(this.widget.label),
           trailing: CupertinoSegmentedControl(
               children: _genChildren(),
               groupValue: selectedSegment(),
               onValueChanged: (value) {
                 setState(() {
-                  Prefs().setStringForKey(this.prefKey, this.items[value]);
+                  Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
                 });
               }),
         ),
@@ -150,49 +135,36 @@ class SettingsSliderWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SettingsSliderWidgetState createState() =>
-      _SettingsSliderWidgetState(this.label, this.prefKey, this.minValue, this.maxValue);
+  _SettingsSliderWidgetState createState() => _SettingsSliderWidgetState();
 }
 
 class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
-  String label;
-  String prefKey;
-  double minValue;
-  double maxValue;
   double currVal;
 
-  _SettingsSliderWidgetState(String lab, String key, double minv, double maxv) {
-    this.label = lab;
-    this.prefKey = key;
-    this.minValue = minv;
-    this.maxValue = maxv;
-    this.currVal = _validValue(Prefs().floatForKey(key));
+  _SettingsSliderWidgetState() {
+    this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
   }
 
-  double _validValue(double pval) {
-    if (pval > this.maxValue) {
-      pval = maxValue;
-    }
-    if (pval < this.minValue) {
-      pval = minValue;
-    }
+  double _constrainValue(double pval) {
+    pval = pval > this.widget.maxValue ? this.widget.maxValue : pval;
+    pval = pval < this.widget.minValue ? this.widget.maxValue : pval;
     return pval;
   }
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: Text(this.label, style: TextStyle(fontSize: 18.0)),
+        title: Text(this.widget.label, style: TextStyle(fontSize: 18.0)),
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
-                this.currVal = value;
-                Prefs().setFloatForKey(this.prefKey, value);
+                currVal = value;
+                Prefs().setFloatForKey(this.widget.prefKey, value);
               });
             },
             value: this.currVal,
-            min: this.minValue,
-            max: this.maxValue));
+            min: this.widget.minValue,
+            max: this.widget.maxValue));
   }
 }
 
@@ -259,33 +231,28 @@ class QueryServerSegmentedWidget extends StatefulWidget {
   QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
 
   @override
-  _QueryServerSegmentedWidgetState createState() =>
-      _QueryServerSegmentedWidgetState(this.items, this.prefKey);
+  _QueryServerSegmentedWidgetState createState() => _QueryServerSegmentedWidgetState();
 }
 
 class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
-  List items;
-  String prefKey;
   String text;
   final textController = TextEditingController();
 
-  _QueryServerSegmentedWidgetState(List it, String key) {
-    this.items = it;
-    this.prefKey = key;
-    this.text = Prefs().stringForKey(key);
+  _QueryServerSegmentedWidgetState() {
+    this.text = Prefs().stringForKey(this.widget.prefKey);
   }
 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
-    for (int i = 0; i < this.items.length; i++) {
-      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.items[i][0]));
+    for (int i = 0; i < this.widget.items.length; i++) {
+      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.widget.items[i][0]));
     }
     return wlist;
   }
 
   int selectedSegment() {
-    for (int i = 0; i < this.items.length; i++) {
-      if (Prefs().stringForKey(this.prefKey) == this.items[i][1]) {
+    for (int i = 0; i < this.widget.items.length; i++) {
+      if (Prefs().stringForKey(this.widget.prefKey) == this.widget.items[i][1]) {
         return i;
       }
     }
@@ -297,11 +264,11 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     if (val is String) {
       finalVal = val;
     } else {
-      finalVal = this.items[val][1];
+      finalVal = this.widget.items[val][1];
     }
     setState(() {
       this.text = finalVal;
-      Prefs().setStringForKey(this.prefKey, this.text);
+      Prefs().setStringForKey(this.widget.prefKey, this.text);
     });
   }
 
