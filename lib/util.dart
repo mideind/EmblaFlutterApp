@@ -35,18 +35,18 @@ extension StringExtension on String {
     return false;
   }
 
+  String periodTerminated() {
+    if (this.length >= 0 && this.isPunctuationTerminated() == false) {
+      return this + '.';
+    }
+    return this;
+  }
+
   String sentenceCapitalized() {
     if (this.length == 0) {
       return this;
     }
     return "${this[0].toUpperCase()}${this.substring(1)}";
-  }
-
-  String periodTerminated() {
-    if (this.isPunctuationTerminated() == false) {
-      return this + '.';
-    }
-    return this;
   }
 }
 

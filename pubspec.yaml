@@ -36,6 +36,11 @@ dependencies:
   connectivity: ^2.0.1
   flutter_inappwebview: ^4.0.0+4
 
+  # flutter_sphinx:
+  #   git:
+  #     url: https://github.com/dustin-graham/flutter_sphinx
+  #     ref: master
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.0
@@ -43,6 +48,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  test: '>=1.15.4'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
