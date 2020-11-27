@@ -19,6 +19,7 @@
 // Various utility functions
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 // String extensions
 extension StringExtension on String {
@@ -64,11 +65,11 @@ extension HexColor on Color {
 }
 
 // Read Google API key
-String readGoogleKey() {
-  return '';
+Future<String> readGoogleKey() async {
+  return await rootBundle.loadString('assets/keys/GoogleAPI.key');
 }
 
 // Read query server key
-String readQueryServerKey() {
-  return '';
+Future<String> readQueryServerKey() async {
+  return await rootBundle.loadString('assets/keys/GreynirAPI.key');
 }
