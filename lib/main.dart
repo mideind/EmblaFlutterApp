@@ -98,18 +98,6 @@ class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidge
   }
 }
 
-// Top right button to show menu route
-class MenuButtonWidget extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return IconButton(
-        icon: ImageIcon(AssetImage('assets/images/menu.png')),
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (context) => MenuRoute()));
-        });
-  }
-}
-
 // Initial view
 class MainRoute extends StatefulWidget {
   @override

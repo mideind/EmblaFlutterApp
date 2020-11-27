@@ -64,12 +64,22 @@ extension HexColor on Color {
   }
 }
 
+String googleAPIKey = "";
+
 // Read Google API key
 Future<String> readGoogleKey() async {
-  return await rootBundle.loadString('assets/keys/GoogleAPI.key');
+  if (googleAPIKey == "") {
+    googleAPIKey = await rootBundle.loadString('assets/keys/GoogleAPI.key');
+  }
+  return googleAPIKey;
 }
+
+String queryAPIKey = "";
 
 // Read query server key
 Future<String> readQueryServerKey() async {
-  return await rootBundle.loadString('assets/keys/GreynirAPI.key');
+  if (queryAPIKey == "") {
+    queryAPIKey = await rootBundle.loadString('assets/keys/GreynirAPI.key');
+  }
+  return queryAPIKey;
 }
