@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// App initialization and presentation of session view
+// App initialization and presentation of main view
 
 import 'dart:io';
 
@@ -77,7 +77,7 @@ void main() async {
   runApp(app);
 }
 
-// Top left button to turn voice activation on or off
+// Top left button to toggle voice activation
 class ToggleVoiceActivationWidget extends StatefulWidget {
   @override
   _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
@@ -98,7 +98,7 @@ class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidge
   }
 }
 
-// Initial view
+// Main screen
 class MainRoute extends StatefulWidget {
   @override
   _MainRouteState createState() => _MainRouteState();

@@ -70,16 +70,13 @@ class _WebViewRouteState extends State<WebViewRoute> {
       ),
       body: InAppWebView(
         initialUrl: this.widget.initialURL,
-        //initialFile: "docs/about.html",
         initialOptions: InAppWebViewGroupOptions(
             crossPlatform: InAppWebViewOptions(
           debuggingEnabled: true,
           useShouldOverrideUrlLoading: true,
           transparentBackground: true,
         )),
-        onWebViewCreated: (InAppWebViewController controller) {
-          webView = controller;
-        },
+        //onWebViewCreated: (InAppWebViewController controller) {},
         onLoadStart: (InAppWebViewController controller, String url) {
           dlog('Loading URL $url');
         },

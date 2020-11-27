@@ -34,7 +34,6 @@ const String SOFTWARE_VERSION = "1.0.0";
 
 // Server communication
 const String DEFAULT_SERVER = "https://greynir.is";
-// API paths
 const String QUERY_API_PATH = "/query.api/v1";
 const String QUERY_HISTORY_API_PATH = "/query_history.api/v1";
 const String SPEECH_API_PATH = "/speech.api/v1";
@@ -52,6 +51,6 @@ const String PRIVACY_URL = "https://embla.is/privacy.html";
 const List QUERY_SERVER_OPTIONS = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Vinna', 'http://192.168.1.114:5000'],
+  ['Vinna', 'http://192.168.1.113:5000'],
   ['Heima', 'http://192.168.1.8:5000']
 ];

@@ -63,37 +63,24 @@ void pushPrivacy() {
   );
 }
 
+ListTile generateTile(String name, Function onTapFunc) {
+  return ListTile(
+    title: Text(name, style: TextStyle(fontSize: 18.0, color: Colors.red)),
+    //leading: const Icon(CupertinoIcons.gear),
+    leading: Image(image: AssetImage('assets/images/cube.png')),
+    trailing: Icon(Icons.arrow_right, color: Colors.red),
+    onTap: onTapFunc,
+  );
+}
+
+// List of menu tiles
 var list = ListView(
   padding: const EdgeInsets.all(8),
   children: <Widget>[
-    ListTile(
-      title: const Text("Stillingar", style: TextStyle(fontSize: 18.0, color: Colors.red)),
-      //leading: const Icon(CupertinoIcons.gear),
-      leading: Image(image: AssetImage('assets/images/cube.png')),
-      trailing: Icon(Icons.arrow_right, color: Colors.red),
-      onTap: pushSettings,
-    ),
-    ListTile(
-      title: const Text("Um Emblu", style: TextStyle(fontSize: 18.0, color: Colors.red)),
-      leading: Image(image: AssetImage('assets/images/cube.png')),
-      trailing: Icon(Icons.arrow_right, color: Colors.red),
-      onTap: pushAbout,
-    ),
-    ListTile(
-      title: const Text(
-        "Leiðbeiningar",
-        style: TextStyle(fontSize: 18.0, color: Colors.red),
-      ),
-      leading: Image(image: AssetImage('assets/images/cube.png')),
-      trailing: Icon(Icons.arrow_right, color: Colors.red),
-      onTap: pushInstructions,
-    ),
-    ListTile(
-      title: const Text("Persónuvernd", style: TextStyle(fontSize: 18.0, color: Colors.red)),
-      leading: Image(image: AssetImage('assets/images/cube.png')),
-      trailing: Icon(Icons.arrow_right, color: Colors.red),
-      onTap: pushPrivacy,
-    ),
+    generateTile("Stillingar", pushSettings),
+    generateTile("Um Emblu", pushAbout),
+    generateTile("Leiðbeiningar", pushInstructions),
+    generateTile("Persónuvernd", pushPrivacy),
   ],
 );
 
