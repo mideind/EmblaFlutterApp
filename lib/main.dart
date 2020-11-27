@@ -86,11 +86,15 @@ class ToggleVoiceActivationWidget extends StatefulWidget {
 class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: IconButton(
-      icon: ImageIcon(AssetImage('assets/images/mic.png')),
-      onPressed: () {},
-    ));
+    String iconName = Prefs().boolForKey('voice_activation') ? 'mic.png' : 'mic-slash.png';
+    return IconButton(
+      icon: ImageIcon(AssetImage('assets/images/' + iconName)),
+      onPressed: () {
+        setState(() {
+          Prefs().setBoolForKey('voice_activation', !Prefs().boolForKey('voice_activation'));
+        });
+      },
+    );
   }
 }
 
@@ -107,7 +111,12 @@ class MenuButtonWidget extends StatelessWidget {
 }
 
 // Initial view
-class MainRoute extends StatelessWidget {
+class MainRoute extends StatefulWidget {
+  @override
+  _MainRouteState createState() => _MainRouteState();
+}
+
+class _MainRouteState extends State<MainRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,8 +125,22 @@ class MainRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           leading: ToggleVoiceActivationWidget(),
-          actions: <Widget>[MenuButtonWidget()]),
+          actions: <Widget>[
+            IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
+          ]),
       body: SessionWidget(),
     );
+  }
+
+  void pushMenu() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MenuRoute(),
+      ),
+    ).then((val) {
+      // Make sure we rebuild main route when menu route is popped
+      setState(() {});
+    });
   }
 }

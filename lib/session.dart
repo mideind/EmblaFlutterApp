@@ -62,7 +62,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     var img = await loadImageAsset("assets/images/logo.png");
     setState(() {
       this.image = img;
-      dlog("Loaded image " + image.toString());
+      //dlog("Loaded image " + image.toString());
     });
   }
 
