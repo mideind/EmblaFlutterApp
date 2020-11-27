@@ -48,7 +48,7 @@ const String ABOUT_URL = "https://embla.is/about.html";
 const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";
 const String PRIVACY_URL = "https://embla.is/privacy.html";
 
-// Debug stuff
+// Alternate query server options f. debugging
 const List QUERY_SERVER_OPTIONS = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],

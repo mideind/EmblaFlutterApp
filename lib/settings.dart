@@ -129,8 +129,10 @@ class SettingsSliderWidget extends StatefulWidget {
   final String prefKey;
   final double minValue;
   final double maxValue;
+  final double stepSize;
 
-  SettingsSliderWidget({Key key, this.label, this.prefKey, this.minValue, this.maxValue})
+  SettingsSliderWidget(
+      {Key key, this.label, this.prefKey, this.minValue, this.maxValue, this.stepSize})
       : super(key: key);
 
   @override
@@ -143,6 +145,9 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   double _constrainValue(double pval) {
     pval = pval > this.widget.maxValue ? this.widget.maxValue : pval;
     pval = pval < this.widget.minValue ? this.widget.maxValue : pval;
+    if (this.widget.stepSize > 0) {
+      pval = (pval / this.widget.stepSize).round() * this.widget.stepSize;
+    }
     return pval;
   }
 
@@ -154,8 +159,8 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
-                currVal = value;
-                Prefs().setFloatForKey(this.widget.prefKey, value);
+                currVal = _constrainValue(value);
+                Prefs().setFloatForKey(this.widget.prefKey, currVal);
               });
             },
             value: this.currVal,
@@ -296,7 +301,8 @@ List<Widget> _settings() {
         label: 'Talhraði',
         prefKey: 'voice_speed',
         minValue: VOICE_SPEED_MIN,
-        maxValue: VOICE_SPEED_MAX),
+        maxValue: VOICE_SPEED_MAX,
+        stepSize: 0.05),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: clearHistoryText,
