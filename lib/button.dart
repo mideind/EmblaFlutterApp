@@ -15,6 +15,12 @@ import './common.dart';
 final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
+const kRestingSessionState = 0;
+const kListeningSessionState = 1;
+const kAnsweringSessionState = 2;
+
+var state = kRestingSessionState;
+
 const AWV_DEFAULT_NUM_BARS = 15;
 const AWV_DEFAULT_BAR_SPACING = 4.0;
 const AWV_DEFAULT_SAMPLE_LEVEL = 0.05; // A hard lower limit above 0 looks better
@@ -46,7 +52,6 @@ class SessionWidget extends StatefulWidget {
 
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   ui.Image image;
-  bool expanded = false;
   Timer timer;
 
   void didChangeDependencies() async {
@@ -67,7 +72,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double prop = expanded ? 0.65 : 0.5;
+    double prop = (state == kRestingSessionState) ? 0.5 : 0.75;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
     void updateAnim() {
@@ -80,8 +85,15 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     void stop() {
       setState(() {
         audioPlayer.stop();
-        audioCache.play('audio/rec_cancel.wav');
         timer.cancel();
+        state = kRestingSessionState;
+      });
+    }
+
+    void cancel() {
+      stop();
+      setState(() {
+        audioCache.play('audio/rec_cancel.wav');
       });
     }
 
@@ -89,43 +101,44 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         audioPlayer.stop();
         audioCache.play('audio/rec_begin.wav');
-        timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 60)), (Timer t) => updateAnim());
+        timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 24)), (Timer t) => updateAnim());
+        state = kListeningSessionState;
       });
     }
 
     void toggle() {
-      expanded = !expanded;
-      if (expanded) {
+      if (state == kRestingSessionState) {
         start();
       } else {
-        stop();
+        cancel();
       }
     }
 
     return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            GestureDetector(
-                onTap: toggle,
-                child: AnimatedSize(
-                    curve: Curves.linear,
-                    duration: Duration(milliseconds: 10),
-                    vsync: this,
-                    alignment: Alignment.center,
-                    child: new SizedBox(
-                      width: buttonSize,
-                      height: buttonSize,
-                      child: CustomPaint(painter: SessionButtonPainter(image)),
-                    ))),
-          ],
-        ),
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        children: <Widget>[
+          Text("Hello, world!"),
+          Center(
+              child: GestureDetector(
+                  onTap: toggle,
+                  child: AnimatedSize(
+                      curve: Curves.linear,
+                      duration: Duration(milliseconds: 1),
+                      vsync: this,
+                      alignment: Alignment.center,
+                      child: new SizedBox(
+                        width: buttonSize,
+                        height: buttonSize,
+                        child: CustomPaint(painter: SessionButtonPainter(image)),
+                      )))),
+        ],
       ),
     );
   }
 }
 
+/* This is the drawing code for the session button. */
 class SessionButtonPainter extends CustomPainter {
   ui.Image image;
 
@@ -140,17 +153,20 @@ class SessionButtonPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) async {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
-    // First circle
+    // First, outermost, circle
     var paint = Paint()..color = circleColor1;
     canvas.drawCircle(center, radius, paint);
     // Second circle
     paint = Paint()..color = circleColor2;
     canvas.drawCircle(center, radius / 1.25, paint);
-    // Third circle
+    // Third, innermost, circle
     paint = Paint()..color = circleColor3;
     canvas.drawCircle(center, radius / 1.75, paint);
-    // Draw logo if image is already asynchronously loaded
-    if (false && image != null) {
+
+    Rect innermostRect = Rect.fromCircle(center: center, radius: radius / 2.0);
+
+    // Draw non-animated Embla logo
+    if (state == kRestingSessionState && image != null) {
       // Source image rect
       double imgWidth = image.width.toDouble();
       double imgHeight = image.height.toDouble();
@@ -163,45 +179,53 @@ class SessionButtonPainter extends CustomPainter {
               Size(w, h);
       canvas.drawImageRect(image, src, dst, Paint());
     }
-    // Draw audio signal bars
-    double margin = AWV_DEFAULT_BAR_SPACING;
-    double totalMarginWidth = AWV_DEFAULT_NUM_BARS * margin;
+    // Draw waveform bars during microphone input
+    else if (state == kListeningSessionState) {
+      // Draw audio signal bars
+      double margin = AWV_DEFAULT_BAR_SPACING;
+      double totalMarginWidth = AWV_DEFAULT_NUM_BARS * margin;
 
-    double barWidth = (size.width - totalMarginWidth) / AWV_DEFAULT_NUM_BARS;
-    double barHeight = size.height / 2;
-    double centerY = size.height / 2;
+      double xOffset = (size.width - innermostRect.width) / 2;
+      double yOffset = (size.height - innermostRect.height) / 2;
 
-    for (int i = 0; i < audioSamples.length; i++) {
-      double level = audioSamples[i];
-      paint = Paint()..color = Colors.red;
+      double barWidth = (innermostRect.width - totalMarginWidth) / AWV_DEFAULT_NUM_BARS;
+      double barHeight = innermostRect.height / 2;
+      double centerY = (innermostRect.height / 2);
 
-      // Draw top bar
-      Rect topRect = new Rect.fromLTWH(
-          i * (barWidth + margin) + (margin / 2), // x
-          barHeight - (level * barHeight), // y
-          barWidth, // width
-          level * barHeight); // height
-      canvas.drawRect(topRect, paint);
-      // Draw circle at end of bar
-      canvas.drawCircle(
-          Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2),
-              barHeight - (level * barHeight)),
-          barWidth / 2,
-          paint);
+      for (int i = 0; i < audioSamples.length; i++) {
+        double level = audioSamples[i];
+        paint = Paint()..color = Colors.red;
 
-      // Draw bottom bar
-      Rect bottomRect = new Rect.fromLTWH(
-          i * (barWidth + margin) + (margin / 2), // x
-          centerY, // y
-          barWidth, // width
-          level * barHeight); // height
-      canvas.drawRect(bottomRect, paint);
-      // Draw circle at end of bar
-      canvas.drawCircle(
-          Offset(
-              i * (barWidth + margin) + barWidth / 2 + (margin / 2), centerY + (level * barHeight)),
-          barWidth / 2,
-          paint);
+        // Draw top bar
+        Rect topRect = new Rect.fromLTWH(
+            i * (barWidth + margin) + (margin / 2) + xOffset, // x
+            barHeight - (level * barHeight) + yOffset, // y
+            barWidth, // width
+            level * barHeight); // height
+        canvas.drawRect(topRect, paint);
+        // Draw circle at end of bar
+        canvas.drawCircle(
+            Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
+                barHeight - (level * barHeight) + yOffset),
+            barWidth / 2,
+            paint);
+
+        // Draw bottom bar
+        Rect bottomRect = new Rect.fromLTWH(
+            i * (barWidth + margin) + (margin / 2) + xOffset, // x
+            centerY + yOffset, // y
+            barWidth, // width
+            level * barHeight); // height
+        canvas.drawRect(bottomRect, paint);
+        // Draw circle at end of bar
+        canvas.drawCircle(
+            Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
+                centerY + (level * barHeight) + yOffset),
+            barWidth / 2,
+            paint);
+      }
+    } else if (state == kAnsweringSessionState) {
+      // pass
     }
   }
 
