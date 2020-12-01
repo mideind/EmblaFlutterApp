@@ -52,6 +52,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
       InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
+    print("urlclickhandler");
     if (req.url != this.widget.initialURL) {
       dlog("Opening external URL ${req.url}");
       launch(req.url);

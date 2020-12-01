@@ -117,6 +117,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     await _recorder.stop();
     setState(() {
       recognizing = false;
+      buttonSize = 200;
     });
   }
 
