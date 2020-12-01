@@ -5,9 +5,14 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:audioplayers/audio_cache.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import './util.dart';
 import './common.dart';
+
+final audioPlayer = AudioPlayer();
+final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
 class SessionWidget extends StatefulWidget {
   @override
@@ -16,6 +21,7 @@ class SessionWidget extends StatefulWidget {
 
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   ui.Image image;
+  bool expanded = false;
 
   void didChangeDependencies() async {
     super.didChangeDependencies();
@@ -35,29 +41,32 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double buttonSize = MediaQuery.of(context).size.width * 0.5;
+    double prop = expanded ? 0.65 : 0.5;
+    double buttonSize = MediaQuery.of(context).size.width * prop;
+    String soundFile = expanded ? "rec_cancel.wav" : 'rec_begin.wav';
 
     return Scaffold(
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
-            AnimatedSize(
-                curve: Curves.elasticInOut,
-                duration: Duration(seconds: 2),
-                vsync: this,
-                alignment: Alignment.center,
-                child: new SizedBox(
-                  width: buttonSize,
-                  height: buttonSize,
-                  child: CustomPaint(painter: SessionButtonPainter(image)),
-                )),
-            // AnimatedContainer(
-            //     duration: Duration(seconds: 2),
-            //     child: SizedBox(
-            //         width: buttonSize,
-            //         height: buttonSize,
-            //         child: CustomPaint(painter: SessionButtonPainter(image))))
+            GestureDetector(
+                onTap: () {
+                  setState(() {
+                    audioCache.play('audio/' + soundFile);
+                    expanded = !expanded;
+                  });
+                },
+                child: AnimatedSize(
+                    curve: Curves.linear,
+                    duration: Duration(milliseconds: 10),
+                    vsync: this,
+                    alignment: Alignment.center,
+                    child: new SizedBox(
+                      width: buttonSize,
+                      height: buttonSize,
+                      child: CustomPaint(painter: SessionButtonPainter(image)),
+                    ))),
           ],
         ),
       ),
