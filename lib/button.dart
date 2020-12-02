@@ -27,24 +27,30 @@ import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound;
 
 // Global state
-const kRestingSessionState = 0;
-const kListeningSessionState = 1;
-const kAnsweringSessionState = 2;
+const kRestingSessionState = 0; // No active session
+const kListeningSessionState = 1; // Receiving microphone input
+const kAnsweringSessionState = 2; // Communicating with server and playing back answer
 
 var state = kRestingSessionState;
 
 // Waveform configuration
-const kWaveformNumBars = 15;
-const kWaveformBarSpacing = 4.0;
-const kWaveformDefaultSampleLevel = 0.05; // A hard lower limit above 0 looks better
-const kWaveformDefaultVariation = 0.025; // Variation range for bars when reset
+const kWaveformNumBars = 15; // Number of waveform bars drawn
+const kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
+const kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
-final List<double> audioSamples = populateSamples();
+List<double> audioSamples = populateSamples();
 
 List<double> populateSamples() {
   return new List.filled(kWaveformNumBars, kWaveformDefaultSampleLevel, growable: true);
+}
+
+void addSample(double level) {
+  while (audioSamples.length > kWaveformNumBars) {
+    audioSamples.removeAt(0);
+  }
+  audioSamples.add(level);
 }
 
 // Logo animation
@@ -64,10 +70,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     double prop = (state == kRestingSessionState) ? 0.6 : 0.75;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
-    void updateAnim() {
+    // Timer ticker to refresh button view
+    void ticker() {
       setState(() {
-        audioSamples.removeAt(0);
-        audioSamples.add(Random().nextDouble());
+        addSample(Random().nextDouble());
         currFrame += 1;
         if (currFrame > 99) {
           currFrame = 0;
@@ -75,6 +81,18 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       });
     }
 
+    // Start session
+    void start() {
+      setState(() {
+        playSound('rec_begin');
+        int msecPerFrame = (1000 ~/ 24); // Framerate
+        timer = new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
+        state = kListeningSessionState;
+        audioSamples = populateSamples();
+      });
+    }
+
+    // End session
     void stop() {
       setState(() {
         stopSound();
@@ -84,20 +102,13 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       });
     }
 
+    // User cancelled ongoing session
     void cancel() {
       stop();
       playSound('rec_cancel');
     }
 
-    void start() {
-      setState(() {
-        playSound('rec_begin');
-        timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 24)), (Timer t) => updateAnim());
-        state = kListeningSessionState;
-        audioSamples = populateSamples();
-      });
-    }
-
+    // Button pressed
     void toggle() {
       if (state == kRestingSessionState) {
         start();
@@ -108,7 +119,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     return Scaffold(
       body: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceAround,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Text("Hello, world!"),
           Center(
@@ -157,19 +168,21 @@ class SessionButtonPainter extends CustomPainter {
   void drawFrame(Canvas canvas, Size size, int fnum) {
     ui.Image img = animationFrames[fnum];
     // Source image rect
-    Rect srcRect = const Offset(0, 0) & Size(img.width.toDouble(), img.height.toDouble());
+    Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
     // Destination rect centered in canvas
-    double w = size.width.toDouble() / 2.5;
-    double h = size.height.toDouble() / 2.5;
-    Rect dstRect =
-        Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
-            Size(w, h);
+    double w = size.width.toDouble() / 2.4;
+    double h = size.height.toDouble() / 2.4;
+    Rect dstRect = Rect.fromLTWH(
+        (size.width.toDouble() / 2) - (w / 2), // x
+        (size.height.toDouble() / 2) - (h / 2), // y
+        w, // width
+        h); // height
     canvas.drawImageRect(img, srcRect, dstRect, Paint());
   }
 
   void drawWaveform(Canvas canvas, Size size) {
     // Generate square frame to contain waveform
-    double w = size.width / 1.95;
+    double w = size.width / 2.0;
     double xOffset = (size.width - w) / 2;
     double yOffset = (size.height - w) / 2;
     Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
@@ -225,14 +238,16 @@ class SessionButtonPainter extends CustomPainter {
     // We always draw the circles
     drawCircles(canvas, size);
 
+    // Draw non-animated Embla logo
     if (state == kRestingSessionState) {
-      // Draw non-animated Embla logo
       drawFrame(canvas, size, kFullLogoFrame); // Always same frame
-    } else if (state == kListeningSessionState) {
-      // Draw waveform bars during microphone input
+    }
+    // Draw waveform bars during microphone input
+    else if (state == kListeningSessionState) {
       drawWaveform(canvas, size);
-    } else if (state == kListeningSessionState) {
-      // Draw logo animation during query-answering phase
+    }
+    // Draw logo animation during query-answering phase
+    else if (state == kAnsweringSessionState) {
       drawFrame(canvas, size, currFrame);
     }
   }
