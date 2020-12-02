@@ -22,17 +22,20 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 
-import './util.dart';
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound;
 import './connectivity.dart' show ConnectivityMonitor;
+import './util.dart';
+import './common.dart';
 
-// Global state
-const kRestingSessionState = 0; // No active session
-const kListeningSessionState = 1; // Receiving microphone input
-const kAnsweringSessionState = 2; // Communicating with server and playing back answer
+// Global session state
+enum SessionState {
+  resting, // No active session
+  listening, // Receiving microphone input
+  answering, // Communicating with server and playing back answer
+}
 
-var state = kRestingSessionState;
+SessionState state = SessionState.resting;
 
 // Waveform configuration
 const kWaveformNumBars = 15; // Number of waveform bars drawn
@@ -48,7 +51,7 @@ List<double> populateSamples() {
 }
 
 void addSample(double level) {
-  while (audioSamples.length > kWaveformNumBars) {
+  while (audioSamples.length >= kWaveformNumBars) {
     audioSamples.removeAt(0);
   }
   audioSamples.add(level);
@@ -68,7 +71,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double prop = (state == kRestingSessionState) ? 0.6 : 0.75;
+    double prop = (state == SessionState.resting) ? 0.6 : 0.75;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
     // Timer ticker to refresh button view
@@ -84,6 +87,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // Start session
     void start() {
+      if (state != SessionState.resting) {
+        dlog('Session start called during pre-existing session!');
+        return;
+      }
       // Check for internet connectivity
       if (!ConnectivityMonitor().connected) {
         playSound('conn');
@@ -93,7 +100,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         int msecPerFrame = (1000 ~/ 24); // Framerate
         timer = new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
-        state = kListeningSessionState;
+        state = SessionState.listening;
         audioSamples = populateSamples();
       });
     }
@@ -103,7 +110,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         stopSound();
         timer.cancel();
-        state = kRestingSessionState;
+        state = SessionState.resting;
         currFrame = 0;
       });
     }
@@ -116,7 +123,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // Button pressed
     void toggle() {
-      if (state == kRestingSessionState) {
+      if (state == SessionState.resting) {
         start();
       } else {
         cancel();
@@ -246,15 +253,15 @@ class SessionButtonPainter extends CustomPainter {
     drawCircles(canvas, size);
 
     // Draw non-animated Embla logo
-    if (state == kRestingSessionState) {
+    if (state == SessionState.resting) {
       drawFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
     // Draw waveform bars during microphone input
-    else if (false && state == kListeningSessionState) {
+    else if (state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase
-    else if (state == kListeningSessionState) {
+    else if (state == SessionState.listening) {
       drawFrame(canvas, size, currFrame);
     }
   }
