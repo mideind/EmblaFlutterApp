@@ -19,12 +19,11 @@ Future<ui.Image> loadImageAsset(String asset) async {
   return fi.image;
 }
 
-void loadFrames() {
+void loadFrames() async {
   NumberFormat formatter = new NumberFormat("00000");
-  // Pass
   for (int i = 0; i < 100; i++) {
     String fn = "${frameFn}${formatter.format(i)}${frameSuffix}";
-    animationFrames.add(loadImageAsset(fn));
+    animationFrames.add(await loadImageAsset(fn));
   }
-  // print(animationFrames);
+  //print(animationFrames);
 }

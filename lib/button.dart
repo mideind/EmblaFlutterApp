@@ -9,6 +9,7 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import './util.dart';
+import './anim.dart' show animationFrames;
 
 final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
@@ -42,6 +43,8 @@ final List audioSamples = <double>[
   0.5,
   0.3
 ];
+
+int currFrame = 0;
 
 class SessionWidget extends StatefulWidget {
   @override
@@ -77,6 +80,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         audioSamples.removeAt(0);
         audioSamples.add(Random().nextDouble());
+        currFrame += 1;
+        if (currFrame > 99) {
+          currFrame = 0;
+        }
       });
     }
 
@@ -178,7 +185,7 @@ class SessionButtonPainter extends CustomPainter {
       canvas.drawImageRect(image, src, dst, Paint());
     }
     // Draw waveform bars during microphone input
-    else if (state == kListeningSessionState) {
+    else if (false && state == kListeningSessionState) {
       // Draw audio signal bars
       double margin = AWV_DEFAULT_BAR_SPACING;
       double totalMarginWidth = AWV_DEFAULT_NUM_BARS * margin;
@@ -222,8 +229,17 @@ class SessionButtonPainter extends CustomPainter {
             barWidth / 2,
             paint);
       }
-    } else if (state == kAnsweringSessionState) {
-      // pass
+    } else if (state == kListeningSessionState) {
+      ui.Image img = animationFrames[currFrame];
+      // Source image rect
+      Rect srcRect = const Offset(0, 0) & Size(img.width.toDouble(), img.height.toDouble());
+      // Destination rect centered in canvas
+      double w = size.width.toDouble() / 2.5;
+      double h = size.height.toDouble() / 2.5;
+      Rect dstRect =
+          Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
+              Size(w, h);
+      canvas.drawImageRect(img, srcRect, dstRect, Paint());
     }
   }
 

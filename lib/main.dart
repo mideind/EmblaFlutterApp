@@ -75,7 +75,7 @@ void main() async {
     }
   }
 
-  loadFrames();
+  await loadFrames();
 
   // Launch app
   runApp(app);
