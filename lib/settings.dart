@@ -285,10 +285,10 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
 }
 
 // Alert messages for clear history buttons
-String clearHistoryText = '''Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis.
-Fyrirspurnir eru aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.''';
-String clearAllText = '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki.
-Gögnin eru einungis nýtt til þess að bæta svör.''';
+String clearHistoryText =
+    '''Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.''';
+String clearAllText =
+    '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt til þess að bæta svör.''';
 
 // List of settings widgets
 List<Widget> _settings() {

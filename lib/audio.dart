@@ -22,10 +22,12 @@ import 'package:audioplayers/audioplayers.dart';
 import './prefs.dart' show Prefs;
 import './common.dart';
 
-final audioPlayer = AudioPlayer();
+final audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
-void audioPlayerHandler(AudioPlayerState value) => print('state => $value');
+void defaultPlayerHandler(AudioPlayerState value) {
+  // Do nothing
+}
 
 const List<String> audioFiles = [
   // Voice-independent
@@ -64,9 +66,10 @@ void playURL(String url) {
 }
 
 void playSound(String soundName) {
-  audioPlayer.monitorNotificationStateChanges(audioPlayerHandler);
-
   stopSound();
+
+  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+
   String assetPath;
   if (sessionSounds.contains(soundName)) {
     assetPath = "audio/$soundName.wav";
