@@ -27,7 +27,7 @@ import './common.dart';
 
 var menuContext;
 
-void pushSettings() {
+void _pushSettings() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
@@ -36,7 +36,7 @@ void pushSettings() {
   );
 }
 
-void pushAbout() {
+void _pushAbout() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
@@ -45,7 +45,7 @@ void pushAbout() {
   );
 }
 
-void pushInstructions() {
+void _pushInstructions() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
@@ -54,7 +54,7 @@ void pushInstructions() {
   );
 }
 
-void pushPrivacy() {
+void _pushPrivacy() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
@@ -63,7 +63,7 @@ void pushPrivacy() {
   );
 }
 
-ListTile generateTile(String name, Function onTapFunc) {
+ListTile _generateTile(String name, Function onTapFunc) {
   return ListTile(
     title: Text(name, style: TextStyle(fontSize: 18.0, color: Colors.red)),
     //leading: const Icon(CupertinoIcons.gear),
@@ -77,10 +77,10 @@ ListTile generateTile(String name, Function onTapFunc) {
 var list = ListView(
   padding: const EdgeInsets.all(8),
   children: <Widget>[
-    generateTile("Stillingar", pushSettings),
-    generateTile("Um Emblu", pushAbout),
-    generateTile("Leiðbeiningar", pushInstructions),
-    generateTile("Persónuvernd", pushPrivacy),
+    _generateTile("Stillingar", _pushSettings),
+    _generateTile("Um Emblu", _pushAbout),
+    _generateTile("Leiðbeiningar", _pushInstructions),
+    _generateTile("Persónuvernd", _pushPrivacy),
   ],
 );
 

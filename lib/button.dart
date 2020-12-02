@@ -24,7 +24,7 @@ import 'package:flutter/material.dart';
 
 import './util.dart';
 import './anim.dart' show animationFrames;
-import './audio.dart' show audioPlayer, playSound;
+import './audio.dart' show playSound, stopSound;
 
 // Global state
 const kRestingSessionState = 0;
@@ -89,7 +89,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     void stop() {
       setState(() {
-        audioPlayer.stop();
+        stopSound();
         timer.cancel();
         state = kRestingSessionState;
         currFrame = 0;
@@ -103,7 +103,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     void start() {
       setState(() {
-        audioPlayer.stop();
         playSound('rec_begin');
         timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 24)), (Timer t) => updateAnim());
         state = kListeningSessionState;
