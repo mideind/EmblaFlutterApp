@@ -30,9 +30,10 @@ import './prefs.dart' show Prefs;
 //import './session.dart' show SessionWidget;
 import './button.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
+import './anim.dart' show preloadAnimationFrames;
+import './audio.dart' show preloadAudioFiles;
 import './common.dart';
 import './util.dart';
-import './anim.dart' show loadFrames;
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
@@ -67,6 +68,10 @@ void main() async {
   }
   dlog("Shared prefs: " + Prefs().desc());
 
+  // Preload assets
+  await preloadAudioFiles();
+  await preloadAnimationFrames();
+
   // Set up location tracking
   if (Prefs().boolForKey('share_location')) {
     LocationPermission permission = await Geolocator.requestPermission();
@@ -74,9 +79,6 @@ void main() async {
       LocationTracking().start();
     }
   }
-
-  await loadFrames();
-
   // Launch app
   runApp(app);
 }
@@ -111,6 +113,21 @@ class MainRoute extends StatefulWidget {
 class _MainRouteState extends State<MainRoute> {
   @override
   Widget build(BuildContext context) {
+    // Present menu route
+    void pushMenu() async {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MenuRoute(),
+        ),
+      ).then((val) {
+        // Make sure we rebuild main route when menu route is popped
+        // This ensures that the state of the voice activation button
+        // is updated to reflect potential changes in Settings.
+        setState(() {});
+      });
+    }
+
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Colors.transparent,
@@ -122,17 +139,5 @@ class _MainRouteState extends State<MainRoute> {
           ]),
       body: SessionWidget(),
     );
-  }
-
-  void pushMenu() async {
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => MenuRoute(),
-      ),
-    ).then((val) {
-      // Make sure we rebuild main route when menu route is popped
-      setState(() {});
-    });
   }
 }

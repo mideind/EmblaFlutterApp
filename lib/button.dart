@@ -1,23 +1,39 @@
+/*
+ * This file is part of the Embla Flutter app
+ * Copyright (c) 2020 Miðeind ehf.
+ * Author: Sveinbjorn Thordarson
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, version 3.
+ *
+ * This program is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 import './util.dart';
 import './anim.dart' show animationFrames;
+import './audio.dart' show audioPlayer, playSound;
 
-final audioPlayer = AudioPlayer();
-final audioCache = new AudioCache(fixedPlayer: audioPlayer);
-
+// Global state
 const kRestingSessionState = 0;
 const kListeningSessionState = 1;
 const kAnsweringSessionState = 2;
 
 var state = kRestingSessionState;
 
+// Waveform configuration
 const kWaveformNumBars = 15;
 const kWaveformBarSpacing = 4.0;
 const kWaveformDefaultSampleLevel = 0.05; // A hard lower limit above 0 looks better
@@ -43,6 +59,7 @@ final List audioSamples = <double>[
   0.3
 ];
 
+// Logo animation
 int currFrame = 0;
 const kRestFrame = 99;
 
@@ -81,15 +98,13 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     void cancel() {
       stop();
-      setState(() {
-        audioCache.play('audio/rec_cancel.wav');
-      });
+      playSound('rec_cancel');
     }
 
     void start() {
       setState(() {
         audioPlayer.stop();
-        audioCache.play('audio/rec_begin.wav');
+        playSound('rec_begin');
         timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 24)), (Timer t) => updateAnim());
         state = kListeningSessionState;
       });
