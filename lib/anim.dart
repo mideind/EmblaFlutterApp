@@ -24,9 +24,10 @@ import 'package:intl/intl.dart';
 
 import './common.dart';
 
-List animationFrames = [];
 const String frameFn = 'assets/anim/logo/EMBLA_256px_';
 const String frameSuffix = '.png';
+
+final List animationFrames = [];
 
 Future<ui.Image> _loadImageAsset(String asset) async {
   ByteData data = await rootBundle.load(asset);

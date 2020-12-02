@@ -25,7 +25,7 @@ import './common.dart';
 final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
-final List<String> audioFiles = [
+const List<String> audioFiles = [
   // Voice-independent
   'audio/rec_begin.wav',
   'audio/rec_cancel.wav',
@@ -40,7 +40,7 @@ final List<String> audioFiles = [
 ];
 
 // These sounds are the same regardless of voice ID settings.
-final List<String> sessionSounds = [
+const List<String> sessionSounds = [
   'rec_begin',
   'rec_cancel',
   'rec_confirm',

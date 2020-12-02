@@ -41,27 +41,15 @@ const kWaveformDefaultVariation = 0.025; // Variation range for bars when reset
 const kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
-final List audioSamples = <double>[
-  0.025,
-  0.5,
-  0.3,
-  0.2,
-  1.0,
-  0.7,
-  0.025,
-  0.5,
-  0.3,
-  0.2,
-  1.0,
-  0.7,
-  0.025,
-  0.5,
-  0.3
-];
+final List<double> audioSamples = populateSamples();
+
+List<double> populateSamples() {
+  return new List.filled(kWaveformNumBars, kWaveformDefaultSampleLevel, growable: true);
+}
 
 // Logo animation
 int currFrame = 0;
-const kRestFrame = 99;
+const kFullLogoFrame = 99;
 
 class SessionWidget extends StatefulWidget {
   @override
@@ -106,6 +94,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         playSound('rec_begin');
         timer = new Timer.periodic(Duration(milliseconds: (1000 ~/ 24)), (Timer t) => updateAnim());
         state = kListeningSessionState;
+        audioSamples = populateSamples();
       });
     }
 
@@ -141,14 +130,14 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 }
 
-/* This is the drawing code for the session button. */
+// This is the drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
-  // Outermost to innermost
-  final circleColor1 = HexColor.fromHex("#F9F0F0");
-  final circleColor2 = HexColor.fromHex("#F9E2E1");
-  final circleColor3 = HexColor.fromHex("#F9DCDB");
-
   void drawCircles(Canvas canvas, Size size) {
+    // Outermost to innermost
+    final circleColor1 = HexColor.fromHex("#f9f0f0");
+    final circleColor2 = HexColor.fromHex("#f9e2e1");
+    final circleColor3 = HexColor.fromHex("#f9dcdb");
+
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
@@ -186,16 +175,19 @@ class SessionButtonPainter extends CustomPainter {
     Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
 
     double margin = kWaveformBarSpacing;
-    double totalMarginWidth = kWaveformNumBars * margin;
+    double totalMarginWidth = (kWaveformNumBars * margin) - margin;
 
     double barWidth = (frame.width - totalMarginWidth) / kWaveformNumBars;
     double barHeight = frame.height / 2;
     double centerY = (frame.height / 2);
 
+    // Colors for the top and bottom waveform bars
     var topPaint = Paint()..color = HexColor.fromHex('#e83939');
     var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
 
+    // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {
+      // Clamp signal level
       double level = min(max(kWaveformMinSampleLevel, audioSamples[i]), kWaveformMaxSampleLevel);
 
       // Draw top bar
@@ -230,18 +222,17 @@ class SessionButtonPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) async {
+    // We always draw the circles
     drawCircles(canvas, size);
 
-    // Draw non-animated Embla logo
     if (state == kRestingSessionState) {
-      drawFrame(canvas, size, kRestFrame);
-    }
-    // Draw waveform bars during microphone input
-    else if (state == kListeningSessionState) {
+      // Draw non-animated Embla logo
+      drawFrame(canvas, size, kFullLogoFrame); // Always same frame
+    } else if (state == kListeningSessionState) {
+      // Draw waveform bars during microphone input
       drawWaveform(canvas, size);
-    }
-    // Draw logo animation during query-answering phase
-    else if (state == kListeningSessionState) {
+    } else if (state == kListeningSessionState) {
+      // Draw logo animation during query-answering phase
       drawFrame(canvas, size, currFrame);
     }
   }
