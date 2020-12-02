@@ -90,113 +90,110 @@ flutter:
     - docs/Lato-Bold.woff2
     # Other
     - assets/test_service_account.json
-    # Animation
+    # Logo animation frames
+    - assets/anim/logo/EMBLA_256px_00000.png
+    - assets/anim/logo/EMBLA_256px_00001.png
     - assets/anim/logo/EMBLA_256px_00002.png
+    - assets/anim/logo/EMBLA_256px_00003.png
+    - assets/anim/logo/EMBLA_256px_00004.png
+    - assets/anim/logo/EMBLA_256px_00005.png
+    - assets/anim/logo/EMBLA_256px_00006.png
+    - assets/anim/logo/EMBLA_256px_00007.png
+    - assets/anim/logo/EMBLA_256px_00008.png
+    - assets/anim/logo/EMBLA_256px_00009.png
+    - assets/anim/logo/EMBLA_256px_00010.png
+    - assets/anim/logo/EMBLA_256px_00011.png
+    - assets/anim/logo/EMBLA_256px_00012.png
+    - assets/anim/logo/EMBLA_256px_00013.png
+    - assets/anim/logo/EMBLA_256px_00014.png
+    - assets/anim/logo/EMBLA_256px_00015.png
     - assets/anim/logo/EMBLA_256px_00016.png
     - assets/anim/logo/EMBLA_256px_00017.png
-    - assets/anim/logo/EMBLA_256px_00003.png
-    - assets/anim/logo/EMBLA_256px_00029.png
-    - assets/anim/logo/EMBLA_256px_00015.png
-    - assets/anim/logo/EMBLA_256px_00001.png
-    - assets/anim/logo/EMBLA_256px_00000.png
-    - assets/anim/logo/EMBLA_256px_00014.png
-    - assets/anim/logo/EMBLA_256px_00028.png
-    - assets/anim/logo/EMBLA_256px_00010.png
-    - assets/anim/logo/EMBLA_256px_00004.png
-    - assets/anim/logo/EMBLA_256px_00038.png
-    - assets/anim/logo/EMBLA_256px_00039.png
-    - assets/anim/logo/EMBLA_256px_00005.png
-    - assets/anim/logo/EMBLA_256px_00011.png
-    - assets/anim/logo/EMBLA_256px_00007.png
-    - assets/anim/logo/EMBLA_256px_00013.png
-    - assets/anim/logo/EMBLA_256px_00012.png
-    - assets/anim/logo/EMBLA_256px_00006.png
-    - assets/anim/logo/EMBLA_256px_00049.png
-    - assets/anim/logo/EMBLA_256px_00061.png
-    - assets/anim/logo/EMBLA_256px_00075.png
-    - assets/anim/logo/EMBLA_256px_00074.png
-    - assets/anim/logo/EMBLA_256px_00060.png
-    - assets/anim/logo/EMBLA_256px_00048.png
-    - assets/anim/logo/EMBLA_256px_00089.png
-    - assets/anim/logo/EMBLA_256px_00076.png
-    - assets/anim/logo/EMBLA_256px_00062.png
-    - assets/anim/logo/EMBLA_256px_00063.png
-    - assets/anim/logo/EMBLA_256px_00077.png
-    - assets/anim/logo/EMBLA_256px_00088.png
-    - assets/anim/logo/EMBLA_256px_00098.png
-    - assets/anim/logo/EMBLA_256px_00073.png
-    - assets/anim/logo/EMBLA_256px_00067.png
-    - assets/anim/logo/EMBLA_256px_00066.png
-    - assets/anim/logo/EMBLA_256px_00072.png
-    - assets/anim/logo/EMBLA_256px_00099.png
-    - assets/anim/logo/EMBLA_256px_00064.png
-    - assets/anim/logo/EMBLA_256px_00070.png
-    - assets/anim/logo/EMBLA_256px_00058.png
-    - assets/anim/logo/EMBLA_256px_00059.png
-    - assets/anim/logo/EMBLA_256px_00071.png
-    - assets/anim/logo/EMBLA_256px_00065.png
-    - assets/anim/logo/EMBLA_256px_00083.png
-    - assets/anim/logo/EMBLA_256px_00097.png
-    - assets/anim/logo/EMBLA_256px_00068.png
-    - assets/anim/logo/EMBLA_256px_00040.png
-    - assets/anim/logo/EMBLA_256px_00054.png
-    - assets/anim/logo/EMBLA_256px_00055.png
-    - assets/anim/logo/EMBLA_256px_00041.png
-    - assets/anim/logo/EMBLA_256px_00069.png
-    - assets/anim/logo/EMBLA_256px_00096.png
-    - assets/anim/logo/EMBLA_256px_00082.png
-    - assets/anim/logo/EMBLA_256px_00094.png
-    - assets/anim/logo/EMBLA_256px_00080.png
-    - assets/anim/logo/EMBLA_256px_00057.png
-    - assets/anim/logo/EMBLA_256px_00043.png
-    - assets/anim/logo/EMBLA_256px_00042.png
-    - assets/anim/logo/EMBLA_256px_00056.png
-    - assets/anim/logo/EMBLA_256px_00081.png
-    - assets/anim/logo/EMBLA_256px_00095.png
-    - assets/anim/logo/EMBLA_256px_00091.png
-    - assets/anim/logo/EMBLA_256px_00085.png
-    - assets/anim/logo/EMBLA_256px_00052.png
-    - assets/anim/logo/EMBLA_256px_00046.png
-    - assets/anim/logo/EMBLA_256px_00047.png
-    - assets/anim/logo/EMBLA_256px_00053.png
-    - assets/anim/logo/EMBLA_256px_00084.png
-    - assets/anim/logo/EMBLA_256px_00090.png
-    - assets/anim/logo/EMBLA_256px_00086.png
-    - assets/anim/logo/EMBLA_256px_00092.png
-    - assets/anim/logo/EMBLA_256px_00045.png
-    - assets/anim/logo/EMBLA_256px_00051.png
-    - assets/anim/logo/EMBLA_256px_00079.png
-    - assets/anim/logo/EMBLA_256px_00078.png
-    - assets/anim/logo/EMBLA_256px_00050.png
-    - assets/anim/logo/EMBLA_256px_00044.png
-    - assets/anim/logo/EMBLA_256px_00093.png
-    - assets/anim/logo/EMBLA_256px_00087.png
-    - assets/anim/logo/EMBLA_256px_00023.png
-    - assets/anim/logo/EMBLA_256px_00037.png
-    - assets/anim/logo/EMBLA_256px_00036.png
-    - assets/anim/logo/EMBLA_256px_00022.png
-    - assets/anim/logo/EMBLA_256px_00008.png
-    - assets/anim/logo/EMBLA_256px_00034.png
+    - assets/anim/logo/EMBLA_256px_00018.png
+    - assets/anim/logo/EMBLA_256px_00019.png
     - assets/anim/logo/EMBLA_256px_00020.png
     - assets/anim/logo/EMBLA_256px_00021.png
-    - assets/anim/logo/EMBLA_256px_00035.png
-    - assets/anim/logo/EMBLA_256px_00009.png
-    - assets/anim/logo/EMBLA_256px_00031.png
-    - assets/anim/logo/EMBLA_256px_00025.png
-    - assets/anim/logo/EMBLA_256px_00019.png
-    - assets/anim/logo/EMBLA_256px_00018.png
+    - assets/anim/logo/EMBLA_256px_00022.png
+    - assets/anim/logo/EMBLA_256px_00023.png
     - assets/anim/logo/EMBLA_256px_00024.png
-    - assets/anim/logo/EMBLA_256px_00030.png
+    - assets/anim/logo/EMBLA_256px_00025.png
     - assets/anim/logo/EMBLA_256px_00026.png
+    - assets/anim/logo/EMBLA_256px_00027.png
+    - assets/anim/logo/EMBLA_256px_00028.png
+    - assets/anim/logo/EMBLA_256px_00029.png
+    - assets/anim/logo/EMBLA_256px_00030.png
+    - assets/anim/logo/EMBLA_256px_00031.png
     - assets/anim/logo/EMBLA_256px_00032.png
     - assets/anim/logo/EMBLA_256px_00033.png
-    - assets/anim/logo/EMBLA_256px_00027.png
+    - assets/anim/logo/EMBLA_256px_00034.png
+    - assets/anim/logo/EMBLA_256px_00035.png
+    - assets/anim/logo/EMBLA_256px_00036.png
+    - assets/anim/logo/EMBLA_256px_00037.png
+    - assets/anim/logo/EMBLA_256px_00038.png
+    - assets/anim/logo/EMBLA_256px_00039.png
+    - assets/anim/logo/EMBLA_256px_00040.png
+    - assets/anim/logo/EMBLA_256px_00041.png
+    - assets/anim/logo/EMBLA_256px_00042.png
+    - assets/anim/logo/EMBLA_256px_00043.png
+    - assets/anim/logo/EMBLA_256px_00044.png
+    - assets/anim/logo/EMBLA_256px_00045.png
+    - assets/anim/logo/EMBLA_256px_00046.png
+    - assets/anim/logo/EMBLA_256px_00047.png
+    - assets/anim/logo/EMBLA_256px_00048.png
+    - assets/anim/logo/EMBLA_256px_00049.png
+    - assets/anim/logo/EMBLA_256px_00050.png
+    - assets/anim/logo/EMBLA_256px_00051.png
+    - assets/anim/logo/EMBLA_256px_00052.png
+    - assets/anim/logo/EMBLA_256px_00053.png
+    - assets/anim/logo/EMBLA_256px_00054.png
+    - assets/anim/logo/EMBLA_256px_00055.png
+    - assets/anim/logo/EMBLA_256px_00056.png
+    - assets/anim/logo/EMBLA_256px_00057.png
+    - assets/anim/logo/EMBLA_256px_00058.png
+    - assets/anim/logo/EMBLA_256px_00059.png
+    - assets/anim/logo/EMBLA_256px_00060.png
+    - assets/anim/logo/EMBLA_256px_00061.png
+    - assets/anim/logo/EMBLA_256px_00062.png
+    - assets/anim/logo/EMBLA_256px_00063.png
+    - assets/anim/logo/EMBLA_256px_00064.png
+    - assets/anim/logo/EMBLA_256px_00065.png
+    - assets/anim/logo/EMBLA_256px_00066.png
+    - assets/anim/logo/EMBLA_256px_00067.png
+    - assets/anim/logo/EMBLA_256px_00068.png
+    - assets/anim/logo/EMBLA_256px_00069.png
+    - assets/anim/logo/EMBLA_256px_00070.png
+    - assets/anim/logo/EMBLA_256px_00071.png
+    - assets/anim/logo/EMBLA_256px_00072.png
+    - assets/anim/logo/EMBLA_256px_00073.png
+    - assets/anim/logo/EMBLA_256px_00074.png
+    - assets/anim/logo/EMBLA_256px_00075.png
+    - assets/anim/logo/EMBLA_256px_00076.png
+    - assets/anim/logo/EMBLA_256px_00077.png
+    - assets/anim/logo/EMBLA_256px_00078.png
+    - assets/anim/logo/EMBLA_256px_00079.png
+    - assets/anim/logo/EMBLA_256px_00080.png
+    - assets/anim/logo/EMBLA_256px_00081.png
+    - assets/anim/logo/EMBLA_256px_00082.png
+    - assets/anim/logo/EMBLA_256px_00083.png
+    - assets/anim/logo/EMBLA_256px_00084.png
+    - assets/anim/logo/EMBLA_256px_00085.png
+    - assets/anim/logo/EMBLA_256px_00086.png
+    - assets/anim/logo/EMBLA_256px_00087.png
+    - assets/anim/logo/EMBLA_256px_00088.png
+    - assets/anim/logo/EMBLA_256px_00089.png
+    - assets/anim/logo/EMBLA_256px_00090.png
+    - assets/anim/logo/EMBLA_256px_00091.png
+    - assets/anim/logo/EMBLA_256px_00092.png
+    - assets/anim/logo/EMBLA_256px_00093.png
+    - assets/anim/logo/EMBLA_256px_00094.png
+    - assets/anim/logo/EMBLA_256px_00095.png
+    - assets/anim/logo/EMBLA_256px_00096.png
+    - assets/anim/logo/EMBLA_256px_00097.png
+    - assets/anim/logo/EMBLA_256px_00098.png
+    - assets/anim/logo/EMBLA_256px_00099.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.
-
-  # For details regarding adding assets from package dependencies, see
-  # https://flutter.dev/assets-and-images/#from-packages
 
   fonts:
     - family: Lato
@@ -204,6 +201,3 @@ flutter:
         - asset: assets/fonts/Lato-Regular.ttf
         - asset: assets/fonts/Lato-Italic.ttf
           style: italic
-  #
-  # For details regarding fonts from package dependencies,
-  # see https://flutter.dev/custom-fonts/#from-packages

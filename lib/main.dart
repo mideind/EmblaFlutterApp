@@ -31,7 +31,7 @@ import './prefs.dart' show Prefs;
 import './button.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
 import './anim.dart' show preloadAnimationFrames;
-import './audio.dart' show preloadAudioFiles;
+import './audio.dart' show preloadAudioFiles, stopSound;
 import './common.dart';
 import './util.dart';
 
@@ -115,6 +115,7 @@ class _MainRouteState extends State<MainRoute> {
   Widget build(BuildContext context) {
     // Present menu route
     void pushMenu() async {
+      stopSound();
       await Navigator.push(
         context,
         MaterialPageRoute(
