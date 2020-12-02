@@ -84,12 +84,13 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // Start session
     void start() {
+      // Check for internet connectivity
       if (!ConnectivityMonitor().connected) {
         playSound('conn');
         return;
       }
+      playSound('rec_begin');
       setState(() {
-        playSound('rec_begin');
         int msecPerFrame = (1000 ~/ 24); // Framerate
         timer = new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
         state = kListeningSessionState;
@@ -109,8 +110,8 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // User cancelled ongoing session
     void cancel() {
-      stop();
       playSound('rec_cancel');
+      stop();
     }
 
     // Button pressed
