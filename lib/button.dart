@@ -25,8 +25,13 @@ import 'package:flutter/material.dart';
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound;
 import './connectivity.dart' show ConnectivityMonitor;
+import './prefs.dart' show Prefs;
 import './util.dart';
 import './common.dart';
+
+// String constants
+const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
+const kIntroNoVoiceActivationMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 
 // Global session state
 enum SessionState {
@@ -130,25 +135,45 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       }
     }
 
+    String msg =
+        Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoVoiceActivationMessage;
+
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          Text("Hello, world!"),
-          Container(
-              child: Center(
-                  child: GestureDetector(
-                      onTap: toggle,
-                      child: AnimatedSize(
-                          curve: Curves.linear,
-                          duration: Duration(milliseconds: 1),
-                          vsync: this,
-                          alignment: Alignment.center,
-                          child: new SizedBox(
-                            width: buttonSize,
-                            height: buttonSize,
-                            child: CustomPaint(painter: SessionButtonPainter()),
-                          ))))),
+          Expanded(
+              flex: 6,
+              child: SingleChildScrollView(
+                  scrollDirection: Axis.vertical,
+                  child: Padding(
+                      padding: EdgeInsets.only(left: 20, right: 20),
+                      child: FractionallySizedBox(
+                          widthFactor: 1.0,
+                          child: Container(
+                              color: Colors.transparent,
+                              child: Text(msg,
+                                  style: TextStyle(
+                                      fontSize: 22.0,
+                                      fontStyle: FontStyle.italic,
+                                      color: Colors.red))))))),
+          Expanded(
+              flex: 6,
+              child: Padding(
+                  padding: EdgeInsets.only(bottom: 20, top: 20),
+                  child: Center(
+                      child: GestureDetector(
+                          onTap: toggle,
+                          child: AnimatedSize(
+                              curve: Curves.linear,
+                              duration: Duration(milliseconds: 1),
+                              vsync: this,
+                              alignment: Alignment.center,
+                              child: new SizedBox(
+                                width: buttonSize,
+                                height: buttonSize,
+                                child: CustomPaint(painter: SessionButtonPainter()),
+                              )))))),
         ],
       ),
     );
