@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import './util.dart';
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound;
+import './connectivity.dart' show ConnectivityMonitor;
 
 // Global state
 const kRestingSessionState = 0; // No active session
@@ -83,6 +84,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // Start session
     void start() {
+      if (!ConnectivityMonitor().connected) {
+        playSound('conn');
+        return;
+      }
       setState(() {
         playSound('rec_begin');
         int msecPerFrame = (1000 ~/ 24); // Framerate

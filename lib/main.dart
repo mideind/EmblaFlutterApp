@@ -30,6 +30,7 @@ import './prefs.dart' show Prefs;
 //import './session.dart' show SessionWidget;
 import './button.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
+import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
 import './common.dart';
@@ -71,6 +72,9 @@ void main() async {
   // Preload assets
   await preloadAudioFiles();
   await preloadAnimationFrames();
+
+  // Start monitoring internet connectivity
+  await ConnectivityMonitor().start();
 
   // Set up location tracking
   if (Prefs().boolForKey('share_location')) {
