@@ -1,10 +1,8 @@
 import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -54,24 +52,7 @@ class SessionWidget extends StatefulWidget {
 }
 
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
-  ui.Image image;
   Timer timer;
-
-  void didChangeDependencies() async {
-    super.didChangeDependencies();
-    var img = await loadImageAsset("assets/images/logo.png");
-    setState(() {
-      this.image = img;
-      //dlog("Loaded image " + image.toString());
-    });
-  }
-
-  Future<ui.Image> loadImageAsset(String asset) async {
-    ByteData data = await rootBundle.load(asset);
-    ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
-    ui.FrameInfo fi = await codec.getNextFrame();
-    return fi.image;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -138,7 +119,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
                       child: new SizedBox(
                         width: buttonSize,
                         height: buttonSize,
-                        child: CustomPaint(painter: SessionButtonPainter(image)),
+                        child: CustomPaint(painter: SessionButtonPainter()),
                       )))),
         ],
       ),
@@ -148,14 +129,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
 /* This is the drawing code for the session button. */
 class SessionButtonPainter extends CustomPainter {
-  ui.Image image;
-
   // Outermost to innermost
   final circleColor1 = HexColor.fromHex("#F9F0F0");
   final circleColor2 = HexColor.fromHex("#F9E2E1");
   final circleColor3 = HexColor.fromHex("#F9DCDB");
-
-  SessionButtonPainter(this.image);
 
   void drawCircles(Canvas canvas, Size size) {
     final radius = min(size.width, size.height) / 2;
@@ -188,7 +165,7 @@ class SessionButtonPainter extends CustomPainter {
   }
 
   void drawWaveform(Canvas canvas, Size size) {
-    // Generate frame to contain waveform
+    // Generate square frame to contain waveform
     double w = size.width / 1.95;
     double xOffset = (size.width - w) / 2;
     double yOffset = (size.height - w) / 2;
@@ -242,7 +219,7 @@ class SessionButtonPainter extends CustomPainter {
     drawCircles(canvas, size);
 
     // Draw non-animated Embla logo
-    if (state == kRestingSessionState && image != null) {
+    if (state == kRestingSessionState) {
       drawFrame(canvas, size, kRestFrame);
     }
     // Draw waveform bars during microphone input
