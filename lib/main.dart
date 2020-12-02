@@ -32,6 +32,7 @@ import './button.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
 import './common.dart';
 import './util.dart';
+import './anim.dart' show loadFrames;
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
@@ -73,6 +74,8 @@ void main() async {
       LocationTracking().start();
     }
   }
+
+  loadFrames();
 
   // Launch app
   runApp(app);

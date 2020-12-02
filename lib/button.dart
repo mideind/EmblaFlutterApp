@@ -2,7 +2,6 @@ import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:typed_data';
-import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +9,6 @@ import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
 import './util.dart';
-import './common.dart';
 
 final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
@@ -72,7 +70,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double prop = (state == kRestingSessionState) ? 0.5 : 0.75;
+    double prop = (state == kRestingSessionState) ? 0.6 : 0.75;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
     void updateAnim() {
@@ -163,7 +161,7 @@ class SessionButtonPainter extends CustomPainter {
     paint = Paint()..color = circleColor3;
     canvas.drawCircle(center, radius / 1.75, paint);
 
-    Rect innermostRect = Rect.fromCircle(center: center, radius: radius / 2.0);
+    Rect innermostRect = Rect.fromCircle(center: center, radius: radius / 2.1);
 
     // Draw non-animated Embla logo
     if (state == kRestingSessionState && image != null) {
