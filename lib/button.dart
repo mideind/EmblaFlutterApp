@@ -128,19 +128,20 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           Text("Hello, world!"),
-          Center(
-              child: GestureDetector(
-                  onTap: toggle,
-                  child: AnimatedSize(
-                      curve: Curves.linear,
-                      duration: Duration(milliseconds: 1),
-                      vsync: this,
-                      alignment: Alignment.center,
-                      child: new SizedBox(
-                        width: buttonSize,
-                        height: buttonSize,
-                        child: CustomPaint(painter: SessionButtonPainter()),
-                      )))),
+          Container(
+              child: Center(
+                  child: GestureDetector(
+                      onTap: toggle,
+                      child: AnimatedSize(
+                          curve: Curves.linear,
+                          duration: Duration(milliseconds: 1),
+                          vsync: this,
+                          alignment: Alignment.center,
+                          child: new SizedBox(
+                            width: buttonSize,
+                            height: buttonSize,
+                            child: CustomPaint(painter: SessionButtonPainter()),
+                          ))))),
         ],
       ),
     );
@@ -249,11 +250,11 @@ class SessionButtonPainter extends CustomPainter {
       drawFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
     // Draw waveform bars during microphone input
-    else if (state == kListeningSessionState) {
+    else if (false && state == kListeningSessionState) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase
-    else if (state == kAnsweringSessionState) {
+    else if (state == kListeningSessionState) {
       drawFrame(canvas, size, currFrame);
     }
   }

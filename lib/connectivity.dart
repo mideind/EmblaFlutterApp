@@ -36,6 +36,7 @@ class ConnectivityMonitor {
     dlog("Starting internet connectivity tracking");
     var res = await Connectivity().checkConnectivity();
     isConnected = (res != ConnectivityResult.none);
+    dlog("Internet connectivity: " + isConnected.toString());
     // Start listening
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       dlog("Checking internet connectivity status");

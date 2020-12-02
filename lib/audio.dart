@@ -25,6 +25,8 @@ import './common.dart';
 final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
+void audioPlayerHandler(AudioPlayerState value) => print('state => $value');
+
 const List<String> audioFiles = [
   // Voice-independent
   'audio/rec_begin.wav',
@@ -62,6 +64,8 @@ void playURL(String url) {
 }
 
 void playSound(String soundName) {
+  audioPlayer.monitorNotificationStateChanges(audioPlayerHandler);
+
   stopSound();
   String assetPath;
   if (sessionSounds.contains(soundName)) {

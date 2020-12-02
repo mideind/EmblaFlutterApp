@@ -24,7 +24,7 @@ import 'package:intl/intl.dart';
 
 import './common.dart';
 
-const String frameFn = 'assets/anim/logo/EMBLA_256px_';
+const String frameFn = 'assets/images/anim/logo/anim_';
 const String frameSuffix = '.png';
 
 final List animationFrames = [];
@@ -43,4 +43,5 @@ Future<void> preloadAnimationFrames() async {
     String fn = "$frameFn${formatter.format(i)}$frameSuffix";
     animationFrames.add(await _loadImageAsset(fn));
   }
+  dlog("Loaded ${animationFrames.length} animation frames");
 }
