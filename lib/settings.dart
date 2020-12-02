@@ -300,8 +300,8 @@ List<Widget> _settings() {
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',
-        minValue: VOICE_SPEED_MIN,
-        maxValue: VOICE_SPEED_MAX,
+        minValue: kVoiceSpeedMin,
+        maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
@@ -327,7 +327,7 @@ class SettingsRoute extends StatelessWidget {
     // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
       slist.addAll(
-          [QueryServerSegmentedWidget(items: QUERY_SERVER_OPTIONS, prefKey: 'query_server')]);
+          [QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server')]);
     }
 
     return Scaffold(

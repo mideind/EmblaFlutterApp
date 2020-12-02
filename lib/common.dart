@@ -29,26 +29,26 @@ void dlog(String logStr) {
 }
 
 // Software info
-const String SOFTWARE_NAME = "Embla";
-const String SOFTWARE_VERSION = "1.0.0";
+const String kSoftwareName = "Embla";
+const String kSoftwareVersion = "1.0.0";
 
 // Server communication
-const String DEFAULT_SERVER = "https://greynir.is";
-const String QUERY_API_PATH = "/query.api/v1";
-const String QUERY_HISTORY_API_PATH = "/query_history.api/v1";
-const String SPEECH_API_PATH = "/speech.api/v1";
+const String kDefaultServer = "https://greynir.is";
+const String kQueryAPIPath = "/query.api/v1";
+const String kQueryHistoryAPIPath = "/query_history.api/v1";
+const String kSpeechAPIPath = "/speech.api/v1";
 
 // Voice speed range
-const double VOICE_SPEED_MIN = 0.7;
-const double VOICE_SPEED_MAX = 1.3;
+const double kVoiceSpeedMin = 0.7;
+const double kVoiceSpeedMax = 1.3;
 
 // Documentation URLs
-const String ABOUT_URL = "https://embla.is/about.html";
-const String INSTRUCTIONS_URL = "https://embla.is/instructions.html";
-const String PRIVACY_URL = "https://embla.is/privacy.html";
+const String kAboutURL = "https://embla.is/about.html";
+const String kInstructionsURL = "https://embla.is/instructions.html";
+const String kPrivacyURL = "https://embla.is/privacy.html";
 
 // Alternate query server options f. debugging
-const List QUERY_SERVER_OPTIONS = [
+const List kQueryServerPresetOptions = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
   ['Vinna', 'http://192.168.1.113:5000'],

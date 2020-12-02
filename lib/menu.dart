@@ -18,12 +18,12 @@
 
 // Menu view
 
-import 'package:Embla/common.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './settings.dart' show SettingsRoute;
 import './web.dart';
+import './common.dart';
 
 var menuContext;
 
@@ -40,7 +40,7 @@ void pushAbout() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: ABOUT_URL),
+      builder: (context) => WebViewRoute(initialURL: kAboutURL),
     ),
   );
 }
@@ -49,7 +49,7 @@ void pushInstructions() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: INSTRUCTIONS_URL),
+      builder: (context) => WebViewRoute(initialURL: kInstructionsURL),
     ),
   );
 }
@@ -58,7 +58,7 @@ void pushPrivacy() {
   Navigator.push(
     menuContext,
     MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: PRIVACY_URL),
+      builder: (context) => WebViewRoute(initialURL: kPrivacyURL),
     ),
   );
 }

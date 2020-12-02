@@ -26,9 +26,11 @@ final audioPlayer = AudioPlayer();
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
 final List<String> audioFiles = [
+  // Voice-independent
   'audio/rec_begin.wav',
   'audio/rec_cancel.wav',
   'audio/rec_confirm.wav',
+  // Voice dependent
   'audio/conn-dora.wav',
   'audio/conn-karl.wav',
   'audio/dunno-dora.wav',
