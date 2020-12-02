@@ -20,11 +20,12 @@ const kAnsweringSessionState = 2;
 
 var state = kRestingSessionState;
 
-const AWV_DEFAULT_NUM_BARS = 15;
-const AWV_DEFAULT_BAR_SPACING = 4.0;
-const AWV_DEFAULT_SAMPLE_LEVEL = 0.05; // A hard lower limit above 0 looks better
-const AWV_DEFAULT_VARIATION = 0.025; // Variation range for bars when reset
-const AWV_MIN_SAMPLE_LEVEL = 0.025; // Hard limit on lowest level
+const kWaveformNumBars = 15;
+const kWaveformBarSpacing = 4.0;
+const kWaveformDefaultSampleLevel = 0.05; // A hard lower limit above 0 looks better
+const kWaveformDefaultVariation = 0.025; // Variation range for bars when reset
+const kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
+const kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
 final List audioSamples = <double>[
   0.025,
@@ -45,6 +46,7 @@ final List audioSamples = <double>[
 ];
 
 int currFrame = 0;
+const kRestFrame = 99;
 
 class SessionWidget extends StatefulWidget {
   @override
@@ -92,6 +94,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         audioPlayer.stop();
         timer.cancel();
         state = kRestingSessionState;
+        currFrame = 0;
       });
     }
 
@@ -154,92 +157,101 @@ class SessionButtonPainter extends CustomPainter {
 
   SessionButtonPainter(this.image);
 
-  @override
-  void paint(Canvas canvas, Size size) async {
+  void drawCircles(Canvas canvas, Size size) {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
+
     // First, outermost, circle
     var paint = Paint()..color = circleColor1;
     canvas.drawCircle(center, radius, paint);
+
     // Second circle
     paint = Paint()..color = circleColor2;
     canvas.drawCircle(center, radius / 1.25, paint);
+
     // Third, innermost, circle
     paint = Paint()..color = circleColor3;
     canvas.drawCircle(center, radius / 1.75, paint);
+  }
 
-    Rect innermostRect = Rect.fromCircle(center: center, radius: radius / 2.1);
+  void drawFrame(Canvas canvas, Size size, int fnum) {
+    ui.Image img = animationFrames[fnum];
+    // Source image rect
+    Rect srcRect = const Offset(0, 0) & Size(img.width.toDouble(), img.height.toDouble());
+    // Destination rect centered in canvas
+    double w = size.width.toDouble() / 2.5;
+    double h = size.height.toDouble() / 2.5;
+    Rect dstRect =
+        Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
+            Size(w, h);
+    canvas.drawImageRect(img, srcRect, dstRect, Paint());
+  }
+
+  void drawWaveform(Canvas canvas, Size size) {
+    // Generate frame to contain waveform
+    double w = size.width / 1.95;
+    double xOffset = (size.width - w) / 2;
+    double yOffset = (size.height - w) / 2;
+    Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
+
+    double margin = kWaveformBarSpacing;
+    double totalMarginWidth = kWaveformNumBars * margin;
+
+    double barWidth = (frame.width - totalMarginWidth) / kWaveformNumBars;
+    double barHeight = frame.height / 2;
+    double centerY = (frame.height / 2);
+
+    var topPaint = Paint()..color = HexColor.fromHex('#e83939');
+    var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
+
+    for (int i = 0; i < audioSamples.length; i++) {
+      double level = min(max(kWaveformMinSampleLevel, audioSamples[i]), kWaveformMaxSampleLevel);
+
+      // Draw top bar
+      Rect topRect = new Rect.fromLTWH(
+          i * (barWidth + margin) + (margin / 2) + xOffset, // x
+          barHeight - (level * barHeight) + yOffset, // y
+          barWidth, // width
+          level * barHeight); // height
+      canvas.drawRect(topRect, topPaint);
+      // Draw circle at end of bar
+      canvas.drawCircle(
+          Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
+              barHeight - (level * barHeight) + yOffset), // offset
+          barWidth / 2, // radius
+          topPaint);
+
+      // Draw bottom bar
+      Rect bottomRect = new Rect.fromLTWH(
+          i * (barWidth + margin) + (margin / 2) + xOffset, // x
+          centerY + yOffset, // y
+          barWidth, // width
+          level * barHeight); // height
+      canvas.drawRect(bottomRect, bottomPaint);
+      // Draw circle at end of bar
+      canvas.drawCircle(
+          Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
+              centerY + (level * barHeight) + yOffset), // offset
+          barWidth / 2, // radius
+          bottomPaint);
+    }
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) async {
+    drawCircles(canvas, size);
 
     // Draw non-animated Embla logo
     if (state == kRestingSessionState && image != null) {
-      // Source image rect
-      double imgWidth = image.width.toDouble();
-      double imgHeight = image.height.toDouble();
-      Rect src = const Offset(0, 0) & Size(imgWidth, imgHeight);
-      // Destination rect centered in canvas
-      double w = size.width.toDouble() / 2.5;
-      double h = size.height.toDouble() / 2.5;
-      Rect dst =
-          Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
-              Size(w, h);
-      canvas.drawImageRect(image, src, dst, Paint());
+      drawFrame(canvas, size, kRestFrame);
     }
     // Draw waveform bars during microphone input
-    else if (false && state == kListeningSessionState) {
-      // Draw audio signal bars
-      double margin = AWV_DEFAULT_BAR_SPACING;
-      double totalMarginWidth = AWV_DEFAULT_NUM_BARS * margin;
-
-      double xOffset = (size.width - innermostRect.width) / 2;
-      double yOffset = (size.height - innermostRect.height) / 2;
-
-      double barWidth = (innermostRect.width - totalMarginWidth) / AWV_DEFAULT_NUM_BARS;
-      double barHeight = innermostRect.height / 2;
-      double centerY = (innermostRect.height / 2);
-
-      for (int i = 0; i < audioSamples.length; i++) {
-        double level = audioSamples[i];
-        paint = Paint()..color = Colors.red;
-
-        // Draw top bar
-        Rect topRect = new Rect.fromLTWH(
-            i * (barWidth + margin) + (margin / 2) + xOffset, // x
-            barHeight - (level * barHeight) + yOffset, // y
-            barWidth, // width
-            level * barHeight); // height
-        canvas.drawRect(topRect, paint);
-        // Draw circle at end of bar
-        canvas.drawCircle(
-            Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
-                barHeight - (level * barHeight) + yOffset),
-            barWidth / 2,
-            paint);
-
-        // Draw bottom bar
-        Rect bottomRect = new Rect.fromLTWH(
-            i * (barWidth + margin) + (margin / 2) + xOffset, // x
-            centerY + yOffset, // y
-            barWidth, // width
-            level * barHeight); // height
-        canvas.drawRect(bottomRect, paint);
-        // Draw circle at end of bar
-        canvas.drawCircle(
-            Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
-                centerY + (level * barHeight) + yOffset),
-            barWidth / 2,
-            paint);
-      }
-    } else if (state == kListeningSessionState) {
-      ui.Image img = animationFrames[currFrame];
-      // Source image rect
-      Rect srcRect = const Offset(0, 0) & Size(img.width.toDouble(), img.height.toDouble());
-      // Destination rect centered in canvas
-      double w = size.width.toDouble() / 2.5;
-      double h = size.height.toDouble() / 2.5;
-      Rect dstRect =
-          Offset((size.width.toDouble() / 2) - (w / 2), (size.height.toDouble() / 2) - (h / 2)) &
-              Size(w, h);
-      canvas.drawImageRect(img, srcRect, dstRect, Paint());
+    else if (state == kListeningSessionState) {
+      drawWaveform(canvas, size);
+    }
+    // Draw logo animation during query-answering phase
+    else if (state == kListeningSessionState) {
+      drawFrame(canvas, size, currFrame);
     }
   }
 
