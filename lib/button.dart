@@ -90,8 +90,6 @@ class SessionWidget extends StatefulWidget {
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   Timer animationTimer;
   final RecorderStream _recorder = RecorderStream();
-  bool recognizing = false;
-  bool recognizeFinished = false;
   String text = Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoHotwordMessage;
   StreamSubscription<List<int>> _audioStreamSubscription;
   BehaviorSubject<List<int>> _audioStream;
@@ -103,16 +101,14 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   void startSpeechRecognition() async {
+    dlog("Starting speech recognition");
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((event) {
       _audioStream.add(event);
+      //print(event.toString());
     });
 
     await _recorder.start();
-
-    setState(() {
-      recognizing = true;
-    });
 
     final serviceAccount = ServiceAccount.fromString(
         '${(await rootBundle.loadString('assets/test_service_account.json'))}');
@@ -125,7 +121,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         text = data.results.map((e) => e.alternatives.first.transcript).join('\n');
         text = text.sentenceCapitalized();
-        recognizeFinished = true;
         var first = data.results[0];
         if (first.isFinal) {
           dlog("Final result received, stopping recording");
@@ -138,11 +133,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   void stopSpeechRecognition() async {
+    dlog("Stopping speech recognition");
     await _recorder.stop();
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
     setState(() {
-      recognizing = false;
       state = SessionState.resting;
     });
   }
@@ -191,13 +186,14 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     // End session
     void stop() {
+      stopSpeechRecognition();
+
       setState(() {
         stopSound();
         animationTimer.cancel();
         state = SessionState.resting;
         currFrame = 0;
       });
-      stopSpeechRecognition();
     }
 
     // User cancelled ongoing session
@@ -366,7 +362,7 @@ class SessionButtonPainter extends CustomPainter {
       drawFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
     // Draw waveform bars during microphone input
-    else if (false && state == SessionState.listening) {
+    else if (state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase
