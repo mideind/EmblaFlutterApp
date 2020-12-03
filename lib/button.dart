@@ -16,9 +16,9 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import 'dart:math';
 import 'dart:async';
 import 'dart:ui' as ui;
+import 'dart:math' show min, max, Random;
 
 import 'package:flutter/material.dart';
 
@@ -43,11 +43,14 @@ enum SessionState {
 SessionState state = SessionState.resting;
 
 // Waveform configuration
-const kWaveformNumBars = 15; // Number of waveform bars drawn
-const kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
-const kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
-const kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
-const kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
+const int kWaveformNumBars = 15; // Number of waveform bars drawn
+const double kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
+const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
+const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
+const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
+
+const kRestingButtonProp = 0.62;
+const kExpandedButtonProp = 0.77;
 
 List<double> audioSamples = populateSamples();
 
@@ -76,7 +79,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
-    double prop = (state == SessionState.resting) ? 0.6 : 0.75;
+    double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
     // Timer ticker to refresh button view
@@ -84,7 +87,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       setState(() {
         addSample(Random().nextDouble());
         currFrame += 1;
-        if (currFrame > 99) {
+        if (currFrame >= animationFrames.length - 1) {
           currFrame = 0;
         }
       });
@@ -96,12 +99,15 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         dlog('Session start called during pre-existing session!');
         return;
       }
+
       // Check for internet connectivity
-      if (!ConnectivityMonitor().connected) {
-        playSound('conn');
-        return;
-      }
+      // if (!ConnectivityMonitor().connected) {
+      //   playSound('conn');
+      //   return;
+      // }
+
       playSound('rec_begin');
+
       setState(() {
         int msecPerFrame = (1000 ~/ 24); // Framerate
         timer = new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
@@ -205,15 +211,22 @@ class SessionButtonPainter extends CustomPainter {
   }
 
   void drawFrame(Canvas canvas, Size size, int fnum) {
+    if (animationFrames.length == 0) {
+      dlog("Animation frame loading fail. No frames loaded.");
+    }
     ui.Image img = animationFrames[fnum];
     // Source image rect
     Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
+
     // Destination rect centered in canvas
-    double w = size.width.toDouble() / 2.4;
-    double h = size.height.toDouble() / 2.4;
+    double sw = size.width.toDouble();
+    double sh = size.height.toDouble();
+    double prop = 2.4;
+    double w = sw / prop;
+    double h = sh / prop;
     Rect dstRect = Rect.fromLTWH(
-        (size.width.toDouble() / 2) - (w / 2), // x
-        (size.height.toDouble() / 2) - (h / 2), // y
+        (sw / 2) - (w / 2), // x
+        (sh / 2) - (h / 2), // y
         w, // width
         h); // height
     canvas.drawImageRect(img, srcRect, dstRect, Paint());
@@ -282,7 +295,7 @@ class SessionButtonPainter extends CustomPainter {
       drawFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
     // Draw waveform bars during microphone input
-    else if (state == SessionState.listening) {
+    else if (false && state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase

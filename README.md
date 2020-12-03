@@ -6,6 +6,26 @@ Embla is a voice-driven virtual assistant app that uses the Icelandic-language [
 
 The client is implemented in [Dart](https://dart.dev/) using the [Flutter](https://flutter.dev) framework. Currently built to run on iOS and Android, with native macOS and web support on the roadmap.
 
+## Build instructions
+
+Building the Embla client requires the Flutter framework:
+
+* [Install Flutter](https://flutter.dev/docs/get-started/install)
+
+Clone the repository:
+
+```
+$ git clone https://github.com/mideind/Embla
+```
+
+Change to the repository root and run the following command:
+
+```
+$ flutter run
+```
+
+This should launch the app in development mode on your device of choice (e.g. simulator, attached physical device, etc.).
+
 ## GPL License
 
 This program and its source code is &copy; 2020 [Miðeind ehf.](https://miðeind.is) and is released as open source software

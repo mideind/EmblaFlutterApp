@@ -1,11 +1,8 @@
 TODO:
-    * Implement animations in session button
     * Implement JS execution w. payload from query server (easy via WebViews)
     * Confirmation alert on completion of clear query history calls
     * Make interface 100% nice, styling
-    * Local audio playback for UI interaction, errors
     * Update documentation wrt. OS version requirements, building, etc.
-    * Add tests + Travis CI integration
     * Spin up local webserver and test QueryService functions against them
     * Unique timestamp-based session identifiers to control callbacks
     * Pocketsphinx voice activation
@@ -13,5 +10,8 @@ TODO:
     * Set timeout of HTTP requests to query server, handle timeout
     * Configure granularity and frequency of location updates
 
+    DONE * Implement animations in session button
+    DONE * Add tests + Travis CI integration
+    DONE * Local audio playback for UI interaction, errors
     DONE * Local documentation fallback for documentation web views
     DONE * Send location with query
