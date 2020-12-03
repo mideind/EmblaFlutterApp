@@ -63,11 +63,11 @@ void _pushPrivacy() {
   );
 }
 
-ListTile _generateTile(String name, Function onTapFunc) {
+ListTile _generateTile(String name, String imageName, Function onTapFunc) {
   return ListTile(
     title: Text(name, style: TextStyle(fontSize: 18.0, color: Colors.red)),
     //leading: const Icon(CupertinoIcons.gear),
-    leading: Image(image: AssetImage('assets/images/cube.png')),
+    leading: Image(image: AssetImage("assets/images/$imageName.png")),
     trailing: Icon(Icons.arrow_right, color: Colors.red),
     onTap: onTapFunc,
   );
@@ -77,10 +77,10 @@ ListTile _generateTile(String name, Function onTapFunc) {
 var list = ListView(
   padding: const EdgeInsets.all(8),
   children: <Widget>[
-    _generateTile("Stillingar", _pushSettings),
-    _generateTile("Um Emblu", _pushAbout),
-    _generateTile("Leiðbeiningar", _pushInstructions),
-    _generateTile("Persónuvernd", _pushPrivacy),
+    _generateTile('Stillingar', 'cog', _pushSettings),
+    _generateTile('Um Emblu', 'cube', _pushAbout),
+    _generateTile('Leiðbeiningar', 'cube', _pushInstructions),
+    _generateTile('Persónuvernd', 'cube', _pushPrivacy),
   ],
 );
 
