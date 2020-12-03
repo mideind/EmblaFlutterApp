@@ -21,6 +21,9 @@ import 'dart:ui' as ui;
 import 'dart:math' show min, max, Random;
 
 import 'package:flutter/material.dart';
+import 'package:google_speech/google_speech.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sound_stream/sound_stream.dart';
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound;
@@ -33,7 +36,7 @@ import './common.dart';
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
 const kIntroNoVoiceActivationMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 
-// Global session state
+// Global session state enum
 enum SessionState {
   resting, // No active session
   listening, // Receiving microphone input
@@ -75,14 +78,15 @@ class SessionWidget extends StatefulWidget {
 }
 
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
-  Timer timer;
+  Timer animationTimer;
+  final RecorderStream _recorder = RecorderStream();
 
   @override
   Widget build(BuildContext context) {
     double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
-    // Timer ticker to refresh button view
+    // Animation timer ticker to refresh button view
     void ticker() {
       setState(() {
         addSample(Random().nextDouble());
@@ -110,7 +114,8 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
       setState(() {
         int msecPerFrame = (1000 ~/ 24); // Framerate
-        timer = new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
+        animationTimer =
+            new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
         state = SessionState.listening;
         audioSamples = populateSamples();
       });
@@ -120,7 +125,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     void stop() {
       setState(() {
         stopSound();
-        timer.cancel();
+        animationTimer.cancel();
         state = SessionState.resting;
         currFrame = 0;
       });
