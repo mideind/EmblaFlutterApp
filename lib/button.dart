@@ -124,11 +124,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         var first = data.results[0];
         if (first.isFinal) {
           dlog("Final result received, stopping recording");
-          stopSpeechRecognition();
+          stop();
         }
       });
     }, onDone: () {
-      stopSpeechRecognition();
+      stop();
     });
   }
 
@@ -142,74 +142,74 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     });
   }
 
+  // Animation timer ticker to refresh button view
+  void ticker() {
+    setState(() {
+      addSample(Random().nextDouble());
+      currFrame += 1;
+      if (currFrame >= animationFrames.length - 1) {
+        currFrame = 0;
+      }
+    });
+  }
+
+  // Start session
+  void start() {
+    if (state != SessionState.resting) {
+      dlog('Session start called during pre-existing session!');
+      return;
+    }
+
+    // Check for internet connectivity
+    // if (!ConnectivityMonitor().connected) {
+    //   playSound('conn');
+    //   return;
+    // }
+
+    playSound('rec_begin');
+
+    setState(() {
+      int msecPerFrame = (1000 ~/ 24); // Framerate
+      animationTimer =
+          new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
+      state = SessionState.listening;
+      audioSamples = populateSamples();
+    });
+
+    startSpeechRecognition();
+  }
+
+  // End session
+  void stop() {
+    stopSpeechRecognition();
+
+    setState(() {
+      stopSound();
+      animationTimer.cancel();
+      state = SessionState.resting;
+      currFrame = 0;
+    });
+  }
+
+  // User cancelled ongoing session
+  void cancel() {
+    playSound('rec_cancel');
+    stop();
+  }
+
+  // Button pressed
+  void toggle() {
+    if (state == SessionState.resting) {
+      start();
+    } else {
+      cancel();
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
     double buttonSize = MediaQuery.of(context).size.width * prop;
-
-    // Animation timer ticker to refresh button view
-    void ticker() {
-      setState(() {
-        addSample(Random().nextDouble());
-        currFrame += 1;
-        if (currFrame >= animationFrames.length - 1) {
-          currFrame = 0;
-        }
-      });
-    }
-
-    // Start session
-    void start() {
-      if (state != SessionState.resting) {
-        dlog('Session start called during pre-existing session!');
-        return;
-      }
-
-      // Check for internet connectivity
-      // if (!ConnectivityMonitor().connected) {
-      //   playSound('conn');
-      //   return;
-      // }
-
-      playSound('rec_begin');
-
-      setState(() {
-        int msecPerFrame = (1000 ~/ 24); // Framerate
-        animationTimer =
-            new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
-        state = SessionState.listening;
-        audioSamples = populateSamples();
-      });
-
-      startSpeechRecognition();
-    }
-
-    // End session
-    void stop() {
-      stopSpeechRecognition();
-
-      setState(() {
-        stopSound();
-        animationTimer.cancel();
-        state = SessionState.resting;
-        currFrame = 0;
-      });
-    }
-
-    // User cancelled ongoing session
-    void cancel() {
-      playSound('rec_cancel');
-      stop();
-    }
-
-    // Button pressed
-    void toggle() {
-      if (state == SessionState.resting) {
-        start();
-      } else {
-        cancel();
-      }
-    }
 
     return Scaffold(
       body: Column(
