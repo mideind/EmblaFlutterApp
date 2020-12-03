@@ -21,6 +21,7 @@ import 'dart:ui' as ui;
 import 'dart:math' show min, max, Random;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
@@ -34,7 +35,7 @@ import './common.dart';
 
 // String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
-const kIntroNoVoiceActivationMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
+const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 
 // Global session state enum
 enum SessionState {
@@ -45,6 +46,14 @@ enum SessionState {
 
 SessionState state = SessionState.resting;
 
+// Speech recognition config
+RecognitionConfig speechRecognitionConfig = RecognitionConfig(
+    encoding: AudioEncoding.LINEAR16,
+    model: RecognitionModel.command_and_search,
+    enableAutomaticPunctuation: true,
+    sampleRateHertz: 16000,
+    languageCode: 'is-IS');
+
 // Waveform configuration
 const int kWaveformNumBars = 15; // Number of waveform bars drawn
 const double kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
@@ -52,6 +61,7 @@ const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks bette
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
+// Session button size (proportional to width/height)
 const kRestingButtonProp = 0.62;
 const kExpandedButtonProp = 0.77;
 
@@ -80,6 +90,62 @@ class SessionWidget extends StatefulWidget {
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   Timer animationTimer;
   final RecorderStream _recorder = RecorderStream();
+  bool recognizing = false;
+  bool recognizeFinished = false;
+  String text = Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoHotwordMessage;
+  StreamSubscription<List<int>> _audioStreamSubscription;
+  BehaviorSubject<List<int>> _audioStream;
+
+  @override
+  void initState() {
+    super.initState();
+    _recorder.initialize();
+  }
+
+  void startSpeechRecognition() async {
+    _audioStream = BehaviorSubject<List<int>>();
+    _audioStreamSubscription = _recorder.audioStream.listen((event) {
+      _audioStream.add(event);
+    });
+
+    await _recorder.start();
+
+    setState(() {
+      recognizing = true;
+    });
+
+    final serviceAccount = ServiceAccount.fromString(
+        '${(await rootBundle.loadString('assets/test_service_account.json'))}');
+    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
+    final responseStream = speechToText.streamingRecognize(
+        StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
+        _audioStream);
+
+    responseStream.listen((data) {
+      setState(() {
+        text = data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        text = text.sentenceCapitalized();
+        recognizeFinished = true;
+        var first = data.results[0];
+        if (first.isFinal) {
+          dlog("Final result received, stopping recording");
+          stopSpeechRecognition();
+        }
+      });
+    }, onDone: () {
+      stopSpeechRecognition();
+    });
+  }
+
+  void stopSpeechRecognition() async {
+    await _recorder.stop();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
+    setState(() {
+      recognizing = false;
+      state = SessionState.resting;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -119,6 +185,8 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         state = SessionState.listening;
         audioSamples = populateSamples();
       });
+
+      startSpeechRecognition();
     }
 
     // End session
@@ -129,6 +197,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         state = SessionState.resting;
         currFrame = 0;
       });
+      stopSpeechRecognition();
     }
 
     // User cancelled ongoing session
@@ -146,9 +215,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       }
     }
 
-    String msg =
-        Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoVoiceActivationMessage;
-
     return Scaffold(
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -163,7 +229,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
                           widthFactor: 1.0,
                           child: Container(
                               color: Colors.transparent,
-                              child: Text(msg,
+                              child: Text(text,
                                   style: TextStyle(
                                       fontSize: 22.0,
                                       fontStyle: FontStyle.italic,
