@@ -18,7 +18,20 @@
 
 // Singleton class for speech recognition
 
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:google_speech/google_speech.dart';
+import 'package:rxdart/rxdart.dart';
+import 'package:sound_stream/sound_stream.dart';
+
 import './common.dart';
+
+// Speech recognition config
+RecognitionConfig speechRecognitionConfig = RecognitionConfig(
+    encoding: AudioEncoding.LINEAR16,
+    model: RecognitionModel.command_and_search,
+    enableAutomaticPunctuation: true,
+    sampleRateHertz: 16000,
+    languageCode: 'is-IS');
 
 class SpeechRecognizer {
   SpeechRecognizer._privateConstructor();

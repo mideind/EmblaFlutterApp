@@ -59,10 +59,10 @@ void stopSound() {
   audioPlayer.stop();
 }
 
-void playURL(String url) {
+Future<void> playURL(String url) async {
   dlog("Playing remote audio file $url");
   stopSound();
-  audioPlayer.play(url);
+  await audioPlayer.play(url);
 }
 
 void playSound(String soundName) {

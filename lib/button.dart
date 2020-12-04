@@ -27,9 +27,10 @@ import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
 
 import './anim.dart' show animationFrames;
-import './audio.dart' show playSound, stopSound;
+import './audio.dart' show playSound, stopSound, playURL;
 import './connectivity.dart' show ConnectivityMonitor;
 import './prefs.dart' show Prefs;
+import './query.dart' show QueryService;
 import './util.dart';
 import './common.dart';
 
@@ -119,16 +120,23 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     responseStream.listen((data) {
       setState(() {
-        text = data.results.map((e) => e.alternatives.first.transcript).join('\n');
+        text = data.results.map((e) => e.alternatives.first.transcript).join('');
+        dlog("RESULTS--------------");
+        dlog(data.results.toString());
+        if (data.results.length < 1) {
+          return;
+        }
         text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
           dlog("Final result received, stopping recording");
-          stop();
+          stopSpeechRecognition();
+          handleFinal(first);
         }
       });
     }, onDone: () {
-      stop();
+      dlog("Stream done");
+      stopSpeechRecognition();
     });
   }
 
@@ -137,9 +145,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     await _recorder.stop();
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
-    setState(() {
-      state = SessionState.resting;
-    });
+    // setState(() {
+    //   state = SessionState.resting;
+    // });
   }
 
   // Animation timer ticker to refresh button view
@@ -150,6 +158,27 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       if (currFrame >= animationFrames.length - 1) {
         currFrame = 0;
       }
+    });
+  }
+
+  Future<void> handleFinal(var finalResult) async {
+    state = SessionState.answering;
+    String res = finalResult.alternatives.first.transcript;
+    QueryService.sendQuery([res], (Map resp) async {
+      if (resp["valid"] == true) {
+        dlog("Received valid response to query");
+        dlog("Playing audio" + resp["audio"]);
+        await playURL(resp["audio"]);
+        setState(() {
+          text = resp["answer"];
+        });
+      } else {
+        setState(() {
+          text = 'Það veit ég ekki.';
+          playSound('dunno');
+        });
+      }
+      state = SessionState.resting;
     });
   }
 
@@ -193,8 +222,8 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   // User cancelled ongoing session
   void cancel() {
-    playSound('rec_cancel');
     stop();
+    playSound('rec_cancel');
   }
 
   // Button pressed
@@ -366,7 +395,7 @@ class SessionButtonPainter extends CustomPainter {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase
-    else if (state == SessionState.listening) {
+    else if (state == SessionState.answering) {
       drawFrame(canvas, size, currFrame);
     }
   }
