@@ -62,6 +62,7 @@ Future<void> preloadAudioFiles() async {
 }
 
 void stopSound() {
+  _cancelSubscriptions();
   audioPlayer.stop();
 }
 
@@ -84,8 +85,6 @@ Future<void> playURL(String url, [Function completionHandler]) async {
   // Silence annoying warning on iOS
   audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
 
-  _cancelSubscriptions();
-
   stopSound();
 
   if (completionHandler != null) {
@@ -99,8 +98,6 @@ Future<void> playURL(String url, [Function completionHandler]) async {
 void playSound(String soundName, [Function completionHandler]) {
   // Silence annoying warning on iOS
   audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
-
-  _cancelSubscriptions();
 
   stopSound();
 

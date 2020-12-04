@@ -2,14 +2,14 @@ TODO:
     * Implement JS execution w. payload from query server (easy via WebViews)
     * Confirmation alert on completion of clear query history calls
     * Make interface 100% nice, styling
-    * Update documentation wrt. OS version requirements, building, etc.
     * Spin up local webserver and test QueryService functions against them
-    * Unique timestamp-based session identifiers to control callbacks
     * Pocketsphinx voice activation
     * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
-    * Set timeout of HTTP requests to query server, handle timeout
     * Configure granularity and frequency of location updates
+    * Handle "open_url" param in query response
 
+    DONE * Set timeout of HTTP requests to query server, handle timeout
+    DONE * Update documentation wrt. OS version requirements, building, etc.
     DONE * Implement animations in session button
     DONE * Add tests + Travis CI integration
     DONE * Local audio playback for UI interaction, errors

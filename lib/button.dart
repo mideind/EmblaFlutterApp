@@ -175,9 +175,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         setState(() {
           text = resp["answer"];
         });
-        await playURL('asdas', (err) {
+        await playURL(resp['audio'], (err) {
           if (err) {
             dlog('Error during audio playback');
+            playSound('err');
           } else {
             dlog("Playback finished");
           }
