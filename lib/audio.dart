@@ -27,6 +27,7 @@ final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
 void defaultPlayerHandler(AudioPlayerState value) {
   // Do nothing
+  dlog("Audio player state: " + value.toString());
 }
 
 const List<String> audioFiles = [
@@ -59,16 +60,27 @@ void stopSound() {
   audioPlayer.stop();
 }
 
-Future<void> playURL(String url) async {
+Future<void> playURL(String url, [Function completionHandler]) async {
   dlog("Playing remote audio file $url");
   stopSound();
+
+  if (completionHandler != null) {
+    audioPlayer.monitorNotificationStateChanges(completionHandler);
+  }
+
   await audioPlayer.play(url);
 }
 
-void playSound(String soundName) {
+void playSound(String soundName, [Function completionHandler]) {
   stopSound();
 
-  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+  if (completionHandler != null) {
+    audioPlayer.monitorNotificationStateChanges((AudioPlayerState value) {
+      if (value == AudioPlayerState.COMPLETED || value == AudioPlayerState.STOPPED) {
+        completionHandler();
+      }
+    });
+  }
 
   String assetPath;
   if (sessionSounds.contains(soundName)) {

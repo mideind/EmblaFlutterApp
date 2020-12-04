@@ -25,6 +25,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
@@ -165,12 +166,18 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     state = SessionState.answering;
     String res = finalResult.alternatives.first.transcript;
     QueryService.sendQuery([res], (Map resp) async {
+      if (state != SessionState.answering) {
+        dlog('Received query answer after session terminated: ' + resp.toString());
+        return;
+      }
       if (resp["valid"] == true) {
         dlog("Received valid response to query");
-        dlog("Playing audio" + resp["audio"]);
-        await playURL(resp["audio"]);
         setState(() {
           text = resp["answer"];
+        });
+        await playURL(resp["audio"], (AudioPlayerState value) {
+          dlog("Playback finished");
+          stop();
         });
       } else {
         setState(() {
@@ -188,13 +195,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       dlog('Session start called during pre-existing session!');
       return;
     }
-
     // Check for internet connectivity
     // if (!ConnectivityMonitor().connected) {
     //   playSound('conn');
     //   return;
     // }
-
     playSound('rec_begin');
 
     setState(() {
