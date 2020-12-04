@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+
 import 'package:audioplayers/audio_cache.dart';
 import 'package:audioplayers/audioplayers.dart';
 
@@ -25,9 +27,12 @@ import './common.dart';
 final audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
+StreamSubscription completionStreamSubscription;
+StreamSubscription errorStreamSubscription;
+
 void defaultPlayerHandler(AudioPlayerState value) {
   // Do nothing
-  dlog("Audio player state: " + value.toString());
+  //dlog("Audio player state changed: " + value.toString());
 }
 
 const List<String> audioFiles = [
@@ -60,26 +65,47 @@ void stopSound() {
   audioPlayer.stop();
 }
 
+void _subscribe(Function handler) {
+  _cancelSubscriptions();
+  completionStreamSubscription = audioPlayer.onPlayerCompletion.listen((event) {
+    handler(false);
+  });
+  errorStreamSubscription = audioPlayer.onPlayerError.listen((event) {
+    handler(true);
+  });
+}
+
+void _cancelSubscriptions() {
+  completionStreamSubscription?.cancel();
+  errorStreamSubscription?.cancel();
+}
+
 Future<void> playURL(String url, [Function completionHandler]) async {
-  dlog("Playing remote audio file $url");
+  // Silence annoying warning on iOS
+  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+
+  _cancelSubscriptions();
+
   stopSound();
 
   if (completionHandler != null) {
-    audioPlayer.monitorNotificationStateChanges(completionHandler);
+    _subscribe(completionHandler);
   }
 
+  dlog("Playing remote audio file $url");
   await audioPlayer.play(url);
 }
 
 void playSound(String soundName, [Function completionHandler]) {
+  // Silence annoying warning on iOS
+  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+
+  _cancelSubscriptions();
+
   stopSound();
 
   if (completionHandler != null) {
-    audioPlayer.monitorNotificationStateChanges((AudioPlayerState value) {
-      if (value == AudioPlayerState.COMPLETED || value == AudioPlayerState.STOPPED) {
-        completionHandler();
-      }
-    });
+    _subscribe(completionHandler);
   }
 
   String assetPath;

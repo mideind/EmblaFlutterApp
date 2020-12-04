@@ -335,6 +335,7 @@ class SettingsRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
+          title: Text('Stillingar', style: TextStyle(fontSize: 18.0, color: Colors.red)),
         ),
         body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }

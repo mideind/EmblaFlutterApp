@@ -25,7 +25,6 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
-import 'package:audioplayers/audioplayers.dart';
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
@@ -170,22 +169,31 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         dlog('Received query answer after session terminated: ' + resp.toString());
         return;
       }
-      if (resp["valid"] == true) {
+
+      if (resp["valid"] == true && resp["error"] == null) {
         dlog("Received valid response to query");
         setState(() {
           text = resp["answer"];
         });
-        await playURL(resp["audio"], (AudioPlayerState value) {
-          dlog("Playback finished");
+        await playURL('asdas', (err) {
+          if (err) {
+            dlog('Error during audio playback');
+          } else {
+            dlog("Playback finished");
+          }
           stop();
+          state = SessionState.resting;
         });
       } else {
         setState(() {
           text = 'Það veit ég ekki.';
-          playSound('dunno');
+          playSound('dunno', (err) {
+            dlog("Playback finished");
+            stop();
+            state = SessionState.resting;
+          });
         });
       }
-      state = SessionState.resting;
     });
   }
 
