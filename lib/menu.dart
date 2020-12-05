@@ -22,79 +22,79 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './settings.dart' show SettingsRoute;
-import './theme.dart' show bgColor, defaultTextStyle;
+import './theme.dart' show bgColor, mainColor, defaultTextStyle;
 import './web.dart';
 import './common.dart';
 
-var menuContext;
-
-void _pushSettings() {
+void _pushSettings(BuildContext context) {
   Navigator.push(
-    menuContext,
+    context,
     MaterialPageRoute(
       builder: (context) => SettingsRoute(),
     ),
   );
 }
 
-void _pushAbout() {
+void _pushAbout(BuildContext context) {
   Navigator.push(
-    menuContext,
+    context,
     MaterialPageRoute(
       builder: (context) => WebViewRoute(initialURL: kAboutURL),
     ),
   );
 }
 
-void _pushInstructions() {
+void _pushInstructions(BuildContext context) {
   Navigator.push(
-    menuContext,
+    context,
     MaterialPageRoute(
       builder: (context) => WebViewRoute(initialURL: kInstructionsURL),
     ),
   );
 }
 
-void _pushPrivacy() {
+void _pushPrivacy(BuildContext context) {
   Navigator.push(
-    menuContext,
+    context,
     MaterialPageRoute(
       builder: (context) => WebViewRoute(initialURL: kPrivacyURL),
     ),
   );
 }
 
-ListTile _generateTile(String name, String imageName, Function onTapFunc) {
+ListTile _generateTile(String name, String imageName, Function onTapFunc, BuildContext context) {
   return ListTile(
     title: Text(name, style: defaultTextStyle),
-    //leading: const Icon(CupertinoIcons.gear),
     leading: Image(image: AssetImage("assets/images/$imageName.png")),
-    trailing: Icon(Icons.arrow_right, color: Colors.red),
-    onTap: onTapFunc,
+    trailing: Icon(Icons.arrow_right, color: mainColor),
+    onTap: () {
+      onTapFunc(context);
+    },
   );
 }
 
-// List of menu tiles
-var list = ListView(
-  padding: const EdgeInsets.all(8),
-  children: <Widget>[
-    _generateTile('Stillingar', 'cog', _pushSettings),
-    _generateTile('Um Emblu', 'cube', _pushAbout),
-    _generateTile('Leiðbeiningar', 'cube', _pushInstructions),
-    _generateTile('Persónuvernd', 'cube', _pushPrivacy),
-  ],
-);
+// Generate list of menu tiles
+ListView _genMenu(BuildContext context) {
+  return ListView(
+    padding: const EdgeInsets.all(8),
+    children: <Widget>[
+      _generateTile('Stillingar', 'cog', _pushSettings, context),
+      _generateTile('Um Emblu', 'cube', _pushAbout, context),
+      _generateTile('Leiðbeiningar', 'cube', _pushInstructions, context),
+      _generateTile('Persónuvernd', 'cube', _pushPrivacy, context),
+    ],
+  );
+}
 
 class MenuRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    menuContext = context;
     return Scaffold(
         appBar: AppBar(
           backgroundColor: bgColor,
           bottomOpacity: 0.0,
           elevation: 0.0,
         ),
-        body: list);
+        body: _genMenu(context));
   }
 }
