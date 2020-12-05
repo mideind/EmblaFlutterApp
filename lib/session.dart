@@ -154,9 +154,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void ticker() {
     setState(() {
       addSample(Random().nextDouble());
-      currFrame += 1;
-      if (currFrame >= animationFrames.length - 1) {
-        currFrame = 0;
+      if (state == SessionState.answering) {
+        currFrame += 1;
+        if (currFrame >= animationFrames.length) {
+          currFrame = 0;
+        }
       }
     });
   }
