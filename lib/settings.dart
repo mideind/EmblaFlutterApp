@@ -24,6 +24,7 @@ import 'package:flutter/cupertino.dart';
 
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
+import './theme.dart' show defaultFontSize, mainColor;
 import './common.dart';
 
 // Switch control associated with a boolean value pref
@@ -44,10 +45,10 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.widget.label, style: TextStyle(fontSize: 18.0)),
+          title: Text(this.widget.label, style: TextStyle(fontSize: defaultFontSize)),
           trailing: CupertinoSwitch(
             value: Prefs().boolForKey(prefKey),
-            activeColor: Colors.red,
+            activeColor: mainColor,
             onChanged: (bool value) {
               setState(() {
                 if (prefKey == 'privacy_mode' && value) {
@@ -155,7 +156,7 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   Widget build(BuildContext context) {
     this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
     return ListTile(
-        title: Text(this.widget.label, style: TextStyle(fontSize: 18.0)),
+        title: Text(this.widget.label, style: TextStyle(fontSize: defaultFontSize)),
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
@@ -219,7 +220,7 @@ class SettingsButtonWidget extends StatelessWidget {
       onPressed: () {
         _showMyDialog(context);
       },
-      child: Text(this.label, style: TextStyle(fontSize: 18.0)),
+      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
     );
   }
 }
@@ -277,7 +278,9 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
       Padding(
           padding: EdgeInsets.all(8.0),
           child: TextField(
-              controller: textController, style: TextStyle(fontSize: 18.0), onChanged: _changed)),
+              controller: textController,
+              style: TextStyle(fontSize: defaultFontSize),
+              onChanged: _changed)),
       CupertinoSegmentedControl(
           children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _changed),
     ]);
@@ -335,7 +338,6 @@ class SettingsRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
-          title: Text('Stillingar', style: TextStyle(fontSize: 18.0, color: Colors.red)),
         ),
         body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }

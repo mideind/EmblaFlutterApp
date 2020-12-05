@@ -22,6 +22,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './settings.dart' show SettingsRoute;
+import './theme.dart' show bgColor, defaultTextStyle;
 import './web.dart';
 import './common.dart';
 
@@ -65,7 +66,7 @@ void _pushPrivacy() {
 
 ListTile _generateTile(String name, String imageName, Function onTapFunc) {
   return ListTile(
-    title: Text(name, style: TextStyle(fontSize: 18.0, color: Colors.red)),
+    title: Text(name, style: defaultTextStyle),
     //leading: const Icon(CupertinoIcons.gear),
     leading: Image(image: AssetImage("assets/images/$imageName.png")),
     trailing: Icon(Icons.arrow_right, color: Colors.red),
@@ -90,9 +91,7 @@ class MenuRoute extends StatelessWidget {
     menuContext = context;
     return Scaffold(
         appBar: AppBar(
-          title: const Text(""),
-          //leading: const Text("Til baka"),
-          backgroundColor: Colors.transparent,
+          backgroundColor: bgColor,
           bottomOpacity: 0.0,
           elevation: 0.0,
         ),

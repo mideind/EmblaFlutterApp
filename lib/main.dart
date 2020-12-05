@@ -21,7 +21,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 
 import './menu.dart' show MenuRoute;
@@ -31,28 +30,8 @@ import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
+import './theme.dart' show defaultTheme, bgColor;
 import './common.dart';
-import './util.dart';
-
-// Define overall app brightness and color scheme
-final defaultTheme = ThemeData(
-    // brightness: Brightness.dark,
-    // accentColor: Colors.cyan[600],
-    scaffoldBackgroundColor: HexColor.fromHex('#F9F9F9'),
-    primarySwatch: Colors.red,
-    fontFamily: 'Lato',
-    primaryColor: Colors.red,
-    backgroundColor: Colors.grey,
-    textTheme: TextTheme(bodyText2: TextStyle(color: Colors.red, fontSize: 16.0)),
-    appBarTheme: AppBarTheme(
-      brightness: Brightness.light,
-      color: Colors.transparent,
-      textTheme: TextTheme().apply(displayColor: Colors.red),
-      iconTheme: IconThemeData(color: Colors.red),
-    ));
-
-// App object
-final app = MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme);
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -81,8 +60,9 @@ void main() async {
       LocationTracking().start();
     }
   }
+
   // Launch app
-  runApp(app);
+  runApp(MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme));
 }
 
 // Top left button to toggle voice activation
@@ -133,7 +113,7 @@ class _MainRouteState extends State<MainRoute> {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Colors.transparent,
+          backgroundColor: bgColor,
           bottomOpacity: 0.0,
           elevation: 0.0,
           leading: ToggleVoiceActivationWidget(),

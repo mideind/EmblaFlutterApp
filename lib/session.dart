@@ -31,6 +31,7 @@ import './audio.dart' show playSound, stopSound, playURL;
 import './connectivity.dart' show ConnectivityMonitor;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
+import './theme.dart';
 import './util.dart';
 import './common.dart';
 
@@ -214,6 +215,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     playSound('rec_begin');
 
     setState(() {
+      text = '';
       int msecPerFrame = (1000 ~/ 24); // Framerate
       animationTimer =
           new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
@@ -267,14 +269,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
                   child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20),
                       child: FractionallySizedBox(
-                          widthFactor: 1.0,
-                          child: Container(
-                              color: Colors.transparent,
-                              child: Text(text,
-                                  style: TextStyle(
-                                      fontSize: 22.0,
-                                      fontStyle: FontStyle.italic,
-                                      color: Colors.red))))))),
+                          widthFactor: 1.0, child: Text(text, style: sessionTextStyle))))),
           Expanded(
               flex: 6,
               child: Padding(
@@ -301,11 +296,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 // This is the drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
   void drawCircles(Canvas canvas, Size size) {
-    // Outermost to innermost
-    final circleColor1 = HexColor.fromHex("#f9f0f0");
-    final circleColor2 = HexColor.fromHex("#f9e2e1");
-    final circleColor3 = HexColor.fromHex("#f9dcdb");
-
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
@@ -359,7 +349,7 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
-    var topPaint = Paint()..color = HexColor.fromHex('#e83939');
+    var topPaint = Paint()..color = mainColor;
     var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
 
     // Draw audio waveform bars based on audio sample levels
