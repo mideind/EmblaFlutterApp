@@ -26,8 +26,7 @@ import 'package:geolocator/geolocator.dart';
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
-//import './session.dart' show SessionWidget;
-import './button.dart' show SessionWidget;
+import './session.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
