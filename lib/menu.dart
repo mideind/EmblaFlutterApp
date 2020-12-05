@@ -22,8 +22,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import './settings.dart' show SettingsRoute;
+import './web.dart' show WebViewRoute;
 import './theme.dart' show bgColor, mainColor, defaultTextStyle;
-import './web.dart';
 import './common.dart';
 
 void _pushSettings(BuildContext context) {
