@@ -41,6 +41,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     return "docs/" + uri.pathSegments.last;
   }
 
+  // Fall back to local THML document if err comes up when fetching from remote server
   void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
     dlog('Page load error for $url: $errCode, $desc');
     String path = _fallbackAssetForURL(url);
@@ -50,6 +51,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     });
   }
 
+  // Handle clicks on links in HTML documentation
   Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
       InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
     print("urlclickhandler");

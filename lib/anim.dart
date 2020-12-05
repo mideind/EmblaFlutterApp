@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Animations
+
 import 'dart:ui' as ui;
 import 'dart:typed_data';
 

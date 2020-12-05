@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton class that monitors internet connectivity
+// Singleton class to monitors internet connectivity
 
 import 'package:connectivity/connectivity.dart';
 

@@ -16,6 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Main session view
+
 import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' show min, max, Random;

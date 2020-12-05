@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Various utility functions
+// Various utility functions and custom class extensions
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;

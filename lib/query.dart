@@ -47,6 +47,7 @@ Future<String> _clientVersion() async {
   return packageInfo.buildNumber;
 }
 
+// Send a request to query server
 Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async {
   String apiURL = Prefs().stringForKey('query_server') + path;
 
@@ -68,6 +69,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   return response;
 }
 
+// Singleton wrapper around communication with query server
 class QueryService {
   // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {

@@ -31,7 +31,7 @@ import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
 import './theme.dart' show defaultTheme, bgColor;
-import './common.dart';
+import './common.dart' show dlog;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -104,9 +104,9 @@ class _MainRouteState extends State<MainRoute> {
           builder: (context) => MenuRoute(),
         ),
       ).then((val) {
-        // Make sure we rebuild main route when menu route is popped
-        // This ensures that the state of the voice activation button
-        // is updated to reflect potential changes in Settings.
+        // Make sure we rebuild main route when menu route is popped in navigation
+        // stack. This ensures that the state of the voice activation button is
+        // updated to reflect potential changes in Settings.
         setState(() {});
       });
     }

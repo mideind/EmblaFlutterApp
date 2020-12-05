@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton class for speech recognition
+// Singleton wrapper class for speech recognition
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_speech/google_speech.dart';
