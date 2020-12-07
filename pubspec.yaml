@@ -36,6 +36,7 @@ dependencies:
   connectivity: '>=2.0.1'
   flutter_inappwebview: '>=4.0.0+4'
   rxdart: '>=0.24.1'
+  dart_numerics: '>=0.0.5'
 
   # flutter_sphinx:
   #   git:
@@ -91,6 +92,7 @@ flutter:
     - docs/Lato-Bold.woff2
     # Keys
     - assets/keys/gaccount.json
+    - assets/keys/GreynirAPI.key
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png
