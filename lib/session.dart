@@ -82,6 +82,10 @@ void addSample(double level) {
   audioSamples.add(level);
 }
 
+String introMsg() {
+  return Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoHotwordMessage;
+}
+
 // Logo animation
 int currFrame = 0;
 const kFullLogoFrame = 99;
@@ -94,7 +98,7 @@ class SessionWidget extends StatefulWidget {
 class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
   Timer animationTimer;
   final RecorderStream _recorder = RecorderStream();
-  String text = Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoHotwordMessage;
+  String text = introMsg();
   StreamSubscription<List<int>> _audioStreamSubscription;
   BehaviorSubject<List<int>> _audioStream;
 
@@ -244,6 +248,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void cancel() {
     stop();
     playSound('rec_cancel');
+    text = introMsg();
   }
 
   // Button pressed
