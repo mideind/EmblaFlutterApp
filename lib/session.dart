@@ -20,7 +20,7 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
-import 'dart:math' show min, max, Random, pow;
+import 'dart:math' show min, max, pow;
 import 'dart:typed_data';
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
@@ -121,59 +121,51 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         1.0 / 2.0);
   }
 
+  void addSignalForAudioBuffer(Int16List samples) {
+    int max = 0;
+    for (var i = 0; i < samples.length; i++) {
+      max = (samples[i] > max) ? samples[i] : max;
+    }
+    //print(total / samples.length);
+
+    double ampl = max / 32767.0;
+    print(ampl);
+    double decibels = 20.0 * log10(ampl);
+    print(decibels);
+    //addSample(lastSignal);
+
+    lastSignal = ampl;
+
+    lastSignal = _normalizedPowerLevelFromDecibels(decibels);
+    // print(lastSignal);
+
+    //addSample(lastSignal);
+  }
+
   void startSpeechRecognition() async {
     dlog("Starting speech recognition");
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((data) {
       _audioStream.add(data);
 
-      // Get signal strength
       ByteBuffer bytes = data.buffer;
       Int16List samples = bytes.asInt16List();
-      int max = 0;
-      for (var i = 0; i < samples.length; i++) {
-        max = (samples[i] > max) ? samples[i] : max;
-      }
-      //print(total / samples.length);
+      print("Num samples: " + samples.length.toString());
 
-      double ampl = max / 32767.0;
-      print(ampl);
-      double decibels = 20.0 * log10(ampl);
-      print(decibels);
+      // Int16List first = samples.sublist(0, (samples.length ~/ 2));
+      // Int16List second = samples.sublist(first.length, samples.length);
 
-      lastSignal = ampl;
+      // addSignalForAudioBuffer(first);
+      // addSignalForAudioBuffer(second);
 
-      // lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-      // print(lastSignal);
-      // int total = 0;
-      // int count = 0;
-      // int one = 0;
-      // int two = 0;
-      // for (int i in event) {
-      //   if (count != 0 && count % 2 == 0) {
-      //     two = i;
-      //     total += ((one << 8) + two);
-      //   } else {
-      //     one = i;
-      //   }
-      //   count += 1;
-      // }
-      // print(total / count);
-
-      // double avg = total / count;
-      // print(avg);
-      // int sum = 0;
-      // event.forEach((num e) {
-      //   sum += e;
-      // });
-      // sum = sum / event.length;
+      addSignalForAudioBuffer(samples);
     });
 
     await _recorder.start();
 
     final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
-    final responseStream = speechToText.streamingRecognize(
+    final Stream responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
         _audioStream);
 
@@ -209,11 +201,12 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   // Animation timer ticker to refresh button view
   void ticker() {
     setState(() {
-      addSample(lastSignal);
-      if (state == SessionState.answering) {
+      if (state == SessionState.listening) {
+        addSample(lastSignal);
+      } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
-          currFrame = 0;
+          currFrame = 0; // Reset animation
         }
       }
     });
