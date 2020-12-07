@@ -69,6 +69,7 @@ pubspec.lock
 **/ios/ServiceDefinitions.json
 **/ios/Runner/GeneratedPluginRegistrant.*
 
-*test_service_account.json
 *.last_build_id
 .vscode
+
+assets/keys/*

@@ -64,14 +64,14 @@ extension HexColor on Color {
   }
 }
 
-String googleAPIKey = "";
+String googleServiceAccount = "";
 
-// Read Google API key
-Future<String> readGoogleKey() async {
-  if (googleAPIKey == "") {
-    googleAPIKey = await rootBundle.loadString('assets/keys/GoogleAPI.key');
+// Read Google API service account config JSON
+Future<String> readGoogleServiceAccount() async {
+  if (googleServiceAccount == "") {
+    googleServiceAccount = await rootBundle.loadString('assets/keys/gaccount.json');
   }
-  return googleAPIKey;
+  return googleServiceAccount;
 }
 
 String queryAPIKey = "";

@@ -7,8 +7,8 @@ Embla is a voice-driven virtual assistant app that uses the Icelandic-language
 cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
-[Flutter](https://flutter.dev) framework. Currently built to run on iOS and Android,
-with native macOS and web support on the roadmap. Supports iOS 12.0+ and Android SDK 28+.
+[Flutter](https://flutter.dev) framework. Currently built to run on iOS 12+ and Android SDK 28+,
+with macOS, Windows and web support on the roadmap.
 
 ## Build instructions
 
@@ -33,6 +33,9 @@ $ flutter run
 
 This should launch the app in development mode on your device of choice (e.g.
 simulator, attached physical device, etc.).
+
+NB: To work, the app requires a Google Cloud Speech-to-Text API service account configuration.
+Once you have acquired a JSON config file via their API console, put it in `assets/keys/gaccount.json`.
 
 ## Screenshots
 

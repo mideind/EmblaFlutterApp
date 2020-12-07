@@ -89,8 +89,8 @@ flutter:
     - docs/Lato-Regular.woff2
     - docs/Lato-Italic.woff2
     - docs/Lato-Bold.woff2
-    # Other
-    - assets/test_service_account.json
+    # Keys
+    - assets/keys/gaccount.json
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png

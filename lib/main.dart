@@ -31,6 +31,7 @@ import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
 import './theme.dart' show defaultTheme, bgColor;
+import './util.dart';
 import './common.dart' show dlog;
 
 void main() async {
@@ -49,6 +50,10 @@ void main() async {
   // Preload assets
   await preloadAudioFiles();
   await preloadAnimationFrames();
+
+  // Preload keys from files
+  readGoogleServiceAccount();
+  readQueryServerKey();
 
   // Start monitoring internet connectivity
   await ConnectivityMonitor().start();

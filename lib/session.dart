@@ -23,14 +23,13 @@ import 'dart:ui' as ui;
 import 'dart:math' show min, max, Random;
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
-import './connectivity.dart' show ConnectivityMonitor;
+//import './connectivity.dart' show ConnectivityMonitor;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
 import './theme.dart';
@@ -118,8 +117,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     await _recorder.start();
 
-    final serviceAccount = ServiceAccount.fromString(
-        '${(await rootBundle.loadString('assets/test_service_account.json'))}');
+    final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
