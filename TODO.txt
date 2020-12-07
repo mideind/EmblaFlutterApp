@@ -5,10 +5,10 @@ TODO:
     * Confirmation alert on completion of clear query history calls
     * Make interface 100% nice, styling
     * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
-    * Configure granularity and frequency of location updates
     * Handle "open_url" param in query response
     * Add Android splash screen
 
+    DONE * Configure granularity and frequency of location updates
     DONE * Set timeout of HTTP requests to query server, handle timeout
     DONE * Update documentation wrt. OS version requirements, building, etc.
     DONE * Implement animations in session button

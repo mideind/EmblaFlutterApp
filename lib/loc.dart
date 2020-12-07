@@ -41,7 +41,8 @@ class LocationTracking {
       return;
     }
     dlog("Starting location tracking");
-    positionStream = Geolocator.getPositionStream().listen((Position position) {
+    positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
+        .listen((Position position) {
       if (position == null) {
         known = false;
         return;
