@@ -21,6 +21,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:geolocator/geolocator.dart';
 
 import './menu.dart' show MenuRoute;
@@ -36,8 +37,9 @@ import './common.dart' show dlog;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  HttpClient.enableTimelineLogging = true;
-
+  if (kReleaseMode == false) {
+    HttpClient.enableTimelineLogging = true;
+  }
   // Load prefs and populate with default values if required
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');

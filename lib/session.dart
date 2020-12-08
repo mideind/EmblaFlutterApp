@@ -20,7 +20,7 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
-import 'dart:math' show min, max, pow;
+import 'dart:math' show Random, min, max, pow;
 import 'dart:typed_data';
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
@@ -202,7 +202,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        addSample(lastSignal);
+        addSample(Random().nextDouble());
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
