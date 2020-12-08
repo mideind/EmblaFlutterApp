@@ -83,7 +83,7 @@ class Prefs {
 
   void setDefaults() {
     Prefs().setBoolForKey('launched', true);
-    Prefs().setBoolForKey('voice_activation', true);
+    Prefs().setBoolForKey('hotword_activation', true);
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
     Prefs().setFloatForKey('voice_speed', 1.0);

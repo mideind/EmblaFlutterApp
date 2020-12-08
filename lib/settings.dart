@@ -296,7 +296,7 @@ String clearAllText =
 // List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
-    SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'voice_activation'),
+    SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
     SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),

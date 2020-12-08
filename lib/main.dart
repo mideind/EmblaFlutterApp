@@ -33,7 +33,7 @@ import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
 import './theme.dart' show defaultTheme, bgColor;
 import './util.dart';
-import './common.dart' show dlog;
+import './common.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -69,7 +69,7 @@ void main() async {
   }
 
   // Launch app
-  runApp(MaterialApp(title: "Embla", home: MainRoute(), theme: defaultTheme));
+  runApp(MaterialApp(title: kSoftwareName, home: MainRoute(), theme: defaultTheme));
 }
 
 // Top left button to toggle voice activation
@@ -81,12 +81,12 @@ class ToggleVoiceActivationWidget extends StatefulWidget {
 class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
   @override
   Widget build(BuildContext context) {
-    String iconName = Prefs().boolForKey('voice_activation') ? 'mic.png' : 'mic-slash.png';
+    String iconName = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
     return IconButton(
       icon: ImageIcon(AssetImage('assets/images/' + iconName)),
       onPressed: () {
         setState(() {
-          Prefs().setBoolForKey('voice_activation', !Prefs().boolForKey('voice_activation'));
+          Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
         });
       },
     );

@@ -84,7 +84,7 @@ void addSample(double level) {
 }
 
 String introMsg() {
-  return Prefs().boolForKey('voice_activation') ? kIntroMessage : kIntroNoHotwordMessage;
+  return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
 }
 
 // Logo animation
