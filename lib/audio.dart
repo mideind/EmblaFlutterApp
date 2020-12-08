@@ -94,7 +94,13 @@ Future<void> playURL(String url, [Function completionHandler]) async {
   }
 
   dlog("Playing remote audio file $url");
-  await audioPlayer.play(url);
+  try {
+    await audioPlayer.play(url);
+  } catch (e) {
+    if (completionHandler != null) {
+      completionHandler(true);
+    }
+  }
 }
 
 void playSound(String soundName, [Function completionHandler]) {
