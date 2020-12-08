@@ -107,7 +107,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _recorder.initialize();
+    _recorder.initialize(sampleRate: 16000);
   }
 
   double _normalizedPowerLevelFromDecibels(double decibels) {
@@ -119,6 +119,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         (pow(10.0, exp * decibels) - pow(10.0, exp * -60.0)) *
             (1.0 / (1.0 - pow(10.0, exp * -60.0))),
         1.0 / 2.0);
+  }
+
+  double doubleInRange(double start, double end) {
+    return Random().nextDouble() * (end - start) + start;
   }
 
   void addSignalForAudioBuffer(Int16List samples) {
@@ -139,7 +143,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     // print(lastSignal);
 
-    //addSample(lastSignal);
+    // addSample(lastSignal);
+    // double rand = doubleInRange(-0.05, 0.05);
+    // addSample(lastSignal + rand);
   }
 
   void startSpeechRecognition() async {
@@ -202,7 +208,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        addSample(Random().nextDouble());
+        addSample(lastSignal);
+        double rand = doubleInRange(-0.05, 0.05);
+        addSample(lastSignal + rand);
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {

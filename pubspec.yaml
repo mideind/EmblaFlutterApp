@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   http: '>=0.12.1'
-  sound_stream: '>=0.2.0'
+  # sound_stream: '>=0.2.0'
   audioplayers: '>=0.16.2'
   shared_preferences: '>=0.5.7'
   geolocator: '>=6.1.4'
@@ -39,6 +39,10 @@ dependencies:
   dart_numerics: '>=0.0.5'
   wakelock: '>=0.2.1+1'
 
+  sound_stream:
+    git:
+      url: https://github.com/mideind/flutter-sound-stream.git
+      ref: 20441b1714ea64f2cad8f96779fccc4ed8bb59c7
 
   # flutter_sphinx:
   #   git:
