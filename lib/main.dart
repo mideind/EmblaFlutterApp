@@ -23,6 +23,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:geolocator/geolocator.dart';
+import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
@@ -56,6 +57,10 @@ void main() async {
   // Preload keys from files
   readGoogleServiceAccount();
   readQueryServerKey();
+
+  // Activate wake lock to prevent device from going to sleep
+  // TODO: This should be disabled outside main session view
+  Wakelock.enable();
 
   // Start monitoring internet connectivity
   await ConnectivityMonitor().start();
