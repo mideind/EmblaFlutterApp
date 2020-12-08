@@ -26,7 +26,7 @@ import 'package:audioplayers/audioplayers.dart';
 import './prefs.dart' show Prefs;
 import './common.dart';
 
-final audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
+final audioPlayer = AudioPlayer(/*mode: PlayerMode.LOW_LATENCY*/);
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
 StreamSubscription completionStreamSubscription;
@@ -65,7 +65,7 @@ Future<void> preloadAudioFiles() async {
 
 void stopSound() {
   _cancelSubscriptions();
-  audioPlayer.stop();
+  audioPlayer?.stop();
 }
 
 void _subscribe(Function handler) {
@@ -85,7 +85,7 @@ void _cancelSubscriptions() {
 
 Future<void> playURL(String url, [Function completionHandler]) async {
   // Silence annoying warning on iOS
-  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+  //audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
 
   stopSound();
 
@@ -99,7 +99,7 @@ Future<void> playURL(String url, [Function completionHandler]) async {
 
 void playSound(String soundName, [Function completionHandler]) {
   // Silence annoying warning on iOS
-  audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+  //audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
 
   stopSound();
 
