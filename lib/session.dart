@@ -60,8 +60,8 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     languageCode: 'is-IS');
 
 // Waveform configuration
-const int kWaveformNumBars = 15; // Number of waveform bars drawn
-const double kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
+const int kWaveformNumBars = 10; // Number of waveform bars drawn
+const double kWaveformBarSpacing = 10.0; // Fixed spacing between bars. TODO: Fix this!
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
@@ -131,19 +131,19 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       max = (samples[i] > max) ? samples[i] : max;
     }
     //print(total / samples.length);
-
+    print(max);
     double ampl = max / 32767.0;
     print(ampl);
     double decibels = 20.0 * log10(ampl);
     print(decibels);
-    //addSample(lastSignal);
 
     lastSignal = ampl;
 
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     // print(lastSignal);
+    print("Normalized: " + lastSignal.toString());
 
-    // addSample(lastSignal);
+    addSample(lastSignal);
     // double rand = doubleInRange(-0.05, 0.05);
     // addSample(lastSignal + rand);
   }
@@ -208,9 +208,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        addSample(lastSignal);
-        double rand = doubleInRange(-0.05, 0.05);
-        addSample(lastSignal + rand);
+        // addSample(lastSignal);
+        // double rand = doubleInRange(-0.05, 0.05);
+        // addSample(lastSignal + rand);
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {

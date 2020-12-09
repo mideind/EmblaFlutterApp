@@ -42,7 +42,7 @@ dependencies:
   sound_stream:
     git:
       url: https://github.com/mideind/flutter-sound-stream.git
-      ref: 20441b1714ea64f2cad8f96779fccc4ed8bb59c7
+      ref: 425bee6f038eaa3bc33b1d4f22cb86fa56f9dfa5
 
   # flutter_sphinx:
   #   git:
