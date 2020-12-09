@@ -35,7 +35,7 @@ const Brightness defaultBrightness = Brightness.light;
 
 const String defaultFontFamily = 'Lato';
 const double defaultFontSize = 18.0;
-const double sessionFontSize = 22.0;
+const double sessionFontSize = 24.0;
 
 final TextStyle defaultTextStyle = TextStyle(color: mainColor, fontSize: defaultFontSize);
 final TextStyle sessionTextStyle =

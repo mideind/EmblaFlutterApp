@@ -60,8 +60,8 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     languageCode: 'is-IS');
 
 // Waveform configuration
-const int kWaveformNumBars = 10; // Number of waveform bars drawn
-const double kWaveformBarSpacing = 10.0; // Fixed spacing between bars. TODO: Fix this!
+const int kWaveformNumBars = 15; // Number of waveform bars drawn
+const double kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
@@ -107,7 +107,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _recorder.initialize(sampleRate: 16000);
+    _recorder.initialize();
   }
 
   double _normalizedPowerLevelFromDecibels(double decibels) {
@@ -126,24 +126,21 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   void addSignalForAudioBuffer(Int16List samples) {
-    int max = 0;
-    for (var i = 0; i < samples.length; i++) {
-      max = (samples[i] > max) ? samples[i] : max;
-    }
+    int maxSignal = samples.reduce(max);
     //print(total / samples.length);
-    print(max);
-    double ampl = max / 32767.0;
-    print(ampl);
+    // print(max);
+    double ampl = maxSignal / 32767.0;
+    // print(ampl);
     double decibels = 20.0 * log10(ampl);
-    print(decibels);
+    // print(decibels);
 
     lastSignal = ampl;
 
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     // print(lastSignal);
-    print("Normalized: " + lastSignal.toString());
+    // print("Normalized: " + lastSignal.toString());
 
-    addSample(lastSignal);
+    //addSample(lastSignal);
     // double rand = doubleInRange(-0.05, 0.05);
     // addSample(lastSignal + rand);
   }
@@ -208,7 +205,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        // addSample(lastSignal);
+        addSample(lastSignal);
         // double rand = doubleInRange(-0.05, 0.05);
         // addSample(lastSignal + rand);
       } else if (state == SessionState.answering) {
@@ -229,10 +226,13 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         return;
       }
 
-      if (resp["valid"] == true && resp["error"] == null) {
+      if (resp["valid"] == true && resp["error"] == null && resp["answer"] != null) {
         dlog("Received valid response to query");
         setState(() {
-          text = resp["answer"];
+          text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
+          if (resp["source"] != null) {
+            text = "$text (${resp['source']})";
+          }
         });
         await playURL(resp['audio'], (err) {
           if (err) {
@@ -242,7 +242,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
             dlog("Playback finished");
           }
           stop();
-          state = SessionState.resting;
         });
       } else {
         setState(() {
@@ -250,7 +249,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
           playSound('dunno', (err) {
             dlog("Playback finished");
             stop();
-            state = SessionState.resting;
           });
         });
       }
