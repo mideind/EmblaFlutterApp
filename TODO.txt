@@ -1,11 +1,19 @@
-TODO:
+TODO FUTURE:
+    * Dark mode support
+    * Analyse audio samples in smaller chunks
+    * Optimize redraws
+
+TODO for Android release:
     * Pocketsphinx voice activation
-    * Spin up local webserver and test QueryService functions against them
     * Implement JS execution w. code payload from query server
     * Confirmation alert on completion of clear query history calls
-    * Make interface 100% nice, styling
     * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
     * Handle "open_url" param in query response
+    * Set up continuous integration
+    * Spin up local webserver and test QueryService functions against them
+    * Clean up speech2text code, factor into separate class
+    * Performance profiling
+    * Elegant handling of audio streaming issues when internet connectivity is lost
 
     DONE * Configure granularity and frequency of location updates
     DONE * Set timeout of HTTP requests to query server, handle timeout

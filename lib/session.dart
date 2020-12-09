@@ -147,6 +147,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   void startSpeechRecognition() async {
     dlog("Starting speech recognition");
+    stopSound();
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((data) {
       _audioStream.add(data);
@@ -277,7 +278,12 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       audioSamples = populateSamples();
     });
 
-    startSpeechRecognition();
+    try {
+      startSpeechRecognition();
+    } catch (e) {
+      stop();
+      playSound('conn');
+    }
   }
 
   // End session
@@ -292,8 +298,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     });
   }
 
-  // User cancelled ongoing session
+  // User cancelled ongoing session by pressing button
   void cancel() {
+    dlog("User initiated cancellation of session");
     stop();
     playSound('rec_cancel');
     text = introMsg();
