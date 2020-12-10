@@ -351,7 +351,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
               child: SingleChildScrollView(
                   scrollDirection: Axis.vertical,
                   child: Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20),
+                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                       child: FractionallySizedBox(
                           widthFactor: 1.0, child: Text(text, style: sessionTextStyle))))),
           Expanded(

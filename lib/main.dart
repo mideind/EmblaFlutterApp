@@ -37,11 +37,15 @@ import './util.dart';
 import './common.dart' show dlog, kSoftwareName;
 
 void main() async {
+  // Initialize bindings before calling runApp()
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Only enable HTTP comm. logging in debug mode
   if (kReleaseMode == false) {
     HttpClient.enableTimelineLogging = true;
   }
-  // Load prefs and populate with default values if required
+
+  // Load prefs, populate with default values if required
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
@@ -97,7 +101,7 @@ class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidge
   }
 }
 
-// Main screen
+// Main route
 class MainRoute extends StatefulWidget {
   @override
   _MainRouteState createState() => _MainRouteState();
@@ -119,8 +123,9 @@ class _MainRouteState extends State<MainRoute> {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings.
-        Wakelock.enable();
         setState(() {});
+        // Re-enable wake lock
+        Wakelock.enable();
       });
     }
 
