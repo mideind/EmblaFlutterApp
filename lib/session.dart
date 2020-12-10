@@ -101,12 +101,12 @@ String introMsg() {
 }
 
 // Main widget for session view
-class SessionWidget extends StatefulWidget {
+class SessionRoute extends StatefulWidget {
   @override
-  State<StatefulWidget> createState() => _SessionWidgetState();
+  State<StatefulWidget> createState() => SessionRouteState();
 }
 
-class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateMixin {
+class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
   final RecorderStream _recorder = RecorderStream();
   String text = introMsg();
@@ -142,7 +142,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   void startSpeechRecognition() async {
-    dlog("Starting speech recognition");
+    dlog('Starting speech recognition');
     stopSound();
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((data) {
@@ -150,7 +150,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
       // Coerce sample bytes into list of 16-bit shorts
       Int16List samples = data.buffer.asInt16List();
-      //print("Num samples: " + samples.length.toString());
+      //print("Num samples: ${samples.length.toString()}");
       updateAudioSignal(samples);
     });
 
@@ -406,7 +406,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 }
 
-// Top left button to toggle voice activation
+// Top left app bar button to toggle voice activation
 class ToggleVoiceActivationWidget extends StatefulWidget {
   @override
   _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
@@ -450,7 +450,7 @@ class SessionButtonPainter extends CustomPainter {
   // Draw still logo frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.length == 0) {
-      dlog("Animation frame loading fail. No frames loaded.");
+      dlog('Animation frame loading fail. No frames loaded.');
     }
     ui.Image img = animationFrames[fnum];
     // Source image rect
@@ -501,6 +501,7 @@ class SessionButtonPainter extends CustomPainter {
           barWidth, // width
           level * barHeight); // height
       canvas.drawRect(topRect, topPaint);
+
       // Draw circle at end of bar
       canvas.drawCircle(
           Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
@@ -515,6 +516,7 @@ class SessionButtonPainter extends CustomPainter {
           barWidth, // width
           level * barHeight); // height
       canvas.drawRect(bottomRect, bottomPaint);
+
       // Draw circle at end of bar
       canvas.drawCircle(
           Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
@@ -529,17 +531,17 @@ class SessionButtonPainter extends CustomPainter {
     // We always draw the circles
     drawCircles(canvas, size);
 
-    // Draw non-animated Embla logo
-    if (state == SessionState.resting) {
-      drawFrame(canvas, size, kFullLogoFrame); // Always same frame
-    }
     // Draw waveform bars during microphone input
-    else if (state == SessionState.listening) {
+    if (state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during query-answering phase
     else if (state == SessionState.answering) {
       drawFrame(canvas, size, currFrame);
+    }
+    // Otherwise, draw non-animated Embla logo
+    else {
+      drawFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
   }
 

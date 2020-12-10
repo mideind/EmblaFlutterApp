@@ -26,7 +26,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './prefs.dart' show Prefs;
-import './session.dart' show SessionWidget;
+import './session.dart' show SessionRoute;
 import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
@@ -39,7 +39,7 @@ void main() async {
   // Initialize bindings before calling runApp()
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Only enable HTTP comm. logging in debug mode
+  // Only enable HTTP communication logging in debug mode
   if (kReleaseMode == false) {
     HttpClient.enableTimelineLogging = true;
   }
@@ -48,10 +48,10 @@ void main() async {
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
-    dlog("Setting default prefs on first launch");
+    dlog('Setting default prefs on first launch');
     Prefs().setDefaults();
   }
-  dlog("Shared prefs: " + Prefs().desc());
+  dlog("Shared prefs: ${Prefs().desc()}");
 
   // Preload assets
   await preloadAudioFiles();
@@ -68,7 +68,7 @@ void main() async {
   await ConnectivityMonitor().start();
 
   // Set up location tracking
-  if (Prefs().boolForKey('share_location')) {
+  if (Prefs().boolForKey('share_location') == true) {
     LocationPermission permission = await Geolocator.requestPermission();
     if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
       LocationTracking().start();
@@ -76,5 +76,5 @@ void main() async {
   }
 
   // Launch app
-  runApp(MaterialApp(title: kSoftwareName, home: SessionWidget(), theme: defaultTheme));
+  runApp(MaterialApp(title: kSoftwareName, home: SessionRoute(), theme: defaultTheme));
 }

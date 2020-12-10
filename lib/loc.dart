@@ -40,7 +40,7 @@ class LocationTracking {
     if (positionStream != null) {
       return;
     }
-    dlog("Starting location tracking");
+    dlog('Starting location tracking');
     positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
         .listen((Position position) {
       if (position == null) {
@@ -56,7 +56,7 @@ class LocationTracking {
 
   void stop() {
     if (positionStream != null) {
-      dlog("Stopping location tracking");
+      dlog('Stopping location tracking');
       positionStream.cancel();
       positionStream = null;
       known = false;

@@ -29,23 +29,23 @@ void dlog(String logStr) {
 }
 
 // Software info
-const String kSoftwareName = "Embla";
-const String kSoftwareVersion = "1.0.0";
+const String kSoftwareName = 'Embla';
+const String kSoftwareVersion = '1.0.0';
 
 // Server communication
-const String kDefaultServer = "https://greynir.is";
-const String kQueryAPIPath = "/query.api/v1";
-const String kQueryHistoryAPIPath = "/query_history.api/v1";
-const String kSpeechAPIPath = "/speech.api/v1";
+const String kDefaultServer = 'https://greynir.is';
+const String kQueryAPIPath = '/query.api/v1';
+const String kQueryHistoryAPIPath = '/query_history.api/v1';
+const String kSpeechAPIPath = '/speech.api/v1';
 
 // Voice speed range
 const double kVoiceSpeedMin = 0.7;
 const double kVoiceSpeedMax = 1.3;
 
 // Documentation URLs
-const String kAboutURL = "https://embla.is/about.html";
-const String kInstructionsURL = "https://embla.is/instructions.html";
-const String kPrivacyURL = "https://embla.is/privacy.html";
+const String kAboutURL = 'https://embla.is/about.html';
+const String kInstructionsURL = 'https://embla.is/instructions.html';
+const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Alternate query server options f. debugging
 const List kQueryServerPresetOptions = [

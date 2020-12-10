@@ -38,7 +38,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
-    return "docs/" + uri.pathSegments.last;
+    return "docs/${uri.pathSegments.last}";
   }
 
   // Fall back to local THML document if err comes up when fetching from remote server
@@ -54,9 +54,8 @@ class _WebViewRouteState extends State<WebViewRoute> {
   // Handle clicks on links in HTML documentation
   Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
       InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
-    print("urlclickhandler");
     if (req.url != this.widget.initialURL) {
-      dlog("Opening external URL ${req.url}");
+      dlog("Opening external URL: ${req.url}");
       launch(req.url);
       return ShouldOverrideUrlLoadingAction.CANCEL;
     }

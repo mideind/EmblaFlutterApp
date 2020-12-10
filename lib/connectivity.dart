@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton class to monitors internet connectivity
+// Singleton class to monitor internet connectivity
 
 import 'package:connectivity/connectivity.dart';
 
@@ -33,18 +33,18 @@ class ConnectivityMonitor {
   bool isConnected = true;
 
   start() async {
-    dlog("Starting internet connectivity tracking");
+    dlog('Starting internet connectivity tracking');
     var res = await Connectivity().checkConnectivity();
     isConnected = (res != ConnectivityResult.none);
-    dlog("Internet connectivity: " + isConnected.toString());
+    dlog("Internet connectivity: ${isConnected.toString()}");
     // Start listening
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
-      dlog("Checking internet connectivity status");
+      dlog('Checking internet connectivity status');
       bool conn = (result != ConnectivityResult.none);
       if (conn && conn != isConnected) {
-        dlog("Now connected to the internet");
+        dlog('Now connected to the internet');
       } else if (!conn && conn != isConnected) {
-        dlog("No longer connected to the internet");
+        dlog('No longer connected to the internet');
       }
       isConnected = conn;
     });

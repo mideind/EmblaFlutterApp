@@ -35,7 +35,7 @@ import './common.dart';
 const int kRequestTimeout = 10; // Seconds
 
 String _clientType() {
-  return Platform.operatingSystem + "_flutter";
+  return "${Platform.operatingSystem}_flutter";
 }
 
 Future<String> _clientID() async {
@@ -51,7 +51,7 @@ Future<String> _clientVersion() async {
 Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async {
   String apiURL = Prefs().stringForKey('query_server') + path;
 
-  dlog("Sending query POST request to $apiURL: " + qargs.toString());
+  dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
   Response response = await http
       .post(apiURL, body: qargs)
       .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
@@ -74,31 +74,31 @@ class QueryService {
   // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler]) async {
     Map<String, String> qargs = {
-      "q": queries.join("|"),
-      "voice": "1",
-      "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora"
+      'q': queries.join('|'),
+      'voice': '1',
+      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora'
     };
 
     bool privacyMode = Prefs().boolForKey('privacy_mode');
     if (privacyMode) {
-      qargs["private"] = "1";
+      qargs['private'] = '1';
     } else {
-      qargs["client_type"] = _clientType();
-      qargs["client_id"] = await _clientID();
-      qargs["client_version"] = await _clientVersion();
+      qargs['client_type'] = _clientType();
+      qargs['client_id'] = await _clientID();
+      qargs['client_version'] = await _clientVersion();
     }
 
     double speed = Prefs().floatForKey('voice_speed');
     if (speed != null) {
-      qargs["voice_speed"] = speed.toString();
+      qargs['voice_speed'] = speed.toString();
     }
 
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation) {
       List<double> latlon = LocationTracking().location;
       if (latlon != null) {
-        qargs["latitude"] = latlon[0].toString();
-        qargs["longitude"] = latlon[1].toString();
+        qargs['latitude'] = latlon[0].toString();
+        qargs['longitude'] = latlon[1].toString();
       }
     }
 
@@ -108,11 +108,11 @@ class QueryService {
   // Send request to query history API
   static Future<void> clearUserData(bool allData, [Function handler]) async {
     Map<String, String> qargs = {
-      "action": allData ? "clear_all" : "clear",
-      "client_id": await _clientID(),
-      "client_type": _clientType(),
-      "client_version": await _clientVersion(),
-      "api_key": await readQueryServerKey()
+      'action': allData ? 'clear_all' : 'clear',
+      'client_id': await _clientID(),
+      'client_type': _clientType(),
+      'client_version': await _clientVersion(),
+      'api_key': await readQueryServerKey()
     };
 
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
@@ -121,10 +121,10 @@ class QueryService {
   // Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
     Map<String, String> qargs = {
-      "text": text,
-      "voice_id": Prefs().stringForKey('voice_id') == "Karl" ? "Karl" : "Dora",
-      "format": "text", // No SSML for now...
-      "api_key": await readQueryServerKey(),
+      'text': text,
+      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
+      'format': 'text', // No SSML for now...
+      'api_key': await readQueryServerKey(),
     };
 
     await _makeRequest(kSpeechAPIPath, qargs, handler);

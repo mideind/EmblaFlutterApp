@@ -64,21 +64,21 @@ extension HexColor on Color {
   }
 }
 
-String googleServiceAccount = "";
+String googleServiceAccount = '';
 
 // Read Google API service account config JSON
 Future<String> readGoogleServiceAccount() async {
-  if (googleServiceAccount == "") {
+  if (googleServiceAccount == '') {
     googleServiceAccount = await rootBundle.loadString('assets/keys/gaccount.json');
   }
   return googleServiceAccount;
 }
 
-String queryAPIKey = "";
+String queryAPIKey = '';
 
 // Read query server key
 Future<String> readQueryServerKey() async {
-  if (queryAPIKey == "") {
+  if (queryAPIKey == '') {
     queryAPIKey = await rootBundle.loadString('assets/keys/GreynirAPI.key');
   }
   return queryAPIKey;
