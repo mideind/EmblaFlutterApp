@@ -18,6 +18,7 @@
 
 // Documentation web views
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
@@ -74,7 +75,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
         initialUrl: this.widget.initialURL,
         initialOptions: InAppWebViewGroupOptions(
             crossPlatform: InAppWebViewOptions(
-          debuggingEnabled: true,
+          debuggingEnabled: kReleaseMode,
           useShouldOverrideUrlLoading: true,
           transparentBackground: true,
         )),
