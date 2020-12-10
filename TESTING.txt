@@ -7,6 +7,7 @@ PRÓFUN Á EMBLU F. ANDROID:
     * Slökkva á microphone permissions. Hvernig bregst forritið við?
     * Slökkva á location permissions. Hvernig bregst forritið við?
     * Hætta í forritinu í miðri fyrirspurnar-sessjón og opna aftur. Virkar allt?
+    * Bluetooth tæki: Virkar að skipa milli bluetooth heyrnatóla/míkrófóns? Hættir eitthvað að virka?
 
 SEINNA:
     * Virkar myrkrahamur þ.e.a.s. dark mode? Er hann læsilegur?

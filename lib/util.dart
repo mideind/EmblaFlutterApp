@@ -23,6 +23,7 @@ import 'package:flutter/services.dart' show rootBundle;
 
 // String extensions
 extension StringExtension on String {
+  // Does string end w. standard punctuation?
   bool isPunctuationTerminated() {
     if (this.length == 0) {
       return false;
@@ -36,6 +37,7 @@ extension StringExtension on String {
     return false;
   }
 
+  // Return period-terminated string if not already ending w. punctuation
   String periodTerminated() {
     if (this.length >= 0 && this.isPunctuationTerminated() == false) {
       return this + '.';
@@ -43,6 +45,8 @@ extension StringExtension on String {
     return this;
   }
 
+  // Return string with first character capitalized.
+  // Why isn't this part of of the standard library?
   String sentenceCapitalized() {
     if (this.length == 0) {
       return this;
@@ -52,8 +56,8 @@ extension StringExtension on String {
 }
 
 extension HexColor on Color {
-  // Get Color object from hex string in the format "aabbcc"
-  // or "ffaabbcc" with an optional leading "#".
+  // Get standard Flutter Color object from hex string in the
+  // format "aabbcc" or "ffaabbcc", with an optional leading "#".
   static Color fromHex(String hexString) {
     final buffer = StringBuffer();
     if (hexString.length == 6 || hexString.length == 7) {
