@@ -28,6 +28,7 @@ import 'package:flutter/material.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
+import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
@@ -231,6 +232,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
           }
           stop();
         });
+        if (resp['open_url'] != null) {
+          launch(resp['open_url']);
+        }
       } else {
         setState(() {
           text = 'Það veit ég ekki.';
