@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 
 import './settings.dart' show SettingsRoute;
 import './web.dart' show WebViewRoute;
-import './theme.dart' show bgColor, mainColor, menuFontStyle;
+import './theme.dart' show bgColor, mainColor, menuTextStyle;
 import './common.dart';
 
 void _pushSettings(BuildContext context) {
@@ -64,7 +64,7 @@ void _pushPrivacy(BuildContext context) {
 
 ListTile _generateTile(String name, String imageName, Function onTapFunc, BuildContext context) {
   return ListTile(
-    title: Text(name, style: menuFontStyle),
+    title: Text(name, style: menuTextStyle),
     leading: Image(image: AssetImage("assets/images/$imageName.png")),
     trailing: Icon(Icons.arrow_right, color: mainColor),
     onTap: () {

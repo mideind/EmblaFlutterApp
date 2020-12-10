@@ -40,7 +40,7 @@ const double sessionFontSize = 24.0;
 final TextStyle defaultTextStyle = TextStyle(color: mainColor, fontSize: defaultFontSize);
 final TextStyle sessionTextStyle =
     TextStyle(color: mainColor, fontSize: sessionFontSize, fontStyle: FontStyle.italic);
-final TextStyle menuFontStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
+final TextStyle menuTextStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
