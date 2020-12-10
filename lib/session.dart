@@ -20,8 +20,8 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
-import 'dart:math' show Random, min, max, pow;
-import 'dart:typed_data';
+import 'dart:math' show min, max, pow;
+import 'dart:typed_data' show Int16List;
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:flutter/material.dart';
@@ -48,15 +48,15 @@ enum SessionState {
   listening, // Receiving microphone input
   answering, // Communicating with server and playing back answer
 }
-
+// Current state
 SessionState state = SessionState.resting;
 
 // Speech recognition config
 RecognitionConfig speechRecognitionConfig = RecognitionConfig(
-    encoding: AudioEncoding.LINEAR16,
+    encoding: AudioEncoding.LINEAR16, // 16-bit audio
     model: RecognitionModel.command_and_search,
     enableAutomaticPunctuation: true,
-    sampleRateHertz: 16000,
+    sampleRateHertz: 16000, // 16 Khz
     languageCode: 'is-IS');
 
 // Waveform configuration
@@ -66,10 +66,17 @@ const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks bette
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
+// Animation framerate
+const int msecPerFrame = (1000 ~/ 24);
+// Logo animation status
+int currFrame = 0;
+const kFullLogoFrame = 99;
+
 // Session button size (proportional to width/height)
 const kRestingButtonProp = 0.62;
 const kExpandedButtonProp = 0.77;
 
+// Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
 
 List<double> populateSamples() {
@@ -87,10 +94,7 @@ String introMsg() {
   return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
 }
 
-// Logo animation
-int currFrame = 0;
-const kFullLogoFrame = 99;
-
+// Main widget for session view
 class SessionWidget extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _SessionWidgetState();
@@ -102,7 +106,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   String text = introMsg();
   StreamSubscription<List<int>> _audioStreamSubscription;
   BehaviorSubject<List<int>> _audioStream;
-  double lastSignal = 0;
+  double lastSignal = 0; // Strength of last audio signal
 
   @override
   void initState() {
@@ -121,28 +125,14 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         1.0 / 2.0);
   }
 
-  double doubleInRange(double start, double end) {
-    return Random().nextDouble() * (end - start) + start;
-  }
-
-  void addSignalForAudioBuffer(Int16List samples) {
+  void updateAudioSignal(Int16List samples) {
     int maxSignal = samples.reduce(max);
-    //print(total / samples.length);
-    // print(max);
     double ampl = maxSignal / 32767.0;
     // print(ampl);
     double decibels = 20.0 * log10(ampl);
     // print(decibels);
-
-    lastSignal = ampl;
-
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     // print(lastSignal);
-    // print("Normalized: " + lastSignal.toString());
-
-    //addSample(lastSignal);
-    // double rand = doubleInRange(-0.05, 0.05);
-    // addSample(lastSignal + rand);
   }
 
   void startSpeechRecognition() async {
@@ -152,17 +142,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     _audioStreamSubscription = _recorder.audioStream.listen((data) {
       _audioStream.add(data);
 
-      ByteBuffer bytes = data.buffer;
-      Int16List samples = bytes.asInt16List();
+      // Coerce sample bytes into list of 16-bit shorts
+      Int16List samples = data.buffer.asInt16List();
       print("Num samples: " + samples.length.toString());
 
-      // Int16List first = samples.sublist(0, (samples.length ~/ 2));
-      // Int16List second = samples.sublist(first.length, samples.length);
-
-      // addSignalForAudioBuffer(first);
-      // addSignalForAudioBuffer(second);
-
-      addSignalForAudioBuffer(samples);
+      updateAudioSignal(samples);
     });
 
     await _recorder.start();
@@ -175,18 +159,18 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     responseStream.listen((data) {
       setState(() {
-        text = data.results.map((e) => e.alternatives.first.transcript).join('');
-        dlog("RESULTS--------------");
-        dlog(data.results.toString());
         if (data.results.length < 1) {
           return;
         }
+        text = data.results.map((e) => e.alternatives.first.transcript).join('');
+        dlog("RESULTS--------------");
+        dlog(data.results.toString());
         text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
           dlog("Final result received, stopping recording");
           stopSpeechRecognition();
-          handleFinal(first);
+          sendQuery(first);
         }
       });
     }, onDone: () {
@@ -196,19 +180,20 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   void stopSpeechRecognition() async {
+    // if (_recorder.status == SoundStreamStatus.Stopped) {
+    //   return;
+    // }
     dlog("Stopping speech recognition");
-    await _recorder.stop();
+    await _recorder?.stop();
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
   }
 
-  // Animation timer ticker to refresh button view
+  // Ticker to animate session button
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
         addSample(lastSignal);
-        // double rand = doubleInRange(-0.05, 0.05);
-        // addSample(lastSignal + rand);
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
@@ -218,9 +203,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     });
   }
 
-  Future<void> handleFinal(var finalResult) async {
+  Future<void> sendQuery(var finalResult) async {
     state = SessionState.answering;
+    currFrame = kFullLogoFrame;
     String res = finalResult.alternatives.first.transcript;
+    // Send text to query server
     QueryService.sendQuery([res], (Map resp) async {
       if (state != SessionState.answering) {
         dlog('Received query answer after session terminated: ' + resp.toString());
@@ -271,7 +258,6 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
     setState(() {
       text = '';
-      int msecPerFrame = (1000 ~/ 24); // Framerate
       animationTimer =
           new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
       state = SessionState.listening;
@@ -286,10 +272,9 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     }
   }
 
-  // End session
+  // End session, reset state
   void stop() {
     stopSpeechRecognition();
-
     setState(() {
       stopSound();
       animationTimer.cancel();
