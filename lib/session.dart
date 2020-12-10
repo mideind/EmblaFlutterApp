@@ -32,7 +32,7 @@ import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
-//import './connectivity.dart' show ConnectivityMonitor;
+// import './connectivity.dart' show ConnectivityMonitor;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
 import './theme.dart';
@@ -42,6 +42,9 @@ import './common.dart';
 // String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
+const kDunnoMessage = 'Það veit ég ekki.';
+const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
+const kNoInternetMessage = 'Ekki næst samband við netið.';
 
 // Global session state enum
 enum SessionState {
@@ -145,8 +148,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
       // Coerce sample bytes into list of 16-bit shorts
       Int16List samples = data.buffer.asInt16List();
-      print("Num samples: " + samples.length.toString());
-
+      //print("Num samples: " + samples.length.toString());
       updateAudioSignal(samples);
     });
 
@@ -159,6 +161,10 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         _audioStream);
 
     responseStream.listen((data) {
+      if (state != SessionState.listening) {
+        dlog('Received speech recognition results after session was terminated.');
+        return;
+      }
       setState(() {
         if (data.results.length < 1) {
           return;
@@ -205,9 +211,11 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
   }
 
   Future<void> sendQuery(var finalResult) async {
+    // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
     String res = finalResult.alternatives.first.transcript;
+
     // Send text to query server
     QueryService.sendQuery([res], (Map resp) async {
       if (state != SessionState.answering) {
@@ -215,14 +223,20 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
         return;
       }
 
-      if (resp["valid"] == true && resp["error"] == null && resp["answer"] != null) {
+      // Received valid responsd to query
+      if (resp['valid'] == true &&
+          resp['error'] == null &&
+          resp['answer'] != null &&
+          resp['audio'] != null) {
         dlog("Received valid response to query");
+        // Update text
         setState(() {
           text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
           if (resp["source"] != null) {
             text = "$text (${resp['source']})";
           }
         });
+        // Play audio answer and then terminate session
         await playURL(resp['audio'], (err) {
           if (err) {
             dlog('Error during audio playback');
@@ -232,16 +246,27 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
           }
           stop();
         });
+        // Open URL, if provided in query answer
         if (resp['open_url'] != null) {
           launch(resp['open_url']);
         }
-      } else {
+      }
+      // Don't know
+      else if (resp["error"] != null) {
         setState(() {
-          text = 'Það veit ég ekki.';
+          text = kDunnoMessage;
           playSound('dunno', (err) {
             dlog("Playback finished");
             stop();
           });
+        });
+      }
+      // Error in server response
+      else {
+        setState(() {
+          stop();
+          text = kServerErrorMessage;
+          playSound('err');
         });
       }
     });
@@ -253,21 +278,27 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
       dlog('Session start called during pre-existing session!');
       return;
     }
+
     // Check for internet connectivity
     // if (!ConnectivityMonitor().connected) {
+    //   text = kNoInternetMessage;
     //   playSound('conn');
     //   return;
     // }
+
     playSound('rec_begin');
 
+    // Set off animation timer
     setState(() {
+      state = SessionState.listening;
       text = '';
+      audioSamples = populateSamples();
+      animationTimer?.cancel();
       animationTimer =
           new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
-      state = SessionState.listening;
-      audioSamples = populateSamples();
     });
 
+    // Start recognizing speech from microphone input
     try {
       startSpeechRecognition();
     } catch (e) {
@@ -278,18 +309,19 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   // End session, reset state
   void stop() {
+    dlog('Stopping session');
     stopSpeechRecognition();
     setState(() {
       stopSound();
-      animationTimer.cancel();
+      animationTimer?.cancel();
       state = SessionState.resting;
-      currFrame = 0;
+      currFrame = kFullLogoFrame;
     });
   }
 
   // User cancelled ongoing session by pressing button
   void cancel() {
-    dlog("User initiated cancellation of session");
+    dlog('User initiated cancellation of session');
     stop();
     playSound('rec_cancel');
     text = introMsg();
@@ -306,6 +338,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
   @override
   Widget build(BuildContext context) {
+    // Button size depends on whether session is active
     double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
