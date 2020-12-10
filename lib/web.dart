@@ -37,12 +37,7 @@ class WebViewRoute extends StatefulWidget {
 class _WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
-  String _fallbackAssetForURL(String url) {
-    Uri uri = Uri.parse(url);
-    return "docs/${uri.pathSegments.last}";
-  }
-
-  // Fall back to local THML document if err comes up when fetching from remote server
+  // Fall back to local HTML document if err comes up when fetching from remote server
   void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
     dlog('Page load error for $url: $errCode, $desc');
     String path = _fallbackAssetForURL(url);
@@ -50,6 +45,12 @@ class _WebViewRouteState extends State<WebViewRoute> {
     setState(() {
       controller.loadFile(assetFilePath: path);
     });
+  }
+
+  // Use local HTML asset with same name as remote document
+  String _fallbackAssetForURL(String url) {
+    Uri uri = Uri.parse(url);
+    return "docs/${uri.pathSegments.last}";
   }
 
   // Handle clicks on links in HTML documentation
