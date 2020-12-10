@@ -39,8 +39,8 @@ Future<ui.Image> _loadImageAsset(String asset) async {
 }
 
 Future<void> preloadAnimationFrames() async {
-  dlog("Preloading animation frames");
-  NumberFormat formatter = new NumberFormat("00000");
+  dlog('Preloading animation frames');
+  NumberFormat formatter = new NumberFormat('00000');
   for (int i = 0; i < 100; i++) {
     String fn = "$frameFileName${formatter.format(i)}$frameFileSuffix";
     animationFrames.add(await _loadImageAsset(fn));

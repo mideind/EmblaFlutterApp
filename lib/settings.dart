@@ -24,7 +24,7 @@ import 'package:flutter/cupertino.dart';
 
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
-import './theme.dart' show defaultFontSize, mainColor;
+import './theme.dart' show menuFontStyle, mainColor;
 import './common.dart';
 
 // Switch control associated with a boolean value pref
@@ -45,7 +45,7 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.widget.label, style: TextStyle(fontSize: defaultFontSize)),
+          title: Text(this.widget.label, style: menuFontStyle),
           trailing: CupertinoSwitch(
             value: Prefs().boolForKey(prefKey),
             activeColor: mainColor,
@@ -156,7 +156,7 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   Widget build(BuildContext context) {
     this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
     return ListTile(
-        title: Text(this.widget.label, style: TextStyle(fontSize: defaultFontSize)),
+        title: Text(this.widget.label, style: menuFontStyle),
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
@@ -220,7 +220,7 @@ class SettingsButtonWidget extends StatelessWidget {
       onPressed: () {
         _showMyDialog(context);
       },
-      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
+      child: Text(this.label, style: menuFontStyle),
     );
   }
 }
@@ -277,10 +277,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
-          child: TextField(
-              controller: textController,
-              style: TextStyle(fontSize: defaultFontSize),
-              onChanged: _changed)),
+          child: TextField(controller: textController, style: menuFontStyle, onChanged: _changed)),
       CupertinoSegmentedControl(
           children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _changed),
     ]);

@@ -311,6 +311,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   // End session, reset state
   void stop() {
+    if (state == SessionState.resting) {
+      return;
+    }
     dlog('Stopping session');
     stopSpeechRecognition();
     setState(() {
