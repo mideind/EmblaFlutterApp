@@ -25,7 +25,6 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:geolocator/geolocator.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
-import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionWidget;
 import './loc.dart' show LocationTracking;
@@ -77,69 +76,5 @@ void main() async {
   }
 
   // Launch app
-  runApp(MaterialApp(title: kSoftwareName, home: MainRoute(), theme: defaultTheme));
-}
-
-// Top left button to toggle voice activation
-class ToggleVoiceActivationWidget extends StatefulWidget {
-  @override
-  _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
-}
-
-class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
-  @override
-  Widget build(BuildContext context) {
-    String iconName = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
-    return IconButton(
-      icon: ImageIcon(AssetImage('assets/images/' + iconName)),
-      onPressed: () {
-        setState(() {
-          Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
-        });
-      },
-    );
-  }
-}
-
-// Main route
-class MainRoute extends StatefulWidget {
-  @override
-  _MainRouteState createState() => _MainRouteState();
-}
-
-class _MainRouteState extends State<MainRoute> {
-  @override
-  Widget build(BuildContext context) {
-    // Present menu route
-    void pushMenu() async {
-      stopSound();
-      Wakelock.disable();
-      await Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => MenuRoute(),
-        ),
-      ).then((val) {
-        // Make sure we rebuild main route when menu route is popped in navigation
-        // stack. This ensures that the state of the voice activation button is
-        // updated to reflect potential changes in Settings.
-        setState(() {});
-        // Re-enable wake lock
-        Wakelock.enable();
-      });
-    }
-
-    // Main view
-    return Scaffold(
-      appBar: AppBar(
-          backgroundColor: bgColor,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-          leading: ToggleVoiceActivationWidget(),
-          actions: <Widget>[
-            IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
-          ]),
-      body: SessionWidget(), // Implemented in session.dart
-    );
-  }
+  runApp(MaterialApp(title: kSoftwareName, home: SessionWidget(), theme: defaultTheme));
 }

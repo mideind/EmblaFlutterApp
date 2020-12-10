@@ -29,7 +29,9 @@ import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:wakelock/wakelock.dart' show Wakelock;
 
+import './menu.dart' show MenuRoute;
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
 // import './connectivity.dart' show ConnectivityMonitor;
@@ -342,7 +344,34 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
     double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
+    // Present menu route
+    void pushMenu() async {
+      stop();
+      Wakelock.disable();
+      await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => MenuRoute(), // Push menu route
+        ),
+      ).then((val) {
+        // Make sure we rebuild main route when menu route is popped in navigation
+        // stack. This ensures that the state of the voice activation button is
+        // updated to reflect potential changes in Settings.
+        setState(() {});
+        // Re-enable wake lock when returning to main route
+        Wakelock.enable();
+      });
+    }
+
     return Scaffold(
+      appBar: AppBar(
+          backgroundColor: bgColor,
+          bottomOpacity: 0.0,
+          elevation: 0.0,
+          leading: ToggleVoiceActivationWidget(),
+          actions: <Widget>[
+            IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
+          ]),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -373,6 +402,27 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
                               )))))),
         ],
       ),
+    );
+  }
+}
+
+// Top left button to toggle voice activation
+class ToggleVoiceActivationWidget extends StatefulWidget {
+  @override
+  _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
+}
+
+class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
+  @override
+  Widget build(BuildContext context) {
+    String iconName = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
+    return IconButton(
+      icon: ImageIcon(AssetImage('assets/images/' + iconName)),
+      onPressed: () {
+        setState(() {
+          Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
+        });
+      },
     );
   }
 }
