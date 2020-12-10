@@ -22,19 +22,19 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
-// import 'package:geolocator/geolocator.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionWidget;
-// import './loc.dart' show LocationTracking;
+import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles, stopSound;
 import './theme.dart' show defaultTheme, bgColor;
 import './util.dart';
-import './common.dart';
+import './common.dart' show dlog, kSoftwareName;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -59,19 +59,18 @@ void main() async {
   readQueryServerKey();
 
   // Activate wake lock to prevent device from going to sleep
-  // TODO: This should be disabled outside main session view
   Wakelock.enable();
 
   // Start monitoring internet connectivity
-  // await ConnectivityMonitor().start();
+  await ConnectivityMonitor().start();
 
   // Set up location tracking
-  // if (Prefs().boolForKey('share_location')) {
-  //   LocationPermission permission = await Geolocator.requestPermission();
-  //   if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
-  //     LocationTracking().start();
-  //   }
-  // }
+  if (Prefs().boolForKey('share_location')) {
+    LocationPermission permission = await Geolocator.requestPermission();
+    if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+      LocationTracking().start();
+    }
+  }
 
   // Launch app
   runApp(MaterialApp(title: kSoftwareName, home: MainRoute(), theme: defaultTheme));
@@ -110,6 +109,7 @@ class _MainRouteState extends State<MainRoute> {
     // Present menu route
     void pushMenu() async {
       stopSound();
+      Wakelock.disable();
       await Navigator.push(
         context,
         MaterialPageRoute(
@@ -119,10 +119,12 @@ class _MainRouteState extends State<MainRoute> {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings.
+        Wakelock.enable();
         setState(() {});
       });
     }
 
+    // Main view
     return Scaffold(
       appBar: AppBar(
           backgroundColor: bgColor,
@@ -132,7 +134,7 @@ class _MainRouteState extends State<MainRoute> {
           actions: <Widget>[
             IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
           ]),
-      body: SessionWidget(),
+      body: SessionWidget(), // Implemented in session.dart
     );
   }
 }
