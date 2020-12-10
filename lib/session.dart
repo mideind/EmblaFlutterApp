@@ -50,7 +50,7 @@ const kNoInternetMessage = 'Ekki næst samband við netið.';
 
 // Global session state enum
 enum SessionState {
-  resting, // No active session
+  resting, // Session not active
   listening, // Receiving microphone input
   answering, // Communicating with server and playing back answer
 }
@@ -67,7 +67,7 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 // Waveform configuration
 const int kWaveformNumBars = 15; // Number of waveform bars drawn
-const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars
+const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars as proportion of width
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
@@ -172,18 +172,18 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           return;
         }
         text = data.results.map((e) => e.alternatives.first.transcript).join('');
-        dlog("RESULTS--------------");
+        dlog('RESULTS--------------');
         dlog(data.results.toString());
         text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
-          dlog("Final result received, stopping recording");
+          dlog('Final result received, stopping recording');
           stopSpeechRecognition();
           sendQuery(first);
         }
       });
     }, onDone: () {
-      dlog("Stream done");
+      dlog('Stream done');
       stopSpeechRecognition();
     });
   }
@@ -192,7 +192,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // if (_recorder.status == SoundStreamStatus.Stopped) {
     //   return;
     // }
-    dlog("Stopping speech recognition");
+    dlog('Stopping speech recognition');
     await _recorder?.stop();
     await _audioStreamSubscription?.cancel();
     await _audioStream?.close();
@@ -230,7 +230,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           resp['error'] == null &&
           resp['answer'] != null &&
           resp['audio'] != null) {
-        dlog("Received valid response to query");
+        dlog('Received valid response to query');
         // Update text
         setState(() {
           text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
@@ -244,7 +244,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
             dlog('Error during audio playback');
             playSound('err');
           } else {
-            dlog("Playback finished");
+            dlog('Playback finished');
           }
           stop();
         });
@@ -254,11 +254,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       }
       // Don't know
-      else if (resp["error"] != null) {
+      else if (resp['error'] != null) {
         setState(() {
           text = kDunnoMessage;
           playSound('dunno', (err) {
-            dlog("Playback finished");
+            dlog('Playback finished');
             stop();
           });
         });
@@ -535,7 +535,7 @@ class SessionButtonPainter extends CustomPainter {
     if (state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
-    // Draw logo animation during query-answering phase
+    // Draw logo animation during answering phase
     else if (state == SessionState.answering) {
       drawFrame(canvas, size, currFrame);
     }

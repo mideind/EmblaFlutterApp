@@ -72,7 +72,7 @@ class Prefs {
   String desc() {
     List list = _sp
         .getKeys()
-        .map<String>((key) => "${key}: ${_sp.get(key).toString()}")
+        .map<String>((key) => "$key: ${_sp.get(key).toString()}")
         .toList(growable: false);
     return list.toString();
   }

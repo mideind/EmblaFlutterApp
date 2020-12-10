@@ -30,10 +30,10 @@ import './session.dart' show SessionRoute;
 import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './anim.dart' show preloadAnimationFrames;
-import './audio.dart' show preloadAudioFiles, stopSound;
-import './theme.dart' show defaultTheme, bgColor;
-import './util.dart';
+import './audio.dart' show preloadAudioFiles;
+import './theme.dart' show defaultTheme;
 import './common.dart' show dlog, kSoftwareName;
+import './util.dart';
 
 void main() async {
   // Initialize bindings before calling runApp()
@@ -53,7 +53,7 @@ void main() async {
   }
   dlog("Shared prefs: ${Prefs().desc()}");
 
-  // Preload assets
+  // Preload assets to prevent any lag after launching app
   await preloadAudioFiles();
   await preloadAnimationFrames();
 
