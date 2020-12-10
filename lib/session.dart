@@ -65,7 +65,7 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 // Waveform configuration
 const int kWaveformNumBars = 15; // Number of waveform bars drawn
-const double kWaveformBarSpacing = 4.0; // Fixed spacing between bars. TODO: Fix this!
+const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
@@ -379,6 +379,7 @@ class _SessionWidgetState extends State<SessionWidget> with TickerProviderStateM
 
 // This is the drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
+  // Draw the three circles that make up the button
   void drawCircles(Canvas canvas, Size size) {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
@@ -396,6 +397,7 @@ class SessionButtonPainter extends CustomPainter {
     canvas.drawCircle(center, radius / 1.75, paint);
   }
 
+  // Draw still logo frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.length == 0) {
       dlog("Animation frame loading fail. No frames loaded.");
@@ -418,6 +420,7 @@ class SessionButtonPainter extends CustomPainter {
     canvas.drawImageRect(img, srcRect, dstRect, Paint());
   }
 
+  // Draw audio waveform
   void drawWaveform(Canvas canvas, Size size) {
     // Generate square frame to contain waveform
     double w = size.width / 2.0;
@@ -425,7 +428,7 @@ class SessionButtonPainter extends CustomPainter {
     double yOffset = (size.height - w) / 2;
     Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
 
-    double margin = kWaveformBarSpacing;
+    double margin = (size.width * kWaveformBarMarginRatio) / (kWaveformNumBars - 1);
     double totalMarginWidth = (kWaveformNumBars * margin) - margin;
 
     double barWidth = (frame.width - totalMarginWidth) / kWaveformNumBars;
