@@ -180,7 +180,7 @@ class SettingsButtonWidget extends StatelessWidget {
   SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
-  Future<void> _showMyDialog(var context) async {
+  Future<void> _showPromptDialog(var context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
@@ -218,7 +218,7 @@ class SettingsButtonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextButton(
       onPressed: () {
-        _showMyDialog(context);
+        _showPromptDialog(context);
       },
       child: Text(this.label, style: menuTextStyle),
     );
@@ -335,6 +335,7 @@ class SettingsRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
+          title: Text("${kSoftwareName} ${kSoftwareVersion}", style: menuTextStyle),
         ),
         body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }
