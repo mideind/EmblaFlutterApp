@@ -79,8 +79,8 @@ const kFullLogoFrame = 99;
 int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
-const kRestingButtonProp = 0.62;
-const kExpandedButtonProp = 0.77;
+const kRestingButtonPropSize = 0.62;
+const kExpandedButtonPropSize = 0.77;
 
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
@@ -93,7 +93,7 @@ void addSample(double level) {
   while (audioSamples.length >= kWaveformNumBars) {
     audioSamples.removeAt(0);
   }
-  audioSamples.add(level);
+  audioSamples.add(level < kWaveformDefaultSampleLevel ? kWaveformDefaultSampleLevel : level);
 }
 
 String introMsg() {
@@ -344,7 +344,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     // Button size depends on whether session is active
-    double prop = (state == SessionState.resting) ? kRestingButtonProp : kExpandedButtonProp;
+    double prop =
+        (state == SessionState.resting) ? kRestingButtonPropSize : kExpandedButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
 
     // Present menu route
