@@ -1,0 +1,12 @@
+PRÓFUN Á EMBLU F. ANDROID:
+    * Gera allt til að trufla state á meðan fyrirspurnar-sessjón er í gangi, annað hvort að hlusta eða
+    svara (smella á hnappinn,hætta í forritinu, skipta yfir í valblað, slökkva á nettengingu o.s.fv.)
+    * Hvernig er leturstærðin? Breytist hún rétt eftir stillingum? Kemur hún vel út?
+    * Accessibility?
+    * Ræsist forritið hratt? Er viðmót þess eins og við mætti búast á Android?
+    * Slökkva á microphone permissions. Hvernig bregst forritið við?
+    * Slökkva á location permissions. Hvernig bregst forritið við?
+    * Hætta í forritinu í miðri fyrirspurnar-sessjón og opna aftur. Virkar allt?
+
+SEINNA:
+    * Virkar myrkrahamur þ.e.a.s. dark mode? Er hann læsilegur?
