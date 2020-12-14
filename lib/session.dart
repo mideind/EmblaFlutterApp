@@ -63,6 +63,7 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     model: RecognitionModel.command_and_search,
     enableAutomaticPunctuation: true,
     sampleRateHertz: 16000, // 16 Khz
+    maxAlternatives: 10,
     languageCode: 'is-IS');
 
 // Waveform configuration
@@ -167,10 +168,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         dlog('Received speech recognition results after session was terminated.');
         return;
       }
+      // Bail on empty result list
+      if (data.results.length < 1) {
+        return;
+      }
       setState(() {
-        if (data.results.length < 1) {
-          return;
-        }
         text = data.results.map((e) => e.alternatives.first.transcript).join('');
         dlog('RESULTS--------------');
         dlog(data.results.toString());
@@ -179,7 +181,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         if (first.isFinal) {
           dlog('Final result received, stopping recording');
           stopSpeechRecognition();
-          sendQuery(first);
+          List<String> alts = [];
+          for (var a in first.alternatives) {
+            alts.add(a.transcript);
+          }
+          answerQuery(alts);
         }
       });
     }, onDone: () {
@@ -212,11 +218,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
   }
 
-  Future<void> sendQuery(var finalResult) async {
+  Future<void> answerQuery(List<String> alternatives) async {
     // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
-    String res = finalResult.alternatives.first.transcript;
+    String res = alternatives.join('|');
 
     // Send text to query server
     QueryService.sendQuery([res], (Map resp) async {

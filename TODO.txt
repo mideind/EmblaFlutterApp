@@ -13,8 +13,8 @@ TODO for Android release:
     * Clean up speech2text code, factor into separate class
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost
-    * Send all top STT results to query server, not just first
 
+    DONE * Send all top STT results to query server, not just first
     DONE * Handle "open_url" param in query response
     DONE * Configure granularity and frequency of location updates
     DONE * Set timeout of HTTP requests to query server, handle timeout
