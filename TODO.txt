@@ -12,6 +12,7 @@ TODO for Android release:
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost
     * Fix session button resizing animation
+    * Move software name and version to own field under Settings
 
     DONE * Basic key obfuscation in binary
     DONE * Added 0.3 second delay before starting mic input so UI sound isn't recorded

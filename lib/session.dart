@@ -217,7 +217,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Start session
-  void start() {
+  void start() async {
     if (state != SessionState.resting) {
       dlog('Session start called during pre-existing session!');
       return;
@@ -244,7 +244,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Start recognizing speech from microphone input
     try {
+      // await Future.delayed(Duration(milliseconds: 350), () {
       startSpeechRecognition();
+      // });
     } catch (e) {
       stop();
       playSound('conn');
