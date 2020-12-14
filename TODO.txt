@@ -13,6 +13,7 @@ TODO for Android release:
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost
 
+    DONE * Added 0.3 second delay before starting mic input so UI sound isn't recorded
     DONE * Clean up speech2text code, factor into separate class
     DONE * Send all top STT results to query server, not just first
     DONE * Handle "open_url" param in query response

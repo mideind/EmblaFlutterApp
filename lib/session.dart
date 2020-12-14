@@ -286,10 +286,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    // Button size depends on whether session is active
+    // Session button size depends on whether session is active
     double prop =
         (state == SessionState.resting) ? kRestingButtonPropSize : kExpandedButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
+    String hotwordIcon = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
 
     // Present menu route
     void pushMenu() async {
@@ -304,9 +305,23 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings.
-        setState(() {});
+        setState(() {
+          if (text == '') {
+            text = introMsg();
+          }
+        });
         // Re-enable wake lock when returning to main route
         Wakelock.enable();
+      });
+    }
+
+    // Enable/disable hotword activation
+    void toggleHotwordActivation() {
+      setState(() {
+        Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
+        if (state == SessionState.resting) {
+          text = introMsg();
+        }
       });
     }
 
@@ -315,13 +330,19 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           backgroundColor: bgColor,
           bottomOpacity: 0.0,
           elevation: 0.0,
-          leading: ToggleVoiceActivationWidget(),
+          // Toggle hotword activation button
+          leading: IconButton(
+            icon: ImageIcon(AssetImage('assets/images/' + hotwordIcon)),
+            onPressed: toggleHotwordActivation,
+          ),
+          // Hamburger menu button
           actions: <Widget>[
             IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
           ]),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
+          // Session text widget
           Expanded(
               flex: 6,
               child: SingleChildScrollView(
@@ -330,6 +351,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                       padding: EdgeInsets.only(left: 20, right: 20, top: 10),
                       child: FractionallySizedBox(
                           widthFactor: 1.0, child: Text(text, style: sessionTextStyle))))),
+          // Session button widget
           Expanded(
               flex: 6,
               child: Padding(
@@ -349,27 +371,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                               )))))),
         ],
       ),
-    );
-  }
-}
-
-// Top left app bar button to toggle voice activation
-class ToggleVoiceActivationWidget extends StatefulWidget {
-  @override
-  _ToggleVoiceActivationWidgetState createState() => _ToggleVoiceActivationWidgetState();
-}
-
-class _ToggleVoiceActivationWidgetState extends State<ToggleVoiceActivationWidget> {
-  @override
-  Widget build(BuildContext context) {
-    String iconName = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
-    return IconButton(
-      icon: ImageIcon(AssetImage('assets/images/' + iconName)),
-      onPressed: () {
-        setState(() {
-          Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
-        });
-      },
     );
   }
 }
