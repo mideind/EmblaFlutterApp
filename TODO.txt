@@ -1,18 +1,19 @@
 TODO FUTURE:
     * Dark mode support
-    * Analyse audio samples in smaller chunks
+    * Analyse audio samples in smaller chunks - find solution
     * Optimize redraws
 
 TODO for Android release:
     * Pocketsphinx voice activation
     * Implement JS execution w. code payload from query server
     * Confirmation alert on completion of clear query history calls
-    * Key obfuscation in binary (https://flutter.dev/docs/deployment/obfuscate)
     * Set up continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost
+    * Fix session button resizing animation
 
+    DONE * Basic key obfuscation in binary
     DONE * Added 0.3 second delay before starting mic input so UI sound isn't recorded
     DONE * Clean up speech2text code, factor into separate class
     DONE * Send all top STT results to query server, not just first

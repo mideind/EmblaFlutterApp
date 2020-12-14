@@ -23,7 +23,6 @@ import 'dart:ui' as ui;
 import 'dart:math' show min, max;
 
 import 'package:flutter/material.dart';
-import 'package:google_speech/google_speech.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 

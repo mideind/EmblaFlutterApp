@@ -83,8 +83,8 @@ flutter:
     - docs/Lato-Italic.woff2
     - docs/Lato-Bold.woff2
     # Keys
-    - assets/keys/gaccount.json
-    - assets/keys/GreynirAPI.key
+    # - assets/keys/gaccount.json
+    # - assets/keys/GreynirAPI.key
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png

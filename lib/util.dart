@@ -18,8 +18,11 @@
 
 // Various utility functions and custom class extensions
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart' show rootBundle;
+
+import './keys.dart' show googleServiceAccount, queryAPIKey;
 
 // String extensions
 extension StringExtension on String {
@@ -68,22 +71,22 @@ extension HexColor on Color {
   }
 }
 
-String googleServiceAccount = '';
+String _googleServiceAccount = '';
 
 // Read Google API service account config JSON
 Future<String> readGoogleServiceAccount() async {
-  if (googleServiceAccount == '') {
-    googleServiceAccount = await rootBundle.loadString('assets/keys/gaccount.json');
+  if (_googleServiceAccount == '') {
+    _googleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
   }
-  return googleServiceAccount;
+  return _googleServiceAccount;
 }
 
-String queryAPIKey = '';
+String _queryAPIKey = '';
 
 // Read query server key
 Future<String> readQueryServerKey() async {
-  if (queryAPIKey == '') {
-    queryAPIKey = await rootBundle.loadString('assets/keys/GreynirAPI.key');
+  if (_queryAPIKey == '') {
+    _queryAPIKey = utf8.decode(base64.decode(queryAPIKey));
   }
-  return queryAPIKey;
+  return _queryAPIKey;
 }
