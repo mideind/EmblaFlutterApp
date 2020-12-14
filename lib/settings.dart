@@ -18,6 +18,8 @@
 
 // Settings route
 
+import 'dart:io' show Platform;
+
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -290,9 +292,28 @@ String clearHistoryText =
 String clearAllText =
     '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt til þess að bæta svör.''';
 
+class SettingsLabelValueWidget extends StatelessWidget {
+  SettingsLabelValueWidget(this.label, this.value);
+
+  final String label;
+  final String value;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+        child: MergeSemantics(
+            child: ListTile(
+      title: Text(this.label, style: menuTextStyle),
+      trailing: Text(this.value, style: menuTextStyle),
+    )));
+  }
+}
+
 // List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
+    SettingsLabelValueWidget(
+        'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
@@ -335,7 +356,6 @@ class SettingsRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
-          title: Text("$kSoftwareName $kSoftwareVersion", style: menuTextStyle),
         ),
         body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }
