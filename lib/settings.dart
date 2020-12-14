@@ -335,7 +335,7 @@ class SettingsRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
           toolbarOpacity: 1.0,
-          title: Text("${kSoftwareName} ${kSoftwareVersion}", style: menuTextStyle),
+          title: Text("$kSoftwareName $kSoftwareVersion", style: menuTextStyle),
         ),
         body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }

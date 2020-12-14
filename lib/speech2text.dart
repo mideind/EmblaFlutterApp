@@ -18,11 +18,16 @@
 
 // Singleton wrapper class for speech recognition
 
-import 'package:flutter/services.dart' show rootBundle;
+import 'dart:async';
+import 'dart:math' show max, pow;
+import 'dart:typed_data' show Int16List;
+
+import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
 
+import './util.dart';
 import './common.dart';
 
 // Speech recognition config
@@ -34,9 +39,67 @@ RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     languageCode: 'is-IS');
 
 class SpeechRecognizer {
-  SpeechRecognizer._privateConstructor();
-  static final SpeechRecognizer _instance = SpeechRecognizer._privateConstructor();
+  static final SpeechRecognizer _instance = SpeechRecognizer._internal();
+
   factory SpeechRecognizer() {
     return _instance;
+  }
+
+  SpeechRecognizer._internal() {
+    dlog('Initializing SpeechRecognizer');
+    _recorder.initialize();
+  }
+
+  final RecorderStream _recorder = RecorderStream();
+  StreamSubscription<List<int>> _audioStreamSubscription;
+  BehaviorSubject<List<int>> _audioStream;
+  double lastSignal = 0; // Strength of last audio signal
+
+  double _normalizedPowerLevelFromDecibels(double decibels) {
+    if (decibels < -60.0 || decibels == 0.0) {
+      return 0.0;
+    }
+    double exp = 0.05;
+    return pow(
+        (pow(10.0, exp * decibels) - pow(10.0, exp * -60.0)) *
+            (1.0 / (1.0 - pow(10.0, exp * -60.0))),
+        1.0 / 2.0);
+  }
+
+  void _updateAudioSignal(Int16List samples) {
+    int maxSignal = samples.reduce(max);
+    double ampl = maxSignal / 32767.0;
+    // print(ampl);
+    double decibels = 20.0 * log10(ampl);
+    // print(decibels);
+    lastSignal = _normalizedPowerLevelFromDecibels(decibels);
+    // print(lastSignal);
+  }
+
+  void start(Function dataHandler, Function completionHandler) async {
+    _audioStream = BehaviorSubject<List<int>>();
+    _audioStreamSubscription = _recorder.audioStream.listen((data) {
+      _audioStream.add(data);
+      // Coerce sample bytes into list of 16-bit shorts
+      Int16List samples = data.buffer.asInt16List();
+      //print("Num samples: ${samples.length.toString()}");
+      _updateAudioSignal(samples);
+    });
+
+    await _recorder.start();
+
+    final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
+    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
+    final Stream responseStream = speechToText.streamingRecognize(
+        StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
+        _audioStream);
+
+    responseStream.listen(dataHandler, onDone: completionHandler);
+  }
+
+  void stop() async {
+    await _recorder?.stop();
+    await _audioStreamSubscription?.cancel();
+    await _audioStream?.close();
   }
 }

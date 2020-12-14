@@ -20,14 +20,11 @@
 
 import 'dart:async';
 import 'dart:ui' as ui;
-import 'dart:math' show min, max, pow;
-import 'dart:typed_data' show Int16List;
+import 'dart:math' show min, max;
 
-import 'package:dart_numerics/dart_numerics.dart' show log10;
+import 'package:Embla/speech2text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_speech/google_speech.dart';
-import 'package:rxdart/rxdart.dart';
-import 'package:sound_stream/sound_stream.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
@@ -109,61 +106,12 @@ class SessionRoute extends StatefulWidget {
 
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
-  final RecorderStream _recorder = RecorderStream();
   String text = introMsg();
-  StreamSubscription<List<int>> _audioStreamSubscription;
-  BehaviorSubject<List<int>> _audioStream;
-  double lastSignal = 0; // Strength of last audio signal
-
-  @override
-  void initState() {
-    super.initState();
-    _recorder.initialize();
-  }
-
-  double _normalizedPowerLevelFromDecibels(double decibels) {
-    if (decibels < -60.0 || decibels == 0.0) {
-      return 0.0;
-    }
-    double exp = 0.05;
-    return pow(
-        (pow(10.0, exp * decibels) - pow(10.0, exp * -60.0)) *
-            (1.0 / (1.0 - pow(10.0, exp * -60.0))),
-        1.0 / 2.0);
-  }
-
-  void updateAudioSignal(Int16List samples) {
-    int maxSignal = samples.reduce(max);
-    double ampl = maxSignal / 32767.0;
-    // print(ampl);
-    double decibels = 20.0 * log10(ampl);
-    // print(decibels);
-    lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-    // print(lastSignal);
-  }
 
   void startSpeechRecognition() async {
     dlog('Starting speech recognition');
     stopSound();
-    _audioStream = BehaviorSubject<List<int>>();
-    _audioStreamSubscription = _recorder.audioStream.listen((data) {
-      _audioStream.add(data);
-
-      // Coerce sample bytes into list of 16-bit shorts
-      Int16List samples = data.buffer.asInt16List();
-      //print("Num samples: ${samples.length.toString()}");
-      updateAudioSignal(samples);
-    });
-
-    await _recorder.start();
-
-    final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
-    final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
-    final Stream responseStream = speechToText.streamingRecognize(
-        StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
-        _audioStream);
-
-    responseStream.listen((data) {
+    SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
         dlog('Received speech recognition results after session was terminated.');
         return;
@@ -188,7 +136,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           answerQuery(alts);
         }
       });
-    }, onDone: () {
+    }, () {
       dlog('Stream done');
       stopSpeechRecognition();
     });
@@ -199,16 +147,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     //   return;
     // }
     dlog('Stopping speech recognition');
-    await _recorder?.stop();
-    await _audioStreamSubscription?.cancel();
-    await _audioStream?.close();
+    SpeechRecognizer().stop();
   }
 
   // Ticker to animate session button
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        addSample(lastSignal);
+        addSample(SpeechRecognizer().lastSignal);
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
