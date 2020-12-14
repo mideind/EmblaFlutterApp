@@ -73,3 +73,6 @@ pubspec.lock
 .vscode
 
 assets/keys/*
+lib/keys.dart
+keys/*.json
+keys/*.key

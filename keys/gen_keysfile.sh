@@ -4,25 +4,24 @@
 cd "$(dirname "$0")"
 
 GOOGLE_ACCOUNT_PATH="gaccount.json"
-GREYNIR_KEY_PATH="query_api.key"
+QUERY_KEY_PATH="query_api.key"
 
+GOBF=""
 if [ ! -e $GOOGLE_ACCOUNT_PATH ]; then
-    echo "File ${GOOGLE_ACCOUNT_PATH} not found in script directory"
-    exit 1
+    echo "File ${GOOGLE_ACCOUNT_PATH} not found in script directory, using empty string"
+else
+    GOBF=`base64 -i ${GOOGLE_ACCOUNT_PATH}`
 fi
 
-if [ ! -e $GREYNIR_KEY_PATH ]; then
-    echo "File ${GREYNIR_KEY_PATH} not found in script directory"
-    exit 1
+SOBF=""
+if [ ! -e $QUERY_KEY_PATH ]; then
+    echo "File ${QUERY_KEY_PATH} not found in script directory, using empty string"
+else
+    SOBF=`base64 -i ${QUERY_KEY_PATH}`
 fi
-
-GOBF=`base64 -i ${GOOGLE_ACCOUNT_PATH}`
-SOBF=`base64 -i ${GREYNIR_KEY_PATH}`
 
 cat > '../lib/keys.dart' << EOF
-const String googleServiceAccount = "${GOBF}";
-
-const String queryAPIKey = "${SOBF}";
-
+const String googleServiceAccount = '${GOBF}';
+const String queryAPIKey = '${SOBF}';
 EOF
 

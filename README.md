@@ -25,17 +25,13 @@ Clone the repository:
 $ git clone https://github.com/mideind/Embla
 ```
 
-In order to work as intended, the app requires configuration JSON for Google's
-Speech-to-Text API. Get this document from Google's console and and save it at the
-following path within the repository:
+In order to work as intended, the app requires a configuration JSON file with a key to
+Google's Speech-to-Text API. Get this document from Google's console and and save it
+at the following path within the repository:
 
 ```keys/gaccount.json```
 
-Either acquire key to query server API or create a blank file in:
-
-```keys/query_api.key```
-
-Change to the `keys` root and run the following script:
+Then change to the `keys` root and run the following script:
 
 ```
 $ /bin/bash gen_keysfile.sh
