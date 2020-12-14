@@ -29,7 +29,21 @@ import './prefs.dart' show Prefs;
 import './theme.dart' show menuTextStyle, mainColor;
 import './common.dart';
 
-// Switch control associated with a boolean value pref
+// UI string constants
+const String kPrivacyModeMessage =
+    'Í einkaham sendir forritið engar upplýsingar frá sér að fyrirspurnatexta undanskildum. '
+    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, gerð tækis o.fl. til'
+    'þess að bæta svör.';
+
+// Alert messages for clear history buttons
+String kClearHistoryAlertText =
+    'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar'
+    ' í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
+String kClearAllAlertText =
+    'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt'
+    ' til þess að bæta svör.';
+
+// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
@@ -53,11 +67,6 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
             activeColor: mainColor,
             onChanged: (bool value) {
               setState(() {
-                if (prefKey == 'privacy_mode' && value) {
-                  Prefs().setBoolForKey('share_location', false);
-                } else if (prefKey == 'share_location' && value) {
-                  Prefs().setBoolForKey('privacy_mode', false);
-                }
                 Prefs().setBoolForKey(prefKey, value);
               });
             },
@@ -66,6 +75,89 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
             setState(() {
               Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
             });
+          },
+        ),
+      ),
+    );
+  }
+}
+
+// Switch control associated with a boolean value pref, presents a confirmation alert prompt
+class SettingsSwitchConfirmWidget extends StatefulWidget {
+  final String label;
+  final String prefKey;
+
+  SettingsSwitchConfirmWidget({Key key, this.label, this.prefKey}) : super(key: key);
+
+  @override
+  _SettingsSwitchConfirmWidgetState createState() => _SettingsSwitchConfirmWidgetState();
+}
+
+class _SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget> {
+  Future<void> _showPromptDialog(var context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Virkja einkaham?'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(kPrivacyModeMessage),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hætta við'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text('Virkja'),
+              onPressed: () {
+                setState(() {
+                  Prefs().setBoolForKey(this.widget.prefKey, true);
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    String prefKey = this.widget.prefKey;
+    return Container(
+      child: MergeSemantics(
+        child: ListTile(
+          title: Text(this.widget.label, style: menuTextStyle),
+          trailing: CupertinoSwitch(
+            value: Prefs().boolForKey(prefKey),
+            activeColor: mainColor,
+            onChanged: (bool value) {
+              if (value == true) {
+                _showPromptDialog(context);
+              } else {
+                setState(() {
+                  Prefs().setBoolForKey(prefKey, false);
+                });
+              }
+            },
+          ),
+          onTap: () {
+            if (Prefs().boolForKey(prefKey) == false) {
+              _showPromptDialog(context);
+            } else {
+              setState(() {
+                Prefs().setBoolForKey(prefKey, true);
+              });
+            }
           },
         ),
       ),
@@ -286,12 +378,6 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
   }
 }
 
-// Alert messages for clear history buttons
-String clearHistoryText =
-    '''Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.''';
-String clearAllText =
-    '''Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt til þess að bæta svör.''';
-
 class SettingsLabelValueWidget extends StatelessWidget {
   SettingsLabelValueWidget(this.label, this.value);
 
@@ -316,7 +402,7 @@ List<Widget> _settings() {
         'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
-    SettingsSwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
+    SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
     SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
     SettingsSliderWidget(
         label: 'Talhraði',
@@ -326,14 +412,14 @@ List<Widget> _settings() {
         stepSize: 0.05),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
-        alertText: clearHistoryText,
+        alertText: kClearHistoryAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
           QueryService.clearUserData(false);
         }),
     SettingsButtonWidget(
         label: 'Hreinsa öll gögn',
-        alertText: clearAllText,
+        alertText: kClearAllAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
           QueryService.clearUserData(true);
