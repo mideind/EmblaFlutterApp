@@ -279,10 +279,36 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   // Button pressed
   void toggle() {
     if (state == SessionState.resting) {
-      start();
-    } else {
+      if (SpeechRecognizer().canRecognizeSpeech() == true) {
+        start();
+      } else {
+        showKeyErrorAlert(context);
+      }
+    }
+    // We are in an active session state
+    else {
       cancel();
     }
+  }
+
+  void showKeyErrorAlert(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: new Text('Lykil vantar'),
+          content: new Text('Talgreinilykill vantar í þetta forrit.'),
+          actions: <Widget>[
+            new FlatButton(
+              child: new Text('Allt í lagi'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

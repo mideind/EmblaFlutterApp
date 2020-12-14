@@ -74,7 +74,7 @@ extension HexColor on Color {
 String _googleServiceAccount = '';
 
 // Read Google API service account config JSON
-Future<String> readGoogleServiceAccount() async {
+String readGoogleServiceAccount() {
   if (_googleServiceAccount == '') {
     _googleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
   }
@@ -84,7 +84,7 @@ Future<String> readGoogleServiceAccount() async {
 String _queryAPIKey = '';
 
 // Read query server key
-Future<String> readQueryServerKey() async {
+String readQueryServerKey() {
   if (_queryAPIKey == '') {
     _queryAPIKey = utf8.decode(base64.decode(queryAPIKey));
   }

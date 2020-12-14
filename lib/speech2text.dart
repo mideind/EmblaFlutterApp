@@ -55,6 +55,10 @@ class SpeechRecognizer {
   BehaviorSubject<List<int>> _audioStream;
   double lastSignal = 0; // Strength of last audio signal
 
+  bool canRecognizeSpeech() {
+    return (readGoogleServiceAccount() != '');
+  }
+
   double _normalizedPowerLevelFromDecibels(double decibels) {
     if (decibels < -60.0 || decibels == 0.0) {
       return 0.0;
@@ -91,7 +95,7 @@ class SpeechRecognizer {
     // Start recording
     await _recorder.start();
 
-    final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
+    final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final Stream responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),

@@ -112,7 +112,7 @@ class QueryService {
       'client_id': await _clientID(),
       'client_type': _clientType(),
       'client_version': await _clientVersion(),
-      'api_key': await readQueryServerKey()
+      'api_key': readQueryServerKey()
     };
 
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
@@ -124,7 +124,7 @@ class QueryService {
       'text': text,
       'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
       'format': 'text', // No SSML for now...
-      'api_key': await readQueryServerKey(),
+      'api_key': readQueryServerKey(),
     };
 
     await _makeRequest(kSpeechAPIPath, qargs, handler);
