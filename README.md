@@ -25,7 +25,23 @@ Clone the repository:
 $ git clone https://github.com/mideind/Embla
 ```
 
-Change to the repository root and run the following command:
+In order to work as intended, the app requires configuration JSON for Google's
+Speech-to-Text API. Get this document from Google's console and and save it at the
+following path within the repository:
+
+```keys/gaccount.json```
+
+Either acquire key to query server API or create a blank file in:
+
+```keys/query_api.key```
+
+Change to the `keys` root and run the following script:
+
+```
+$ /bin/bash gen_keysfile.sh
+```
+
+You should now be able to build and run the app:
 
 ```
 $ flutter run
@@ -33,9 +49,6 @@ $ flutter run
 
 This should launch the app in development mode on your device of choice (e.g.
 simulator, attached physical device, etc.).
-
-NB: To work, the app requires a Google Cloud Speech-to-Text API service account configuration.
-Once you have acquired a JSON config file via their API console, put it in `assets/keys/gaccount.json`.
 
 ## Screenshots
 

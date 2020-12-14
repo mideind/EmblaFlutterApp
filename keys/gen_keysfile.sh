@@ -4,7 +4,7 @@
 cd "$(dirname "$0")"
 
 GOOGLE_ACCOUNT_PATH="gaccount.json"
-GREYNIR_KEY_PATH="GreynirAPI.key"
+GREYNIR_KEY_PATH="query_api.key"
 
 if [ ! -e $GOOGLE_ACCOUNT_PATH ]; then
     echo "File ${GOOGLE_ACCOUNT_PATH} not found in script directory"
