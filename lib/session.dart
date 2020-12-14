@@ -22,7 +22,6 @@ import 'dart:async';
 import 'dart:ui' as ui;
 import 'dart:math' show min, max;
 
-import 'package:Embla/speech2text.dart';
 import 'package:flutter/material.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
@@ -31,6 +30,7 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import './menu.dart' show MenuRoute;
 import './anim.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
+import './speech2text.dart' show SpeechRecognizer;
 // import './connectivity.dart' show ConnectivityMonitor;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
@@ -38,7 +38,7 @@ import './theme.dart';
 import './util.dart';
 import './common.dart';
 
-// String constants
+// UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 const kDunnoMessage = 'Það veit ég ekki.';
@@ -49,19 +49,10 @@ const kNoInternetMessage = 'Ekki næst samband við netið.';
 enum SessionState {
   resting, // Session not active
   listening, // Receiving microphone input
-  answering, // Communicating with server and playing back answer
+  answering, // Communicating with server or playing back answer
 }
 // Current state
 SessionState state = SessionState.resting;
-
-// Speech recognition config
-RecognitionConfig speechRecognitionConfig = RecognitionConfig(
-    encoding: AudioEncoding.LINEAR16, // 16-bit audio
-    model: RecognitionModel.command_and_search,
-    enableAutomaticPunctuation: true,
-    sampleRateHertz: 16000, // 16 Khz
-    maxAlternatives: 10,
-    languageCode: 'is-IS');
 
 // Waveform configuration
 const int kWaveformNumBars = 15; // Number of waveform bars drawn

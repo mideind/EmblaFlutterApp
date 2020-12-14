@@ -82,6 +82,7 @@ class Prefs {
   }
 
   void setDefaults() {
+    dlog('Setting prefs to default values');
     Prefs().setBoolForKey('launched', true);
     Prefs().setBoolForKey('hotword_activation', true);
     Prefs().setBoolForKey('share_location', true);

@@ -48,7 +48,6 @@ void main() async {
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
-    dlog('Setting default prefs on first launch');
     Prefs().setDefaults();
   }
   dlog("Shared prefs: ${Prefs().desc()}");

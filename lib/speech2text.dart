@@ -20,7 +20,7 @@
 
 import 'dart:async';
 import 'dart:math' show max, pow;
-import 'dart:typed_data' show Int16List;
+import 'dart:typed_data' show Uint8List, Int16List;
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:google_speech/google_speech.dart';
@@ -66,8 +66,12 @@ class SpeechRecognizer {
         1.0 / 2.0);
   }
 
-  void _updateAudioSignal(Int16List samples) {
+  void _updateAudioSignal(Uint8List data) {
+    // Coerce sample bytes into list of 16-bit shorts
+    Int16List samples = data.buffer.asInt16List();
+    //print("Num samples: ${samples.length.toString()}");
     int maxSignal = samples.reduce(max);
+    // Divide by max value of 16-bit short to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
     // print(ampl);
     double decibels = 20.0 * log10(ampl);
@@ -77,15 +81,14 @@ class SpeechRecognizer {
   }
 
   void start(Function dataHandler, Function completionHandler) async {
+    // Subscribe to recording stream
     _audioStream = BehaviorSubject<List<int>>();
     _audioStreamSubscription = _recorder.audioStream.listen((data) {
       _audioStream.add(data);
-      // Coerce sample bytes into list of 16-bit shorts
-      Int16List samples = data.buffer.asInt16List();
-      //print("Num samples: ${samples.length.toString()}");
-      _updateAudioSignal(samples);
+      _updateAudioSignal(data);
     });
 
+    // Start recording
     await _recorder.start();
 
     final serviceAccount = ServiceAccount.fromString(await readGoogleServiceAccount());
