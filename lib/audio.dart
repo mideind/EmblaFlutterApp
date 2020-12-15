@@ -26,7 +26,9 @@ import 'package:audioplayers/audioplayers.dart';
 import './prefs.dart' show Prefs;
 import './common.dart';
 
-final audioPlayer = AudioPlayer(/*mode: PlayerMode.LOW_LATENCY*/);
+final audioPlayer = AudioPlayer(
+  mode: PlayerMode.LOW_LATENCY,
+);
 final audioCache = new AudioCache(fixedPlayer: audioPlayer);
 
 StreamSubscription completionStreamSubscription;

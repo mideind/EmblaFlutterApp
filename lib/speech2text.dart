@@ -42,7 +42,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 class SpeechRecognizer {
   // Class variables
-  final RecorderStream _micRecorder = RecorderStream();
+  RecorderStream _micRecorder = RecorderStream();
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
   double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
@@ -57,10 +57,7 @@ class SpeechRecognizer {
   }
 
   // Initialization
-  SpeechRecognizer._internal() {
-    dlog('Initializing speech recognizer');
-    _micRecorder.initialize(showLogs: !kReleaseMode);
-  }
+  SpeechRecognizer._internal() {}
 
   // Do we have all we need to recognize speech?
   bool canRecognizeSpeech() {
@@ -97,6 +94,10 @@ class SpeechRecognizer {
 
   // Set things off
   void start(Function dataHandler, Function completionHandler) async {
+    dlog('Initializing speech recognizer');
+    _micRecorder = RecorderStream();
+    _micRecorder.initialize();
+
     isRecognizing = true;
     dlog('Starting speech recognition');
     // Subscribe to recording stream
