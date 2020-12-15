@@ -42,7 +42,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 class SpeechRecognizer {
   // Class variables
-  final RecorderStream _recorder = RecorderStream();
+  final RecorderStream _micRecorder = RecorderStream();
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
   double lastSignal = 0.0; // Strength of last audio signal
@@ -59,7 +59,7 @@ class SpeechRecognizer {
   // Initialization
   SpeechRecognizer._internal() {
     dlog('Initializing speech recognizer');
-    _recorder.initialize(showLogs: kReleaseMode);
+    _micRecorder.initialize(showLogs: kReleaseMode);
   }
 
   // Do we have all we need to recognize speech?
@@ -101,7 +101,7 @@ class SpeechRecognizer {
     dlog('Starting speech recognition');
     // Subscribe to recording stream
     _recognitionStream = BehaviorSubject<List<int>>();
-    _recognitionStreamSubscription = _recorder.audioStream.listen((data) {
+    _recognitionStreamSubscription = _micRecorder.audioStream.listen((data) {
       // When recording stream receives data, pass it on to the recognition
       // stream and note the maximum strength of the audio signal.
       _recognitionStream?.add(data);
@@ -109,7 +109,7 @@ class SpeechRecognizer {
     });
 
     // Start microphone recording
-    await _recorder.start();
+    await _micRecorder.start();
 
     // Start recognizing
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
@@ -129,7 +129,7 @@ class SpeechRecognizer {
     isRecognizing = false;
     // Kill everything
     dlog('Stopping speech recognition');
-    await _recorder?.stop();
+    await _micRecorder?.stop();
     await _recognitionStreamSubscription?.cancel();
     await _recognitionStream?.close();
   }

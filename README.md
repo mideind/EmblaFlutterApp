@@ -16,8 +16,8 @@ Building the Embla client requires the Flutter framework:
 
 * [Install Flutter](https://flutter.dev/docs/get-started/install)
 
-Building for iOS requires a recent version of Xcode. Building for Android requires
-a recent version of Android Studio.
+Building for Android requires a recent version of Android Studio. Building for iOS
+requires a recent version of Xcode.
 
 Clone the repository:
 
