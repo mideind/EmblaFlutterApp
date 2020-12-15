@@ -25,16 +25,16 @@ Clone the repository:
 $ git clone https://github.com/mideind/Embla
 ```
 
-In order to work as intended, the app requires a configuration JSON file with a key to
-Google's Speech-to-Text API. Get this document from Google's console and and save it
-at the following path within the repository:
+In order to work as intended, the app requires a JSON configuration file containing a key
+for Google's Speech-to-Text API. Get this document from Google's API console and and save
+it at the following path within the repository:
 
 ```keys/gaccount.json```
 
-Then change to the `keys` root and run the following script:
+Then run the following script:
 
 ```
-$ /bin/bash gen_keysfile.sh
+$ /bin/bash keys/gen_keysfile.sh
 ```
 
 You should now be able to build and run the app:
@@ -53,7 +53,7 @@ TBD
 ## Credits
 
 The Embla client uses Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text)
-for speech recognition. Speech synthesis is accomplished via voices commissioned by
+for speech recognition. Speech synthesis is accomplished via synthetic voices commissioned by
 [Blindrafélagið](https://blind.is), the Icelandic Association of the Visually Impaired.
 
 ## GPL License
