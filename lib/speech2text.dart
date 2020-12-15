@@ -84,7 +84,7 @@ class SpeechRecognizer {
   void _updateAudioSignal(Uint8List data) {
     // Coerce sample bytes into list of 16-bit shorts
     Int16List samples = data.buffer.asInt16List();
-    // dlog("Num samples: ${samples.length.toString()}");
+    dlog("Num samples: ${samples.length.toString()}");
     int maxSignal = samples.reduce(max);
     // Divide by max value of 16-bit short to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
@@ -104,9 +104,13 @@ class SpeechRecognizer {
     _recognitionStreamSubscription = _micRecorder.audioStream.listen((data) {
       // When recording stream receives data, pass it on to the recognition
       // stream and note the maximum strength of the audio signal.
+      dlog('Received stream data');
       _recognitionStream?.add(data);
       _updateAudioSignal(data);
     });
+
+    dlog(_micRecorder.toString());
+    dlog(_recognitionStreamSubscription.toString());
 
     // Start microphone recording
     await _micRecorder.start();
