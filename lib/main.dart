@@ -29,11 +29,10 @@ import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
-import './anim.dart' show preloadAnimationFrames;
+import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show preloadAudioFiles;
 import './theme.dart' show defaultTheme;
 import './common.dart' show dlog, kSoftwareName;
-import './util.dart';
 
 void main() async {
   // Initialize bindings before calling runApp()
@@ -55,10 +54,6 @@ void main() async {
   // Preload assets to prevent any lag after launching app
   await preloadAudioFiles();
   await preloadAnimationFrames();
-
-  // Preload keys from files
-  readGoogleServiceAccount();
-  readQueryServerKey();
 
   // Activate wake lock to prevent device from going to sleep
   Wakelock.enable();
