@@ -27,7 +27,7 @@ import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './menu.dart' show MenuRoute;
-import './anim.dart' show animationFrames;
+import './animations.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
 import './speech2text.dart' show SpeechRecognizer;
 // import './connectivity.dart' show ConnectivityMonitor;

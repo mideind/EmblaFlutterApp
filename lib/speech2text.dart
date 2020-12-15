@@ -45,7 +45,7 @@ class SpeechRecognizer {
   final RecorderStream _micRecorder = RecorderStream();
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
-  double lastSignal = 0.0; // Strength of last audio signal
+  double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
   bool isRecognizing = false;
 
   // Constructor
@@ -59,7 +59,7 @@ class SpeechRecognizer {
   // Initialization
   SpeechRecognizer._internal() {
     dlog('Initializing speech recognizer');
-    _micRecorder.initialize(showLogs: kReleaseMode);
+    _micRecorder.initialize(showLogs: !kReleaseMode);
   }
 
   // Do we have all we need to recognize speech?
