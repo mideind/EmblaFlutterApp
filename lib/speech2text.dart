@@ -23,6 +23,7 @@ import 'dart:math' show max, pow;
 import 'dart:typed_data' show Uint8List, Int16List;
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
+import 'package:flutter/foundation.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
@@ -30,35 +31,42 @@ import 'package:sound_stream/sound_stream.dart';
 import './util.dart';
 import './common.dart';
 
-// Speech recognition config
-RecognitionConfig speechRecognitionConfig = RecognitionConfig(
+// Speech recognition config record
+final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     encoding: AudioEncoding.LINEAR16,
     model: RecognitionModel.command_and_search,
     enableAutomaticPunctuation: true,
     sampleRateHertz: 16000,
+    maxAlternatives: 10,
     languageCode: 'is-IS');
 
 class SpeechRecognizer {
+  // Class variables
+  final RecorderStream _recorder = RecorderStream();
+  StreamSubscription<List<int>> _recognitionStreamSubscription;
+  BehaviorSubject<List<int>> _recognitionStream;
+  double lastSignal = 0; // Strength of last audio signal
+
+  // Constructor
   static final SpeechRecognizer _instance = SpeechRecognizer._internal();
 
+  // Singleton pattern
   factory SpeechRecognizer() {
     return _instance;
   }
 
+  // Initialization
   SpeechRecognizer._internal() {
     dlog('Initializing SpeechRecognizer');
-    _recorder.initialize();
+    _recorder.initialize(showLogs: kReleaseMode);
   }
 
-  final RecorderStream _recorder = RecorderStream();
-  StreamSubscription<List<int>> _audioStreamSubscription;
-  BehaviorSubject<List<int>> _audioStream;
-  double lastSignal = 0; // Strength of last audio signal
-
+  // Do we have all we need to recognize speech?
   bool canRecognizeSpeech() {
     return (readGoogleServiceAccount() != '');
   }
 
+  // Normalize decibel level to a number between 0.0 and 1.0
   double _normalizedPowerLevelFromDecibels(double decibels) {
     if (decibels < -60.0 || decibels == 0.0) {
       return 0.0;
@@ -70,43 +78,50 @@ class SpeechRecognizer {
         1.0 / 2.0);
   }
 
+  // Read audio buffer, analyse strength of signal
   void _updateAudioSignal(Uint8List data) {
     // Coerce sample bytes into list of 16-bit shorts
     Int16List samples = data.buffer.asInt16List();
-    //print("Num samples: ${samples.length.toString()}");
+    // dlog("Num samples: ${samples.length.toString()}");
     int maxSignal = samples.reduce(max);
     // Divide by max value of 16-bit short to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
-    // print(ampl);
+    // dlog(ampl);
     double decibels = 20.0 * log10(ampl);
-    // print(decibels);
+    // dlog(decibels);
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-    // print(lastSignal);
+    // dlog(lastSignal);
   }
 
+  // Set things off
   void start(Function dataHandler, Function completionHandler) async {
     // Subscribe to recording stream
-    _audioStream = BehaviorSubject<List<int>>();
-    _audioStreamSubscription = _recorder.audioStream.listen((data) {
-      _audioStream.add(data);
+    _recognitionStream = BehaviorSubject<List<int>>();
+    _recognitionStreamSubscription = _recorder.audioStream.listen((data) {
+      // When recording stream receives data, pass it on to the recognition
+      // stream and note the maximum strength of the audio signal.
+      _recognitionStream.add(data);
       _updateAudioSignal(data);
     });
 
-    // Start recording
+    // Start microphone recording
     await _recorder.start();
 
+    // Start recognizing
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final Stream responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
-        _audioStream);
+        _recognitionStream);
 
+    // Listen for streaming speech recognition response
     responseStream.listen(dataHandler, onDone: completionHandler);
   }
 
+  // Kill everything
   void stop() async {
     await _recorder?.stop();
-    await _audioStreamSubscription?.cancel();
-    await _audioStream?.close();
+    await _recognitionStreamSubscription?.cancel();
+    await _recognitionStream?.close();
   }
 }
