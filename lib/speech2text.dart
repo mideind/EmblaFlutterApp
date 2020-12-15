@@ -45,7 +45,7 @@ class SpeechRecognizer {
   final RecorderStream _recorder = RecorderStream();
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
-  double lastSignal = 0; // Strength of last audio signal
+  double lastSignal = 0.0; // Strength of last audio signal
   bool isRecognizing = false;
 
   // Constructor

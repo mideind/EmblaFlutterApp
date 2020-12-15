@@ -98,7 +98,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   Timer animationTimer;
   String text = introMsg();
 
-  void startSpeechRecognition() async {
+  void startSpeechRecognition() {
     stopSound();
     SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
@@ -131,7 +131,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
   }
 
-  void stopSpeechRecognition() async {
+  void stopSpeechRecognition() {
     SpeechRecognizer().stop();
   }
 
@@ -149,20 +149,19 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
   }
 
-  Future<void> answerQuery(List<String> alternatives) async {
+  void answerQuery(List<String> alternatives) {
     // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
-    String res = alternatives.join('|');
 
     // Send text to query server
-    QueryService.sendQuery([res], (Map resp) async {
+    QueryService.sendQuery(alternatives, (Map resp) async {
       if (state != SessionState.answering) {
         dlog('Received query answer after session terminated: ' + resp.toString());
         return;
       }
 
-      // Received valid responsd to query
+      // Received valid response to query
       if (resp['valid'] == true &&
           resp['error'] == null &&
           resp['answer'] != null &&
@@ -212,7 +211,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Start session
-  void start() async {
+  void start() {
     if (state != SessionState.resting) {
       dlog('Session start called during pre-existing session!');
       return;
@@ -277,7 +276,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       if (SpeechRecognizer().canRecognizeSpeech() == true) {
         start();
       } else {
-        showKeyErrorAlert(context);
+        showRecognitionErrorAlert(context);
       }
     }
     // We are in an active session state
@@ -286,13 +285,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
-  void showKeyErrorAlert(BuildContext context) {
+  void showRecognitionErrorAlert(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text('Lykil vantar'),
-          content: new Text('Talgreinilykill vantar í þetta forrit.'),
+          title: new Text('Talgreining virkar'),
+          content: new Text('Ekki tókst að hefja talgreiningu.'),
           actions: <Widget>[
             new FlatButton(
               child: new Text('Allt í lagi'),
@@ -315,10 +314,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     String hotwordIcon = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
 
     // Present menu route
-    void pushMenu() async {
-      stop();
+    void pushMenu() {
+      stop(); // Terminate any ongoing session
       Wakelock.disable();
-      await Navigator.push(
+      Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => MenuRoute(), // Push menu route
@@ -326,7 +325,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       ).then((val) {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
-        // updated to reflect potential changes in Settings.
+        // updated to reflect potential changes in Settings and more.
         setState(() {
           if (text == '') {
             text = introMsg();
@@ -348,6 +347,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
 
     return Scaffold(
+      // Top nav bar
       appBar: AppBar(
           backgroundColor: bgColor,
           bottomOpacity: 0.0,
@@ -361,6 +361,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           actions: <Widget>[
             IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
           ]),
+      // Main view contents
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
@@ -497,7 +498,7 @@ class SessionButtonPainter extends CustomPainter {
   }
 
   @override
-  void paint(Canvas canvas, Size size) async {
+  void paint(Canvas canvas, Size size) {
     // We always draw the circles
     drawCircles(canvas, size);
 
