@@ -63,7 +63,6 @@ flutter:
     - assets/images/mic-slash.png
     - assets/images/menu.png
     - assets/images/cog.png
-    # - assets/images/logo.png
     # Audio
     - assets/audio/rec_begin.wav
     - assets/audio/rec_cancel.wav

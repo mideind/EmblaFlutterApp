@@ -46,6 +46,7 @@ class SpeechRecognizer {
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
   double lastSignal = 0; // Strength of last audio signal
+  bool isRecognizing = false;
 
   // Constructor
   static final SpeechRecognizer _instance = SpeechRecognizer._internal();
@@ -57,12 +58,13 @@ class SpeechRecognizer {
 
   // Initialization
   SpeechRecognizer._internal() {
-    dlog('Initializing SpeechRecognizer');
+    dlog('Initializing speech recognizer');
     _recorder.initialize(showLogs: kReleaseMode);
   }
 
   // Do we have all we need to recognize speech?
   bool canRecognizeSpeech() {
+    // TODO: Also check for app permissions f. microphone input
     return (readGoogleServiceAccount() != '');
   }
 
@@ -95,12 +97,14 @@ class SpeechRecognizer {
 
   // Set things off
   void start(Function dataHandler, Function completionHandler) async {
+    isRecognizing = true;
+    dlog('Starting speech recognition');
     // Subscribe to recording stream
     _recognitionStream = BehaviorSubject<List<int>>();
     _recognitionStreamSubscription = _recorder.audioStream.listen((data) {
       // When recording stream receives data, pass it on to the recognition
       // stream and note the maximum strength of the audio signal.
-      _recognitionStream.add(data);
+      _recognitionStream?.add(data);
       _updateAudioSignal(data);
     });
 
@@ -118,8 +122,13 @@ class SpeechRecognizer {
     responseStream.listen(dataHandler, onDone: completionHandler);
   }
 
-  // Kill everything
   void stop() async {
+    if (isRecognizing == false) {
+      return;
+    }
+    isRecognizing = false;
+    // Kill everything
+    dlog('Stopping speech recognition');
     await _recorder?.stop();
     await _recognitionStreamSubscription?.cancel();
     await _recognitionStream?.close();

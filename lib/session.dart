@@ -99,7 +99,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   String text = introMsg();
 
   void startSpeechRecognition() async {
-    dlog('Starting speech recognition');
     stopSound();
     SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
@@ -107,7 +106,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         return;
       }
       // Bail on empty result list
-      if (data.results.length < 1) {
+      if (data == null || data.results.length < 1) {
         return;
       }
       setState(() {
@@ -133,10 +132,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void stopSpeechRecognition() async {
-    // if (_recorder.status == SoundStreamStatus.Stopped) {
-    //   return;
-    // }
-    dlog('Stopping speech recognition');
     SpeechRecognizer().stop();
   }
 

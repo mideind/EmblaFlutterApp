@@ -12,6 +12,8 @@ TODO for Android release:
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost
     * Fix session button resizing animation
+    * Prefetch remote audio file before playback? Perhaps more robust in terms of error handling.
+    * Fix weird mic input behaviour when session button is hammered repeatedly
 
     DONE * Confirmation dialog when enabling Privacy Mode
     DONE * Move software name and version to own field under Settings
