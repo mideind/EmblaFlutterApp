@@ -16,14 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+// Singleton wrapper class for hotword detection ("Hæ Embla")
+
 import 'dart:async';
 import 'dart:io';
-import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:porcupine/porcupine_manager.dart';
-import 'package:porcupine/porcupine_error.dart';
 
 import './common.dart' show dlog;
 
@@ -41,8 +41,9 @@ class HotwordDetector {
   }
 
   // Initialization
-  HotwordDetector._internal() {}
+  HotwordDetector._internal();
 
+  // Start hotword detection
   Future<void> start(Function hotwordHandler, Function errHandler) async {
     dlog('Starting hotword detection');
     try {
@@ -52,34 +53,33 @@ class HotwordDetector {
       pm = await PorcupineManager.fromKeywordPaths([ppnPath], (idx) {
         hotwordHandler();
       });
-    } on PvError catch (err) {
-      dlog(err.toString());
+    } catch (err) {
+      dlog("Error initing Porcupine: ${err.toString()}");
       errHandler();
+      return;
     }
     await pm.start();
   }
 
+  // Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
     await pm.stop();
   }
 
+  // Release any assets loaded by hotword detector
   void purge() {
     pm.delete();
   }
 
+  // Copy PPN files from asset bundle to temp directory
   Future<String> copyPPNToTemp() async {
     final filename = 'hey_emm_blah_ios.ppn';
-    var bytes = await rootBundle.load("assets/ppn/hey_emm_blah_ios.ppn");
-    String dir = (await getApplicationDocumentsDirectory()).path;
+    var bytes = await rootBundle.load("assets/ppn/$filename");
+    String dir = (await getTemporaryDirectory()).path;
     String finalPath = "$dir/$filename";
-    writeToFile(bytes, finalPath);
+    final buffer = bytes.buffer;
+    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return finalPath;
-  }
-
-//write to app path
-  Future<void> writeToFile(ByteData data, String path) {
-    final buffer = data.buffer;
-    return new File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
 }

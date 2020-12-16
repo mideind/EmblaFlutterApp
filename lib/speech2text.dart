@@ -23,7 +23,6 @@ import 'dart:math' show max, pow;
 import 'dart:typed_data' show Uint8List, Int16List;
 
 import 'package:dart_numerics/dart_numerics.dart' show log10;
-import 'package:flutter/foundation.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:sound_stream/sound_stream.dart';
@@ -57,7 +56,7 @@ class SpeechRecognizer {
   }
 
   // Initialization
-  SpeechRecognizer._internal() {}
+  SpeechRecognizer._internal();
 
   // Do we have all we need to recognize speech?
   bool canRecognizeSpeech() {
@@ -94,12 +93,13 @@ class SpeechRecognizer {
 
   // Set things off
   void start(Function dataHandler, Function completionHandler) async {
-    dlog('Initializing speech recognizer');
+    isRecognizing = true;
+    dlog('Starting speech recognition');
+
+    // Create recording stream
     _micRecorder = RecorderStream();
     _micRecorder.initialize();
 
-    isRecognizing = true;
-    dlog('Starting speech recognition');
     // Subscribe to recording stream
     _recognitionStream = BehaviorSubject<List<int>>();
     _recognitionStreamSubscription = _micRecorder.audioStream.listen((data) {
@@ -124,12 +124,12 @@ class SpeechRecognizer {
     responseStream.listen(dataHandler, onDone: completionHandler);
   }
 
+  // Teardown
   void stop() async {
     if (isRecognizing == false) {
       return;
     }
     isRecognizing = false;
-    // Kill everything
     dlog('Stopping speech recognition');
     await _micRecorder?.stop();
     await _recognitionStreamSubscription?.cancel();
