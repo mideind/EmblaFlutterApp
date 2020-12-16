@@ -46,6 +46,7 @@ class HotwordDetector {
 
   // Start hotword detection
   Future<void> start(Function hotwordHandler, Function errHandler) async {
+    return;
     dlog('Starting hotword detection');
     try {
       if (ppnPath == null) {
@@ -64,6 +65,7 @@ class HotwordDetector {
 
   // Stop hotword detection
   Future<void> stop() async {
+    return;
     dlog('Stopping hotword detection');
     await pm.stop();
   }

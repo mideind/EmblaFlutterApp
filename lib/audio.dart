@@ -19,36 +19,27 @@
 // Audio playback
 
 import 'dart:async';
+import 'dart:typed_data';
 
-import 'package:audioplayers/audio_cache.dart';
-import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import './prefs.dart' show Prefs;
 import './common.dart';
 
-final audioPlayer = AudioPlayer(mode: PlayerMode.LOW_LATENCY);
-final audioCache = new AudioCache(fixedPlayer: audioPlayer);
-
-StreamSubscription completionStreamSubscription;
-StreamSubscription errorStreamSubscription;
-
-void defaultPlayerHandler(AudioPlayerState value) {
-  // Do nothing
-  //dlog("Audio player state changed: " + value.toString());
-}
-
+// List of audio file assets in bundle
 const List<String> audioFiles = [
   // Voice-independent
-  'audio/rec_begin.wav',
-  'audio/rec_cancel.wav',
-  'audio/rec_confirm.wav',
+  'rec_begin',
+  'rec_cancel',
+  'rec_confirm',
   // Voice dependent
-  'audio/conn-dora.wav',
-  'audio/conn-karl.wav',
-  'audio/dunno-dora.wav',
-  'audio/dunno-karl.wav',
-  'audio/err-dora.wav',
-  'audio/err-karl.wav',
+  'conn-dora',
+  'conn-karl',
+  'dunno-dora',
+  'dunno-karl',
+  'err-dora',
+  'err-karl',
 ];
 
 // These sounds are the same regardless of voice ID settings.
@@ -58,68 +49,99 @@ const List<String> sessionSounds = [
   'rec_confirm',
 ];
 
-Future<void> preloadAudioFiles() async {
-  dlog('Preloading audio assets: ' + audioFiles.toString());
-  await audioCache.loadAll(audioFiles);
-}
+class AudioPlayer {
+  // Class variables
+  final FlutterSoundPlayer player = FlutterSoundPlayer();
+  final Map<String, Uint8List> audioFileCache = Map();
 
-void stopSound() {
-  _cancelSubscriptions();
-  audioPlayer?.stop();
-}
+  // Constructor
+  static final AudioPlayer _instance = AudioPlayer._internal();
 
-void _subscribe(Function handler) {
-  _cancelSubscriptions();
-  completionStreamSubscription = audioPlayer.onPlayerCompletion.listen((event) {
-    handler(false);
-  });
-  errorStreamSubscription = audioPlayer.onPlayerError.listen((event) {
-    handler(true);
-  });
-}
-
-void _cancelSubscriptions() {
-  completionStreamSubscription?.cancel();
-  errorStreamSubscription?.cancel();
-}
-
-Future<void> playURL(String url, [Function completionHandler]) async {
-  // Silence annoying warning on iOS
-  //audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
-
-  stopSound();
-
-  if (completionHandler != null) {
-    _subscribe(completionHandler);
+  // Singleton pattern
+  factory AudioPlayer() {
+    return _instance;
   }
 
-  dlog("Playing remote audio file $url");
-  try {
-    await audioPlayer.play(url);
-  } catch (e) {
-    if (completionHandler != null) {
-      completionHandler(true);
+  // Initialization
+  AudioPlayer._internal();
+
+  // Audio player setup and audio data preloading
+  Future<void> init() async {
+    // Check if already inited
+    if (audioFileCache.length > 0) {
+      return;
+    }
+    dlog('Initing audio player');
+    await preloadAudioFiles();
+    await player.openAudioSession();
+  }
+
+  // Load all asset-bundled audio files into memory
+  Future<void> preloadAudioFiles() async {
+    dlog("Preloading audio assets: ${audioFiles.toString()}");
+    for (String fn in audioFiles) {
+      ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
+      audioFileCache[fn] = bytes.buffer.asUint8List();
     }
   }
-}
 
-void playSound(String soundName, [Function completionHandler]) {
-  // Silence annoying warning on iOS
-  //audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
-
-  stopSound();
-
-  if (completionHandler != null) {
-    _subscribe(completionHandler);
+  // Stop playback
+  void stop() {
+    player.stopPlayer();
   }
 
-  String assetPath;
-  if (sessionSounds.contains(soundName)) {
-    assetPath = "audio/$soundName.wav";
-  } else {
-    String voiceName = (Prefs().stringForKey('voice_id') == 'Kona') ? 'dora' : 'karl';
-    assetPath = "audio/$soundName-$voiceName.wav";
+  // Play remote audio file
+  Future<void> playURL(String url, [Function completionHandler]) async {
+    _instance.stop();
+
+    dlog("Playing remote audio file '$url'");
+    player.startPlayer(
+        fromURI: url,
+        whenFinished: () {
+          if (completionHandler != null) {
+            completionHandler();
+          }
+        });
   }
-  dlog("Playing audio file '$assetPath'");
-  audioCache.play(assetPath);
+
+  // Play a preloaded audio file bundled with the app
+  Future<void> playSound(String soundName, [Function completionHandler]) async {
+    _instance.stop();
+
+    String fileName = soundName;
+    if (sessionSounds.contains(soundName) == false) {
+      String voiceName = (Prefs().stringForKey('voice_id') == 'Kona') ? 'dora' : 'karl';
+      fileName = "$soundName-$voiceName";
+    }
+
+    dlog("Playing audio file '$fileName.wav'");
+    player.startPlayer(
+        fromDataBuffer: audioFileCache[fileName],
+        sampleRate: 16000,
+        whenFinished: () {
+          if (completionHandler != null) {
+            completionHandler();
+          }
+        });
+  }
 }
+
+// Future<void> playURL(String url, [Function completionHandler]) async {
+// Silence annoying warning on iOS
+//audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
+
+// stopSound();
+
+// if (completionHandler != null) {
+//   _subscribe(completionHandler);
+// }
+
+// dlog("Playing remote audio file $url");
+// try {
+//   await audioPlayer.play(url);
+// } catch (e) {
+//   if (completionHandler != null) {
+//     completionHandler(true);
+//   }
+// }
+// }

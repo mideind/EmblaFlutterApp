@@ -28,7 +28,7 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './menu.dart' show MenuRoute;
 import './animations.dart' show animationFrames;
-import './audio.dart' show playSound, stopSound, playURL;
+import './audio.dart' show AudioPlayer;
 import './speech2text.dart' show SpeechRecognizer;
 // import './connectivity.dart' show ConnectivityMonitor;
 import './hotword.dart' show HotwordDetector;
@@ -112,7 +112,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void startSpeechRecognition() {
-    stopSound();
+    AudioPlayer().stop();
     SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
         dlog('Received speech recognition results after session was terminated.');
@@ -188,10 +188,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           }
         });
         // Play audio answer and then terminate session
-        await playURL(resp['audio'], (err) {
+        await AudioPlayer().playURL(resp['audio'], (err) {
           if (err) {
             dlog('Error during audio playback');
-            playSound('err');
+            AudioPlayer().playSound('err');
           } else {
             dlog('Playback finished');
           }
@@ -206,7 +206,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       else if (resp['error'] != null) {
         setState(() {
           text = kDunnoMessage;
-          playSound('dunno', (err) {
+          AudioPlayer().playSound('dunno', (err) {
             dlog('Playback finished');
             stop();
           });
@@ -217,7 +217,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         setState(() {
           stop();
           text = kServerErrorMessage;
-          playSound('err');
+          AudioPlayer().playSound('err');
         });
       }
     });
@@ -238,7 +238,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     //   return;
     // }
 
-    playSound('rec_begin');
+    AudioPlayer().playSound('rec_begin');
+    return;
 
     // Set off animation timer
     setState(() {
@@ -257,7 +258,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       // });
     } catch (e) {
       stop();
-      playSound('conn');
+      AudioPlayer().playSound('conn');
     }
   }
 
@@ -268,7 +269,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Stopping session');
     stopSpeechRecognition();
-    stopSound();
+    AudioPlayer().stop();
     animationTimer?.cancel();
 
     setState(() {
@@ -285,7 +286,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void cancel() {
     dlog('User initiated cancellation of session');
     stop();
-    playSound('rec_cancel');
+    AudioPlayer().playSound('rec_cancel');
     text = introMsg();
   }
 

@@ -30,7 +30,7 @@ import './session.dart' show SessionRoute;
 import './loc.dart' show LocationTracking;
 import './connectivity.dart' show ConnectivityMonitor;
 import './animations.dart' show preloadAnimationFrames;
-import './audio.dart' show preloadAudioFiles;
+import './audio.dart' show AudioPlayer;
 import './theme.dart' show defaultTheme;
 import './common.dart' show dlog, kSoftwareName;
 
@@ -51,8 +51,8 @@ void main() async {
   }
   dlog("Shared prefs: ${Prefs().desc()}");
 
-  // Preload assets to prevent any lag after launching app
-  await preloadAudioFiles();
+  // Init/preload these to prevent any lag after launching app
+  await AudioPlayer().init();
   await preloadAnimationFrames();
 
   // Activate wake lock to prevent device from going to sleep

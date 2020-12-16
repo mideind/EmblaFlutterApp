@@ -40,6 +40,8 @@ dependencies:
   wakelock: '>=0.2.1+1'
   porcupine: '>=1.9.1'
   path_provider: '>=0.5.0+1'
+  flutter_sound: '>=6.4.8+2'
+
 
 dev_dependencies:
   flutter_test:
