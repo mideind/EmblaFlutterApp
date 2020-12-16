@@ -18,7 +18,7 @@
 
 // Singleton class w. headless web view to execute JS code
 
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 class JSExecutor {
   JSExecutor._privateConstructor();
@@ -27,20 +27,10 @@ class JSExecutor {
     return _instance;
   }
 
-  HeadlessInAppWebView headlessWebView;
+  WebView webview;
 
   void _constructWebView() {
-    if (headlessWebView != null) {
-      return;
-    }
-    headlessWebView = new HeadlessInAppWebView(
-        initialUrl: "about:blank",
-        initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-            javaScriptEnabled: true,
-            debuggingEnabled: true,
-          ),
-        ));
+    webview = WebView(initialUrl: 'about:blank', javascriptMode: JavascriptMode.unrestricted);
   }
 
   void runJavascript(String jsCode) {
