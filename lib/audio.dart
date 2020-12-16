@@ -126,23 +126,3 @@ class AudioPlayer {
         });
   }
 }
-
-// Future<void> playURL(String url, [Function completionHandler]) async {
-// Silence annoying warning on iOS
-//audioPlayer.monitorNotificationStateChanges(defaultPlayerHandler);
-
-// stopSound();
-
-// if (completionHandler != null) {
-//   _subscribe(completionHandler);
-// }
-
-// dlog("Playing remote audio file $url");
-// try {
-//   await audioPlayer.play(url);
-// } catch (e) {
-//   if (completionHandler != null) {
-//     completionHandler(true);
-//   }
-// }
-// }
