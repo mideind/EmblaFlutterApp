@@ -110,9 +110,6 @@ class SpeechRecognizer {
       _updateAudioSignal(data);
     });
 
-    dlog(_micRecorder.toString());
-    dlog(_recognitionStreamSubscription.toString());
-
     // Start microphone recording
     await _micRecorder.start();
 

@@ -19,6 +19,8 @@
 import 'package:porcupine/porcupine_manager.dart';
 import 'package:porcupine/porcupine_error.dart';
 
+import './common.dart' show dlog;
+
 class HotwordDetector {
   // Class variables
   PorcupineManager pm;
@@ -35,6 +37,7 @@ class HotwordDetector {
   HotwordDetector._internal() {}
 
   Future<void> start(Function hotwordHandler, Function errHandler) async {
+    dlog('Starting hotword detection');
     try {
       pm = await PorcupineManager.fromKeywords(["picovoice", "porcupine"], (idx) {
         hotwordHandler();
@@ -46,6 +49,7 @@ class HotwordDetector {
   }
 
   Future<void> stop() async {
+    dlog('Stopping hotword detection');
     await pm.stop();
   }
 

@@ -102,7 +102,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void initState() {
     super.initState();
-    HotwordDetector().start(hotwordHandler, () {});
+    if (Prefs().boolForKey('hotword_activation') == true) {
+      HotwordDetector().start(hotwordHandler, () {});
+    }
   }
 
   void hotwordHandler() {
@@ -266,13 +268,17 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Stopping session');
     stopSpeechRecognition();
+    stopSound();
+    animationTimer?.cancel();
+
     setState(() {
-      stopSound();
-      animationTimer?.cancel();
       state = SessionState.resting;
       currFrame = kFullLogoFrame;
     });
-    HotwordDetector().start(hotwordHandler, () {});
+
+    if (Prefs().boolForKey('hotword_activation') == true) {
+      HotwordDetector().start(hotwordHandler, () {});
+    }
   }
 
   // User cancelled ongoing session by pressing button
@@ -355,6 +361,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
         if (state == SessionState.resting) {
           text = introMsg();
+        }
+        if (Prefs().boolForKey('hotword_activation') == true) {
+          HotwordDetector().start(hotwordHandler, () {});
+        } else {
+          HotwordDetector().stop();
         }
       });
     }
