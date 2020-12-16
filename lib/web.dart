@@ -37,7 +37,7 @@ class WebViewRoute extends StatefulWidget {
 class _WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
-  // Fall back to local HTML document if err comes up when fetching from remote server
+  // Fall back to local HTML document if error comes up when fetching from remote server
   void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
     dlog('Page load error for $url: $errCode, $desc');
     String path = _fallbackAssetForURL(url);

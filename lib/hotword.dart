@@ -20,6 +20,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -74,7 +75,7 @@ class HotwordDetector {
 
   // Copy PPN files from asset bundle to temp directory
   Future<String> copyPPNToTemp() async {
-    final filename = 'hey_emm_blah_ios.ppn';
+    final filename = "${Platform.operatingSystem}.ppn";
     var bytes = await rootBundle.load("assets/ppn/$filename");
     String dir = (await getTemporaryDirectory()).path;
     String finalPath = "$dir/$filename";

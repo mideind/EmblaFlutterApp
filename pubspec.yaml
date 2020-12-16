@@ -28,7 +28,7 @@ dependencies:
   audioplayers: '>=0.16.2'
   shared_preferences: '>=0.5.7'
   geolocator: '>=6.1.4'
-  webview_flutter: '>=1.0.3'
+  webview_flutter: '>=1.0.7'
   package_info: '>=0.4.3'
   device_id: '>=0.0.1'
   url_launcher: '>=5.7.8'
@@ -84,7 +84,8 @@ flutter:
     - docs/Lato-Italic.woff2
     - docs/Lato-Bold.woff2
     # PPN
-    - assets/ppn/hey_emm_blah_ios.ppn
+    - assets/ppn/ios.ppn
+    - assets/ppn/android.ppn
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png
