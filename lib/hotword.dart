@@ -16,6 +16,12 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
+import 'dart:async';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'package:porcupine/porcupine_manager.dart';
 import 'package:porcupine/porcupine_error.dart';
 
@@ -24,6 +30,7 @@ import './common.dart' show dlog;
 class HotwordDetector {
   // Class variables
   PorcupineManager pm;
+  String ppnPath;
 
   // Constructor
   static final HotwordDetector _instance = HotwordDetector._internal();
@@ -39,10 +46,14 @@ class HotwordDetector {
   Future<void> start(Function hotwordHandler, Function errHandler) async {
     dlog('Starting hotword detection');
     try {
-      pm = await PorcupineManager.fromKeywords(["picovoice", "porcupine"], (idx) {
+      if (ppnPath == null) {
+        ppnPath = await copyPPNToTemp();
+      }
+      pm = await PorcupineManager.fromKeywordPaths([ppnPath], (idx) {
         hotwordHandler();
       });
     } on PvError catch (err) {
+      dlog(err.toString());
       errHandler();
     }
     await pm.start();
@@ -55,5 +66,20 @@ class HotwordDetector {
 
   void purge() {
     pm.delete();
+  }
+
+  Future<String> copyPPNToTemp() async {
+    final filename = 'hey_emm_blah_ios.ppn';
+    var bytes = await rootBundle.load("assets/ppn/hey_emm_blah_ios.ppn");
+    String dir = (await getApplicationDocumentsDirectory()).path;
+    String finalPath = "$dir/$filename";
+    writeToFile(bytes, finalPath);
+    return finalPath;
+  }
+
+//write to app path
+  Future<void> writeToFile(ByteData data, String path) {
+    final buffer = data.buffer;
+    return new File(path).writeAsBytes(buffer.asUint8List(data.offsetInBytes, data.lengthInBytes));
   }
 }
