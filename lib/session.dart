@@ -31,6 +31,7 @@ import './animations.dart' show animationFrames;
 import './audio.dart' show playSound, stopSound, playURL;
 import './speech2text.dart' show SpeechRecognizer;
 // import './connectivity.dart' show ConnectivityMonitor;
+import './hotword.dart' show HotwordDetector;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
 import './theme.dart';
@@ -97,6 +98,16 @@ class SessionRoute extends StatefulWidget {
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
   String text = introMsg();
+
+  @override
+  void initState() {
+    super.initState();
+    HotwordDetector().start(hotwordHandler, () {});
+  }
+
+  void hotwordHandler() {
+    start();
+  }
 
   void startSpeechRecognition() {
     stopSound();
@@ -216,6 +227,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Session start called during pre-existing session!');
       return;
     }
+    HotwordDetector().stop();
 
     // Check for internet connectivity
     // if (!ConnectivityMonitor().connected) {
@@ -260,6 +272,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       state = SessionState.resting;
       currFrame = kFullLogoFrame;
     });
+    HotwordDetector().start(hotwordHandler, () {});
   }
 
   // User cancelled ongoing session by pressing button

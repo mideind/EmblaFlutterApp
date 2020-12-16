@@ -38,6 +38,7 @@ dependencies:
   rxdart: '>=0.20.0'
   dart_numerics: '>=0.0.5'
   wakelock: '>=0.2.1+1'
+  porcupine: '>=1.9.1'
 
 dev_dependencies:
   flutter_test:
