@@ -32,16 +32,16 @@ import './common.dart';
 // UI string constants
 const String kPrivacyModeMessage =
     'Í einkaham sendir forritið engar upplýsingar frá sér að fyrirspurnatexta undanskildum. '
-    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, gerð tækis o.fl. til'
+    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, gerð tækis o.fl. til '
     'þess að bæta svör.';
 
 // Alert messages for clear history buttons
 String kClearHistoryAlertText =
-    'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar'
-    ' í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
+    'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar '
+    'í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
 String kClearAllAlertText =
-    'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt'
-    ' til þess að bæta svör.';
+    'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
+    'til þess að bæta svör.';
 
 // Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
