@@ -46,7 +46,6 @@ class HotwordDetector {
 
   // Start hotword detection
   Future<void> start(Function hotwordHandler, Function errHandler) async {
-    return;
     dlog('Starting hotword detection');
     try {
       if (ppnPath == null) {
@@ -65,14 +64,17 @@ class HotwordDetector {
 
   // Stop hotword detection
   Future<void> stop() async {
-    return;
+    if (pm == null) {
+      return;
+    }
     dlog('Stopping hotword detection');
-    await pm.stop();
+    await pm?.stop();
   }
 
   // Release any assets loaded by hotword detector
   void purge() {
-    pm.delete();
+    pm?.stop();
+    pm?.delete();
   }
 
   // Copy PPN files from asset bundle to temp directory

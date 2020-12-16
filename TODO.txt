@@ -4,10 +4,10 @@ TODO FUTURE:
     * Optimize redraws
 
 TODO for Android release:
-    * Pocketsphinx voice activation
+    TBD: * Pocketsphinx voice activation
     * Implement JS execution w. code payload from query server
     * Confirmation alert on completion of clear query history calls
-    * Set up continuous integration
+    * Set up proper continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
     * Elegant handling of audio streaming issues when internet connectivity is lost

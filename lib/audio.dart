@@ -51,8 +51,8 @@ const List<String> sessionSounds = [
 
 class AudioPlayer {
   // Class variables
-  final FlutterSoundPlayer player = FlutterSoundPlayer();
-  final Map<String, Uint8List> audioFileCache = Map();
+  FlutterSoundPlayer player;
+  Map<String, Uint8List> audioFileCache = Map();
 
   // Constructor
   static final AudioPlayer _instance = AudioPlayer._internal();
@@ -71,8 +71,9 @@ class AudioPlayer {
     if (audioFileCache.length > 0) {
       return;
     }
-    dlog('Initing audio player');
     await preloadAudioFiles();
+    dlog('Initing audio player');
+    player = FlutterSoundPlayer();
     await player.openAudioSession();
   }
 

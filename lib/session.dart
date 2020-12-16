@@ -103,6 +103,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void initState() {
     super.initState();
     if (Prefs().boolForKey('hotword_activation') == true) {
+      HotwordDetector().purge();
       HotwordDetector().start(hotwordHandler, () {});
     }
   }
