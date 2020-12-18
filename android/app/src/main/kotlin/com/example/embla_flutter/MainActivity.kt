@@ -1,4 +1,4 @@
-package is.mideind.embla
+package com.example.embla_flutter
 
 import io.flutter.embedding.android.FlutterActivity
 

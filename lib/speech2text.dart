@@ -22,10 +22,11 @@ import 'dart:async';
 import 'dart:math' show max, pow;
 import 'dart:typed_data' show Uint8List, Int16List;
 
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:google_speech/google_speech.dart';
 import 'package:rxdart/rxdart.dart';
-import 'package:sound_stream/sound_stream.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import './util.dart';
 import './common.dart';
@@ -41,9 +42,14 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 class SpeechRecognizer {
   // Class variables
-  RecorderStream _micRecorder = RecorderStream();
+
+  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
+  StreamSubscription _recordingDataSubscription;
+  StreamController _recordingDataController;
+
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
+
   double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
   bool isRecognizing = false;
 
@@ -59,8 +65,11 @@ class SpeechRecognizer {
   SpeechRecognizer._internal();
 
   // Do we have all we need to recognize speech?
-  bool canRecognizeSpeech() {
-    // TODO: Also check for app permissions f. microphone input
+  Future<bool> canRecognizeSpeech() async {
+    var status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      return false;
+    }
     return (readGoogleServiceAccount() != '');
   }
 
@@ -96,22 +105,26 @@ class SpeechRecognizer {
     isRecognizing = true;
     dlog('Starting speech recognition');
 
-    // Create recording stream
-    _micRecorder = RecorderStream();
-    _micRecorder.initialize();
-
-    // Subscribe to recording stream
+    // Stream to be consumed by speech recognizer
     _recognitionStream = BehaviorSubject<List<int>>();
-    _recognitionStreamSubscription = _micRecorder.audioStream.listen((data) {
-      // When recording stream receives data, pass it on to the recognition
-      // stream and note the maximum strength of the audio signal.
-      dlog('Received stream data');
-      _recognitionStream?.add(data);
-      _updateAudioSignal(data);
+
+    // Create recording stream
+    _recordingDataController = StreamController<Food>();
+    _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
+      if (buffer is FoodData) {
+        _recognitionStream?.add(buffer.data);
+        _updateAudioSignal(buffer.data);
+      }
     });
 
-    // Start microphone recording
-    await _micRecorder.start();
+    // Open microphone session
+    await _micRecorder.openAudioSession();
+    await _micRecorder.startRecorder(
+      toStream: _recordingDataController.sink,
+      codec: Codec.pcm16,
+      numChannels: 1,
+      sampleRate: 16000,
+    );
 
     // Start recognizing
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
@@ -131,7 +144,10 @@ class SpeechRecognizer {
     }
     isRecognizing = false;
     dlog('Stopping speech recognition');
-    await _micRecorder?.stop();
+    await _micRecorder?.stopRecorder();
+    await _micRecorder?.closeAudioSession();
+    await _recordingDataSubscription?.cancel();
+    await _recordingDataController?.close();
     await _recognitionStreamSubscription?.cancel();
     await _recognitionStream?.close();
   }

@@ -189,8 +189,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           }
         });
         // Play audio answer and then terminate session
-        await AudioPlayer().playURL(resp['audio'], (err) {
-          if (err) {
+        await AudioPlayer().playURL(resp['audio'], () {
+          if (false) {
             dlog('Error during audio playback');
             AudioPlayer().playSound('err');
           } else {
@@ -207,7 +207,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       else if (resp['error'] != null) {
         setState(() {
           text = kDunnoMessage;
-          AudioPlayer().playSound('dunno', (err) {
+          AudioPlayer().playSound('dunno', () {
             dlog('Playback finished');
             stop();
           });
@@ -240,7 +240,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // }
 
     AudioPlayer().playSound('rec_begin');
-    return;
 
     // Set off animation timer
     setState(() {
@@ -292,9 +291,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Button pressed
-  void toggle() {
+  void toggle() async {
     if (state == SessionState.resting) {
-      if (SpeechRecognizer().canRecognizeSpeech() == true) {
+      if (await SpeechRecognizer().canRecognizeSpeech() == true) {
         start();
       } else {
         showRecognitionErrorAlert(context);

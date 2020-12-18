@@ -68,7 +68,7 @@ class AudioPlayer {
   // Audio player setup and audio data preloading
   Future<void> init() async {
     // Check if already inited
-    if (audioFileCache.length > 0) {
+    if (player != null || audioFileCache.length > 0) {
       return;
     }
     await preloadAudioFiles();
@@ -92,7 +92,7 @@ class AudioPlayer {
   }
 
   // Play remote audio file
-  Future<void> playURL(String url, [Function completionHandler]) async {
+  Future<void> playURL(String url, [Function() completionHandler]) async {
     _instance.stop();
 
     dlog("Playing remote audio file '$url'");
@@ -106,9 +106,10 @@ class AudioPlayer {
   }
 
   // Play a preloaded audio file bundled with the app
-  Future<void> playSound(String soundName, [Function completionHandler]) async {
+  Future<void> playSound(String soundName, [Function() completionHandler]) async {
     _instance.stop();
 
+    // Different file name depending on whether female or male voice selected.
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
       String voiceName = (Prefs().stringForKey('voice_id') == 'Kona') ? 'dora' : 'karl';
