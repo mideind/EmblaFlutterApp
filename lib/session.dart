@@ -169,59 +169,62 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     currFrame = kFullLogoFrame;
 
     // Send text to query server
-    QueryService.sendQuery(alternatives, (Map resp) async {
-      if (state != SessionState.answering) {
-        dlog('Received query answer after session terminated: ' + resp.toString());
-        return;
-      }
+    QueryService.sendQuery(alternatives, handleQueryResponse);
+  }
 
-      // Received valid response to query
-      if (resp['valid'] == true &&
-          resp['error'] == null &&
-          resp['answer'] != null &&
-          resp['audio'] != null) {
-        dlog('Received valid response to query');
-        // Update text
-        setState(() {
-          text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
-          if (resp["source"] != null) {
-            text = "$text (${resp['source']})";
-          }
-        });
-        // Play audio answer and then terminate session
-        await AudioPlayer().playURL(resp['audio'], () {
-          if (false) {
-            dlog('Error during audio playback');
-            AudioPlayer().playSound('err');
-          } else {
-            dlog('Playback finished');
-          }
-          stop();
-        });
-        // Open URL, if provided in query answer
-        if (resp['open_url'] != null) {
-          launch(resp['open_url']);
+  // Process response from query server
+  void handleQueryResponse(Map resp) async {
+    if (state != SessionState.answering) {
+      dlog('Received query answer after session terminated: ' + resp.toString());
+      return;
+    }
+
+    // Received valid response to query
+    if (resp['valid'] == true &&
+        resp['error'] == null &&
+        resp['answer'] != null &&
+        resp['audio'] != null) {
+      dlog('Received valid response to query');
+      // Update text
+      setState(() {
+        text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
+        if (resp["source"] != null) {
+          text = "$text (${resp['source']})";
         }
-      }
-      // Don't know
-      else if (resp['error'] != null) {
-        setState(() {
-          text = kDunnoMessage;
-          AudioPlayer().playSound('dunno', () {
-            dlog('Playback finished');
-            stop();
-          });
-        });
-      }
-      // Error in server response
-      else {
-        setState(() {
-          stop();
-          text = kServerErrorMessage;
+      });
+      // Play audio answer and then terminate session
+      await AudioPlayer().playURL(resp['audio'], () {
+        if (false) {
+          dlog('Error during audio playback');
           AudioPlayer().playSound('err');
-        });
+        } else {
+          dlog('Playback finished');
+        }
+        stop();
+      });
+      // Open URL, if provided in query answer
+      if (resp['open_url'] != null) {
+        launch(resp['open_url']);
       }
-    });
+    }
+    // Don't know
+    else if (resp['error'] != null) {
+      setState(() {
+        text = kDunnoMessage;
+        AudioPlayer().playSound('dunno', () {
+          dlog('Playback finished');
+          stop();
+        });
+      });
+    }
+    // Error in server response
+    else {
+      setState(() {
+        stop();
+        text = kServerErrorMessage;
+        AudioPlayer().playSound('err');
+      });
+    }
   }
 
   // Start session
