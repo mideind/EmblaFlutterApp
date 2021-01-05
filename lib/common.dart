@@ -32,11 +32,12 @@ void dlog(var msg) {
 const String kSoftwareName = 'Embla';
 const String kSoftwareVersion = '1.0.0';
 
-// Audio
+// Audio settings
 const int kAudioSampleRate = 16000;
 
 // Server communication
 const String kDefaultServer = 'https://greynir.is';
+const String kDefaultText2SpeechServer = '';
 const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
 const String kSpeechAPIPath = '/speech.api/v1';

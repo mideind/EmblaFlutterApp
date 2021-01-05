@@ -90,5 +90,6 @@ class Prefs {
     Prefs().setFloatForKey('voice_speed', 1.0);
     Prefs().setStringForKey('voice_id', 'Kona');
     Prefs().setStringForKey('query_server', kDefaultServer);
+    Prefs().setStringForKey('speech2text_server', kDefaultText2SpeechServer);
   }
 }

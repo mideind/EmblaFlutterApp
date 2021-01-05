@@ -53,7 +53,7 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  AudioPlayer();
+  AudioPlayer(); // Initialize singleton
 
   // Activate wake lock to prevent device from going to sleep
   Wakelock.enable();

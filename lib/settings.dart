@@ -203,7 +203,7 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.widget.label),
+          title: Text(this.widget.label, style: menuTextStyle),
           trailing: CupertinoSegmentedControl(
               children: _genChildren(),
               groupValue: selectedSegment(),
@@ -433,8 +433,11 @@ class SettingsRoute extends StatelessWidget {
     List<Widget> slist = _settings();
     // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
-      slist.addAll(
-          [QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server')]);
+      slist.addAll([
+        SettingsSegmentedWidget(
+            label: 'Talgreining', items: ['Google', 'Tíró'], prefKey: 'speech2text_server'),
+        QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      ]);
     }
 
     return Scaffold(
