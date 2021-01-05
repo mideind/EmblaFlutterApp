@@ -3,6 +3,7 @@ PRÓFUN Á EMBLU F. ANDROID:
     svara (smella á hnappinn,hætta í forritinu, skipta yfir í valblað, slökkva á nettengingu o.s.fv.)
     * Hvernig er leturstærðin? Breytist hún rétt eftir stillingum í kerfinu? Kemur hún vel út?
     * Accessibility? Ekki viss hvernig er best að meta það á Android.
+    * Staðsetning. Veit Embla hvar þú ert? Hvað ef þú slekkur á "Deila staðsetningu" í stillingum?
     * Ræsist forritið hratt? Er viðmót þess eins og við mætti búast á Android?
     * Slökkva á microphone permissions. Hvernig bregst forritið við?
     * Slökkva á location permissions. Hvernig bregst forritið við?

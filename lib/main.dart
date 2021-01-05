@@ -44,7 +44,7 @@ void main() async {
   }
 
   // Load prefs, populate with default values if required
-  await Prefs().load();
+  Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
     Prefs().setDefaults();
@@ -63,8 +63,14 @@ void main() async {
 
   // Set up location tracking
   if (Prefs().boolForKey('share_location') == true) {
-    LocationPermission permission = await Geolocator.requestPermission();
-    if (permission != LocationPermission.denied && permission != LocationPermission.deniedForever) {
+    // Wrap in try/catch in case another location permission request is ongoing
+    try {
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission != LocationPermission.denied &&
+          permission != LocationPermission.deniedForever) {
+        LocationTracking().start();
+      }
+    } catch (err) {
       LocationTracking().start();
     }
   }
