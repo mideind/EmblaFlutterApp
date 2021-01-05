@@ -63,27 +63,28 @@ class AudioPlayer {
   }
 
   // Initialization
-  AudioPlayer._internal();
+  AudioPlayer._internal() {
+    _init();
+  }
 
   // Audio player setup and audio data preloading
-  Future<void> init() async {
-    // Check if already inited
-    if (player != null) {
-      return;
-    }
-    teardown();
-    await preloadAudioFiles();
+  Future<void> _init() async {
     dlog('Initing audio player');
+    await _preloadAudioFiles();
     player = FlutterSoundPlayer();
     await player.openAudioSession();
   }
 
-  Future<void> teardown() async {
-    await player?.closeAudioSession();
-  }
+  // This is never called since we keep the same audio
+  // session for the duration of the app's lifetime.
+  // Unfortunately, this means the app will crash on
+  // Flutter's "hot restart" (but not "hot reload").
+  // Future<void> _teardown() async {
+  //   await player?.closeAudioSession();
+  // }
 
   // Load all asset-bundled audio files into memory
-  Future<void> preloadAudioFiles() async {
+  Future<void> _preloadAudioFiles() async {
     dlog("Preloading audio assets: ${audioFiles.toString()}");
     audioFileCache = Map();
     for (String fn in audioFiles) {
@@ -94,9 +95,7 @@ class AudioPlayer {
 
   // Stop playback
   void stop() {
-    if (player != null) {
-      player.stopPlayer();
-    }
+    player?.stopPlayer();
   }
 
   // Play remote audio file
@@ -127,7 +126,7 @@ class AudioPlayer {
     dlog("Playing audio file '$fileName.wav'");
     player.startPlayer(
         fromDataBuffer: audioFileCache[fileName],
-        sampleRate: 16000,
+        sampleRate: kAudioSampleRate,
         whenFinished: () {
           if (completionHandler != null) {
             completionHandler();

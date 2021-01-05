@@ -36,7 +36,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     encoding: AudioEncoding.LINEAR16,
     model: RecognitionModel.command_and_search,
     enableAutomaticPunctuation: true,
-    sampleRateHertz: 16000,
+    sampleRateHertz: kAudioSampleRate,
     maxAlternatives: 10,
     languageCode: 'is-IS');
 
@@ -91,15 +91,15 @@ class SpeechRecognizer {
     // implementation, we have to create a copy of the
     // data before analyzing it. Inefficient, but whatchagonnado?
     Uint8List copy = new Uint8List.fromList(data);
-    // Coerce into list of 16-bit shorts
+    // Coerce into list of 16-bit signed integers
     Int16List samples = copy.buffer.asInt16List();
     // dlog("Num samples: ${samples.length.toString()}");
     int maxSignal = samples.reduce(max);
-    // int maxSignal = samples.reduce((curr, next) => curr > next ? curr : next);
     // dlog(maxSignal);
-    // Divide by max value of 16-bit short to get amplitude in range 0.0-1.0
+    // Divide by max value of 16-bit signed integer to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
     // dlog(ampl.toString());
+    // Convert to decibels and normalize
     double decibels = 20.0 * log10(ampl);
     // dlog(decibels.toString());
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
@@ -129,7 +129,7 @@ class SpeechRecognizer {
       toStream: _recordingDataController.sink,
       codec: Codec.pcm16,
       numChannels: 1,
-      sampleRate: 16000,
+      sampleRate: kAudioSampleRate,
     );
 
     // Start recognizing
