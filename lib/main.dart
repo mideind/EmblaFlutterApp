@@ -44,7 +44,7 @@ void main() async {
   }
 
   // Load prefs, populate with default values if required
-  Prefs().load();
+  await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == null || launched == false) {
     Prefs().setDefaults();
@@ -52,8 +52,8 @@ void main() async {
   dlog("Shared prefs: ${Prefs().desc()}");
 
   // Init/preload these to prevent any lag after launching app
-  await AudioPlayer().init();
   await preloadAnimationFrames();
+  await AudioPlayer().init();
 
   // Activate wake lock to prevent device from going to sleep
   Wakelock.enable();

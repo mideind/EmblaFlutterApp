@@ -52,6 +52,7 @@ class HotwordDetector {
         ppnPath = await copyPPNToTemp();
       }
       pm = await PorcupineManager.fromKeywordPaths([ppnPath], (idx) {
+        dlog('Hotword detected');
         hotwordHandler();
       });
     } catch (err) {

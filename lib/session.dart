@@ -233,6 +233,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Session start called during pre-existing session!');
       return;
     }
+    dlog('Starting session');
     HotwordDetector().stop();
 
     // Check for internet connectivity

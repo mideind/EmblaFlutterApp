@@ -52,7 +52,7 @@ const List<String> sessionSounds = [
 class AudioPlayer {
   // Class variables
   FlutterSoundPlayer player;
-  Map<String, Uint8List> audioFileCache = Map();
+  Map<String, Uint8List> audioFileCache;
 
   // Constructor
   static final AudioPlayer _instance = AudioPlayer._internal();
@@ -68,18 +68,24 @@ class AudioPlayer {
   // Audio player setup and audio data preloading
   Future<void> init() async {
     // Check if already inited
-    if (player != null || audioFileCache.length > 0) {
+    if (player != null) {
       return;
     }
+    teardown();
     await preloadAudioFiles();
     dlog('Initing audio player');
     player = FlutterSoundPlayer();
     await player.openAudioSession();
   }
 
+  Future<void> teardown() async {
+    await player?.closeAudioSession();
+  }
+
   // Load all asset-bundled audio files into memory
   Future<void> preloadAudioFiles() async {
     dlog("Preloading audio assets: ${audioFiles.toString()}");
+    audioFileCache = Map();
     for (String fn in audioFiles) {
       ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
       audioFileCache[fn] = bytes.buffer.asUint8List();
@@ -88,7 +94,9 @@ class AudioPlayer {
 
   // Stop playback
   void stop() {
-    player.stopPlayer();
+    if (player != null) {
+      player.stopPlayer();
+    }
   }
 
   // Play remote audio file
