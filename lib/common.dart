@@ -21,11 +21,11 @@
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Debug logging
-void dlog(String logStr) {
+void dlog(var msg) {
   if (kReleaseMode) {
     return;
   }
-  print(logStr);
+  print(msg.toString());
 }
 
 // Software info
