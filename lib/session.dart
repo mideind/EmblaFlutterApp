@@ -126,7 +126,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       setState(() {
         text = data.results.map((e) => e.alternatives.first.transcript).join('');
         dlog('RESULTS--------------');
-        dlog(data.results.toString());
+        dlog(data.results);
         text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
@@ -175,7 +175,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   // Process response from query server
   void handleQueryResponse(Map resp) async {
     if (state != SessionState.answering) {
-      dlog('Received query answer after session terminated: ' + resp.toString());
+      dlog("Received query answer after session terminated: ${resp.toString()}");
       return;
     }
 

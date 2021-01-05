@@ -87,17 +87,23 @@ class SpeechRecognizer {
 
   // Read audio buffer, analyse strength of signal
   void _updateAudioSignal(Uint8List data) {
-    // Coerce sample bytes into list of 16-bit shorts
-    Int16List samples = data.buffer.asInt16List();
-    dlog("Num samples: ${samples.length.toString()}");
+    // Due to the internal details in the flutter_sound
+    // implementation, we have to create a copy of the
+    // data before analyzing it. Inefficient, but whatchagonnado?
+    Uint8List copy = new Uint8List.fromList(data);
+    // Coerce into list of 16-bit shorts
+    Int16List samples = copy.buffer.asInt16List();
+    // dlog("Num samples: ${samples.length.toString()}");
     int maxSignal = samples.reduce(max);
+    // int maxSignal = samples.reduce((curr, next) => curr > next ? curr : next);
+    // dlog(maxSignal);
     // Divide by max value of 16-bit short to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
-    // dlog(ampl);
+    // dlog(ampl.toString());
     double decibels = 20.0 * log10(ampl);
-    // dlog(decibels);
+    // dlog(decibels.toString());
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-    // dlog(lastSignal);
+    // dlog(lastSignal.toString());
   }
 
   // Set things off
