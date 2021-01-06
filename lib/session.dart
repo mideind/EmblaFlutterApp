@@ -68,8 +68,8 @@ const kFullLogoFrame = 99;
 int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
-const kRestingButtonPropSize = 0.62;
-const kExpandedButtonPropSize = 0.77;
+const kRestingButtonPropSize = 0.58;
+const kExpandedButtonPropSize = 0.74;
 
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
@@ -113,7 +113,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void startSpeechRecognition() {
-    AudioPlayer().stop();
     SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
         dlog('Received speech recognition results after session was terminated.');
@@ -236,14 +235,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     dlog('Starting session');
     HotwordDetector().stop();
 
+    AudioPlayer().playSound('rec_begin');
+
     // Check for internet connectivity
     // if (!ConnectivityMonitor().connected) {
     //   text = kNoInternetMessage;
     //   playSound('conn');
     //   return;
     // }
-
-    AudioPlayer().playSound('rec_begin');
 
     // Set off animation timer
     setState(() {

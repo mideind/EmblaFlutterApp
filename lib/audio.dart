@@ -72,7 +72,7 @@ class AudioPlayer {
     dlog('Initing audio player');
     await _preloadAudioFiles();
     player = FlutterSoundPlayer();
-    await player.openAudioSession();
+    player.openAudioSession();
   }
 
   // This is never called since we keep the same audio
@@ -95,11 +95,12 @@ class AudioPlayer {
 
   // Stop playback
   void stop() {
+    dlog('Stopping audio playback');
     player?.stopPlayer();
   }
 
   // Play remote audio file
-  Future<void> playURL(String url, [Function() completionHandler]) async {
+  void playURL(String url, [Function() completionHandler]) {
     _instance.stop();
 
     dlog("Playing remote audio file '$url'");
@@ -113,7 +114,7 @@ class AudioPlayer {
   }
 
   // Play a preloaded audio file bundled with the app
-  Future<void> playSound(String soundName, [Function() completionHandler]) async {
+  void playSound(String soundName, [Function() completionHandler]) {
     _instance.stop();
 
     // Different file name depending on whether female or male voice is set in prefs
