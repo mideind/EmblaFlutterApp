@@ -60,6 +60,11 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
     return null;
   });
 
+  if (response == null && handler != null) {
+    handler(null);
+    return null;
+  }
+
   dlog('Response status: ${response.statusCode}');
   dlog('Response body: ${response.body}');
 
