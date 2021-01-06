@@ -47,13 +47,14 @@ class _WebViewRouteState extends State<WebViewRoute> {
     });
   }
 
-  // Use local HTML asset with same name as remote document
+  // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
     return "docs/${uri.pathSegments.last}";
   }
 
-  // Handle clicks on links in HTML documentation
+  // Handle clicks on links in HTML documentation.
+  // These links should be opened in an external browser.
   Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
       InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
     if (req.url != this.widget.initialURL) {
@@ -66,28 +67,31 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   @override
   Widget build(BuildContext context) {
+    // Create web view
+    var view = InAppWebView(
+      initialUrl: this.widget.initialURL,
+      initialOptions: InAppWebViewGroupOptions(
+          crossPlatform: InAppWebViewOptions(
+        debuggingEnabled: kReleaseMode,
+        useShouldOverrideUrlLoading: true,
+        transparentBackground: true,
+      )),
+      //onWebViewCreated: (InAppWebViewController controller) {},
+      onLoadStart: (InAppWebViewController controller, String url) {
+        dlog("Loading URL $url");
+      },
+      onLoadError: errHandler,
+      onLoadHttpError: errHandler,
+      shouldOverrideUrlLoading: urlClickHandler,
+    );
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),
-      body: InAppWebView(
-        initialUrl: this.widget.initialURL,
-        initialOptions: InAppWebViewGroupOptions(
-            crossPlatform: InAppWebViewOptions(
-          debuggingEnabled: kReleaseMode,
-          useShouldOverrideUrlLoading: true,
-          transparentBackground: true,
-        )),
-        //onWebViewCreated: (InAppWebViewController controller) {},
-        onLoadStart: (InAppWebViewController controller, String url) {
-          dlog('Loading URL $url');
-        },
-        onLoadError: errHandler,
-        onLoadHttpError: errHandler,
-        shouldOverrideUrlLoading: urlClickHandler,
-      ),
+      body: view,
     );
   }
 }

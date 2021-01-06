@@ -56,6 +56,7 @@ void main() async {
   AudioPlayer(); // Initialize singleton
 
   // Activate wake lock to prevent device from going to sleep
+  // This wakelock is disabled when leaving session route
   Wakelock.enable();
 
   // Start monitoring internet connectivity

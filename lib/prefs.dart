@@ -27,6 +27,8 @@ class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
   static SharedPreferences _sp;
+
+  // Singleton pattern
   factory Prefs() {
     return _instance;
   }

@@ -37,12 +37,10 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     model: RecognitionModel.command_and_search,
     enableAutomaticPunctuation: true,
     sampleRateHertz: kAudioSampleRate,
-    maxAlternatives: 10,
-    languageCode: 'is-IS');
+    maxAlternatives: kSpeechToTextMaxAlternatives,
+    languageCode: kSpeechToTextLanguage);
 
 class SpeechRecognizer {
-  // Class variables
-
   FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
   StreamSubscription _recordingDataSubscription;
   StreamController _recordingDataController;
@@ -53,7 +51,6 @@ class SpeechRecognizer {
   double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
   bool isRecognizing = false;
 
-  // Constructor
   static final SpeechRecognizer _instance = SpeechRecognizer._internal();
 
   // Singleton pattern
@@ -66,10 +63,12 @@ class SpeechRecognizer {
 
   // Do we have all we need to recognize speech?
   Future<bool> canRecognizeSpeech() async {
+    // Access to microphone?
     var status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
       return false;
     }
+    // Proper service account for speech2text server?
     return (readGoogleServiceAccount() != '');
   }
 
@@ -87,7 +86,7 @@ class SpeechRecognizer {
 
   // Read audio buffer, analyse strength of signal
   void _updateAudioSignal(Uint8List data) {
-    // Due to the internal details in the flutter_sound
+    // Due to internal details of the flutter_sound
     // implementation, we have to create a copy of the
     // data before analyzing it. Inefficient, but whatchagonnado?
     Uint8List copy = new Uint8List.fromList(data);

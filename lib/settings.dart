@@ -35,10 +35,10 @@ const String kPrivacyModeMessage =
     'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, gerð tækis o.fl. til '
     'þess að bæta svör.';
 
-// Alert messages for clear history buttons
 String kClearHistoryAlertText =
     'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar '
     'í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
+
 String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
@@ -201,18 +201,16 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      child: MergeSemantics(
-        child: ListTile(
-          title: Text(this.widget.label, style: menuTextStyle),
-          trailing: CupertinoSegmentedControl(
-              children: _genChildren(),
-              groupValue: selectedSegment(),
-              onValueChanged: (value) {
-                setState(() {
-                  Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
-                });
-              }),
-        ),
+      child: ListTile(
+        title: Text(this.widget.label, style: menuTextStyle),
+        trailing: CupertinoSegmentedControl(
+            children: _genChildren(),
+            groupValue: selectedSegment(),
+            onValueChanged: (value) {
+              setState(() {
+                Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
+              });
+            }),
       ),
     );
   }

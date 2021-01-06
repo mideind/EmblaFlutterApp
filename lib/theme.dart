@@ -23,13 +23,15 @@ import 'package:flutter/services.dart';
 
 import './util.dart';
 
-final mainColor = HexColor.fromHex('#e83939');
-final bgColor = HexColor.fromHex('#f9f9f9');
+// Text, icons, accents
+final Color mainColor = HexColor.fromHex('#e83939');
+// Background
+final Color bgColor = HexColor.fromHex('#f9f9f9');
 
 // Session button circle colors, outermost to innermost
-final circleColor1 = HexColor.fromHex('#f9f0f0');
-final circleColor2 = HexColor.fromHex('#f9e2e1');
-final circleColor3 = HexColor.fromHex('#f9dcdb');
+final Color circleColor1 = HexColor.fromHex('#f9f0f0');
+final Color circleColor2 = HexColor.fromHex('#f9e2e1');
+final Color circleColor3 = HexColor.fromHex('#f9dcdb');
 
 const Brightness defaultBrightness = Brightness.light;
 

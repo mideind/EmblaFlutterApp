@@ -25,7 +25,6 @@ import 'package:device_id/device_id.dart' show DeviceId;
 import 'package:http/http.dart' show Response;
 import 'package:http/http.dart' as http;
 import 'package:package_info/package_info.dart' show PackageInfo;
-//import 'package:location/location.dart';
 
 import './prefs.dart' show Prefs;
 import './loc.dart' show LocationTracking;
@@ -55,7 +54,9 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   Response response = await http
       .post(apiURL, body: qargs)
       .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
-    handler(null);
+    if (handler != null) {
+      handler(null);
+    }
     return null;
   });
 
@@ -63,7 +64,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   dlog('Response body: ${response.body}');
 
   if (handler != null) {
-    var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+    var arg = (response.statusCode == 200) ? json.decode(response.body) : null;
     handler(arg);
   }
   return response;

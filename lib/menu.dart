@@ -74,7 +74,7 @@ ListTile _generateTile(String name, String imageName, Function onTapFunc, BuildC
 }
 
 // Generate list of menu tiles
-ListView _genMenu(BuildContext context) {
+ListView _generateMenu(BuildContext context) {
   return ListView(
     padding: const EdgeInsets.all(8),
     children: <Widget>[
@@ -95,6 +95,6 @@ class MenuRoute extends StatelessWidget {
           bottomOpacity: 0.0,
           elevation: 0.0,
         ),
-        body: _genMenu(context));
+        body: _generateMenu(context));
   }
 }

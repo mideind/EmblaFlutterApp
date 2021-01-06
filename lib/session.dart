@@ -350,11 +350,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings and more.
-        setState(() {
-          if (text == '') {
+        if (text == '') {
+          setState(() {
             text = introMsg();
-          }
-        });
+          });
+        }
+
         // Re-enable wake lock when returning to main route
         Wakelock.enable();
       });
@@ -367,12 +368,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         if (state == SessionState.resting) {
           text = introMsg();
         }
-        if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler, () {});
-        } else {
-          HotwordDetector().stop();
-        }
       });
+      if (Prefs().boolForKey('hotword_activation') == true) {
+        HotwordDetector().start(hotwordHandler, () {});
+      } else {
+        HotwordDetector().stop();
+      }
     }
 
     return Scaffold(

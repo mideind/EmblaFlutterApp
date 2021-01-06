@@ -32,7 +32,9 @@ void dlog(var msg) {
 const String kSoftwareName = 'Embla';
 const String kSoftwareVersion = '1.0.0';
 
-// Audio settings
+// Speech recognition settings
+const String kSpeechToTextLanguage = 'is-IS';
+const int kSpeechToTextMaxAlternatives = 10;
 const int kAudioSampleRate = 16000;
 
 // Server communication

@@ -33,7 +33,6 @@ class HotwordDetector {
   PorcupineManager pm;
   String ppnPath;
 
-  // Constructor
   static final HotwordDetector _instance = HotwordDetector._internal();
 
   // Singleton pattern
@@ -41,7 +40,7 @@ class HotwordDetector {
     return _instance;
   }
 
-  // Initialization
+  // Constructor
   HotwordDetector._internal();
 
   // Start hotword detection

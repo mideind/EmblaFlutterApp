@@ -23,16 +23,20 @@ import 'package:connectivity/connectivity.dart';
 import './common.dart';
 
 class ConnectivityMonitor {
-  ConnectivityMonitor._privateConstructor();
+  var subscription;
+  bool isConnected = true;
+
   static final ConnectivityMonitor _instance = ConnectivityMonitor._privateConstructor();
+
+  // Singleton pattern
   factory ConnectivityMonitor() {
     return _instance;
   }
 
-  var subscription;
-  bool isConnected = true;
+  // Constructor
+  ConnectivityMonitor._privateConstructor();
 
-  start() async {
+  void start() async {
     dlog('Starting internet connectivity tracking');
     var res = await Connectivity().checkConnectivity();
     isConnected = (res != ConnectivityResult.none);
@@ -50,7 +54,7 @@ class ConnectivityMonitor {
     });
   }
 
-  stop() {
+  void stop() {
     subscription.cancel();
     subscription = null;
   }
