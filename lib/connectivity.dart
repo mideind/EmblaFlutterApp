@@ -36,18 +36,18 @@ class ConnectivityMonitor {
   // Constructor
   ConnectivityMonitor._privateConstructor();
 
-  void start() async {
+  Future<void> start() async {
     dlog('Starting internet connectivity tracking');
-    var res = await Connectivity().checkConnectivity();
+    ConnectivityResult res = await Connectivity().checkConnectivity();
     isConnected = (res != ConnectivityResult.none);
     dlog("Internet connectivity: ${isConnected.toString()}");
     // Start listening
     subscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult result) {
       dlog('Checking internet connectivity status');
       bool conn = (result != ConnectivityResult.none);
-      if (conn && conn != isConnected) {
+      if (conn == true && conn != isConnected) {
         dlog('Now connected to the internet');
-      } else if (!conn && conn != isConnected) {
+      } else if (conn == false && conn != isConnected) {
         dlog('No longer connected to the internet');
       }
       isConnected = conn;

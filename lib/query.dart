@@ -64,7 +64,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   dlog('Response body: ${response.body}');
 
   if (handler != null) {
-    var arg = (response.statusCode == 200) ? json.decode(response.body) : null;
+    var arg = response.statusCode == 200 ? json.decode(response.body) : null;
     handler(arg);
   }
   return response;

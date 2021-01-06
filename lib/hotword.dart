@@ -29,7 +29,6 @@ import 'package:porcupine/porcupine_manager.dart';
 import './common.dart' show dlog;
 
 class HotwordDetector {
-  // Class variables
   PorcupineManager pm;
   String ppnPath;
 

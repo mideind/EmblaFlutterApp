@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// App initialization and presentation of main view
+// App initialization and presentation of main (session) view
 
 import 'dart:io';
 

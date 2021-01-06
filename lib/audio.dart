@@ -116,7 +116,7 @@ class AudioPlayer {
   Future<void> playSound(String soundName, [Function() completionHandler]) async {
     _instance.stop();
 
-    // Different file name depending on whether female or male voice selected.
+    // Different file name depending on whether female or male voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
       String voiceName = (Prefs().stringForKey('voice_id') == 'Kona') ? 'dora' : 'karl';

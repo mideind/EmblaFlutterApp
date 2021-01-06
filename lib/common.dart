@@ -16,16 +16,15 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Shared constants and debug logging
+// Global constants and debug logging
 
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Debug logging
 void dlog(var msg) {
-  if (kReleaseMode) {
-    return;
+  if (kReleaseMode == false) {
+    print(msg.toString());
   }
-  print(msg.toString());
 }
 
 // Software info

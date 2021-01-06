@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton wrapper class for speech recognition
+// Singleton wrapper class for speech to text functionality
 
 import 'dart:async';
 import 'dart:math' show max, pow;

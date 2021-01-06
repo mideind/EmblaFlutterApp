@@ -26,7 +26,7 @@ import 'package:flutter/cupertino.dart';
 
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
-import './theme.dart' show menuTextStyle, mainColor;
+import './theme.dart';
 import './common.dart';
 
 // UI string constants
