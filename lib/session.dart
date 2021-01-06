@@ -211,19 +211,19 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     else if (resp['error'] != null) {
       setState(() {
         text = kDunnoMessage;
-        AudioPlayer().playSound('dunno', () {
-          dlog('Playback finished');
-          stop();
-        });
+      });
+      AudioPlayer().playSound('dunno', () {
+        dlog('Playback finished');
+        stop();
       });
     }
     // Error in server response
     else {
+      stop();
       setState(() {
-        stop();
         text = kServerErrorMessage;
-        AudioPlayer().playSound('err');
       });
+      AudioPlayer().playSound('err');
     }
   }
 

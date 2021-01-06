@@ -10,7 +10,6 @@ dependencies:
   flutter:
     sdk: flutter
   http: '>=0.12.1'
-  sound_stream: '>=0.2.0'
   shared_preferences: '>=0.5.7'
   geolocator: '>=6.1.4'
   webview_flutter: '>=1.0.7'
