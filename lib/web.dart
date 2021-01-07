@@ -25,6 +25,8 @@ import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './common.dart';
 
+const String kLoadingHTMLFile = 'docs/loading.html';
+
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
@@ -57,7 +59,8 @@ class _WebViewRouteState extends State<WebViewRoute> {
   // These links should be opened in an external browser.
   Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
       InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
-    if (req.url != this.widget.initialURL) {
+    String fallbackFilename = _fallbackAssetForURL(req.url);
+    if (req.url != this.widget.initialURL && req.url.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
       launch(req.url);
       return ShouldOverrideUrlLoadingAction.CANCEL;
@@ -65,11 +68,20 @@ class _WebViewRouteState extends State<WebViewRoute> {
     return ShouldOverrideUrlLoadingAction.ALLOW;
   }
 
+  // void loadCompletionHandler(InAppWebViewController controller, String url) {
+  //   if (url.endsWith('loading.html')) {
+  //     setState(() {
+  //       controller.loadUrl(url: null);
+  //     });
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     // Create web view
     var view = InAppWebView(
-      initialUrl: this.widget.initialURL,
+      // initialUrl: this.widget.initialURL,
+      initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         debuggingEnabled: kReleaseMode,
@@ -79,6 +91,13 @@ class _WebViewRouteState extends State<WebViewRoute> {
       //onWebViewCreated: (InAppWebViewController controller) {},
       onLoadStart: (InAppWebViewController controller, String url) {
         dlog("Loading URL $url");
+      },
+      onLoadStop: (InAppWebViewController controller, String url) {
+        if (url.endsWith(kLoadingHTMLFile)) {
+          setState(() {
+            controller.loadUrl(url: this.widget.initialURL);
+          });
+        }
       },
       onLoadError: errHandler,
       onLoadHttpError: errHandler,

@@ -13,9 +13,9 @@ TODO for Android release:
     * Fix session button resizing animation
     * Prefetch remote audio file before playback? Perhaps more robust in terms of error handling.
     * Fix weird mic input behaviour when session button is hammered repeatedly
-    * Add "loading page" to documentation web views
     * Elegant handling of audio streaming issues when internet connectivity is lost
 
+    DONE * Add "loading page" with progress indicator for documentation web views
     DONE * Fix button aspect ratio squishing on smaller (shorter screens)
     DONE * Confirmation dialog when enabling Privacy Mode
     DONE * Move software name and version to own field under Settings
