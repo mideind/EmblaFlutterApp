@@ -106,7 +106,7 @@ class SpeechRecognizer {
   }
 
   // Set things off
-  void start(Function dataHandler, Function completionHandler) async {
+  void start(Function dataHandler, Function completionHandler, Function errHandler) async {
     dlog('Starting speech recognition');
     isRecognizing = true;
 
@@ -139,7 +139,8 @@ class SpeechRecognizer {
         _recognitionStream);
 
     // Listen for streaming speech recognition response
-    responseStream.listen(dataHandler, onDone: completionHandler);
+    responseStream.listen(dataHandler,
+        onError: errHandler, onDone: completionHandler, cancelOnError: true);
   }
 
   // Teardown

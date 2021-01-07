@@ -12,8 +12,8 @@ TODO for Android release:
     * Performance profiling
     * Fix session button resizing animation
     * Fix weird mic input behaviour when session button is hammered repeatedly
-    * Elegant handling of audio streaming issues when internet connectivity is lost
 
+    DONE * Elegant handling of audio streaming errors when internet connectivity is lost
     DONE * Prefetch remote audio file before playback? More robust in terms of error handling.
     DONE * Add "loading page" with progress indicator for documentation web views
     DONE * Fix button aspect ratio squishing on smaller (shorter screens)

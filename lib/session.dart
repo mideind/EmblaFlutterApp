@@ -146,6 +146,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }, () {
       dlog('Stream done');
       stopSpeechRecognition();
+    }, (var err) {
+      dlog("Streaming recognition error: ${err}");
+      setState(() {
+        text = kServerErrorMessage;
+      });
+      stop();
+      AudioPlayer().playSound('err');
     });
   }
 
@@ -198,7 +205,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       });
       // Play audio answer and then terminate session
-      AudioPlayer().playURL(resp['audio'], (bool err) {
+      await AudioPlayer().playURL(resp['audio'], (bool err) {
         if (err == true) {
           dlog('Error during audio playback');
           AudioPlayer().playSound('err');
@@ -250,8 +257,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
 
     // Check for internet connectivity
-    bool conn = await isConnectedToInternet();
-    if (conn == false) {
+    if (await isConnectedToInternet() == false) {
       text = kNoInternetMessage;
       AudioPlayer().playSound('conn');
       return;

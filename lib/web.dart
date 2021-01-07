@@ -78,7 +78,9 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   @override
   Widget build(BuildContext context) {
-    // Create web view
+    // Create web view that initially presents a "loading" document with
+    // progress indicator. Then immediately fetch the actual remote
+    // document. Falls back to loading local bundled document on network error.
     var view = InAppWebView(
       // initialUrl: this.widget.initialURL,
       initialFile: kLoadingHTMLFile,
