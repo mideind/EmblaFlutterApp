@@ -41,9 +41,9 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   // Fall back to local HTML document if error comes up when fetching from remote server
   void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
-    dlog('Page load error for $url: $errCode, $desc');
+    dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url);
-    dlog('Falling back to local asset $path');
+    dlog("Falling back to local asset $path");
     setState(() {
       controller.loadFile(assetFilePath: path);
     });

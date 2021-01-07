@@ -184,7 +184,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
 
     // Received valid response to query
-    if (resp['valid'] == true &&
+    if (resp != null &&
+        resp['valid'] == true &&
         resp['error'] == null &&
         resp['answer'] != null &&
         resp['audio'] != null) {

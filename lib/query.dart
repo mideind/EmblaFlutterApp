@@ -57,18 +57,21 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
     if (handler != null) {
       handler(null);
     }
-    return null;
   });
 
-  if (response == null && handler != null) {
-    handler(null);
+  // Handle null response
+  if (response == null) {
+    if (handler != null) {
+      handler(null);
+    }
     return null;
   }
 
-  dlog('Response status: ${response.statusCode}');
-  dlog('Response body: ${response.body}');
+  dlog("Response status: ${response.statusCode}");
+  dlog("Response body: ${response.body}");
 
   if (handler != null) {
+    // Parse JSON and feed to handler function
     var arg = response.statusCode == 200 ? json.decode(response.body) : null;
     handler(arg);
   }
