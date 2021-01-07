@@ -106,6 +106,7 @@ class AudioPlayer {
     dlog("Playing remote audio file '$url'");
     player.startPlayer(
         fromURI: url,
+        codec: Codec.mp3,
         whenFinished: () {
           if (completionHandler != null) {
             completionHandler();
@@ -113,7 +114,7 @@ class AudioPlayer {
         });
   }
 
-  // Play a preloaded audio file bundled with the app
+  // Play a preloaded wav audio file bundled with the app
   void playSound(String soundName, [Function() completionHandler]) {
     _instance.stop();
 

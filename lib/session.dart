@@ -240,6 +240,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Starting session');
 
+    if (await SpeechRecognizer().canRecognizeSpeech() == false) {
+      AudioPlayer().playSound('rec_cancel');
+      showRecognitionErrorAlert(context);
+      return;
+    }
+
     // Check for internet connectivity
     bool conn = await isConnectedToInternet();
     if (conn == false) {
@@ -304,11 +310,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   // Button pressed
   void toggle() async {
     if (state == SessionState.resting) {
-      if (await SpeechRecognizer().canRecognizeSpeech() == true) {
-        start();
-      } else {
-        showRecognitionErrorAlert(context);
-      }
+      start();
     }
     // We are in an active session state
     else {
@@ -321,8 +323,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text('Talgreining virkar'),
-          content: new Text('Ekki tókst að hefja talgreiningu.'),
+          title: new Text('Villa í talgreiningu'),
+          content: new Text(
+              'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnemann.'),
           actions: <Widget>[
             new FlatButton(
               child: new Text('Allt í lagi'),

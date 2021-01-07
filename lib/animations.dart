@@ -26,10 +26,10 @@ import 'package:intl/intl.dart';
 
 import './common.dart';
 
-const String frameFileName = 'assets/images/anim/logo/anim_';
-const String frameFileSuffix = '.png';
-
+const String kFrameFileName = 'assets/images/anim/logo/anim_';
+const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
+
 final List animationFrames = [];
 
 Future<ui.Image> _loadImageAsset(String asset) async {
@@ -42,7 +42,7 @@ Future<ui.Image> _loadImageAsset(String asset) async {
 Future<void> preloadAnimationFrames() async {
   NumberFormat formatter = new NumberFormat('00000');
   for (int i = 0; i < kNumAnimationFrames; i++) {
-    String fn = "$frameFileName${formatter.format(i)}$frameFileSuffix";
+    String fn = "$kFrameFileName${formatter.format(i)}$kFrameFileSuffix";
     animationFrames.add(await _loadImageAsset(fn));
   }
   dlog("Preloaded ${animationFrames.length} animation frames");
