@@ -431,16 +431,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                   child: Center(
                       child: GestureDetector(
                           onTap: toggle,
-                          child: AnimatedSize(
-                              curve: Curves.linear,
-                              duration: Duration(milliseconds: 1),
-                              vsync: this,
-                              alignment: Alignment.center,
-                              child: new SizedBox(
-                                width: buttonSize,
-                                height: buttonSize,
-                                child: CustomPaint(painter: SessionButtonPainter()),
-                              )))))),
+                          child: new SizedBox(
+                            width: buttonSize,
+                            height: buttonSize,
+                            child: CustomPaint(painter: SessionButtonPainter()),
+                          ))))),
         ],
       ),
     );

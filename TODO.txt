@@ -6,17 +6,18 @@ TODO FUTURE:
 
 TODO for Android release:
     TBD: * Pocketsphinx voice activation
-    * Confirmation alert on completion of clear query history calls
     * Set up proper continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
-    * Fix session button resizing animation
     * Fix weird mic input behaviour when session button is hammered repeatedly
+
+    * Confirmation alert on completion of clear query history calls
+    * Fix session button resizing animation
 
     DONE * Elegant handling of audio streaming errors when internet connectivity is lost
     DONE * Prefetch remote audio file before playback? More robust in terms of error handling.
     DONE * Add "loading page" with progress indicator for documentation web views
-    DONE * Fix button aspect ratio squishing on smaller (shorter screens)
+    DONE * Fix button aspect ratio squishing on smaller (shorter) screens
     DONE * Confirmation dialog when enabling Privacy Mode
     DONE * Move software name and version to own field under Settings
     DONE * Basic key obfuscation in binary
