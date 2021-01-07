@@ -23,6 +23,7 @@ import 'dart:typed_data';
 
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:http/http.dart' as http;
 
 import './prefs.dart' show Prefs;
 import './common.dart';
@@ -100,18 +101,23 @@ class AudioPlayer {
   }
 
   // Play remote audio file
-  void playURL(String url, [Function() completionHandler]) {
+  Future<void> playURL(String url, Function(bool) completionHandler) async {
     _instance.stop();
 
     dlog("Playing remote audio file '$url'");
-    player.startPlayer(
-        fromURI: url,
-        codec: Codec.mp3,
-        whenFinished: () {
-          if (completionHandler != null) {
-            completionHandler();
-          }
-        });
+    try {
+      Uint8List data = await http.readBytes(url);
+      dlog("Downloaded ${data.lengthInBytes} bytes");
+      player.startPlayer(
+          fromDataBuffer: data,
+          codec: Codec.mp3,
+          whenFinished: () {
+            completionHandler(false);
+          });
+    } catch (e) {
+      dlog('Error downloading remote file: ${e}');
+      completionHandler(true);
+    }
   }
 
   // Play a preloaded wav audio file bundled with the app
