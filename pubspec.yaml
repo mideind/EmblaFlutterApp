@@ -16,7 +16,7 @@ dependencies:
   device_id: '>=0.0.1'
   url_launcher: '>=5.7.8'
   google_speech: '>=1.2.1'
-  connectivity: '>=2.0.1'
+  connectivity_plus: '>=0.7.1'
   flutter_inappwebview: '>=4.0.0+4'
   rxdart: '>=0.20.0'
   dart_numerics: '>=0.0.5'

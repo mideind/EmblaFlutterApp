@@ -25,12 +25,12 @@ import 'dart:math' show min, max;
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:connectivity_plus/connectivity_plus.dart';
 
 import './menu.dart' show MenuRoute;
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
 import './speech2text.dart' show SpeechRecognizer;
-// import './connectivity.dart' show ConnectivityMonitor;
 import './hotword.dart' show HotwordDetector;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
@@ -106,6 +106,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       HotwordDetector().purge();
       HotwordDetector().start(hotwordHandler, () {});
     }
+  }
+
+  Future<bool> isConnectedToInternet() async {
+    var connectivityResult = await Connectivity().checkConnectivity();
+    return (connectivityResult != ConnectivityResult.none);
   }
 
   void hotwordHandler() {
@@ -192,7 +197,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       });
       // Play audio answer and then terminate session
-      await AudioPlayer().playURL(resp['audio'], () {
+      AudioPlayer().playURL(resp['audio'], () {
         if (false) {
           dlog('Error during audio playback');
           AudioPlayer().playSound('err');
@@ -227,22 +232,24 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Start session
-  void start() {
+  void start() async {
     if (state != SessionState.resting) {
       dlog('Session start called during pre-existing session!');
       return;
     }
     dlog('Starting session');
+
+    // Check for internet connectivity
+    bool conn = await isConnectedToInternet();
+    if (conn == false) {
+      text = kNoInternetMessage;
+      AudioPlayer().playSound('conn');
+      return;
+    }
+
     HotwordDetector().stop();
 
     AudioPlayer().playSound('rec_begin');
-
-    // Check for internet connectivity
-    // if (!ConnectivityMonitor().connected) {
-    //   text = kNoInternetMessage;
-    //   playSound('conn');
-    //   return;
-    // }
 
     // Set off animation timer
     setState(() {

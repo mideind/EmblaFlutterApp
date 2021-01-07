@@ -28,7 +28,6 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './loc.dart' show LocationTracking;
-import './connectivity.dart' show ConnectivityMonitor;
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
 import './theme.dart' show defaultTheme;
@@ -58,9 +57,6 @@ void main() async {
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
   Wakelock.enable();
-
-  // Start monitoring internet connectivity
-  await ConnectivityMonitor().start();
 
   // Set up location tracking
   if (Prefs().boolForKey('share_location') == true) {
