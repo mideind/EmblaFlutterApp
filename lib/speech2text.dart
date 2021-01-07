@@ -107,8 +107,8 @@ class SpeechRecognizer {
 
   // Set things off
   void start(Function dataHandler, Function completionHandler) async {
-    isRecognizing = true;
     dlog('Starting speech recognition');
+    isRecognizing = true;
 
     // Stream to be consumed by speech recognizer
     _recognitionStream = BehaviorSubject<List<int>>();

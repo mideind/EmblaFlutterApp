@@ -128,14 +128,14 @@ class QueryService {
   }
 
   // Send request to speech synthesis API
-  static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
-    Map<String, String> qargs = {
-      'text': text,
-      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
-      'format': 'text', // No SSML for now...
-      'api_key': readQueryServerKey(),
-    };
+  // static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
+  //   Map<String, String> qargs = {
+  //     'text': text,
+  //     'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
+  //     'format': 'text', // No SSML for now...
+  //     'api_key': readQueryServerKey(),
+  //   };
 
-    await _makeRequest(kSpeechAPIPath, qargs, handler);
-  }
+  //   await _makeRequest(kSpeechAPIPath, qargs, handler);
+  // }
 }
