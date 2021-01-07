@@ -312,7 +312,7 @@ class SettingsButtonWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(this.label, style: menuTextStyle),
+      child: Text(this.label, style: TextStyle(color: mainColor, fontSize: defaultFontSize)),
     );
   }
 }
@@ -432,8 +432,8 @@ class SettingsRoute extends StatelessWidget {
     // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
       slist.addAll([
-        SettingsSegmentedWidget(
-            label: 'Talgreining', items: ['Google', 'Tíró'], prefKey: 'speech2text_server'),
+        // SettingsSegmentedWidget(
+        //     label: 'Talgreining', items: ['Google', 'Tíró'], prefKey: 'speech2text_server'),
         QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
       ]);
     }

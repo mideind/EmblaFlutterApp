@@ -2,23 +2,21 @@ TODO FUTURE:
     * Dark mode support
     * Analyse audio samples in smaller chunks - find solution
     * Optimize redraws
+    * Implement JS execution w. code payload from query server
 
 TODO for Android release:
     TBD: * Pocketsphinx voice activation
-    * Implement JS execution w. code payload from query server
     * Confirmation alert on completion of clear query history calls
     * Set up proper continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
-    * Elegant handling of audio streaming issues when internet connectivity is lost
     * Fix session button resizing animation
     * Prefetch remote audio file before playback? Perhaps more robust in terms of error handling.
     * Fix weird mic input behaviour when session button is hammered repeatedly
-    * Fix button aspect ratio squishing on smaller (shorter screens)
-    * MergeSemantics stuff required?
     * Add "loading page" to documentation web views
-    * Update Embla docs wrt. office address
+    * Elegant handling of audio streaming issues when internet connectivity is lost
 
+    DONE * Fix button aspect ratio squishing on smaller (shorter screens)
     DONE * Confirmation dialog when enabling Privacy Mode
     DONE * Move software name and version to own field under Settings
     DONE * Basic key obfuscation in binary
