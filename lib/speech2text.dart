@@ -97,16 +97,15 @@ class SpeechRecognizer {
     // dlog(maxSignal);
     // Divide by max value of 16-bit signed integer to get amplitude in range 0.0-1.0
     double ampl = maxSignal / 32767.0;
-    // dlog(ampl.toString());
+    // dlog(ampl);
     // Convert to decibels and normalize
     double decibels = 20.0 * log10(ampl);
-    // dlog(decibels.toString());
     lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-    // dlog(lastSignal.toString());
+    // dlog(lastSignal);
   }
 
   // Set things off
-  void start(Function dataHandler, Function completionHandler, Function errHandler) async {
+  Future<void> start(Function dataHandler, Function completionHandler, Function errHandler) async {
     dlog('Starting speech recognition');
     isRecognizing = true;
 
@@ -144,7 +143,7 @@ class SpeechRecognizer {
   }
 
   // Teardown
-  void stop() async {
+  Future<void> stop() async {
     if (isRecognizing == false) {
       return;
     }
