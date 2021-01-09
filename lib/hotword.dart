@@ -20,7 +20,6 @@
 
 import 'dart:async';
 import 'dart:io';
-import 'dart:io' show Platform;
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -82,6 +81,9 @@ class HotwordDetector {
     var bytes = await rootBundle.load("assets/ppn/$filename");
     String dir = (await getTemporaryDirectory()).path;
     String finalPath = "$dir/$filename";
+    if (await File(finalPath).exists() == true) {
+      return finalPath;
+    }
     final buffer = bytes.buffer;
     File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return finalPath;

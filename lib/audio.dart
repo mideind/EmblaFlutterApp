@@ -115,7 +115,7 @@ class AudioPlayer {
             completionHandler(false);
           });
     } catch (e) {
-      dlog('Error downloading remote file: ${e}');
+      dlog('Error downloading remote file: $e');
       completionHandler(true);
     }
   }

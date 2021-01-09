@@ -57,6 +57,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
     if (handler != null) {
       handler(null);
     }
+    return null;
   });
 
   // Handle null response

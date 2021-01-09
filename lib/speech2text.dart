@@ -25,6 +25,7 @@ import 'dart:typed_data' show Uint8List, Int16List;
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:google_speech/google_speech.dart';
+
 import 'package:rxdart/rxdart.dart';
 import 'package:permission_handler/permission_handler.dart';
 
@@ -33,12 +34,15 @@ import './common.dart';
 
 // Speech recognition config record
 final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
-    encoding: AudioEncoding.LINEAR16,
-    model: RecognitionModel.command_and_search,
-    enableAutomaticPunctuation: true,
-    sampleRateHertz: kAudioSampleRate,
-    maxAlternatives: kSpeechToTextMaxAlternatives,
-    languageCode: kSpeechToTextLanguage);
+  encoding: AudioEncoding.LINEAR16,
+  audioChannelCount: 1,
+  model: RecognitionModel.command_and_search,
+  enableAutomaticPunctuation: true,
+  sampleRateHertz: kAudioSampleRate,
+  maxAlternatives: kSpeechToTextMaxAlternatives,
+  languageCode: kSpeechToTextLanguage,
+  //recognitionMetadata: RecognitionMetadata()
+);
 
 class SpeechRecognizer {
   FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
@@ -134,7 +138,8 @@ class SpeechRecognizer {
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final Stream responseStream = speechToText.streamingRecognize(
-        StreamingRecognitionConfig(config: speechRecognitionConfig, interimResults: true),
+        StreamingRecognitionConfig(
+            config: speechRecognitionConfig, interimResults: true, singleUtterance: true),
         _recognitionStream);
 
     // Listen for streaming speech recognition response
