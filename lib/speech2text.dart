@@ -67,8 +67,9 @@ class SpeechRecognizer {
   StreamSubscription<List<int>> _recognitionStreamSubscription;
   BehaviorSubject<List<int>> _recognitionStream;
 
-  double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
   bool isRecognizing = false;
+  double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
+  int totalAudioDataSize = 0; // Accumulated byte size of audio recording
 
   static final SpeechRecognizer _instance = SpeechRecognizer._internal();
 
@@ -127,6 +128,7 @@ class SpeechRecognizer {
   Future<void> start(Function dataHandler, Function completionHandler, Function errHandler) async {
     dlog('Starting speech recognition');
     isRecognizing = true;
+    totalAudioDataSize = 0;
 
     // Stream to be consumed by speech recognizer
     _recognitionStream = BehaviorSubject<List<int>>();
@@ -137,6 +139,7 @@ class SpeechRecognizer {
       if (buffer is FoodData) {
         _recognitionStream?.add(buffer.data);
         _updateAudioSignal(buffer.data);
+        totalAudioDataSize += buffer.data.lengthInBytes;
       }
     });
 
@@ -169,6 +172,8 @@ class SpeechRecognizer {
     }
     isRecognizing = false;
     dlog('Stopping speech recognition');
+    double seconds = totalAudioDataSize / (2.0 * kAudioSampleRate);
+    dlog("Total audio length: $seconds seconds ($totalAudioDataSize bytes)");
     await _micRecorder?.stopRecorder();
     await _micRecorder?.closeAudioSession();
     await _recordingDataSubscription?.cancel();
