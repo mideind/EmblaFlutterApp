@@ -41,20 +41,21 @@ import './common.dart';
 
 // Speech recognition config record
 final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
-    encoding: AudioEncoding.LINEAR16,
-    audioChannelCount: 1,
-    model: RecognitionModel.command_and_search,
-    enableAutomaticPunctuation: false,
-    sampleRateHertz: kAudioSampleRate,
-    maxAlternatives: kSpeechToTextMaxAlternatives,
-    languageCode: kSpeechToTextLanguage,
-    recognitionMetadata: getMetadata());
+  encoding: AudioEncoding.LINEAR16,
+  audioChannelCount: 1,
+  model: RecognitionModel.command_and_search,
+  //enableAutomaticPunctuation: false,
+  sampleRateHertz: kAudioSampleRate,
+  maxAlternatives: kSpeechToTextMaxAlternatives,
+  languageCode: kSpeechToTextLanguage,
+  //recognitionMetadata: getMetadata()
+);
 
 // Speech recognition metadata
 RecognitionMetadata getMetadata() {
   RecognitionMetadata md = RecognitionMetadata.getDefault();
   md.recordingDeviceType = RecognitionMetadata_RecordingDeviceType.SMARTPHONE;
-  md.interactionType = RecognitionMetadata_InteractionType.VOICE_SEARCH;
+  md.interactionType = RecognitionMetadata_InteractionType.VOICE_COMMAND;
   md.originalMediaType = RecognitionMetadata_OriginalMediaType.AUDIO;
   return md;
 }
