@@ -42,7 +42,7 @@ class HotwordDetector {
   HotwordDetector._internal();
 
   // Start hotword detection
-  Future<void> start(Function hotwordHandler, Function errHandler) async {
+  Future<void> start(Function hotwordHandler, Function(dynamic) errHandler) async {
     dlog('Starting hotword detection');
     try {
       if (ppnPath == null) {
@@ -54,7 +54,7 @@ class HotwordDetector {
       });
     } catch (err) {
       dlog("Error initing Porcupine: ${err.toString()}");
-      errHandler();
+      errHandler(err);
       return;
     }
     await pm.start();

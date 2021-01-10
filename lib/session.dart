@@ -104,7 +104,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     super.initState();
     if (Prefs().boolForKey('hotword_activation') == true) {
       HotwordDetector().purge();
-      HotwordDetector().start(hotwordHandler, () {});
+      HotwordDetector().start(hotwordHandler, hotwordErrHandler);
     }
   }
 
@@ -115,6 +115,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   void hotwordHandler() {
     start();
+  }
+
+  void hotwordErrHandler(dynamic err) {
+    dlog("Error starting hotword detection: $err");
   }
 
   void startSpeechRecognition() {
@@ -147,7 +151,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Stream done');
       stopSpeechRecognition();
     }, (var err) {
-      dlog("Streaming recognition error: ${err}");
+      dlog("Streaming recognition error: $err");
       setState(() {
         text = kServerErrorMessage;
       });
@@ -304,7 +308,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
 
     if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().start(hotwordHandler, () {});
+      HotwordDetector().start(hotwordHandler, hotwordErrHandler);
     }
   }
 
@@ -389,7 +393,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       });
       if (Prefs().boolForKey('hotword_activation') == true) {
-        HotwordDetector().start(hotwordHandler, () {});
+        HotwordDetector().start(hotwordHandler, hotwordErrHandler);
       } else {
         HotwordDetector().stop();
       }
