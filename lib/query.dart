@@ -43,7 +43,7 @@ Future<String> _clientID() async {
 
 Future<String> _clientVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  return packageInfo.buildNumber;
+  return packageInfo.version;
 }
 
 // Send a request to query server

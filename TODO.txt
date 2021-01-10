@@ -9,7 +9,7 @@ TODO for Android release:
     * Set up proper continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
-    * Fix weird mic input behaviour when session button is hammered repeatedly
+    * Fix broken playback when session button is hammered repeatedly
 
     * Confirmation alert on completion of clear query history calls
     * Fix session button resizing animation
