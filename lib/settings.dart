@@ -20,14 +20,14 @@
 
 import 'dart:io' show Platform;
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
 
+import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './theme.dart';
-import './common.dart';
 
 // UI string constants
 const String kPrivacyModeMessage =

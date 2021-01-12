@@ -13,15 +13,15 @@ else
     GOBF=`base64 -i ${GOOGLE_ACCOUNT_PATH}`
 fi
 
-SOBF=""
+QOBF=""
 if [ ! -e $QUERY_KEY_PATH ]; then
     echo "File ${QUERY_KEY_PATH} not found in script directory, using empty string"
 else
-    SOBF=`base64 -i ${QUERY_KEY_PATH}`
+    QOBF=`base64 -i ${QUERY_KEY_PATH}`
 fi
 
 cat > '../lib/keys.dart' << EOF
 const String googleServiceAccount = '${GOBF}';
-const String queryAPIKey = '${SOBF}';
+const String queryAPIKey = '${QOBF}';
 EOF
 

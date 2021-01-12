@@ -19,24 +19,24 @@
 // Main session view
 
 import 'dart:async';
-import 'dart:ui' as ui;
 import 'dart:math' show min, max;
+import 'dart:ui' as ui;
 
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
-import 'package:connectivity_plus/connectivity_plus.dart';
 
-import './menu.dart' show MenuRoute;
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
-import './speech2text.dart' show SpeechRecognizer;
+import './common.dart';
 import './hotword.dart' show HotwordDetector;
+import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
+import './speech2text.dart' show SpeechRecognizer;
 import './theme.dart';
 import './util.dart';
-import './common.dart';
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';

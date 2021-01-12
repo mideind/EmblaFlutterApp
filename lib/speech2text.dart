@@ -22,8 +22,8 @@ import 'dart:async';
 import 'dart:math' show max, pow;
 import 'dart:typed_data' show Uint8List, Int16List;
 
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:dart_numerics/dart_numerics.dart' show log10;
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart'
     show RecognitionMetadata;
@@ -32,12 +32,11 @@ import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pben
         RecognitionMetadata_RecordingDeviceType,
         RecognitionMetadata_InteractionType,
         RecognitionMetadata_OriginalMediaType;
-
-import 'package:rxdart/rxdart.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:rxdart/rxdart.dart';
 
-import './util.dart';
 import './common.dart';
+import './util.dart';
 
 // Speech recognition config record
 final RecognitionConfig speechRecognitionConfig = RecognitionConfig(

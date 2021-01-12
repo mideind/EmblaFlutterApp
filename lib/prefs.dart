@@ -20,8 +20,8 @@
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import './loc.dart';
 import './common.dart';
+import './loc.dart';
 
 class Prefs {
   Prefs._privateConstructor();

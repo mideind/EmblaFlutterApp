@@ -18,8 +18,8 @@
 
 // Animations
 
-import 'dart:ui' as ui;
 import 'dart:typed_data' show ByteData;
+import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';

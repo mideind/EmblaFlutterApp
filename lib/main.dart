@@ -18,29 +18,22 @@
 
 // App initialization and presentation of main (session) view
 
-import 'dart:io';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 
-import './prefs.dart' show Prefs;
-import './session.dart' show SessionRoute;
-import './loc.dart' show LocationTracking;
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
-import './theme.dart' show defaultTheme;
 import './common.dart' show dlog, kSoftwareName;
+import './loc.dart' show LocationTracking;
+import './prefs.dart' show Prefs;
+import './session.dart' show SessionRoute;
+import './theme.dart' show defaultTheme;
 
 void main() async {
   // Initialize bindings before calling runApp()
   WidgetsFlutterBinding.ensureInitialized();
-
-  // Only enable HTTP communication logging in debug mode
-  if (kReleaseMode == false) {
-    HttpClient.enableTimelineLogging = true;
-  }
 
   // Load prefs, populate with default values if required
   await Prefs().load();
@@ -72,6 +65,6 @@ void main() async {
     }
   }
 
-  // Launch app
+  // Launch app with session route
   runApp(MaterialApp(title: kSoftwareName, home: SessionRoute(), theme: defaultTheme));
 }

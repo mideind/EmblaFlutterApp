@@ -21,10 +21,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import './settings.dart' show SettingsRoute;
-import './web.dart' show WebViewRoute;
-import './theme.dart' show bgColor, mainColor, menuTextStyle;
 import './common.dart';
+import './settings.dart' show SettingsRoute;
+import './theme.dart' show bgColor, mainColor, menuTextStyle;
+import './web.dart' show WebViewRoute;
 
 void _pushSettings(BuildContext context) {
   Navigator.push(

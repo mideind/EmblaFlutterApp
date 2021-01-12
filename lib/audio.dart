@@ -25,8 +25,8 @@ import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 
-import './prefs.dart' show Prefs;
 import './common.dart';
+import './prefs.dart' show Prefs;
 
 // List of audio file assets in bundle
 const List<String> audioFiles = [

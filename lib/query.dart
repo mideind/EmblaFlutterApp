@@ -26,10 +26,10 @@ import 'package:http/http.dart' show Response;
 import 'package:http/http.dart' as http;
 import 'package:package_info/package_info.dart' show PackageInfo;
 
-import './prefs.dart' show Prefs;
-import './loc.dart' show LocationTracking;
-import './util.dart' show readQueryServerKey;
 import './common.dart';
+import './loc.dart' show LocationTracking;
+import './prefs.dart' show Prefs;
+import './util.dart' show readQueryServerKey;
 
 const int kRequestTimeout = 10; // Seconds
 
