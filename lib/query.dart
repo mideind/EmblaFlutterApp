@@ -82,7 +82,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 // Singleton wrapper around communication with query server
 class QueryService {
   // Send request to query API
-  static Future<void> sendQuery(List<String> queries, [Function handler]) async {
+  static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
     Map<String, String> qargs = {
       'q': queries.join('|'),
       'voice': '1',
@@ -96,6 +96,9 @@ class QueryService {
       qargs['client_type'] = _clientType();
       qargs['client_id'] = await _clientID();
       qargs['client_version'] = await _clientVersion();
+    }
+    if (test == true) {
+      qargs['test'] = '1';
     }
 
     double speed = Prefs().floatForKey('voice_speed');
