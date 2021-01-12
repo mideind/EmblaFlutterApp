@@ -18,7 +18,6 @@
 
 // App initialization and presentation of main (session) view
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;

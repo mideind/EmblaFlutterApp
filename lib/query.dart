@@ -68,14 +68,16 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
     return null;
   }
 
+  // We have a valid response object
   dlog("Response status: ${response.statusCode}");
   dlog("Response body: ${response.body}");
-
   if (handler != null) {
-    // Parse JSON and feed to handler function
+    // Parse JSON body and feed ensuing data structure to handler function
     var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+    arg = (arg is Map) == false ? null : arg; // Should be a dict, otherwise something's gone wrong
     handler(arg);
   }
+
   return response;
 }
 
@@ -83,12 +85,14 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 class QueryService {
   // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
+    // Query args
     Map<String, String> qargs = {
       'q': queries.join('|'),
       'voice': '1',
       'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora'
     };
 
+    // Never send client information in privacy mode
     bool privacyMode = Prefs().boolForKey('privacy_mode');
     if (privacyMode) {
       qargs['private'] = '1';
@@ -97,6 +101,7 @@ class QueryService {
       qargs['client_id'] = await _clientID();
       qargs['client_version'] = await _clientVersion();
     }
+
     if (test == true) {
       qargs['test'] = '1';
     }
@@ -119,6 +124,8 @@ class QueryService {
   }
 
   // Send request to query history API
+  // allData boolean param determines whether all device-specific
+  // data or only query history should be deleted server-side
   static Future<void> clearUserData(bool allData, [Function handler]) async {
     Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
@@ -131,6 +138,7 @@ class QueryService {
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
   }
 
+  // This is unneeded until JS execution functionality is implemented
   // Send request to speech synthesis API
   // static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
   //   Map<String, String> qargs = {
