@@ -26,9 +26,12 @@ jobs:
       - uses: actions/setup-java@v1
         with:
             java-version: '12.x'
-      - uses: subosito/flutter-action@v1
+      - uses: subosito/flutter-action@v1.4.0
         with:
             flutter-version: '1.22.4'
+      - run: touch keys/gaccount.json
+      - run: touch keys/query_api.key
+      - run: bash keys/gen_keys.sh
       - run: flutter pub get
       - run: flutter test
       - run: flutter build apk

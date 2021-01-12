@@ -6,7 +6,6 @@ TODO FUTURE:
 
 TODO for Android release:
     TBD: * Pocketsphinx voice activation
-    * Set up proper continuous integration
     * Spin up local webserver and test QueryService functions against them
     * Performance profiling
     * Fix broken playback when session button is hammered repeatedly
@@ -14,6 +13,7 @@ TODO for Android release:
     * Confirmation alert on completion of clear query history calls
     * Fix session button resizing animation
 
+    DONE * Set up proper continuous integration
     DONE * Elegant handling of audio streaming errors when internet connectivity is lost
     DONE * Prefetch remote audio file before playback? More robust in terms of error handling.
     DONE * Add "loading page" with progress indicator for documentation web views
