@@ -5,12 +5,11 @@ TODO FUTURE:
     * Implement JS execution w. code payload from query server
 
 TODO for Android release:
-    TBD: * Pocketsphinx voice activation
-    * Spin up local webserver and test QueryService functions against them
     * Performance profiling
-    * Fix broken playback when session button is hammered repeatedly
+    * Fix broken playback when session button is hammered repeatedly (only issue on iOS)
 
     * Confirmation alert on completion of clear query history calls
+    * Pocketsphinx voice activation
     * Fix session button resizing animation
 
     DONE * Set up proper continuous integration

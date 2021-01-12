@@ -82,7 +82,6 @@ class _WebViewRouteState extends State<WebViewRoute> {
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled document on network error.
     var view = InAppWebView(
-      // initialUrl: this.widget.initialURL,
       initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
@@ -90,7 +89,6 @@ class _WebViewRouteState extends State<WebViewRoute> {
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),
-      //onWebViewCreated: (InAppWebViewController controller) {},
       onLoadStart: (InAppWebViewController controller, String url) {
         dlog("Loading URL $url");
       },
