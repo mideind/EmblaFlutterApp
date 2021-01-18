@@ -380,7 +380,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
             text = introMsg();
           });
         }
-
         // Re-enable wake lock when returning to main route
         Wakelock.enable();
       });
@@ -468,10 +467,10 @@ class SessionButtonPainter extends CustomPainter {
     canvas.drawCircle(center, radius / 1.75, paint);
   }
 
-  // Draw still logo frame
+  // Draw current logo animation frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.length == 0) {
-      dlog('Animation frame loading fail. No frames loaded.');
+      dlog('Animation frame drawing failed. No frames loaded.');
     }
     ui.Image img = animationFrames[fnum];
     // Source image rect

@@ -68,7 +68,9 @@ ListTile _generateTile(String name, String imageName, Function onTapFunc, BuildC
     leading: Image(image: AssetImage("assets/images/$imageName.png")),
     trailing: Icon(Icons.arrow_right, color: mainColor),
     onTap: () {
-      onTapFunc(context);
+      if (onTapFunc is Function) {
+        onTapFunc(context);
+      }
     },
   );
 }

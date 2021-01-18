@@ -7,10 +7,10 @@ TODO FUTURE:
 TODO for Android release:
     * Performance profiling
     * Fix broken playback when session button is hammered repeatedly (only issue on iOS)
-
-    * Confirmation alert on completion of clear query history calls
-    * Pocketsphinx voice activation
     * Fix session button resizing animation
+    * Confirmation alert on completion of clear query history calls
+
+    * Pocketsphinx voice activation
 
     DONE * Set up proper continuous integration
     DONE * Elegant handling of audio streaming errors when internet connectivity is lost
