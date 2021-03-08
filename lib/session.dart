@@ -144,6 +144,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           for (var a in first.alternatives) {
             alts.add(a.transcript);
           }
+          AudioPlayer().playSound('rec_confirm');
           answerQuery(alts);
         }
       });

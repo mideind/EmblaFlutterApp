@@ -102,7 +102,7 @@ class AudioPlayer {
 
   // Play remote audio file
   Future<void> playURL(String url, Function(bool) completionHandler) async {
-    _instance.stop();
+    //_instance.stop();
 
     dlog("Playing remote audio file '$url'");
     try {
