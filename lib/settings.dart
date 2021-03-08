@@ -396,8 +396,6 @@ class SettingsLabelValueWidget extends StatelessWidget {
 // List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
-    SettingsLabelValueWidget(
-        'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
@@ -408,6 +406,8 @@ List<Widget> _settings() {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
+    SettingsLabelValueWidget(
+        'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
