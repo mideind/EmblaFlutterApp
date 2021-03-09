@@ -26,7 +26,8 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
-
+import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
+    show StreamingRecognizeResponse_SpeechEventType;
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
 import './common.dart';
@@ -122,11 +123,22 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void startSpeechRecognition() {
+    List<String> transcripts = [];
+
     SpeechRecognizer().start((data) {
       if (state != SessionState.listening) {
         dlog('Received speech recognition results after session was terminated.');
         return;
       }
+
+      if (data.hasSpeechEventType()) {
+        if (data.speechEventType ==
+            StreamingRecognizeResponse_SpeechEventType.END_OF_SINGLE_UTTERANCE) {
+          dlog('Received END_OF_SINGLE_UTTERANCE speech event.');
+          stopSpeechRecognition();
+        }
+      }
+
       // Bail on empty result list
       if (data == null || data.results.length < 1) {
         return;
@@ -138,19 +150,29 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
-          dlog('Final result received, stopping recording');
+          dlog('Final result received');
           stopSpeechRecognition();
           List<String> alts = [];
           for (var a in first.alternatives) {
-            alts.add(a.transcript);
+            transcripts.add(a.transcript.toString());
           }
-          AudioPlayer().playSound('rec_confirm');
-          answerQuery(alts);
         }
       });
     }, () {
       dlog('Stream done');
       stopSpeechRecognition();
+      dlog('Transcripts: ' + transcripts.toString());
+      if (transcripts.length != 0) {
+        AudioPlayer().playSound('rec_confirm');
+        answerQuery(transcripts);
+      } else {
+        dlog('Stream ended without answer');
+        setState(() {
+          text = introMsg();
+        });
+        stop();
+        AudioPlayer().playSound('rec_cancel');
+      }
     }, (var err) {
       dlog("Streaming recognition error: $err");
       setState(() {
@@ -180,6 +202,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void answerQuery(List<String> alternatives) {
+    dlog("Answering query: " + alternatives.toString());
     // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
@@ -343,7 +366,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           content: new Text(
               'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnemann.'),
           actions: <Widget>[
-            new FlatButton(
+            new TextButton(
               child: new Text('Allt í lagi'),
               onPressed: () {
                 Navigator.of(context).pop();

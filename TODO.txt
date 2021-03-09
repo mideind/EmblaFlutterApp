@@ -9,7 +9,7 @@ TODO for Android release:
     * Fix broken playback when session button is hammered repeatedly (only issue on iOS)
     * Fix session button resizing animation
     * Confirmation alert on completion of clear query history calls
-
+    * Add hardcoded timeout for streaming speech
     * Pocketsphinx voice activation
 
     DONE * Set up proper continuous integration

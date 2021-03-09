@@ -1,4 +1,4 @@
-name: Embla
+name: embla
 description: Voice-driven Icelandic-language digital assistant.
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
