@@ -23,14 +23,10 @@ import 'dart:io';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
-import 'package:porcupine/porcupine_manager.dart';
 
 import './common.dart' show dlog;
 
 class HotwordDetector {
-  PorcupineManager pm;
-  String ppnPath;
-
   static final HotwordDetector _instance = HotwordDetector._internal();
 
   // Singleton pattern
@@ -44,48 +40,13 @@ class HotwordDetector {
   // Start hotword detection
   Future<void> start(Function hotwordHandler, Function(dynamic) errHandler) async {
     dlog('Starting hotword detection');
-    try {
-      if (ppnPath == null) {
-        ppnPath = await copyPPNToTemp();
-      }
-      pm = await PorcupineManager.fromKeywordPaths([ppnPath], (idx) {
-        dlog('Hotword detected');
-        hotwordHandler();
-      });
-    } catch (err) {
-      dlog("Error initing Porcupine: ${err.toString()}");
-      errHandler(err);
-      return;
-    }
-    await pm.start();
   }
 
   // Stop hotword detection
   Future<void> stop() async {
-    if (pm == null) {
-      return;
-    }
     dlog('Stopping hotword detection');
-    await pm?.stop();
   }
 
   // Release any assets loaded by hotword detector
-  void purge() {
-    pm?.stop();
-    pm?.delete();
-  }
-
-  // Copy PPN files from asset bundle to temp directory
-  Future<String> copyPPNToTemp() async {
-    final filename = "${Platform.operatingSystem}.ppn";
-    var bytes = await rootBundle.load("assets/ppn/$filename");
-    String dir = (await getTemporaryDirectory()).path;
-    String finalPath = "$dir/$filename";
-    if (await File(finalPath).exists() == true) {
-      return finalPath;
-    }
-    final buffer = bytes.buffer;
-    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-    return finalPath;
-  }
+  void purge() {}
 }
