@@ -29,7 +29,7 @@ void dlog(var msg) {
 
 // Software info
 const String kSoftwareName = 'Embla';
-const String kSoftwareVersion = '1.0.0';
+const String kSoftwareVersion = '1.1.0';
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';

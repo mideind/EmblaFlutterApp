@@ -16,6 +16,11 @@ void main() {
       "Sjáldan er góð vísa of oft kveðin.“",
       '"This is not great."',
       "'The rain in spain stays mainly in the plain.'",
+      "Hann fór út í búð?",
+      "Klukkan 16:44!",
+      "'Engilbert Humperdink var maðurinn.'",
+      '"Ei skal höggva."',
+      "Þetta er setning.",
     ];
     for (String s in term) {
       expect(s.isPunctuationTerminated(), true);
@@ -32,19 +37,6 @@ void main() {
     ];
     for (String s in nt) {
       expect(s.isPunctuationTerminated(), false);
-    }
-  });
-
-  test('Strings should be identified as NOT punctuation-terminated', () {
-    final List t = [
-      "Hann fór út í búð?",
-      "Klukkan 16:44!",
-      "'Engilbert Humperdink var maðurinn.'",
-      '"Ei skal höggva."',
-      "Þetta er setning.",
-    ];
-    for (String s in t) {
-      expect(s.isPunctuationTerminated(), true);
     }
   });
 
@@ -77,8 +69,6 @@ void main() {
     final Map colors = {
       "#ffffff": Colors.white,
       "#000000": Colors.black,
-      "ffffff": Colors.white,
-      "000000": Colors.black,
     };
     colors.forEach((k, v) {
       expect(HexColor.fromHex(k), v);
