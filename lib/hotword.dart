@@ -19,10 +19,10 @@
 // Singleton wrapper class for hotword detection ("Hæ Embla")
 
 import 'dart:async';
-import 'dart:io';
 
 // import 'package:flutter/services.dart' show rootBundle;
 // import 'package:path_provider/path_provider.dart';
+import 'package:flutter_snowboy/flutter_snowboy.dart';
 
 import './common.dart' show dlog;
 
