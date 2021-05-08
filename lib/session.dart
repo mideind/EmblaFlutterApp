@@ -104,7 +104,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void initState() {
     super.initState();
     if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().purge();
+      // HotwordDetector().purge();
       HotwordDetector().start(hotwordHandler, hotwordErrHandler);
     }
   }
@@ -125,12 +125,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void startSpeechRecognition() {
     List<String> transcripts = [];
 
-    SpeechRecognizer().start((data) {
+    SpeechRecognizer().start(
+        // Data handler
+        (data) {
       if (state != SessionState.listening) {
         dlog('Received speech recognition results after session was terminated.');
         return;
       }
 
+      // End of utterance event handling
       if (data.hasSpeechEventType()) {
         if (data.speechEventType ==
             StreamingRecognizeResponse_SpeechEventType.END_OF_SINGLE_UTTERANCE) {
@@ -141,8 +144,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
       // Bail on empty result list
       if (data == null || data.results.length < 1) {
+        dlog('Empty result from speech recognition');
         return;
       }
+
       setState(() {
         text = data.results.map((e) => e.alternatives.first.transcript).join('');
         dlog('RESULTS--------------');
@@ -152,13 +157,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         if (first.isFinal) {
           dlog('Final result received');
           stopSpeechRecognition();
-          List<String> alts = [];
           for (var a in first.alternatives) {
             transcripts.add(a.transcript.toString());
           }
         }
       });
-    }, () {
+    },
+        // Completion handler
+        () {
       dlog('Stream done');
       stopSpeechRecognition();
       dlog('Transcripts: ' + transcripts.toString());
@@ -167,13 +173,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         answerQuery(transcripts);
       } else {
         dlog('Stream ended without answer');
+        AudioPlayer().playSound('rec_cancel');
         setState(() {
           text = introMsg();
         });
         stop();
-        AudioPlayer().playSound('rec_cancel');
       }
-    }, (var err) {
+    },
+        // Error handler
+        (var err) {
       dlog("Streaming recognition error: $err");
       setState(() {
         text = kServerErrorMessage;
@@ -364,7 +372,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         return AlertDialog(
           title: new Text('Villa í talgreiningu'),
           content: new Text(
-              'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnemann.'),
+              'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.'),
           actions: <Widget>[
             new TextButton(
               child: new Text('Allt í lagi'),
@@ -411,13 +419,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Enable/disable hotword activation
     void toggleHotwordActivation() {
-      setState(() {
-        Prefs().setBoolForKey('hotword_activation', !Prefs().boolForKey('hotword_activation'));
-        if (state == SessionState.resting) {
+      var p = Prefs();
+      p.setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
+      if (state == SessionState.resting) {
+        setState(() {
           text = introMsg();
-        }
-      });
-      if (Prefs().boolForKey('hotword_activation') == true) {
+        });
+      }
+      if (p.boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler, hotwordErrHandler);
       } else {
         HotwordDetector().stop();

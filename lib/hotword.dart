@@ -28,6 +28,7 @@ import './common.dart' show dlog;
 
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
+  FlutterSnowboy detector;
 
   // Singleton pattern
   factory HotwordDetector() {
@@ -35,18 +36,25 @@ class HotwordDetector {
   }
 
   // Constructor
-  HotwordDetector._internal();
+  HotwordDetector._internal() {
+    detector = FlutterSnowboy();
+    detector.prepare("path/to/model");
+  }
 
   // Start hotword detection
   Future<void> start(Function hotwordHandler, Function(dynamic) errHandler) async {
     dlog('Starting hotword detection');
+    detector.start(hotwordHandler);
   }
 
   // Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
+    detector.stop();
   }
 
   // Release any assets loaded by hotword detector
-  void purge() {}
+  void purge() {
+    detector.purge();
+  }
 }
