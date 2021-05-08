@@ -28,7 +28,7 @@ import './common.dart' show dlog;
 
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
-  FlutterSnowboy detector;
+  Snowboy detector;
 
   // Singleton pattern
   factory HotwordDetector() {
@@ -37,7 +37,7 @@ class HotwordDetector {
 
   // Constructor
   HotwordDetector._internal() {
-    detector = FlutterSnowboy();
+    detector = Snowboy();
     detector.prepare("path/to/model");
   }
 
