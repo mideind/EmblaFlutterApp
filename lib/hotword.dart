@@ -20,9 +20,9 @@
 
 import 'dart:async';
 
-// import 'package:flutter/services.dart' show rootBundle;
-// import 'package:path_provider/path_provider.dart';
-import 'package:flutter_snowboy/flutter_snowboy.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
+import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
 
 import './common.dart' show dlog;
 
@@ -38,7 +38,7 @@ class HotwordDetector {
   // Constructor
   HotwordDetector._internal() {
     detector = Snowboy();
-    detector.prepare("path/to/model");
+    detector.prepare(modelPath: "path/to/model");
   }
 
   // Start hotword detection
@@ -56,5 +56,9 @@ class HotwordDetector {
   // Release any assets loaded by hotword detector
   void purge() {
     detector.purge();
+  }
+
+  void copyModelToFilesystem(String assetName) {
+    // pass
   }
 }
