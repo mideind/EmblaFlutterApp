@@ -19,12 +19,13 @@
 // Singleton wrapper class for hotword detection ("Hæ Embla")
 
 import 'dart:async';
+import 'dart:io';
 
-// import 'package:flutter/services.dart' show rootBundle;
-// import 'package:path_provider/path_provider.dart';
+import 'package:flutter/services.dart' show rootBundle;
+import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
 
-import './common.dart' show dlog;
+import './common.dart' show dlog, kHotwordModelName;
 
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
@@ -37,8 +38,14 @@ class HotwordDetector {
 
   // Constructor
   HotwordDetector._internal() {
+    initialize();
+  }
+
+  // Load and prepare hotword-detection-related resources
+  void initialize() async {
+    String modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
     detector = Snowboy();
-    detector.prepare(modelPath: "path/to/model");
+    detector.prepare(modelPath: modelPath);
   }
 
   // Start hotword detection
@@ -58,7 +65,16 @@ class HotwordDetector {
     detector.purge();
   }
 
-  void copyModelToFilesystem(String assetName) {
-    // pass
+  // Copy model from asset bundle to temp directory on the filesystem
+  static Future<String> copyModelToFilesystem(String filename) async {
+    String dir = (await getTemporaryDirectory()).path;
+    String finalPath = "$dir/$filename";
+    if (await File(finalPath).exists() == true) {
+      return finalPath;
+    }
+    var bytes = await rootBundle.load("assets/hwmodels/$filename");
+    final buffer = bytes.buffer;
+    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    return finalPath;
   }
 }

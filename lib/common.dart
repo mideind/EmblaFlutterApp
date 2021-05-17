@@ -31,6 +31,9 @@ void dlog(var msg) {
 const String kSoftwareName = 'Embla';
 const String kSoftwareVersion = '1.1.0';
 
+// Hotword recognition
+const String kHotwordModelName = 'hae_embla.pmdl';
+
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';
 const int kSpeechToTextMaxAlternatives = 10;
