@@ -26,8 +26,10 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
     show StreamingRecognizeResponse_SpeechEventType;
+
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
 import './common.dart';
@@ -99,6 +101,7 @@ class SessionRoute extends StatefulWidget {
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
   String text = introMsg();
+  StreamSubscription<FGBGType> appStateSubscription;
 
   @override
   void initState() {
@@ -107,6 +110,23 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       // HotwordDetector().purge();
       HotwordDetector().start(hotwordHandler, hotwordErrHandler);
     }
+    // Start observing app state (foreground, background, active, inactive)
+    appStateSubscription = FGBGEvents.stream.listen((event) {
+      if (event == FGBGType.foreground && Prefs().boolForKey('hotword_activation') == true) {
+        HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+      } else {
+        // FGBGType.background
+        HotwordDetector().stop();
+      }
+      print(event); // FGBGType.foreground or
+    });
+  }
+
+  @protected
+  @mustCallSuper
+  void dispose() {
+    appStateSubscription.cancel();
+    super.dispose();
   }
 
   Future<bool> isConnectedToInternet() async {

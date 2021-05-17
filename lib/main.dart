@@ -29,6 +29,7 @@ import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './theme.dart' show defaultTheme;
+import './hotword.dart' show HotwordDetector;
 
 void main() async {
   // Initialize bindings before calling runApp()
@@ -63,6 +64,8 @@ void main() async {
       LocationTracking().start();
     }
   }
+
+  HotwordDetector();
 
   // Launch app with session route
   runApp(MaterialApp(title: kSoftwareName, home: SessionRoute(), theme: defaultTheme));
