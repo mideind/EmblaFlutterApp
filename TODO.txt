@@ -10,8 +10,11 @@ TODO for Android release:
     * Fix session button resizing animation
     * Confirmation alert on completion of clear query history calls
     * Add hardcoded timeout for streaming speech
-    * Pocketsphinx voice activation
+    * Open preferences if microphone/location enabled in settings but not allowed in system settings
+    * Suspend hotword detection when app goes into background
 
+    DONE * Stop voice activation when navigated away from session view
+    DONE * Voice activation
     DONE * Set up proper continuous integration
     DONE * Elegant handling of audio streaming errors when internet connectivity is lost
     DONE * Prefetch remote audio file before playback? More robust in terms of error handling.
