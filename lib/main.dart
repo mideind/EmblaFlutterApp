@@ -46,6 +46,7 @@ void main() async {
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
   AudioPlayer(); // Initialize singleton
+  HotwordDetector();
 
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
@@ -64,8 +65,6 @@ void main() async {
       LocationTracking().start();
     }
   }
-
-  HotwordDetector();
 
   // Launch app with session route
   runApp(MaterialApp(title: kSoftwareName, home: SessionRoute(), theme: defaultTheme));

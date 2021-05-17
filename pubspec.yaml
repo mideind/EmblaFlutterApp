@@ -70,9 +70,8 @@ flutter:
     - docs/Lato-Regular.woff2
     - docs/Lato-Italic.woff2
     - docs/Lato-Bold.woff2
-    # PPN
-    - assets/ppn/ios.ppn
-    - assets/ppn/android.ppn
+    # Hotword models
+    - assets/hwmodels/hae_embla.pmdl
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png

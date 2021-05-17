@@ -2,7 +2,7 @@
 
 name: CI
 
-# Controls when the action will run. 
+# Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
@@ -26,15 +26,16 @@ jobs:
       - uses: actions/setup-java@v1
         with:
             java-version: '12.x'
-      - uses: subosito/flutter-action@v1.4.0
+      - uses: subosito/flutter-action@v1
         with:
-            flutter-version: '2.0.3'
+          channel: 'stable' # or: 'beta', 'dev' or 'master'
       - run: touch keys/gaccount.json
       - run: touch keys/query_api.key
       - run: bash keys/gen_keys.sh
+      - run: git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
       - run: flutter pub get
       - run: flutter test
-      - run: dart analyze lib
+      # - run: dart analyze lib
       - run: flutter build apk
       - name: Slack notification
         uses: 8398a7/action-slack@v2
@@ -44,4 +45,3 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
         if: failure() # Pick up event if the job fails
-
