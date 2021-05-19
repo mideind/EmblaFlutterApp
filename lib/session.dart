@@ -112,13 +112,16 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) {
-      if (event == FGBGType.foreground && Prefs().boolForKey('hotword_activation') == true) {
-        HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+      if (event == FGBGType.foreground) {
+        // App went into foreground
+        if (Prefs().boolForKey('hotword_activation') == true) {
+          HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+        }
       } else {
-        // FGBGType.background
+        // App went into background - FGBGType.background
         HotwordDetector().stop();
+        AudioPlayer().stop();
       }
-      print(event); // FGBGType.foreground or
     });
   }
 
@@ -419,6 +422,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       stop(); // Terminate any ongoing session
       Wakelock.disable();
       HotwordDetector().stop();
+      AudioPlayer().stop();
 
       Navigator.push(
         context,
