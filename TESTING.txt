@@ -13,7 +13,7 @@ PRÓFUN Á EMBLU F. ANDROID:
     * Hætta í forritinu í miðri fyrirspurnar-sessjón og opna aftur. Virkar allt?
     * Bluetooth tæki: Virkar að skipa milli bluetooth heyrnatóla/míkrófóns? Hættir eitthvað að virka?
     * Er við viðmótið skiljanlegt, einfalt, eðlilegt? Í samræmi við hefðirnar á Android?
-    * Er forritið stórt og dýrt sækja miðað við önnur Android forrit?
+    * Er forritið stórt og dýrt að sækja miðað við önnur Android forrit?
     * Hvernig er forritið miðað við Android native forritið? Betra, verra, áreiðanlegra, minna áreiðanlegt?
 
 SEINNA:
