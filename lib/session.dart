@@ -250,11 +250,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
 
     // Received valid response to query
-    if (resp != null &&
-        resp['valid'] == true &&
-        resp['error'] == null &&
-        resp['answer'] != null &&
-        resp['audio'] != null) {
+    if (resp != null && resp['valid'] == true && resp['error'] == null && resp['answer'] != null) {
       dlog('Received valid response to query');
       // Update text
       setState(() {
@@ -264,18 +260,23 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       });
       // Play audio answer and then terminate session
-      await AudioPlayer().playURL(resp['audio'], (bool err) {
-        if (err == true) {
-          dlog('Error during audio playback');
-          AudioPlayer().playSound('err');
-          setState(() {
-            text = kServerErrorMessage;
-          });
-        } else {
-          dlog('Playback finished');
-        }
+      if (resp['audio'] != null) {
+        await AudioPlayer().playURL(resp['audio'], (bool err) {
+          if (err == true) {
+            dlog('Error during audio playback');
+            AudioPlayer().playSound('err');
+            setState(() {
+              text = kServerErrorMessage;
+            });
+          } else {
+            dlog('Playback finished');
+          }
+          stop();
+        });
+      } else {
+        // If no audio to play, terminate session
         stop();
-      });
+      }
       // Open URL, if provided in query answer
       if (resp['open_url'] != null) {
         launch(resp['open_url']);
