@@ -52,7 +52,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
   Response response = await http
-      .post(apiURL, body: qargs)
+      .post(Uri.parse(apiURL), body: qargs)
       .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
     if (handler != null) {
       handler(null);

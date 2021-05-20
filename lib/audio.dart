@@ -106,7 +106,7 @@ class AudioPlayer {
 
     dlog("Playing remote audio file '$url'");
     try {
-      Uint8List data = await http.readBytes(url);
+      Uint8List data = await http.readBytes(Uri.parse(url));
       dlog("Downloaded ${data.lengthInBytes} bytes");
       player.startPlayer(
           fromDataBuffer: data,

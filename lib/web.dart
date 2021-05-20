@@ -40,9 +40,9 @@ class _WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
   // Fall back to local HTML document if error comes up when fetching from remote server
-  void errHandler(InAppWebViewController controller, String url, int errCode, String desc) async {
+  void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
-    String path = _fallbackAssetForURL(url);
+    String path = _fallbackAssetForURL(url.toString());
     dlog("Falling back to local asset $path");
     setState(() {
       controller.loadFile(assetFilePath: path);
@@ -57,15 +57,17 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   // Handle clicks on links in HTML documentation.
   // These links should be opened in an external browser.
-  Future<ShouldOverrideUrlLoadingAction> urlClickHandler(
-      InAppWebViewController controller, ShouldOverrideUrlLoadingRequest req) async {
-    String fallbackFilename = _fallbackAssetForURL(req.url);
-    if (req.url != this.widget.initialURL && req.url.endsWith(fallbackFilename) == false) {
+  Future<dynamic> urlClickHandler(
+      InAppWebViewController controller, NavigationAction action) async {
+    URLRequest req = action.request;
+    String urlStr = req.url.toString();
+    String fallbackFilename = _fallbackAssetForURL(urlStr);
+    if (urlStr != this.widget.initialURL && urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
-      launch(req.url);
-      return ShouldOverrideUrlLoadingAction.CANCEL;
+      launch(urlStr);
+      return NavigationActionPolicy.CANCEL;
     }
-    return ShouldOverrideUrlLoadingAction.ALLOW;
+    return NavigationActionPolicy.ALLOW;
   }
 
   // void loadCompletionHandler(InAppWebViewController controller, String url) {
@@ -85,17 +87,18 @@ class _WebViewRouteState extends State<WebViewRoute> {
       initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
-        debuggingEnabled: kReleaseMode,
+        //debuggingEnabled: kReleaseMode,
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),
-      onLoadStart: (InAppWebViewController controller, String url) {
-        dlog("Loading URL $url");
+      onLoadStart: (InAppWebViewController controller, Uri url) {
+        dlog("Loading URL ${url.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, String url) {
-        if (url.endsWith(kLoadingHTMLFile)) {
+      onLoadStop: (InAppWebViewController controller, Uri url) {
+        if (url.toString().endsWith(kLoadingHTMLFile)) {
           setState(() {
-            controller.loadUrl(url: this.widget.initialURL);
+            Uri uri = Uri.parse(this.widget.initialURL);
+            controller.loadUrl(urlRequest: URLRequest(url: uri));
           });
         }
       },
