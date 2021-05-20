@@ -22,7 +22,6 @@ import 'dart:typed_data' show ByteData;
 import 'dart:ui' as ui;
 
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 import './common.dart';
 
@@ -32,6 +31,7 @@ const int kNumAnimationFrames = 100;
 
 final List animationFrames = [];
 
+// Load a PNG image into memory from Flutter assets bundle
 Future<ui.Image> _loadImageAsset(String asset) async {
   ByteData data = await rootBundle.load(asset);
   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
@@ -39,10 +39,11 @@ Future<ui.Image> _loadImageAsset(String asset) async {
   return fi.image;
 }
 
+// Preload all logo animation frames
 Future<void> preloadAnimationFrames() async {
-  NumberFormat formatter = new NumberFormat('00000');
   for (int i = 0; i < kNumAnimationFrames; i++) {
-    String fn = "$kFrameFileName${formatter.format(i)}$kFrameFileSuffix";
+    String padnum = i.toString().padLeft(5, '0');
+    String fn = "$kFrameFileName$padnum$kFrameFileSuffix";
     animationFrames.add(await _loadImageAsset(fn));
   }
   dlog("Preloaded ${animationFrames.length} animation frames");
