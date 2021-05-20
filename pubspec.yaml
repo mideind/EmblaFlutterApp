@@ -16,17 +16,16 @@ dependencies:
   package_info: '>=0.4.3'
   device_id: '>=0.0.1'
   url_launcher: '>=5.7.8'
-  google_speech: '>=2.0.0'
+  google_speech: '^2.0.0'
   connectivity_plus: '>=0.7.1'
   flutter_inappwebview: '>=4.0.0+4'
   rxdart: '>=0.20.0'
   dart_numerics: '>=0.0.5'
-  wakelock: '>=0.2.1+1'
-  path_provider: '>=0.5.0+1'
-  flutter_sound: '>=6.4.8+2'
+  # wakelock: '>=0.5.2'
+  flutter_sound: '^8.1.1'
   permission_handler: '>=5.0.1+1'
   app_settings: '>=4.1.0'
-  flutter_fgbg: ^0.0.1
+  flutter_fgbg: '>=0.0.1'
   flutter_snowboy:
     path: ../flutter_snowboy/
 

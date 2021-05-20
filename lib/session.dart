@@ -25,7 +25,7 @@ import 'dart:ui' as ui;
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
-import 'package:wakelock/wakelock.dart' show Wakelock;
+//import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
     show StreamingRecognizeResponse_SpeechEventType;
@@ -421,7 +421,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Present menu route
     void pushMenu() {
       stop(); // Terminate any ongoing session
-      Wakelock.disable();
+      //Wakelock.disable();
       HotwordDetector().stop();
       AudioPlayer().stop();
 
@@ -440,7 +440,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           });
         }
         // Re-enable wake lock when returning to main route
-        Wakelock.enable();
+        //Wakelock.enable();
         // Re-enable hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
           HotwordDetector().start(hotwordHandler, hotwordErrHandler);
