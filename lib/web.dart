@@ -57,7 +57,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
 
   // Handle clicks on links in HTML documentation.
   // These links should be opened in an external browser.
-  Future<dynamic> urlClickHandler(
+  Future<NavigationActionPolicy> urlClickHandler(
       InAppWebViewController controller, NavigationAction action) async {
     URLRequest req = action.request;
     String urlStr = req.url.toString();

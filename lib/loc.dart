@@ -50,7 +50,7 @@ class LocationTracking {
       lat = position.latitude;
       lon = position.longitude;
       known = true;
-      dlog("Location: ${lat.toString()}, ${lon.toString()}");
+      //dlog("Location: ${lat.toString()}, ${lon.toString()}");
     });
   }
 
