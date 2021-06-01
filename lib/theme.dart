@@ -47,7 +47,6 @@ final TextStyle menuTextStyle = TextStyle(color: Colors.black, fontSize: default
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
     // brightness: Brightness.dark,
-    accentColor: Colors.red,
     scaffoldBackgroundColor: bgColor,
     primarySwatch: Colors.red,
     primaryColor: mainColor,

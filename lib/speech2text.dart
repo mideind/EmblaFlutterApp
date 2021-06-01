@@ -19,10 +19,8 @@
 // Singleton wrapper class for speech to text functionality
 
 import 'dart:async';
-import 'dart:math' show max, pow;
-import 'dart:typed_data' show Uint8List, Int16List;
+import 'dart:math' show pow;
 
-import 'package:dart_numerics/dart_numerics.dart' show log10;
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart'
@@ -62,6 +60,7 @@ RecognitionMetadata getMetadata() {
 class SpeechRecognizer {
   FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
   StreamSubscription _recordingDataSubscription;
+  StreamSubscription _recordingProgressSubscription;
   StreamController _recordingDataController;
 
   StreamSubscription<List<int>> _recognitionStreamSubscription;
@@ -105,24 +104,24 @@ class SpeechRecognizer {
   }
 
   // Read audio buffer, analyse strength of signal
-  void _updateAudioSignal(Uint8List data) {
-    // Due to internal details of the flutter_sound
-    // implementation, we have to create a copy of the
-    // data before analyzing it. Inefficient, but whatchagonnado?
-    Uint8List copy = new Uint8List.fromList(data);
-    // Coerce into list of 16-bit signed integers
-    Int16List samples = copy.buffer.asInt16List();
-    // dlog("Num samples: ${samples.length.toString()}");
-    int maxSignal = samples.reduce(max);
-    // dlog(maxSignal);
-    // Divide by max value of 16-bit signed integer to get amplitude in range 0.0-1.0
-    double ampl = maxSignal / 32767.0;
-    // dlog(ampl);
-    // Convert to decibels and normalize
-    double decibels = 20.0 * log10(ampl);
-    lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-    // dlog(lastSignal);
-  }
+  // void _updateAudioSignal(Uint8List data) {
+  //   // Due to internal details of the flutter_sound
+  //   // implementation, we have to create a copy of the
+  //   // data before analyzing it. Inefficient, but whatchagonnado?
+  //   Uint8List copy = new Uint8List.fromList(data);
+  //   // Coerce into list of 16-bit signed integers
+  //   Int16List samples = copy.buffer.asInt16List();
+  //   // dlog("Num samples: ${samples.length.toString()}");
+  //   int maxSignal = samples.reduce(max);
+  //   // dlog(maxSignal);
+  //   // Divide by max value of 16-bit signed integer to get amplitude in range 0.0-1.0
+  //   double ampl = maxSignal / 32767.0;
+  //   // dlog(ampl);
+  //   // Convert to decibels and normalize
+  //   double decibels = 20.0 * log10(ampl);
+  //   lastSignal = ampl; //_normalizedPowerLevelFromDecibels(decibels);
+  //   // dlog(lastSignal);
+  // }
 
   // Set things off
   Future<void> start(Function dataHandler, Function completionHandler, Function errHandler) async {
@@ -138,18 +137,29 @@ class SpeechRecognizer {
     _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
       if (buffer is FoodData) {
         _recognitionStream?.add(buffer.data);
-        _updateAudioSignal(buffer.data);
+        //_updateAudioSignal(buffer.data);
         totalAudioDataSize += buffer.data.lengthInBytes;
       }
     });
 
     // Open microphone session
     await _micRecorder.openAudioSession();
+
+    // Listen for audio status (duration, decibel) at fixed interval
+    await _micRecorder.setSubscriptionDuration(Duration(milliseconds: 80));
+
+    _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
+      double decibels = e.decibels - 70.0;
+      lastSignal = _normalizedPowerLevelFromDecibels(decibels);
+      //dlog(lastSignal);
+    });
+
     await _micRecorder.startRecorder(
       toStream: _recordingDataController.sink,
       codec: Codec.pcm16,
       numChannels: 1,
       sampleRate: kAudioSampleRate,
+      //bitRate: 256000
     );
 
     // Start recognizing
@@ -177,6 +187,7 @@ class SpeechRecognizer {
     await _micRecorder?.stopRecorder();
     await _micRecorder?.closeAudioSession();
     await _recordingDataSubscription?.cancel();
+    await _recordingProgressSubscription?.cancel();
     await _recordingDataController?.close();
     await _recognitionStreamSubscription?.cancel();
     await _recognitionStream?.close();
