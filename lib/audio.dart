@@ -71,7 +71,7 @@ class AudioPlayer {
   // Audio player setup and audio data preloading
   Future<void> _init() async {
     dlog('Initing audio player');
-    await _preloadAudioFiles();
+    _preloadAudioFiles();
     player = FlutterSoundPlayer();
     player.openAudioSession();
   }

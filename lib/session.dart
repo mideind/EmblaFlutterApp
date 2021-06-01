@@ -196,11 +196,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         answerQuery(transcripts);
       } else {
         dlog('Stream ended without answer');
+        stop();
         AudioPlayer().playSound('rec_cancel');
         setState(() {
           text = introMsg();
         });
-        stop();
       }
     },
         // Error handler
