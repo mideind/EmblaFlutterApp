@@ -83,7 +83,7 @@ class SpeechRecognizer {
   // Do we have all we need to recognize speech?
   Future<bool> canRecognizeSpeech() async {
     // Access to microphone?
-    var status = await Permission.microphone.request();
+    PermissionStatus status = await Permission.microphone.request();
     if (status != PermissionStatus.granted) {
       return false;
     }
@@ -146,8 +146,7 @@ class SpeechRecognizer {
     await _micRecorder.openAudioSession();
 
     // Listen for audio status (duration, decibel) at fixed interval
-    await _micRecorder.setSubscriptionDuration(Duration(milliseconds: 80));
-
+    _micRecorder.setSubscriptionDuration(Duration(milliseconds: 80));
     _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
       double decibels = e.decibels - 70.0;
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
@@ -155,14 +154,13 @@ class SpeechRecognizer {
     });
 
     await _micRecorder.startRecorder(
-      toStream: _recordingDataController.sink,
-      codec: Codec.pcm16,
-      numChannels: 1,
-      sampleRate: kAudioSampleRate,
-      //bitRate: 256000
-    );
+        toStream: _recordingDataController.sink,
+        codec: Codec.pcm16,
+        numChannels: 1,
+        sampleRate: kAudioSampleRate,
+        bitRate: kAudioSampleRate * 16);
 
-    // Start recognizing
+    // Start recognizing speech from audio stream
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
     final speechToText = SpeechToText.viaServiceAccount(serviceAccount);
     final Stream responseStream = speechToText.streamingRecognize(
@@ -170,7 +168,7 @@ class SpeechRecognizer {
             config: speechRecognitionConfig, interimResults: true, singleUtterance: true),
         _recognitionStream);
 
-    // Listen for streaming speech recognition response
+    // Listen for streaming speech recognition server responses
     responseStream.listen(dataHandler,
         onError: errHandler, onDone: completionHandler, cancelOnError: true);
   }

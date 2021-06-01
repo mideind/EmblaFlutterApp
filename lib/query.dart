@@ -73,7 +73,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   dlog("Response body: ${response.body}");
   if (handler != null) {
     // Parse JSON body and feed ensuing data structure to handler function
-    var arg = response.statusCode == 200 ? json.decode(response.body) : null;
+    dynamic arg = response.statusCode == 200 ? json.decode(response.body) : null;
     arg = (arg is Map) == false ? null : arg; // Should be a dict, otherwise something's gone wrong
     handler(arg);
   }

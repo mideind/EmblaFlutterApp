@@ -94,7 +94,7 @@ class SettingsSwitchConfirmWidget extends StatefulWidget {
 }
 
 class _SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget> {
-  Future<void> _showPromptDialog(var context) async {
+  Future<void> _showPromptDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
@@ -272,7 +272,7 @@ class SettingsButtonWidget extends StatelessWidget {
   SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
-  Future<void> _showPromptDialog(var context) async {
+  Future<void> _showPromptDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button

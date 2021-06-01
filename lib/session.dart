@@ -133,7 +133,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   Future<bool> isConnectedToInternet() async {
-    var connectivityResult = await Connectivity().checkConnectivity();
+    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
   }
 
@@ -142,7 +142,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void hotwordErrHandler(dynamic err) {
-    dlog("Error starting hotword detection: $err");
+    dlog("Error starting hotword detection: ${err.toString()}");
   }
 
   void startSpeechRecognition() {
@@ -205,7 +205,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     },
         // Error handler
         (var err) {
-      dlog("Streaming recognition error: $err");
+      dlog("Streaming recognition error: ${err.toString()}");
       setState(() {
         text = kServerErrorMessage;
       });
@@ -450,7 +450,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Enable/disable hotword activation
     void toggleHotwordActivation() {
-      var p = Prefs();
+      Prefs p = Prefs();
       p.setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
       if (state == SessionState.resting) {
         setState(() {

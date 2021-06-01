@@ -83,7 +83,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled document on network error.
-    var view = InAppWebView(
+    InAppWebView view = InAppWebView(
       initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(

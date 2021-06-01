@@ -20,6 +20,7 @@
 
 import 'dart:async';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
@@ -72,7 +73,7 @@ class HotwordDetector {
     if (await File(finalPath).exists() == true) {
       return finalPath;
     }
-    var bytes = await rootBundle.load("assets/hwmodels/$filename");
+    ByteData bytes = await rootBundle.load("assets/hwmodels/$filename");
     final buffer = bytes.buffer;
     File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return finalPath;
