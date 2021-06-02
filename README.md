@@ -2,7 +2,7 @@
 
 # Embla
 
-Embla is a voice-driven virtual assistant app that uses the Icelandic-language
+Embla is a voice-driven virtual assistant app powered by the Icelandic-language
 [Greynir](https://greynir.is) query engine. This is the repository for the
 cross-platform Embla mobile client.
 

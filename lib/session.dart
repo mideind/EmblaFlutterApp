@@ -54,11 +54,12 @@ enum SessionState {
   listening, // Receiving microphone input
   answering, // Communicating with server or playing back answer
 }
+
 // Current state
 SessionState state = SessionState.resting;
 
 // Waveform configuration
-const int kWaveformNumBars = 14; // Number of waveform bars drawn
+const int kWaveformNumBars = 15; // Number of waveform bars drawn
 const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars as proportion of width
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
