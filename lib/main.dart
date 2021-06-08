@@ -20,7 +20,7 @@
 
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
-//import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:wakelock/wakelock.dart' show Wakelock;
 
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
@@ -50,7 +50,7 @@ void main() async {
 
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
-  //Wakelock.enable();
+  Wakelock.enable();
 
   // Set up location tracking
   if (Prefs().boolForKey('share_location') == true) {

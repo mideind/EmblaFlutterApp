@@ -1,6 +1,7 @@
 #!/bin/bash
 
-/bin/bash keys/gen_keysfile.sh
+/bin/bash keys/gen_keys.sh
 
 # Build APK for Android
-flutter build apk --release --obfuscate --split-debug-info=/tmp/
+flutter build apk --release --obfuscate --split-debug-info=/tmp/ 
+# --split-per-abi

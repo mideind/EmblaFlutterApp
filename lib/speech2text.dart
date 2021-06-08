@@ -21,7 +21,7 @@
 import 'dart:async';
 import 'dart:math' show pow;
 
-import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart'
     show RecognitionMetadata;
