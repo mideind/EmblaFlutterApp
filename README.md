@@ -8,7 +8,7 @@ cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on Android 8.0+ (SDK >= 26),
-with iOS, macOS, Windows and web support on the roadmap.
+with iOS support on the roadmap.
 
 ## Build instructions
 
@@ -45,6 +45,12 @@ $ flutter run
 
 This should launch the app in development mode on your device of choice (e.g.
 simulator, attached physical device, etc.).
+
+To build an Android `apk` release binary for arm64, run the following script:
+
+```
+$ bash build.sh
+```
 
 ## Screenshots
 

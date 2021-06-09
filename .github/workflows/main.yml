@@ -36,7 +36,7 @@ jobs:
       - run: flutter pub get
       - run: flutter test
       - run: dart analyze lib
-      - run: flutter build apk
+      - run: bash build.sh
       - name: Slack notification
         uses: 8398a7/action-slack@v2
         with:
