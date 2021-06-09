@@ -46,7 +46,7 @@ class HotwordDetector {
   void initialize() async {
     String modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
     detector = Snowboy();
-    detector.prepare(modelPath: modelPath, sensitivity: 0.6, audioGain: 1.2, applyFrontend: false);
+    detector.prepare(modelPath: modelPath, sensitivity: 0.5, audioGain: 1.25, applyFrontend: false);
   }
 
   // Start hotword detection

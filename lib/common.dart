@@ -22,9 +22,9 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Debug logging
 void dlog(var msg) {
-  if (kReleaseMode == false) {
-    print(msg.toString());
-  }
+  //if (kReleaseMode == false) {
+  print(msg.toString());
+  //}
 }
 
 // Software info

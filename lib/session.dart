@@ -373,7 +373,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void cancel() {
     dlog('User initiated cancellation of session');
     stop();
-    AudioPlayer().playSound('rec_cancel');
+    //AudioPlayer().playSound('rec_cancel');
     setState(() {
       text = introMsg();
     });
