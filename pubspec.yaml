@@ -19,6 +19,7 @@ dependencies:
   google_speech: '>=2.0.0'
   connectivity_plus: '>=0.7.1'
   flutter_inappwebview: '>=4.0.0+4'
+  path_provider: '>=2.0.0'
   rxdart: '>=0.20.0'
   dart_numerics: '>=0.0.5'
   wakelock: '>=0.5.2'
@@ -72,6 +73,7 @@ flutter:
     - docs/Lato-Bold.woff2
     # Hotword models
     - assets/hwmodels/hae_embla.pmdl
+    - assets/hwmodels/multi.pmdl
     # Logo animation frames
     - assets/images/anim/logo/anim_00000.png
     - assets/images/anim/logo/anim_00001.png

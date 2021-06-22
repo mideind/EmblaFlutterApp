@@ -32,7 +32,7 @@ const String kSoftwareName = 'Embla';
 const String kSoftwareVersion = '1.1.0';
 
 // Hotword recognition
-const String kHotwordModelName = 'hae_embla.pmdl';
+const String kHotwordModelName = 'multi.pmdl';
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';

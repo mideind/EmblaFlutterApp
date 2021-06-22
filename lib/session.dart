@@ -67,6 +67,7 @@ const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
 // Animation framerate
 const int msecPerFrame = (1000 ~/ 24);
+
 // Logo animation status
 const kFullLogoFrame = 99;
 int currFrame = kFullLogoFrame;
