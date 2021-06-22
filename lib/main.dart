@@ -21,6 +21,7 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:permission_handler/permission_handler.dart';
 
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
@@ -45,12 +46,18 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  AudioPlayer(); // Initialize singleton
+  AudioPlayer();
   HotwordDetector();
 
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
   Wakelock.enable();
+
+  // Request microphone permission
+  PermissionStatus status = await Permission.microphone.request();
+  if (status != PermissionStatus.granted) {
+    dlog("Microphone permission refused");
+  }
 
   // Set up location tracking
   if (Prefs().boolForKey('share_location') == true) {
