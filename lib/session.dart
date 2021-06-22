@@ -423,7 +423,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Present menu route
     void pushMenu() {
       stop(); // Terminate any ongoing session
-      //Wakelock.disable();
+      Wakelock.disable();
       HotwordDetector().stop();
       AudioPlayer().stop();
 
@@ -442,7 +442,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           });
         }
         // Re-enable wake lock when returning to main route
-        //Wakelock.enable();
+        Wakelock.enable();
         // Re-enable hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
           HotwordDetector().start(hotwordHandler, hotwordErrHandler);
