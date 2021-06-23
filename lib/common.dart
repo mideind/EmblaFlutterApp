@@ -34,7 +34,7 @@ const String kSoftwareVersion = '1.1.0';
 // Hotword recognition
 const String kHotwordModelName = 'multi.pmdl';
 const double kHotwordSensitivity = 0.5;
-const double kHotwordAudioGain = 1.2;
+const double kHotwordAudioGain = 1.15;
 const bool kHotwordApplyFrontend = false;
 
 // Speech recognition settings

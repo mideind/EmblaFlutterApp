@@ -103,28 +103,12 @@ class SpeechRecognizer {
         1.0 / 2.0);
   }
 
-  // Read audio buffer, analyse strength of signal
-  // void _updateAudioSignal(Uint8List data) {
-  //   // Due to internal details of the flutter_sound
-  //   // implementation, we have to create a copy of the
-  //   // data before analyzing it. Inefficient, but whatchagonnado?
-  //   Uint8List copy = new Uint8List.fromList(data);
-  //   // Coerce into list of 16-bit signed integers
-  //   Int16List samples = copy.buffer.asInt16List();
-  //   // dlog("Num samples: ${samples.length.toString()}");
-  //   int maxSignal = samples.reduce(max);
-  //   // dlog(maxSignal);
-  //   // Divide by max value of 16-bit signed integer to get amplitude in range 0.0-1.0
-  //   double ampl = maxSignal / 32767.0;
-  //   // dlog(ampl);
-  //   // Convert to decibels and normalize
-  //   double decibels = 20.0 * log10(ampl);
-  //   lastSignal = ampl; //_normalizedPowerLevelFromDecibels(decibels);
-  //   // dlog(lastSignal);
-  // }
-
   // Set things off
   Future<void> start(Function dataHandler, Function completionHandler, Function errHandler) async {
+    if (isRecognizing == true) {
+      dlog('Speech recognition already running!');
+      return;
+    }
     dlog('Starting speech recognition');
     isRecognizing = true;
     totalAudioDataSize = 0;
