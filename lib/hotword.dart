@@ -26,7 +26,7 @@ import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
 
-import './common.dart' show dlog, kHotwordModelName;
+import './common.dart';
 
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
@@ -46,7 +46,11 @@ class HotwordDetector {
   void initialize() async {
     String modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
     detector = Snowboy();
-    detector.prepare(modelPath: modelPath, sensitivity: 0.5, audioGain: 1.25, applyFrontend: false);
+    detector.prepare(
+        modelPath: modelPath,
+        sensitivity: kHotwordSensitivity,
+        audioGain: kHotwordAudioGain,
+        applyFrontend: kHotwordApplyFrontend);
   }
 
   // Start hotword detection

@@ -22,9 +22,9 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Debug logging
 void dlog(var msg) {
-  //if (kReleaseMode == false) {
-  print(msg.toString());
-  //}
+  if (kReleaseMode == false) {
+    print(msg.toString());
+  }
 }
 
 // Software info
@@ -33,11 +33,15 @@ const String kSoftwareVersion = '1.1.0';
 
 // Hotword recognition
 const String kHotwordModelName = 'multi.pmdl';
+const double kHotwordSensitivity = 0.5;
+const double kHotwordAudioGain = 1.2;
+const bool kHotwordApplyFrontend = false;
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';
 const int kSpeechToTextMaxAlternatives = 10;
 const int kAudioSampleRate = 16000;
+const int kAudioNumChannels = 1;
 
 // Server communication
 const String kDefaultServer = 'https://greynir.is';

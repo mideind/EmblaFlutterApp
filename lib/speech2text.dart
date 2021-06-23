@@ -156,9 +156,8 @@ class SpeechRecognizer {
     await _micRecorder.startRecorder(
         toStream: _recordingDataController.sink,
         codec: Codec.pcm16,
-        numChannels: 1,
-        sampleRate: kAudioSampleRate,
-        bitRate: kAudioSampleRate * 16);
+        numChannels: kAudioNumChannels,
+        sampleRate: kAudioSampleRate);
 
     // Start recognizing speech from audio stream
     final serviceAccount = ServiceAccount.fromString(readGoogleServiceAccount());
