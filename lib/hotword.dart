@@ -25,12 +25,17 @@ import 'dart:typed_data';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
+import 'package:flutter_sound_lite/flutter_sound.dart';
 
 import './common.dart';
 
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
+
   Snowboy detector;
+  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
+  StreamController _recordingDataController;
+  StreamSubscription _recordingDataSubscription;
 
   // Singleton pattern
   factory HotwordDetector() {
@@ -39,6 +44,7 @@ class HotwordDetector {
 
   // Constructor
   HotwordDetector._internal() {
+    // Only called once, when singleton is instantiated
     initialize();
   }
 
@@ -46,29 +52,53 @@ class HotwordDetector {
   void initialize() async {
     String modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
     detector = Snowboy();
-    detector.prepare(
-        modelPath: modelPath,
+    detector.prepare(modelPath,
         sensitivity: kHotwordSensitivity,
         audioGain: kHotwordAudioGain,
         applyFrontend: kHotwordApplyFrontend);
   }
 
   // Start hotword detection
-  Future<void> start(Function hotwordHandler, Function(dynamic) errHandler) async {
+  Future<void> start(Function hwHandler) async {
     dlog('Starting hotword detection');
-    detector.start(hotwordHandler);
+    detector.hotwordHandler = hwHandler;
+
+    // Prep recording session
+    await _micRecorder.openAudioSession();
+
+    // Create recording stream
+    _recordingDataController = StreamController<Food>();
+    _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
+      // When we get data, feed it into Snowboy detector
+      if (buffer is FoodData) {
+        Uint8List copy = new Uint8List.fromList(buffer.data); // Do we need to copy?
+        //dlog("Got audio data (${buffer.data.lengthInBytes} bytes");
+        detector.detect(copy);
+      }
+    });
+
+    // Start recording
+    await _micRecorder.startRecorder(
+        toStream: _recordingDataController.sink,
+        codec: Codec.pcm16,
+        numChannels: 1,
+        sampleRate: 16000);
   }
 
   // Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
-    detector.stop();
+    await _micRecorder?.stopRecorder();
+    await _micRecorder?.closeAudioSession();
+    await _recordingDataSubscription?.cancel();
+    await _recordingDataController?.close();
   }
 
   // Release any assets loaded by hotword detector
-  void purge() {
-    detector.purge();
-  }
+  // void purge() {
+  //   dlog('Purging hotword detector');
+  //   detector.purge();
+  // }
 
   // Copy model from asset bundle to temp directory on the filesystem
   static Future<String> copyModelToFilesystem(String filename) async {

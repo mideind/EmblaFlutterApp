@@ -110,14 +110,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     super.initState();
     if (Prefs().boolForKey('hotword_activation') == true) {
       // HotwordDetector().purge();
-      HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+      HotwordDetector().start(hotwordHandler);
     }
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) {
       if (event == FGBGType.foreground) {
         // App went into foreground
         if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+          HotwordDetector().start(hotwordHandler);
         }
       } else {
         // App went into background - FGBGType.background
@@ -367,7 +367,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
 
     if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+      HotwordDetector().start(hotwordHandler);
     }
   }
 
@@ -446,7 +446,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         Wakelock.enable();
         // Re-enable hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+          HotwordDetector().start(hotwordHandler);
         }
       });
     }
@@ -461,7 +461,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         });
       }
       if (p.boolForKey('hotword_activation') == true) {
-        HotwordDetector().start(hotwordHandler, hotwordErrHandler);
+        HotwordDetector().start(hotwordHandler);
       } else {
         HotwordDetector().stop();
       }
