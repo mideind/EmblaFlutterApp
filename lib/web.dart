@@ -70,14 +70,6 @@ class _WebViewRouteState extends State<WebViewRoute> {
     return NavigationActionPolicy.ALLOW;
   }
 
-  // void loadCompletionHandler(InAppWebViewController controller, String url) {
-  //   if (url.endsWith('loading.html')) {
-  //     setState(() {
-  //       controller.loadUrl(url: null);
-  //     });
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     // Create web view that initially presents a "loading" document with
