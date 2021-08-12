@@ -2,13 +2,13 @@
 
 # Embla
 
-Embla is a voice-driven virtual assistant app powered by the Icelandic-language
-[Greynir](https://greynir.is) query engine. This is the repository for the
-cross-platform Embla mobile client.
+Embla is an Icelandic-language voice assistant app powered by the
+[Greynir](https://greynir.is) query engine. This is the repository for
+the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
-[Flutter](https://flutter.dev) framework. Currently built to run on Android 8.0+ (SDK >= 26),
-with iOS support on the roadmap.
+[Flutter](https://flutter.dev) framework. Currently built to run on
+Android 8.0+ (SDK >= 26), with iOS support on the roadmap.
 
 ## Build instructions
 

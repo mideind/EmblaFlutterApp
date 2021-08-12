@@ -23,13 +23,6 @@ import 'dart:math' show pow;
 
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pb.dart'
-    show RecognitionMetadata;
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
-    show
-        RecognitionMetadata_RecordingDeviceType,
-        RecognitionMetadata_InteractionType,
-        RecognitionMetadata_OriginalMediaType;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
 
