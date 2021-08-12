@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:flutter_fgbg/flutter_fgbg.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
     show StreamingRecognizeResponse_SpeechEventType;
 
@@ -108,10 +109,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void initState() {
     super.initState();
-    if (Prefs().boolForKey('hotword_activation') == true) {
-      // HotwordDetector().purge();
-      HotwordDetector().start(hotwordHandler);
-    }
+
+    requestMicPermissionAndStartHotwordDetection();
+
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) {
       if (event == FGBGType.foreground) {
@@ -132,6 +132,19 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void dispose() {
     appStateSubscription.cancel();
     super.dispose();
+  }
+
+  Future<void> requestMicPermissionAndStartHotwordDetection() async {
+    // Request microphone permission
+    PermissionStatus status = await Permission.microphone.request();
+    if (status != PermissionStatus.granted) {
+      dlog("Microphone permission refused");
+    } else {
+      if (Prefs().boolForKey('hotword_activation') == true) {
+        // HotwordDetector().purge();
+        HotwordDetector().start(hotwordHandler);
+      }
+    }
   }
 
   Future<bool> isConnectedToInternet() async {
