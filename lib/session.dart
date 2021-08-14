@@ -188,9 +188,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
       setState(() {
         text = data.results.map((e) => e.alternatives.first.transcript).join('');
+        text = text.sentenceCapitalized();
         dlog('RESULTS--------------');
         dlog(data.results);
-        text = text.sentenceCapitalized();
         var first = data.results[0];
         if (first.isFinal) {
           dlog('Final result received');
@@ -213,17 +213,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         dlog('Stream ended without answer');
         stop();
         AudioPlayer().playSound('rec_cancel');
-        setState(() {
-          text = introMsg();
-        });
+        msg(introMsg());
       }
     },
         // Error handler
         (var err) {
       dlog("Streaming recognition error: ${err.toString()}");
-      setState(() {
-        text = kServerErrorMessage;
-      });
+      msg(kServerErrorMessage);
       stop();
       AudioPlayer().playSound('err');
     });
@@ -268,21 +264,19 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     if (resp != null && resp['valid'] == true && resp['error'] == null && resp['answer'] != null) {
       dlog('Received valid response to query');
       // Update text
-      setState(() {
-        text = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
-        if (resp["source"] != null) {
-          text = "$text (${resp['source']})";
-        }
-      });
+      String t = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
+      if (resp["source"] != null) {
+        t = "$t (${resp['source']})";
+      }
+      msg(t);
+
       // Play audio answer and then terminate session
       if (resp['audio'] != null) {
         await AudioPlayer().playURL(resp['audio'], (bool err) {
           if (err == true) {
             dlog('Error during audio playback');
             AudioPlayer().playSound('err');
-            setState(() {
-              text = kServerErrorMessage;
-            });
+            msg(kServerErrorMessage);
           } else {
             dlog('Playback finished');
           }
@@ -299,9 +293,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     // Don't know
     else if (resp['error'] != null) {
-      setState(() {
-        text = kDunnoMessage;
-      });
+      msg("${resp["q"]}\n\n$kDunnoMessage");
       AudioPlayer().playSound('dunno', () {
         dlog('Playback finished');
         stop();
@@ -310,11 +302,16 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Error in server response
     else {
       stop();
-      setState(() {
-        text = kServerErrorMessage;
-      });
+      msg(kServerErrorMessage);
       AudioPlayer().playSound('err');
     }
+  }
+
+  // Set text field string
+  void msg(String s) {
+    setState(() {
+      text = s;
+    });
   }
 
   // Start session
@@ -333,7 +330,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
-      text = kNoInternetMessage;
+      msg(kNoInternetMessage);
       AudioPlayer().playSound('conn');
       return;
     }
@@ -342,7 +339,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     HotwordDetector().stop();
 
-    // Set off animation timer
+    // Clear text and set off animation timer
     setState(() {
       state = SessionState.listening;
       text = '';
@@ -389,9 +386,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     dlog('User initiated cancellation of session');
     stop();
     //AudioPlayer().playSound('rec_cancel');
-    setState(() {
-      text = introMsg();
-    });
+    msg(introMsg());
   }
 
   // Button pressed
@@ -451,9 +446,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings and more.
         if (text == '') {
-          setState(() {
-            text = introMsg();
-          });
+          msg(introMsg());
         }
         // Re-enable wake lock when returning to main route
         Wakelock.enable();
@@ -469,9 +462,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       Prefs p = Prefs();
       p.setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
       if (state == SessionState.resting) {
-        setState(() {
-          text = introMsg();
-        });
+        msg(introMsg());
       }
       if (p.boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler);
