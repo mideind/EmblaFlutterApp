@@ -67,6 +67,8 @@ void main() async {
       if (permission != LocationPermission.denied &&
           permission != LocationPermission.deniedForever) {
         LocationTracking().start();
+      } else {
+        Prefs().setBoolForKey('share_location', false);
       }
     } catch (err) {
       LocationTracking().start();

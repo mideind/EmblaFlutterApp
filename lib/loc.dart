@@ -23,6 +23,7 @@ import 'dart:async';
 import 'package:geolocator/geolocator.dart';
 
 import './common.dart';
+import './prefs.dart';
 
 class LocationTracking {
   LocationTracking._privateConstructor();
@@ -36,7 +37,16 @@ class LocationTracking {
   bool known = false;
   StreamSubscription<Position> positionStream;
 
-  void start() {
+  void start() async {
+    try {
+      LocationPermission permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied ||
+          permission == LocationPermission.deniedForever) {
+        Prefs().setBoolForKey('share_location', false);
+        return;
+      }
+    } catch (err) {}
+
     if (positionStream != null) {
       return;
     }
