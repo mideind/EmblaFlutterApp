@@ -1,4 +1,8 @@
-<img src="assets/images/logo.png" align="right" width="224" height="224" style="margin-left:20px;">
+[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![Language](https://img.shields.io/badge/language-dart-lightblue)]()
+[![Build](https://github.com/mideind/Embla_Flutter/actions/workflows/main.yml/badge.svg)]()
+
+<img src="assets/images/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
 # Embla
 
