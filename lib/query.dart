@@ -21,10 +21,10 @@
 import 'dart:convert' show json;
 import 'dart:io' show Platform;
 
-import 'package:device_id/device_id.dart' show DeviceId;
+import 'package:platform_device_id/platform_device_id.dart';
 import 'package:http/http.dart' show Response;
 import 'package:http/http.dart' as http;
-import 'package:package_info/package_info.dart' show PackageInfo;
+import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';
 import './loc.dart' show LocationTracking;
@@ -38,7 +38,7 @@ String _clientType() {
 }
 
 Future<String> _clientID() async {
-  return await DeviceId.getID;
+  return await PlatformDeviceId.getDeviceId;
 }
 
 Future<String> _clientVersion() async {
