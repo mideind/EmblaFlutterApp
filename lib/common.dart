@@ -29,13 +29,14 @@ void dlog(var msg) {
 
 // Software info
 const String kSoftwareName = 'Embla';
-const String kSoftwareVersion = '1.1.0';
+const String kSoftwareVersion = '1.1.1';
 
 // Hotword recognition
 const String kHotwordModelName = 'multi.pmdl';
 const double kHotwordSensitivity = 0.5;
 const double kHotwordAudioGain = 1.15;
 const bool kHotwordApplyFrontend = false;
+const String kModelAssetDirectory = 'assets/hwmodels';
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';

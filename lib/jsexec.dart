@@ -18,6 +18,8 @@
 
 // Singleton class w. headless web view to execute JS code
 
+// TODO: Use flutter_js w. JavaScriptCore (do we get the browser APIs?)
+
 // import 'package:webview_flutter/webview_flutter.dart';
 
 // class JSExecutor {

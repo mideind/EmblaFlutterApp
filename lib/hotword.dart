@@ -72,7 +72,6 @@ class HotwordDetector {
       // When we get data, feed it into Snowboy detector
       if (buffer is FoodData) {
         Uint8List copy = new Uint8List.fromList(buffer.data); // Do we need to copy?
-        //dlog("Got audio data (${buffer.data.lengthInBytes} bytes");
         detector.detect(copy);
       }
     });
@@ -107,7 +106,7 @@ class HotwordDetector {
     if (await File(finalPath).exists() == true) {
       return finalPath;
     }
-    ByteData bytes = await rootBundle.load("assets/hwmodels/$filename");
+    ByteData bytes = await rootBundle.load("$kModelAssetDirectory/$filename");
     final buffer = bytes.buffer;
     File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return finalPath;

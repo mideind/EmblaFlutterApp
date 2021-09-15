@@ -116,7 +116,6 @@ class SpeechRecognizer {
     _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
       double decibels = e.decibels - 70.0;
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
-      //dlog(lastSignal);
     });
 
     await _micRecorder.startRecorder(

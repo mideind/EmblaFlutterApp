@@ -54,8 +54,6 @@ final defaultTheme = ThemeData(
     fontFamily: defaultFontFamily,
     textTheme: TextTheme(bodyText2: defaultTextStyle),
     appBarTheme: AppBarTheme(
-      brightness: defaultBrightness,
       color: bgColor,
-      textTheme: TextTheme().apply(displayColor: mainColor),
       iconTheme: IconThemeData(color: mainColor),
     ));

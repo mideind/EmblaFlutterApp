@@ -31,8 +31,8 @@ extension StringExtension on String {
     if (this.length == 0) {
       return false;
     }
-    List<String> punc = ['.', '?', '!', '."', '.“', ".'"];
-    for (String p in punc) {
+    List<String> punctuation = ['.', '?', '!', '."', '.“', ".'"];
+    for (String p in punctuation) {
       if (this.endsWith(p)) {
         return true;
       }
@@ -71,22 +71,22 @@ extension HexColor on Color {
   }
 }
 
-String _googleServiceAccount = '';
+String _cachedGoogleServiceAccount = '';
 
 // Read and cache Google API service account config JSON
 String readGoogleServiceAccount() {
-  if (_googleServiceAccount == '') {
-    _googleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
+  if (_cachedGoogleServiceAccount == '') {
+    _cachedGoogleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
   }
-  return _googleServiceAccount;
+  return _cachedGoogleServiceAccount;
 }
 
-String _queryAPIKey = '';
+String _cachedQueryAPIKey = '';
 
 // Read and cache query server key
 String readQueryServerKey() {
-  if (_queryAPIKey == '') {
-    _queryAPIKey = utf8.decode(base64.decode(queryAPIKey));
+  if (_cachedQueryAPIKey == '') {
+    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey));
   }
-  return _queryAPIKey;
+  return _cachedQueryAPIKey;
 }

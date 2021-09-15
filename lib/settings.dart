@@ -247,7 +247,6 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   String genSliderLabel() {
     double val = Prefs().floatForKey(this.widget.prefKey);
     String valStr = val.toStringAsFixed(2);
-    dlog(valStr);
     if (valStr.endsWith("0")) {
       valStr = valStr.substring(0, valStr.length - 1);
     }

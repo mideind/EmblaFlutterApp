@@ -39,7 +39,7 @@ class WebViewRoute extends StatefulWidget {
 class _WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
-  // Fall back to local HTML document if error comes up when fetching from remote server
+  // Fall back to local HTML document if error comes up when fetching document from remote server
   void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url.toString());
@@ -75,7 +75,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled document on network error.
-    InAppWebView view = InAppWebView(
+    InAppWebView webView = InAppWebView(
       initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
@@ -105,7 +105,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
         bottomOpacity: 0.0,
         elevation: 0.0,
       ),
-      body: view,
+      body: webView,
     );
   }
 }
