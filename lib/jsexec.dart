@@ -18,11 +18,11 @@
 
 // Singleton class w. headless web view to execute JS code
 
-import 'package:interactive_webview/interactive_webview.dart';
+import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
-  var _webView;
+  final _flutterWebviewPlugin = new FlutterWebviewPlugin();
 
   // Singleton pattern
   factory JSExecutor() {
@@ -32,10 +32,10 @@ class JSExecutor {
   // Constructor
   JSExecutor._internal() {
     // Only called once, when singleton is instantiated
-    _webView = new InteractiveWebView();
+    _flutterWebviewPlugin.launch('about:blank', hidden: true);
   }
 
-  dynamic runJS(String jsCode) {
-    return _webView.evalJavascript(jsCode);
+  Future<String> runJS(String jsCode) {
+    return _flutterWebviewPlugin.evalJavascript(jsCode);
   }
 }
