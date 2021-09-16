@@ -27,10 +27,9 @@ dependencies:
   permission_handler: '>=8.1.6'
   # app_settings: '>=4.1.0'
   flutter_fgbg: '>=0.1.0'
+  interactive_webview: '>=0.1.2'
   flutter_snowboy:
     path: ../flutter_snowboy/
-
-  # webview_flutter: '>=1.0.7' # Used by incomplete jsexec code
 
 dev_dependencies:
   flutter_test:

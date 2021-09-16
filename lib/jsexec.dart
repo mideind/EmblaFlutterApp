@@ -18,24 +18,24 @@
 
 // Singleton class w. headless web view to execute JS code
 
-// TODO: Use flutter_js w. JavaScriptCore (do we get the browser APIs?)
+import 'package:interactive_webview/interactive_webview.dart';
 
-// import 'package:webview_flutter/webview_flutter.dart';
+class JSExecutor {
+  static final JSExecutor _instance = JSExecutor._internal();
+  var _webView;
 
-// class JSExecutor {
-//   JSExecutor._privateConstructor();
-//   static final JSExecutor _instance = JSExecutor._privateConstructor();
-//   factory JSExecutor() {
-//     return _instance;
-//   }
+  // Singleton pattern
+  factory JSExecutor() {
+    return _instance;
+  }
 
-//   WebView webview;
+  // Constructor
+  JSExecutor._internal() {
+    // Only called once, when singleton is instantiated
+    _webView = new InteractiveWebView();
+  }
 
-//   void _constructWebView() {
-//     webview = WebView(initialUrl: 'about:blank', javascriptMode: JavascriptMode.unrestricted);
-//   }
-
-//   void runJavascript(String jsCode) {
-//     _constructWebView();
-//   }
-// }
+  dynamic runJS(String jsCode) {
+    return _webView.evalJavascript(jsCode);
+  }
+}
