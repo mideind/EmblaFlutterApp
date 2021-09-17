@@ -23,6 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
+import './theme.dart' show standardAppBar;
 import './common.dart';
 
 const String kLoadingHTMLFile = 'docs/loading.html';
@@ -100,11 +101,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     );
 
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        bottomOpacity: 0.0,
-        elevation: 0.0,
-      ),
+      appBar: standardAppBar,
       body: webView,
     );
   }

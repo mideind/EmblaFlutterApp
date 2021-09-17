@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 
 import './common.dart';
 import './settings.dart' show SettingsRoute;
-import './theme.dart' show bgColor, mainColor, menuTextStyle;
+import './theme.dart' show standardAppBar, mainColor, menuTextStyle;
 import './web.dart' show WebViewRoute;
 
 void _pushSettings(BuildContext context) {
@@ -91,12 +91,6 @@ ListView _generateMenu(BuildContext context) {
 class MenuRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: AppBar(
-          backgroundColor: bgColor,
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-        ),
-        body: _generateMenu(context));
+    return Scaffold(appBar: standardAppBar, body: _generateMenu(context));
   }
 }

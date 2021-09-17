@@ -59,9 +59,12 @@ void main() async {
     dlog("Microphone permission refused");
   }
 
-  // Set up location tracking
+  // Request and activate location tracking
   if (Prefs().boolForKey('share_location') == true) {
-    // Wrap in try/catch in case another location permission request is ongoing
+    // Wrap in try/catch in case another location permission request is ongoing.
+    // This is a hack. For some reason, some versions of Android can activate a
+    // location permission request without being triggered by the Flutter
+    // permissions package, and simultaneous requests trigger an exception.
     try {
       LocationPermission permission = await Geolocator.requestPermission();
       if (permission != LocationPermission.denied &&

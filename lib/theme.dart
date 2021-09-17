@@ -57,3 +57,10 @@ final defaultTheme = ThemeData(
       color: bgColor,
       iconTheme: IconThemeData(color: mainColor),
     ));
+
+final standardAppBar = AppBar(
+  backgroundColor: bgColor,
+  bottomOpacity: 0.0,
+  elevation: 0.0,
+  toolbarOpacity: 1.0,
+);

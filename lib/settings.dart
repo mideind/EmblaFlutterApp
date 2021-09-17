@@ -451,11 +451,6 @@ class SettingsRoute extends StatelessWidget {
     }
 
     return Scaffold(
-        appBar: AppBar(
-          bottomOpacity: 0.0,
-          elevation: 0.0,
-          toolbarOpacity: 1.0,
-        ),
-        body: ListView(padding: const EdgeInsets.all(8), children: slist));
+        appBar: standardAppBar, body: ListView(padding: const EdgeInsets.all(8), children: slist));
   }
 }

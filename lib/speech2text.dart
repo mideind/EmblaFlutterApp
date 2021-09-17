@@ -103,12 +103,11 @@ class SpeechRecognizer {
     _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
       if (buffer is FoodData) {
         _recognitionStream?.add(buffer.data);
-        //_updateAudioSignal(buffer.data);
         totalAudioDataSize += buffer.data.lengthInBytes;
       }
     });
 
-    // Open microphone session
+    // Open microphone recording session
     await _micRecorder.openAudioSession();
 
     // Listen for audio status (duration, decibel) at fixed interval
