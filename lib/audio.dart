@@ -51,7 +51,6 @@ const List<String> sessionSounds = [
 ];
 
 class AudioPlayer {
-  // Class variables
   FlutterSoundPlayer player;
   Map<String, Uint8List> audioFileCache;
 

@@ -45,9 +45,12 @@ class LocationTracking {
         Prefs().setBoolForKey('share_location', false);
         return;
       }
-    } catch (err) {}
+    } catch (err) {
+      dlog("Error requesting permission: $err");
+    }
 
     if (positionStream != null) {
+      // Already ongoing
       return;
     }
     dlog('Starting location tracking');
@@ -67,7 +70,7 @@ class LocationTracking {
   void stop() {
     if (positionStream != null) {
       dlog('Stopping location tracking');
-      positionStream.cancel();
+      positionStream?.cancel();
       positionStream = null;
       known = false;
     }

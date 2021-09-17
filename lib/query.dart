@@ -59,7 +59,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
       if (handler != null) {
         handler(null);
       }
-      return null;
+      return;
     });
   } catch (e) {
     response = null;
@@ -86,7 +86,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   return response;
 }
 
-// Singleton wrapper around communication with query server
+// Wrapper class around communication with query server
 class QueryService {
   // Send request to query API
   static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
@@ -143,7 +143,6 @@ class QueryService {
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
   }
 
-  // This is unneeded until JS execution functionality is implemented
   // Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
     Map<String, String> qargs = {
@@ -153,6 +152,6 @@ class QueryService {
       'api_key': readQueryServerKey(),
     };
 
-    await _makeRequest(kSpeechAPIPath, qargs, handler);
+    await _makeRequest(kSpeechSynthesisAPIPath, qargs, handler);
   }
 }

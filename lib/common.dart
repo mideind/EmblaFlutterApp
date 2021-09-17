@@ -36,7 +36,7 @@ const String kHotwordModelName = 'multi.pmdl';
 const double kHotwordSensitivity = 0.5;
 const double kHotwordAudioGain = 1.15;
 const bool kHotwordApplyFrontend = false;
-const String kModelAssetDirectory = 'assets/hwmodels';
+const String kHotwordModelAssetDirectory = 'assets/hwmodels';
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';
@@ -49,7 +49,7 @@ const String kDefaultServer = 'https://greynir.is';
 const String kDefaultSTTServer = 'speech.googleapis.com';
 const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
-const String kSpeechAPIPath = '/speech.api/v1';
+const String kSpeechSynthesisAPIPath = '/speech.api/v1';
 
 // Voice speed range
 const double kVoiceSpeedMin = 0.7;
@@ -60,7 +60,7 @@ const String kAboutURL = 'https://embla.is/about.html';
 const String kInstructionsURL = 'https://embla.is/instructions.html';
 const String kPrivacyURL = 'https://embla.is/privacy.html';
 
-// Alternate query server options f. debugging
+// Alternate query server options f. debugging purposes
 const List kQueryServerPresetOptions = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],

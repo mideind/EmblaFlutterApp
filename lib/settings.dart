@@ -365,16 +365,19 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     } else {
       finalVal = this.widget.items[val][1];
     }
+
     setState(() {
       this.text = finalVal;
       Prefs().setStringForKey(this.widget.prefKey, this.text);
+      textController.value = TextEditingValue(
+          text: this.text,
+          selection: TextSelection(baseOffset: this.text.length, extentOffset: this.text.length));
     });
   }
 
   @override
   Widget build(BuildContext context) {
     this.text = Prefs().stringForKey(this.widget.prefKey);
-    textController.text = text;
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
