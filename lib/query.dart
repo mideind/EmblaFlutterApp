@@ -51,14 +51,19 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   String apiURL = Prefs().stringForKey('query_server') + path;
 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
-  Response response = await http
-      .post(Uri.parse(apiURL), body: qargs)
-      .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
-    if (handler != null) {
-      handler(null);
-    }
-    return null;
-  });
+  Response response;
+  try {
+    response = await http
+        .post(Uri.parse(apiURL), body: qargs)
+        .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
+      if (handler != null) {
+        handler(null);
+      }
+      return null;
+    });
+  } catch (e) {
+    response = null;
+  }
 
   // Handle null response
   if (response == null) {
@@ -140,14 +145,14 @@ class QueryService {
 
   // This is unneeded until JS execution functionality is implemented
   // Send request to speech synthesis API
-  // static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
-  //   Map<String, String> qargs = {
-  //     'text': text,
-  //     'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
-  //     'format': 'text', // No SSML for now...
-  //     'api_key': readQueryServerKey(),
-  //   };
+  static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
+    Map<String, String> qargs = {
+      'text': text,
+      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
+      'format': 'text', // No SSML for now...
+      'api_key': readQueryServerKey(),
+    };
 
-  //   await _makeRequest(kSpeechAPIPath, qargs, handler);
-  // }
+    await _makeRequest(kSpeechAPIPath, qargs, handler);
+  }
 }

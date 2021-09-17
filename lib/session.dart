@@ -39,6 +39,7 @@ import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
 import './speech2text.dart' show SpeechRecognizer;
+import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './util.dart';
 
@@ -141,7 +142,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog("Microphone permission refused");
     } else {
       if (Prefs().boolForKey('hotword_activation') == true) {
-        // HotwordDetector().purge();
         HotwordDetector().start(hotwordHandler);
       }
     }
@@ -270,8 +270,32 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       }
       msg(t);
 
+      // Open URL, if provided in query answer
+      if (resp['open_url'] != null) {
+        stop();
+        dlog("Opening URL ${resp['open_url']}");
+        launch(resp['open_url']);
+      }
+      // Javascript payload
+      else if (resp['command'] != null) {
+        // Evaluate JS
+        String s = await JSExecutor().runJS(resp['command']);
+        // Request speech synthesis of result, play it and terminate session
+        await QueryService.requestSpeechSynthesis(s, (dynamic m) {
+          if (m == null || (m is Map) == false || m['audio_url'] == null) {
+            dlog("Error synthesizing audio. Response from server: $m");
+            AudioPlayer().playSound('err');
+            msg(kServerErrorMessage);
+            stop();
+          } else {
+            AudioPlayer().playURL(m['audio_url'], (bool err) {
+              stop();
+            });
+          }
+        });
+      }
       // Play audio answer and then terminate session
-      if (resp['audio'] != null) {
+      else if (resp['audio'] != null) {
         await AudioPlayer().playURL(resp['audio'], (bool err) {
           if (err == true) {
             dlog('Error during audio playback');
@@ -286,13 +310,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         // If no audio to play, terminate session
         stop();
       }
-      // Open URL, if provided in query answer
-      if (resp['open_url'] != null) {
-        launch(resp['open_url']);
-      }
     }
     // Don't know
-    else if (resp['error'] != null) {
+    else if (resp != null && resp['error'] != null) {
       msg("${resp["q"]}\n\n$kDunnoMessage");
       AudioPlayer().playSound('dunno', () {
         dlog('Playback finished');
