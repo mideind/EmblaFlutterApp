@@ -26,7 +26,7 @@ import './settings.dart' show SettingsRoute;
 import './theme.dart' show standardAppBar, mainColor, menuTextStyle;
 import './web.dart' show WebViewRoute;
 
-void _pushSettings(BuildContext context) {
+void _pushSettingsRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -35,41 +35,24 @@ void _pushSettings(BuildContext context) {
   );
 }
 
-void _pushAbout(BuildContext context) {
+void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: kAboutURL),
+      builder: (context) => WebViewRoute(initialURL: arg),
     ),
   );
 }
 
-void _pushInstructions(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: kInstructionsURL),
-    ),
-  );
-}
-
-void _pushPrivacy(BuildContext context) {
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => WebViewRoute(initialURL: kPrivacyURL),
-    ),
-  );
-}
-
-ListTile _generateTile(String name, String imageName, Function onTapFunc, BuildContext context) {
+ListTile _generateTile(
+    String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
     leading: Image(image: AssetImage("assets/images/$imageName.png")),
     trailing: Icon(Icons.arrow_right, color: mainColor),
     onTap: () {
       if (onTapFunc is Function) {
-        onTapFunc(context);
+        onTapFunc(context, arg);
       }
     },
   );
@@ -80,10 +63,10 @@ ListView _generateMenu(BuildContext context) {
   return ListView(
     padding: const EdgeInsets.all(8),
     children: <Widget>[
-      _generateTile('Stillingar', 'cog', _pushSettings, context),
-      _generateTile('Um Emblu', 'cube', _pushAbout, context),
-      _generateTile('Leiðbeiningar', 'cube', _pushInstructions, context),
-      _generateTile('Persónuvernd', 'cube', _pushPrivacy, context),
+      _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+      _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
+      _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
+      _generateTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
     ],
   );
 }

@@ -69,7 +69,7 @@ class SpeechRecognizer {
     if (status != PermissionStatus.granted) {
       return false;
     }
-    // Proper service account for speech2text server?
+    // Proper service account for STT server?
     return (readGoogleServiceAccount() != '');
   }
 
@@ -117,6 +117,7 @@ class SpeechRecognizer {
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     });
 
+    // Start recording audio
     await _micRecorder.startRecorder(
         toStream: _recordingDataController.sink,
         codec: Codec.pcm16,
