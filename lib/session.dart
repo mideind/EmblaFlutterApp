@@ -393,7 +393,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     setState(() {
       state = SessionState.resting;
       currFrame = kFullLogoFrame;
-      audioSamples = populateSamples();
     });
 
     if (Prefs().boolForKey('hotword_activation') == true) {

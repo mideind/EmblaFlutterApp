@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton class w. headless web view to execute JS code
+// Singleton wrapper class around headless web view to execute JS code
 
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 

@@ -250,6 +250,7 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
     if (valStr.endsWith("0")) {
       valStr = valStr.substring(0, valStr.length - 1);
     }
+    valStr = valStr.replaceAll('.', ',');
     return "${this.widget.label} (${valStr}x)";
   }
 

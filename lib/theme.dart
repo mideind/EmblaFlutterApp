@@ -21,7 +21,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-import './util.dart';
+import './util.dart' show HexColor;
 
 // Text, icons, accents
 final Color mainColor = HexColor.fromHex('#e83939');
@@ -39,10 +39,10 @@ const String defaultFontFamily = 'Lato';
 const double defaultFontSize = 18.0;
 const double sessionFontSize = 24.0;
 
-final TextStyle defaultTextStyle = TextStyle(color: mainColor, fontSize: defaultFontSize);
-final TextStyle sessionTextStyle =
+final defaultTextStyle = TextStyle(color: mainColor, fontSize: defaultFontSize);
+final sessionTextStyle =
     TextStyle(color: mainColor, fontSize: sessionFontSize, fontStyle: FontStyle.italic);
-final TextStyle menuTextStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
+final menuTextStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(

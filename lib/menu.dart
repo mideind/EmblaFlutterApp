@@ -44,6 +44,7 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
   );
 }
 
+// Generate a menu tile based on args
 ListTile _generateTile(
     String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
