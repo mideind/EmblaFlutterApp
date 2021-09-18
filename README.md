@@ -4,7 +4,7 @@
 
 <img src="assets/images/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
-# Embla
+# Embla Flutter client
 
 Embla is an Icelandic-language voice assistant app powered by the
 [Greynir](https://greynir.is) query engine. This is the repository for
