@@ -77,4 +77,5 @@ lib/keys.dart
 keys/*.json
 keys/*.key
 
-android/upload-keystore.uu
+*upload-keystore.uu
+

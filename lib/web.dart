@@ -80,7 +80,6 @@ class _WebViewRouteState extends State<WebViewRoute> {
       initialFile: kLoadingHTMLFile,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
-        //debuggingEnabled: kReleaseMode,
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),

@@ -50,6 +50,7 @@ const List<String> sessionSounds = [
   'rec_confirm',
 ];
 
+// Singleton class that handles all audio playback
 class AudioPlayer {
   FlutterSoundPlayer player;
   Map<String, Uint8List> audioFileCache;
