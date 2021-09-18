@@ -5,8 +5,8 @@
 /bin/bash keys/gen_keys.sh
 
 flutter build apk \
---release \
+# --release \
 --obfuscate \
 --split-debug-info=/tmp/ \
---target-platform=android-arm64
+--target-platform=android-arm64 \
 # --split-per-abi

@@ -32,6 +32,7 @@ jobs:
       - run: touch keys/gaccount.json
       - run: touch keys/query_api.key
       - run: bash keys/gen_keys.sh
+      - run: echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
       - run: git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
       - run: flutter pub get
       - run: flutter test

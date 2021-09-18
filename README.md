@@ -50,7 +50,7 @@ $ flutter run
 This should launch the app in development mode on your device of choice (e.g.
 simulator, attached physical device, etc.).
 
-To build an Android `apk` release binary for arm64, run the following script:
+To build an Android `apk` debug binary for arm64, run the following script:
 
 ```
 $ bash build.sh
