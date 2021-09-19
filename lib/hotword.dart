@@ -50,7 +50,14 @@ class HotwordDetector {
 
   // Load and prepare hotword-detection-related resources
   void initialize() async {
-    String modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
+    String modelPath;
+    try {
+      modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
+    } catch (err) {
+      dlog("Error copying hotword model to filesystem: $err");
+      return;
+    }
+
     detector = Snowboy();
     detector.prepare(modelPath,
         sensitivity: kHotwordSensitivity,

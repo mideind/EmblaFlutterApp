@@ -21,7 +21,7 @@
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Debug logging
-void dlog(var msg) {
+void dlog(dynamic msg) {
   if (kReleaseMode == false) {
     print(msg.toString());
   }
@@ -42,6 +42,8 @@ const String kHotwordModelAssetDirectory = 'assets/hwmodels';
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';
 const int kSpeechToTextMaxAlternatives = 10;
+
+// Audio recording settings
 const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
 
