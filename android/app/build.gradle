@@ -54,7 +54,7 @@ android {
         }
     }
 
-    signingConfigs {
+    /*signingConfigs {
         release {
             keyAlias keystoreProperties['keyAlias']
             keyPassword keystoreProperties['keyPassword']
@@ -64,11 +64,11 @@ android {
         debug {
 
         }
-    }
+    }*/
 
     buildTypes {
         release {
-            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.release
         }
         debug {
 
