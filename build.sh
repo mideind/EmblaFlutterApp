@@ -8,4 +8,5 @@ flutter build apk \
 --obfuscate \
 --split-debug-info=/tmp/ \
 --target-platform=android-arm64 \
+# --release \
 # --split-per-abi

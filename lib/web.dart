@@ -24,9 +24,10 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart' show launch;
 
 import './theme.dart' show standardAppBar;
-import './common.dart';
+import './common.dart' show dlog;
 
-const String kLoadingHTMLFile = 'docs/loading.html';
+const String kDocsDir = 'docs';
+const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
@@ -53,7 +54,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
-    return "docs/${uri.pathSegments.last}";
+    return "$kDocsDir/${uri.pathSegments.last}";
   }
 
   // Handle clicks on links in HTML documentation.
@@ -77,7 +78,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled HTML document on network error.
     InAppWebView webView = InAppWebView(
-      initialFile: kLoadingHTMLFile,
+      initialFile: kLoadingHTMLFilePath,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
@@ -87,7 +88,7 @@ class _WebViewRouteState extends State<WebViewRoute> {
         dlog("Loading URL ${url.toString()}");
       },
       onLoadStop: (InAppWebViewController controller, Uri url) {
-        if (url.toString().endsWith(kLoadingHTMLFile)) {
+        if (url.toString().endsWith(kLoadingHTMLFilePath)) {
           setState(() {
             Uri uri = Uri.parse(this.widget.initialURL);
             controller.loadUrl(urlRequest: URLRequest(url: uri));
