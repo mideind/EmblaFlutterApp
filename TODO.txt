@@ -1,38 +1,12 @@
-TODO FUTURE:
+TODO for Embla Flutter client
+
     * Dark mode support
     * Analyse audio samples in smaller chunks - find solution
+    * Full iOS support (via updated flutter_snowboy plugin)
     * Optimize redraws, or switch over to APNG for animation when Flutter adds support
-
-TODO for Android release:
-    * Performance profiling
     * Fix broken playback when session button is hammered repeatedly (only issue on iOS)
+    * Performance profiling
     * Fix session button resizing animation
     * Confirmation alert on completion of clear query history calls
     * Add hardcoded timeout for streaming speech
     * Open preferences if microphone/location enabled in settings but not allowed in system settings
-
-    DONE * Implement JS execution w. code payload from query server
-    DONE * Suspend hotword detection when app goes into background
-    DONE * Stop voice activation when navigated away from session view
-    DONE * Voice activation
-    DONE * Set up proper continuous integration
-    DONE * Elegant handling of audio streaming errors when internet connectivity is lost
-    DONE * Prefetch remote audio file before playback? More robust in terms of error handling.
-    DONE * Add "loading page" with progress indicator for documentation web views
-    DONE * Fix button aspect ratio squishing on smaller (shorter) screens
-    DONE * Confirmation dialog when enabling Privacy Mode
-    DONE * Move software name and version to own field under Settings
-    DONE * Basic key obfuscation in binary
-    DONE * Added 0.3 second delay before starting mic input so UI sound isn't recorded
-    DONE * Clean up speech2text code, factor into separate class
-    DONE * Send all top STT results to query server, not just first
-    DONE * Handle "open_url" param in query response
-    DONE * Configure granularity and frequency of location updates
-    DONE * Set timeout of HTTP requests to query server, handle timeout
-    DONE * Update documentation wrt. OS version requirements, building, etc.
-    DONE * Implement animations in session button
-    DONE * Add tests + Travis CI integration
-    DONE * Local audio playback for UI interaction, errors
-    DONE * Local documentation fallback for documentation web views
-    DONE * Send location with query
-    DONE * Add Android splash screen
