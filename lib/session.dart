@@ -105,6 +105,7 @@ class SessionRoute extends StatefulWidget {
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
   String text = introMsg();
+  String imageURL = null;
   StreamSubscription<FGBGType> appStateSubscription;
 
   @override
@@ -265,10 +266,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Received valid response to query');
       // Update text
       String t = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
-      if (resp["source"] != null) {
+      if (resp['source'] != null) {
         t = "$t (${resp['source']})";
       }
-      msg(t);
+      msg(t, imgURL: resp['image']);
 
       // Open URL, if provided in query answer
       if (resp['open_url'] != null) {
@@ -280,6 +281,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       else if (resp['command'] != null) {
         // Evaluate JS
         String s = await JSExecutor().runJS(resp['command']);
+        msg(s);
         // Request speech synthesis of result, play it and terminate session
         await QueryService.requestSpeechSynthesis(s, (dynamic m) {
           if (m == null || (m is Map) == false || m['audio_url'] == null) {
@@ -327,10 +329,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
-  // Set text field string
-  void msg(String s) {
+  // Set text field string (and optionally, an associated image)
+  void msg(String s, {String imgURL}) {
     setState(() {
       text = s;
+      imageURL = imgURL;
     });
   }
 
@@ -363,6 +366,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     setState(() {
       state = SessionState.listening;
       text = '';
+      imageURL = null;
       audioSamples = populateSamples();
       animationTimer?.cancel();
       animationTimer =
@@ -490,6 +494,18 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       }
     }
 
+    Widget scrollableWidgets() {
+      List<Widget> widgets = [
+        FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
+      ];
+      if (imageURL != null) {
+        widgets.add(Image.network(imageURL));
+      }
+      return Column(
+        children: widgets,
+      );
+    }
+
     return Scaffold(
       // Top nav bar
       appBar: AppBar(
@@ -516,8 +532,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                   scrollDirection: Axis.vertical,
                   child: Padding(
                       padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                      child: FractionallySizedBox(
-                          widthFactor: 1.0, child: Text(text, style: sessionTextStyle))))),
+                      child: scrollableWidgets()))),
           // Session button widget
           Expanded(
               flex: 6,
