@@ -78,6 +78,14 @@ int currFrame = kFullLogoFrame;
 const kRestingButtonPropSize = 0.58;
 const kExpandedButtonPropSize = 0.74;
 
+// Session button accessibility labels
+const kRestingButtonLabel = 'Tala við Emblu';
+const kExpandedButtonLabel = 'Hætta að tala við Emblu';
+
+// Hotword detection accesibility labels
+const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
+const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
+
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
 
@@ -446,11 +454,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   @override
   Widget build(BuildContext context) {
-    // Session button size depends on whether session is active
-    double prop =
-        (state == SessionState.resting) ? kRestingButtonPropSize : kExpandedButtonPropSize;
+    // Session button properties depending on whether session is active
+    bool active = (state == SessionState.resting);
+    double prop = active ? kRestingButtonPropSize : kExpandedButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
-    String hotwordIcon = Prefs().boolForKey('hotword_activation') ? 'mic.png' : 'mic-slash.png';
+    String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
+    // Hotword toggle button properties depending on whether hw detection is enabled
+    bool hwActive = Prefs().boolForKey('hotword_activation');
+    String hotwordIcon = hwActive ? 'mic.png' : 'mic-slash.png';
+    String hotwordLabel = hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
     // Present menu route
     void pushMenu() {
@@ -513,13 +525,18 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           bottomOpacity: 0.0,
           elevation: 0.0,
           // Toggle hotword activation button
-          leading: IconButton(
-            icon: ImageIcon(AssetImage('assets/images/' + hotwordIcon)),
-            onPressed: toggleHotwordActivation,
-          ),
+          leading: Semantics(
+              label: hotwordLabel,
+              child: IconButton(
+                icon: ImageIcon(AssetImage('assets/images/' + hotwordIcon)),
+                onPressed: toggleHotwordActivation,
+              )),
           // Hamburger menu button
           actions: <Widget>[
-            IconButton(icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu)
+            Semantics(
+                label: 'Sýna valblað',
+                child: IconButton(
+                    icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu))
           ]),
       // Main view contents
       body: Column(
@@ -539,13 +556,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
               child: Padding(
                   padding: EdgeInsets.only(bottom: 20, top: 20),
                   child: Center(
-                      child: GestureDetector(
-                          onTap: toggle,
-                          child: new SizedBox(
-                            width: buttonSize,
-                            height: buttonSize,
-                            child: CustomPaint(painter: SessionButtonPainter()),
-                          ))))),
+                      child: Semantics(
+                          label: buttonLabel,
+                          child: GestureDetector(
+                              onTap: toggle,
+                              child: new SizedBox(
+                                width: buttonSize,
+                                height: buttonSize,
+                                child: CustomPaint(painter: SessionButtonPainter()),
+                              )))))),
         ],
       ),
     );
