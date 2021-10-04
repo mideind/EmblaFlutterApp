@@ -113,7 +113,7 @@ class SessionRoute extends StatefulWidget {
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   Timer animationTimer;
   String text = introMsg();
-  String imageURL = null;
+  String imageURL;
   StreamSubscription<FGBGType> appStateSubscription;
 
   @override
@@ -324,7 +324,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Don't know
     else if (resp != null && resp['error'] != null) {
       msg("${resp["q"]}\n\n$kDunnoMessage");
-      AudioPlayer().playSound('dunno', () {
+      AudioPlayer().playDunno(() {
         dlog('Playback finished');
         stop();
       });

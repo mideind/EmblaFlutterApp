@@ -20,6 +20,7 @@
 
 import 'dart:async';
 import 'dart:typed_data';
+import 'dart:math';
 
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -37,8 +38,20 @@ const List<String> audioFiles = [
   // Voice dependent
   'conn-dora',
   'conn-karl',
-  'dunno-dora',
-  'dunno-karl',
+  'dunno01-dora',
+  'dunno02-dora',
+  'dunno03-dora',
+  'dunno04-dora',
+  'dunno05-dora',
+  'dunno06-dora',
+  'dunno07-dora',
+  'dunno01-karl',
+  'dunno02-karl',
+  'dunno03-karl',
+  'dunno04-karl',
+  'dunno05-karl',
+  'dunno06-karl',
+  'dunno07-karl',
   'err-dora',
   'err-karl',
 ];
@@ -118,6 +131,13 @@ class AudioPlayer {
       dlog('Error downloading remote file: $e');
       completionHandler(true);
     }
+  }
+
+  void playDunno([Function() completionHandler]) {
+    int rnd = Random().nextInt(7) + 1;
+    String num = rnd.toString().padLeft(2, '0');
+    String fn = "dunno$num";
+    this.playSound(fn, completionHandler);
   }
 
   // Play a preloaded wav audio file bundled with the app
