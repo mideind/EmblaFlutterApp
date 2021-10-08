@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Change to same directory as script
-cd "$(dirname "$0")"
+cd "$(dirname "$0")" || exit
 
 GOOGLE_ACCOUNT_PATH="gaccount.json"
 QUERY_KEY_PATH="query_api.key"
