@@ -133,11 +133,21 @@ class AudioPlayer {
     }
   }
 
-  void playDunno([Function() completionHandler]) {
+  String playDunno([Function() completionHandler]) {
     int rnd = Random().nextInt(7) + 1;
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
     this.playSound(fn, completionHandler);
+    Map dunnoStrings = {
+      "dunno01": "Ég get ekki svarað því.",
+      "dunno02": "Ég get því miður ekki svarað því.",
+      "dunno03": "Ég kann ekki svar við því.",
+      "dunno04": "Ég skil ekki þessa fyrirspurn.",
+      "dunno05": "Ég veit það ekki.",
+      "dunno06": "Því miður skildi ég þetta ekki.",
+      "dunno07": "Því miður veit ég það ekki.",
+    };
+    return dunnoStrings[fn];
   }
 
   // Play a preloaded wav audio file bundled with the app

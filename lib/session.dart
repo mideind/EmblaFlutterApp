@@ -46,7 +46,6 @@ import './util.dart';
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
-const kDunnoMessage = 'Það veit ég ekki.';
 const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
 const kNoInternetMessage = 'Ekki næst samband við netið.';
 
@@ -323,11 +322,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     // Don't know
     else if (resp != null && resp['error'] != null) {
-      msg("${resp["q"]}\n\n$kDunnoMessage");
-      AudioPlayer().playDunno(() {
+      String dunnoMsg = AudioPlayer().playDunno(() {
         dlog('Playback finished');
         stop();
       });
+      msg("${resp["q"]}\n\n$dunnoMsg");
     }
     // Error in server response
     else {
