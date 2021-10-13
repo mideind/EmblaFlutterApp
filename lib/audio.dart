@@ -117,10 +117,19 @@ class AudioPlayer {
   Future<void> playURL(String url, Function(bool) completionHandler) async {
     //_instance.stop();
 
-    dlog("Playing remote audio file '$url'");
+    dlog("Playing audio file URL '${url.substring(0, 200)}'");
     try {
-      Uint8List data = await http.readBytes(Uri.parse(url));
-      dlog("Downloaded ${data.lengthInBytes} bytes");
+      Uint8List data;
+      Uri uri = Uri.parse(url);
+
+      if (uri.scheme == 'data') {
+        UriData dataURI = UriData.fromUri(uri);
+        data = dataURI.contentAsBytes();
+      } else {
+        data = await http.readBytes(Uri.parse(url));
+      }
+      dlog("Audio file is ${data.lengthInBytes} bytes");
+
       player.startPlayer(
           fromDataBuffer: data,
           codec: Codec.mp3,
