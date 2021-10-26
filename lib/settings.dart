@@ -340,7 +340,19 @@ class QueryServerSegmentedWidget extends StatefulWidget {
 
 class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
   String text;
-  final textController = TextEditingController();
+  TextEditingController textController;
+
+  @override
+  void initState() {
+    super.initState();
+    textController = TextEditingController(text: Prefs().stringForKey("query_server"));
+  }
+
+  @override
+  void dispose() {
+    textController.dispose();
+    super.dispose();
+  }
 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
