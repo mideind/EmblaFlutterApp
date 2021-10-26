@@ -22,6 +22,8 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:math';
 
+import 'package:filesize/filesize.dart' show filesize;
+import 'package:logger/logger.dart' show Level;
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
@@ -85,7 +87,7 @@ class AudioPlayer {
   Future<void> _init() async {
     dlog('Initing audio player');
     _preloadAudioFiles();
-    player = FlutterSoundPlayer();
+    player = FlutterSoundPlayer(logLevel: Level.error);
     player.openAudioSession();
   }
 
@@ -128,7 +130,7 @@ class AudioPlayer {
       } else {
         data = await http.readBytes(Uri.parse(url));
       }
-      dlog("Audio file is ${data.lengthInBytes} bytes");
+      dlog("Audio file is ${filesize(data.lengthInBytes, 1)} (${data.lengthInBytes} bytes)");
 
       player.startPlayer(
           fromDataBuffer: data,

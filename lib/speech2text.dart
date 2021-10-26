@@ -21,6 +21,7 @@
 import 'dart:async';
 import 'dart:math' show pow;
 
+import 'package:logger/logger.dart' show Level;
 import 'package:flutter_sound_lite/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -40,7 +41,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     languageCode: kSpeechToTextLanguage);
 
 class SpeechRecognizer {
-  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
+  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
   StreamSubscription _recordingDataSubscription;
   StreamSubscription _recordingProgressSubscription;
   StreamController _recordingDataController;

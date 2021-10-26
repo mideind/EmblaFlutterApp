@@ -32,14 +32,14 @@ import './theme.dart';
 // UI string constants
 const String kPrivacyModeMessage =
     'Í einkaham sendir forritið engar upplýsingar frá sér að fyrirspurnatexta undanskildum. '
-    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, gerð tækis o.fl. til '
-    'þess að bæta svör.';
+    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, fyrri spurningar, '
+    'gerð tækis o.fl. til þess að bæta svör.';
 
-String kClearHistoryAlertText =
+const String kClearHistoryAlertText =
     'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar '
     'í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
 
-String kClearAllAlertText =
+const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
 

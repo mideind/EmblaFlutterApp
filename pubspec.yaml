@@ -23,11 +23,13 @@ dependencies:
   rxdart: '>=0.27.2'
   # dart_numerics: '>=0.0.5'
   wakelock: '>=0.5.4'
-  flutter_sound_lite: '>=8.3.11'
+  flutter_sound_lite: '>=8.4.1'
   permission_handler: '>=8.1.6'
   # app_settings: '>=4.1.0'
   flutter_fgbg: '>=0.1.0'
   flutter_webview_plugin: '>=0.4.0'
+  logger: '>=1.1.0'
+  filesize: '>=2.0.1'
   flutter_snowboy:
     path: ../flutter_snowboy/
 

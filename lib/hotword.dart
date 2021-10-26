@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:logger/logger.dart' show Level;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
@@ -33,7 +34,7 @@ class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
 
   Snowboy detector;
-  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder();
+  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
   StreamController _recordingDataController;
   StreamSubscription _recordingDataSubscription;
 
