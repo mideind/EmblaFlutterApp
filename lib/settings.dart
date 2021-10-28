@@ -371,7 +371,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     return 0;
   }
 
-  void _changed(var val) {
+  void _onChange(var val) {
     String finalVal = '';
     if (val is String) {
       finalVal = val;
@@ -394,9 +394,10 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
-          child: TextField(controller: textController, style: menuTextStyle, onChanged: _changed)),
+          child:
+              TextField(controller: textController, style: menuTextStyle, onSubmitted: _onChange)),
       CupertinoSegmentedControl(
-          children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _changed),
+          children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _onChange),
     ]);
   }
 }
