@@ -46,7 +46,7 @@ final menuTextStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
 
 // Define overall app brightness and color scheme
 final defaultTheme = ThemeData(
-    // brightness: Brightness.dark,
+    brightness: Brightness.light,
     scaffoldBackgroundColor: bgColor,
     primarySwatch: Colors.red,
     primaryColor: mainColor,
@@ -55,6 +55,19 @@ final defaultTheme = ThemeData(
     textTheme: TextTheme(bodyText2: defaultTextStyle),
     appBarTheme: AppBarTheme(
       color: bgColor,
+      iconTheme: IconThemeData(color: mainColor),
+    ));
+
+final darkTheme = ThemeData(
+    // brightness: Brightness.dark,
+    scaffoldBackgroundColor: Colors.black,
+    primarySwatch: Colors.red,
+    primaryColor: mainColor,
+    backgroundColor: Colors.black,
+    fontFamily: defaultFontFamily,
+    textTheme: TextTheme(bodyText2: defaultTextStyle),
+    appBarTheme: AppBarTheme(
+      color: Colors.black,
       iconTheme: IconThemeData(color: mainColor),
     ));
 

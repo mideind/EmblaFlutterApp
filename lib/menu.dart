@@ -24,6 +24,7 @@ import 'package:flutter/material.dart';
 import './common.dart';
 import './settings.dart' show SettingsRoute;
 import './theme.dart' show standardAppBar, mainColor, menuTextStyle;
+//import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;
 
 void _pushSettingsRoute(BuildContext context, dynamic arg) {
@@ -33,6 +34,15 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
       builder: (context) => SettingsRoute(),
     ),
   );
+}
+
+void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
+  // Navigator.push(
+  //   context,
+  //   MaterialPageRoute(
+  //     builder: (context) => TrainingRoute(),
+  //   ),
+  // );
 }
 
 void _pushWebRoute(BuildContext context, dynamic arg) {
@@ -65,6 +75,7 @@ ListView _generateMenu(BuildContext context) {
     padding: const EdgeInsets.all(8),
     children: <Widget>[
       _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+      _generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
       _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
       _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
       _generateTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
