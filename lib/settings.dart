@@ -419,6 +419,17 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+final Map osName2Pretty = {
+  "linux": "Linux",
+  "macos": "macOS",
+  "windows": "Windows",
+  "android": "Android",
+  "ios": "iOS",
+};
+
+final String osName = osName2Pretty[Platform.operatingSystem];
+final String versionString = "$kSoftwareVersion (${osName})";
+
 // List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
@@ -432,8 +443,7 @@ List<Widget> _settings() {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
-    SettingsLabelValueWidget(
-        'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
+    SettingsLabelValueWidget('Útgáfa', versionString),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
