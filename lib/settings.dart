@@ -24,6 +24,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 
+import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
+
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
@@ -419,16 +421,22 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
-final Map osName2Pretty = {
-  "linux": "Linux",
-  "macos": "macOS",
-  "windows": "Windows",
-  "android": "Android",
-  "ios": "iOS",
-};
+Future<String> genVersionString() async {
+  final Map osName2Pretty = {
+    "linux": "Linux",
+    "macos": "macOS",
+    "windows": "Windows",
+    "android": "Android",
+    "ios": "iOS",
+  };
 
-final String osName = osName2Pretty[Platform.operatingSystem];
-final String versionString = "$kSoftwareVersion (${osName})";
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final String version = packageInfo.version;
+  final String buildNumber = packageInfo.buildNumber;
+
+  final String osName = osName2Pretty[Platform.operatingSystem];
+  return "$version ($buildNumber) ($osName)";
+}
 
 // List of settings widgets
 List<Widget> _settings() {
@@ -443,7 +451,14 @@ List<Widget> _settings() {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
-    SettingsLabelValueWidget('Útgáfa', versionString),
+    FutureBuilder<String>(
+        future: genVersionString(),
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SettingsLabelValueWidget('Útgáfa', snapshot.data);
+          }
+          return SettingsLabelValueWidget('Útgáfa', '...');
+        }),
     SettingsButtonWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,

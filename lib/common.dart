@@ -29,7 +29,6 @@ void dlog(dynamic msg) {
 
 // Software info
 const String kSoftwareName = 'Embla';
-const String kSoftwareVersion = '1.2';
 const String kSoftwareAuthor = 'Sveinbjorn Thordarson';
 
 // Hotword detection
