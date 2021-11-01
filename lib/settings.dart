@@ -24,6 +24,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 
+import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
+
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
@@ -273,13 +275,13 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 }
 
 // Button that presents an alert with an action name + handler
-class SettingsButtonWidget extends StatelessWidget {
+class SettingsButtonPromptWidget extends StatelessWidget {
   final String label;
   final String alertText;
   final String buttonTitle;
   final handler;
 
-  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+  SettingsButtonPromptWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
@@ -419,6 +421,23 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+Future<String> genVersionString() async {
+  final Map osName2Pretty = {
+    "linux": "Linux",
+    "macos": "macOS",
+    "windows": "Windows",
+    "android": "Android",
+    "ios": "iOS",
+  };
+
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final String version = packageInfo.version;
+  final String buildNumber = packageInfo.buildNumber;
+
+  final String osName = osName2Pretty[Platform.operatingSystem];
+  return "$version ($buildNumber) ($osName)";
+}
+
 // List of settings widgets
 List<Widget> _settings() {
   return <Widget>[
@@ -432,16 +451,22 @@ List<Widget> _settings() {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
-    SettingsLabelValueWidget(
-        'Útgáfa', "$kSoftwareName $kSoftwareVersion (${Platform.operatingSystem})"),
-    SettingsButtonWidget(
+    FutureBuilder<String>(
+        future: genVersionString(),
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SettingsLabelValueWidget('Útgáfa', snapshot.data);
+          }
+          return SettingsLabelValueWidget('Útgáfa', '...');
+        }),
+    SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
           QueryService.clearUserData(false);
         }),
-    SettingsButtonWidget(
+    SettingsButtonPromptWidget(
         label: 'Hreinsa öll gögn',
         alertText: kClearAllAlertText,
         buttonTitle: 'Hreinsa',
