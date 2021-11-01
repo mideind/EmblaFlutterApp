@@ -275,13 +275,13 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 }
 
 // Button that presents an alert with an action name + handler
-class SettingsButtonWidget extends StatelessWidget {
+class SettingsButtonPromptWidget extends StatelessWidget {
   final String label;
   final String alertText;
   final String buttonTitle;
   final handler;
 
-  SettingsButtonWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+  SettingsButtonPromptWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
@@ -459,14 +459,14 @@ List<Widget> _settings() {
           }
           return SettingsLabelValueWidget('Útgáfa', '...');
         }),
-    SettingsButtonWidget(
+    SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
           QueryService.clearUserData(false);
         }),
-    SettingsButtonWidget(
+    SettingsButtonPromptWidget(
         label: 'Hreinsa öll gögn',
         alertText: kClearAllAlertText,
         buttonTitle: 'Hreinsa',
