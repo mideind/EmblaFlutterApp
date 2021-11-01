@@ -25,7 +25,7 @@ import 'package:flutter/services.dart';
 
 import './common.dart';
 
-const String kFrameFileName = 'assets/images/anim/logo/anim_';
+const String kFrameFileName = 'assets/images/anim/logo/bright/anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
 
