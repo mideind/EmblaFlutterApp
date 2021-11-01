@@ -56,7 +56,8 @@ flutter:
     # Hotword models
     - assets/hwmodels/
     # Logo animation frames
-    - assets/images/anim/logo/
+    - assets/images/anim/logo/bright
+    - assets/images/anim/logo/dark
   fonts:
     - family: Lato
       fonts:
