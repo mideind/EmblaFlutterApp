@@ -120,7 +120,7 @@ class HotwordDetector {
         return finalPath;
       }
     }
-    ByteData bytes = await rootBundle.load("$kHotwordModelAssetDirectory/$filename");
+    ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
     final buffer = bytes.buffer;
     File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
     return finalPath;

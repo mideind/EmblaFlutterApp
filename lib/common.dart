@@ -32,11 +32,11 @@ const String kSoftwareName = 'Embla';
 const String kSoftwareAuthor = 'Sveinbjorn Thordarson';
 
 // Hotword detection
-const String kHotwordModelName = 'multi.pmdl';
+const String kHotwordModelName = 'hae_embla.pmdl';
 const double kHotwordSensitivity = 0.5;
 const double kHotwordAudioGain = 1.15;
 const bool kHotwordApplyFrontend = false;
-const String kHotwordModelAssetDirectory = 'assets/hwmodels';
+const String kHotwordAssetsDirectory = 'assets/hotword';
 
 // Speech recognition settings
 const String kSpeechToTextLanguage = 'is-IS';
