@@ -35,7 +35,7 @@ class JSExecutor {
     _flutterWebviewPlugin.launch('about:blank', hidden: true);
   }
 
-  Future<String> runJS(String jsCode) {
+  Future<String> run(String jsCode) {
     return _flutterWebviewPlugin.evalJavascript(jsCode);
   }
 }

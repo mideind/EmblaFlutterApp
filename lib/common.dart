@@ -20,16 +20,9 @@
 
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
-// Debug logging
-void dlog(dynamic msg) {
-  if (kReleaseMode == false) {
-    print(msg.toString());
-  }
-}
-
 // Software info
 const String kSoftwareName = 'Embla';
-const String kSoftwareAuthor = 'Sveinbjorn Thordarson';
+const String kSoftwareAuthor = 'Miðeind ehf.';
 
 // Hotword detection
 const String kHotwordModelName = 'hae_embla.pmdl';
@@ -69,3 +62,10 @@ const List kQueryServerPresetOptions = [
   ['Vinna', 'http://192.168.1.113:5000'],
   ['Heima', 'http://192.168.1.8:5000']
 ];
+
+// Debug logging
+void dlog(dynamic msg) {
+  if (kReleaseMode == false) {
+    print(msg.toString());
+  }
+}
