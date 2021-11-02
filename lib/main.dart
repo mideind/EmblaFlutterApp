@@ -80,5 +80,5 @@ void main() async {
 
   // Launch app with session route
   runApp(MaterialApp(
-      title: kSoftwareName, home: SessionRoute(), theme: darkTheme, darkTheme: darkTheme));
+      title: kSoftwareName, home: SessionRoute(), theme: defaultTheme, darkTheme: defaultTheme));
 }
