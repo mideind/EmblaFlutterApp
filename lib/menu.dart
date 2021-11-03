@@ -36,14 +36,14 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
   );
 }
 
-void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
-  // Navigator.push(
-  //   context,
-  //   MaterialPageRoute(
-  //     builder: (context) => TrainingRoute(),
-  //   ),
-  // );
-}
+// void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
+// Navigator.push(
+//   context,
+//   MaterialPageRoute(
+//     builder: (context) => TrainingRoute(),
+//   ),
+// );
+// }
 
 void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(
@@ -75,7 +75,7 @@ ListView _generateMenu(BuildContext context) {
     padding: const EdgeInsets.all(8),
     children: <Widget>[
       _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-      _generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
+      //_generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
       _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
       _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
       _generateTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),

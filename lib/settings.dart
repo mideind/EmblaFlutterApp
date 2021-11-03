@@ -484,7 +484,7 @@ class SettingsRoute extends StatelessWidget {
     if (kReleaseMode == false) {
       slist.addAll([
         // SettingsSegmentedWidget(
-        //     label: 'Talgreining', items: ['Google', 'Tíró'], prefKey: 'speech2text_server'),
+        //     label: 'Talgreining', items: ['Google', 'Tiro'], prefKey: 'speech2text_server'),
         QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
       ]);
     }
