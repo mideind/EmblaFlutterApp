@@ -287,9 +287,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       // Javascript payload
       else if (resp['command'] != null) {
         // Evaluate JS
-        String s = await JSExecutor().runJS(resp['command']);
+        String s = await JSExecutor().run(resp['command']);
         msg(s);
-        // Request speech synthesis of result, play it and terminate session
+        // Request speech synthesis of result, play audio and terminate session
         await QueryService.requestSpeechSynthesis(s, (dynamic m) {
           if (m == null || (m is Map) == false || m['audio_url'] == null) {
             dlog("Error synthesizing audio. Response from server: $m");

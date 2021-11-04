@@ -29,7 +29,7 @@ import './common.dart' show dlog, kSoftwareName;
 import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
-import './theme.dart' show defaultTheme, darkTheme;
+import './theme.dart' show defaultTheme;
 import './hotword.dart' show HotwordDetector;
 
 void main() async {
@@ -80,5 +80,5 @@ void main() async {
 
   // Launch app with session route
   runApp(MaterialApp(
-      title: kSoftwareName, home: SessionRoute(), theme: darkTheme, darkTheme: darkTheme));
+      title: kSoftwareName, home: SessionRoute(), theme: defaultTheme, darkTheme: defaultTheme));
 }

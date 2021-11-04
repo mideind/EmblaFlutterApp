@@ -432,10 +432,10 @@ Future<String> genVersionString() async {
 
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   final String version = packageInfo.version;
-  final String buildNumber = packageInfo.buildNumber;
+  //final String buildNumber = packageInfo.buildNumber;
 
   final String osName = osName2Pretty[Platform.operatingSystem];
-  return "$version ($buildNumber) ($osName)";
+  return "$version ($osName)";
 }
 
 // List of settings widgets
@@ -484,7 +484,7 @@ class SettingsRoute extends StatelessWidget {
     if (kReleaseMode == false) {
       slist.addAll([
         // SettingsSegmentedWidget(
-        //     label: 'Talgreining', items: ['Google', 'Tíró'], prefKey: 'speech2text_server'),
+        //     label: 'Talgreining', items: ['Google', 'Tiro'], prefKey: 'speech2text_server'),
         QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
       ]);
     }
