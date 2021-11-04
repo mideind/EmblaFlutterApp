@@ -30,6 +30,7 @@ dependencies:
   flutter_webview_plugin: '>=0.4.0'
   logger: '>=1.1.0'
   filesize: '>=2.0.1'
+  adaptive_theme: '>=2.3.0'
   flutter_snowboy:
     path: ../flutter_snowboy/
 
@@ -56,7 +57,7 @@ flutter:
     # Hotword models
     - assets/hotword/
     # Logo animation frames
-    - assets/images/anim/logo/bright/
+    - assets/images/anim/logo/light/
     - assets/images/anim/logo/dark/
   fonts:
     - family: Lato

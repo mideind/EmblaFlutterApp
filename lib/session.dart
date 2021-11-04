@@ -85,6 +85,8 @@ const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
 const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
 
+var sessionContext;
+
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
 
@@ -244,7 +246,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         addSample(SpeechRecognizer().lastSignal);
       } else if (state == SessionState.answering) {
         currFrame += 1;
-        if (currFrame >= animationFrames.length) {
+        if (currFrame >= animationFrames[0].length) {
           currFrame = 0; // Reset animation
         }
       }
@@ -454,6 +456,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   Widget build(BuildContext context) {
     // Session button properties depending on whether session is active
+    sessionContext = context;
     bool active = (state == SessionState.resting);
     double prop = active ? kRestingButtonPropSize : kExpandedButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
@@ -520,7 +523,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     return Scaffold(
       // Top nav bar
       appBar: AppBar(
-          backgroundColor: bgColor,
           bottomOpacity: 0.0,
           elevation: 0.0,
           // Toggle hotword activation button
@@ -577,25 +579,28 @@ class SessionButtonPainter extends CustomPainter {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
+    List circleColors = circleColors4Context(sessionContext);
+
     // First, outermost, circle
-    var paint = Paint()..color = circleColor1;
+    var paint = Paint()..color = circleColors[0];
     canvas.drawCircle(center, radius, paint);
 
     // Second circle
-    paint = Paint()..color = circleColor2;
+    paint = Paint()..color = circleColors[1];
     canvas.drawCircle(center, radius / 1.25, paint);
 
     // Third, innermost, circle
-    paint = Paint()..color = circleColor3;
+    paint = Paint()..color = circleColors[2];
     canvas.drawCircle(center, radius / 1.75, paint);
   }
 
   // Draw current logo animation frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
-    if (animationFrames.length == 0) {
+    if (animationFrames[0].length == 0) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
-    ui.Image img = animationFrames[fnum];
+    int idx = (MediaQuery.of(sessionContext).platformBrightness == Brightness.dark) ? 1 : 0;
+    ui.Image img = animationFrames[idx][fnum];
     // Source image rect
     Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
 
@@ -629,8 +634,8 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
-    var topPaint = Paint()..color = mainColor;
-    var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
+    var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
+    var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
 
     // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {

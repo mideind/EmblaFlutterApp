@@ -63,10 +63,10 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.widget.label, style: menuTextStyle),
+          title: Text(this.widget.label),
           trailing: CupertinoSwitch(
             value: Prefs().boolForKey(prefKey),
-            activeColor: mainColor,
+            activeColor: Theme.of(context).primaryColorLight,
             onChanged: (bool value) {
               setState(() {
                 Prefs().setBoolForKey(prefKey, value);
@@ -138,10 +138,10 @@ class _SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidge
     return Container(
       child: MergeSemantics(
         child: ListTile(
-          title: Text(this.widget.label, style: menuTextStyle),
+          title: Text(this.widget.label),
           trailing: CupertinoSwitch(
             value: Prefs().boolForKey(prefKey),
-            activeColor: mainColor,
+            activeColor: Theme.of(context).primaryColorLight,
             onChanged: (bool value) {
               if (value == true) {
                 _showPromptDialog(context);
@@ -204,7 +204,7 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   Widget build(BuildContext context) {
     return Container(
       child: ListTile(
-        title: Text(this.widget.label, style: menuTextStyle),
+        title: Text(this.widget.label),
         trailing: CupertinoSegmentedControl(
             children: _genChildren(),
             groupValue: selectedSegment(),
@@ -260,7 +260,7 @@ class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   Widget build(BuildContext context) {
     this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
     return ListTile(
-        title: Text(genSliderLabel(), style: menuTextStyle),
+        title: Text(genSliderLabel()),
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
@@ -324,7 +324,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(this.label, style: TextStyle(color: mainColor, fontSize: defaultFontSize)),
+      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
     );
   }
 }
@@ -396,8 +396,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
-          child:
-              TextField(controller: textController, style: menuTextStyle, onSubmitted: _onChange)),
+          child: TextField(controller: textController, onSubmitted: _onChange)),
       CupertinoSegmentedControl(
           children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _onChange),
     ]);
@@ -415,8 +414,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
     return Container(
         child: MergeSemantics(
             child: ListTile(
-      title: Text(this.label, style: menuTextStyle),
-      trailing: Text(this.value, style: menuTextStyle),
+      title: Text(this.label),
+      trailing: Text(this.value),
     )));
   }
 }

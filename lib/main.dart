@@ -23,13 +23,15 @@ import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
 
+import 'package:adaptive_theme/adaptive_theme.dart';
+
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
 import './common.dart' show dlog, kSoftwareName;
 import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
-import './theme.dart' show defaultTheme;
+import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
 
 void main() async {
@@ -79,6 +81,22 @@ void main() async {
   }
 
   // Launch app with session route
-  runApp(MaterialApp(
-      title: kSoftwareName, home: SessionRoute(), theme: defaultTheme, darkTheme: defaultTheme));
+  runApp(EmblaApp());
+}
+
+class EmblaApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return AdaptiveTheme(
+      light: darkThemeData,
+      dark: darkThemeData,
+      initial: AdaptiveThemeMode.light,
+      builder: (theme, darkTheme) => MaterialApp(
+        title: kSoftwareName,
+        theme: theme,
+        darkTheme: darkTheme,
+        home: SessionRoute(),
+      ),
+    );
+  }
 }

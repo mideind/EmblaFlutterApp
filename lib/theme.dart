@@ -23,57 +23,104 @@ import 'package:flutter/services.dart';
 
 import './util.dart' show HexColor;
 
-// Text, icons, accents
-final Color mainColor = HexColor.fromHex('#e83939');
-// Background
-final Color bgColor = HexColor.fromHex('#f9f9f9');
-
 // Session button circle colors, outermost to innermost
 final Color circleColor1 = HexColor.fromHex('#f9f0f0');
 final Color circleColor2 = HexColor.fromHex('#f9e2e1');
 final Color circleColor3 = HexColor.fromHex('#f9dcdb');
 
-const Brightness defaultBrightness = Brightness.light;
-
 const String defaultFontFamily = 'Lato';
 const double defaultFontSize = 18.0;
 const double sessionFontSize = 24.0;
 
-final defaultTextStyle = TextStyle(color: mainColor, fontSize: defaultFontSize);
-final sessionTextStyle =
-    TextStyle(color: mainColor, fontSize: sessionFontSize, fontStyle: FontStyle.italic);
-final menuTextStyle = TextStyle(color: Colors.black, fontSize: defaultFontSize);
+final menuTextStyle = TextStyle(fontSize: defaultFontSize);
+final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
+
+final Color lightMainColor = HexColor.fromHex('#e83939');
+final Color lightBgColor = HexColor.fromHex('#f9f9f9');
 
 // Define overall app brightness and color scheme
-final defaultTheme = ThemeData(
+final lightThemeData = ThemeData(
     brightness: Brightness.light,
-    scaffoldBackgroundColor: bgColor,
+    scaffoldBackgroundColor: lightBgColor,
     primarySwatch: Colors.red,
-    primaryColor: mainColor,
-    backgroundColor: bgColor,
+    primaryColor: lightMainColor,
+    backgroundColor: lightBgColor,
     fontFamily: defaultFontFamily,
-    textTheme: TextTheme(bodyText2: defaultTextStyle),
+    textTheme: TextTheme(
+      subtitle1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      subtitle2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      overline: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      button: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      caption: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      bodyText1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      bodyText2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline3: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline4: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline5: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      headline6: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+    ),
     appBarTheme: AppBarTheme(
-      color: bgColor,
-      iconTheme: IconThemeData(color: mainColor),
+      color: lightBgColor,
+      iconTheme: IconThemeData(color: lightMainColor),
     ));
 
-final darkTheme = ThemeData(
-    // brightness: Brightness.dark,
-    scaffoldBackgroundColor: Colors.black,
-    primarySwatch: Colors.red,
-    primaryColor: mainColor,
-    backgroundColor: Colors.black,
+final darkMainColor = HexColor.fromHex('#f9f9f9');
+final darkBgColor = HexColor.fromHex('#202020');
+
+final darkThemeData = ThemeData(
+    brightness: Brightness.dark,
+    scaffoldBackgroundColor: darkBgColor,
+    primarySwatch: Colors.grey,
+    primaryColor: darkBgColor,
+    backgroundColor: darkBgColor,
     fontFamily: defaultFontFamily,
-    textTheme: TextTheme(bodyText2: defaultTextStyle),
+    textTheme: TextTheme(
+      subtitle1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      subtitle2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      overline: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      button: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      caption: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      bodyText1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      bodyText2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline3: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline4: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline5: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+      headline6: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    ),
     appBarTheme: AppBarTheme(
-      color: Colors.black,
-      iconTheme: IconThemeData(color: mainColor),
+      color: darkBgColor,
+      iconTheme: IconThemeData(color: darkMainColor),
     ));
 
 final standardAppBar = AppBar(
-  backgroundColor: bgColor,
   bottomOpacity: 0.0,
   elevation: 0.0,
   toolbarOpacity: 1.0,
 );
+
+String img4theme(String imgName, var context) {
+  if (context == null) {
+    return imgName;
+  }
+  var brightness = MediaQuery.of(context).platformBrightness;
+  if (brightness == Brightness.dark || true) {
+    imgName = imgName + '_dark';
+  }
+  return imgName;
+}
+
+List circleColors4Context(var context) {
+  Color circleColor1 = HexColor.fromHex('#f9f0f0');
+  Color circleColor2 = HexColor.fromHex('#f9e2e1');
+  Color circleColor3 = HexColor.fromHex('#f9dcdb');
+  if (MediaQuery.of(context).platformBrightness == Brightness.dark || true) {
+    circleColor1 = HexColor.fromHex('#f0f0f0');
+    circleColor2 = HexColor.fromHex('#e4e4e4');
+    circleColor3 = HexColor.fromHex('#dcdcdc');
+  }
+  return [circleColor1, circleColor2, circleColor3];
+}
