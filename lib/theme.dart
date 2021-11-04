@@ -29,16 +29,17 @@ final Color circleColor2 = HexColor.fromHex('#f9e2e1');
 final Color circleColor3 = HexColor.fromHex('#f9dcdb');
 
 const String defaultFontFamily = 'Lato';
-const double defaultFontSize = 18.0;
+const double defaultFontSize = 19.0;
 const double sessionFontSize = 24.0;
 
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
 final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
+// Define default (light) app styling and color scheme
 final Color lightMainColor = HexColor.fromHex('#e83939');
 final Color lightBgColor = HexColor.fromHex('#f9f9f9');
+final Color lightTextColor = HexColor.fromHex('#202020');
 
-// Define overall app brightness and color scheme
 final lightThemeData = ThemeData(
     brightness: Brightness.light,
     scaffoldBackgroundColor: lightBgColor,
@@ -47,26 +48,27 @@ final lightThemeData = ThemeData(
     backgroundColor: lightBgColor,
     fontFamily: defaultFontFamily,
     textTheme: TextTheme(
-      subtitle1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      subtitle2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      overline: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      button: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      caption: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      bodyText1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      bodyText2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline3: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline4: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline5: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline6: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+      subtitle1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      subtitle2: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      overline: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      button: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      caption: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      bodyText1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      bodyText2: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline2: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline3: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline4: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline5: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+      headline6: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
     ),
     appBarTheme: AppBarTheme(
       color: lightBgColor,
       iconTheme: IconThemeData(color: lightMainColor),
     ));
 
-final darkMainColor = HexColor.fromHex('#f9f9f9');
+// Define dark mode app styling and color scheme
+final darkMainColor = HexColor.fromHex('#f7f7f7');
 final darkBgColor = HexColor.fromHex('#202020');
 
 final darkThemeData = ThemeData(
@@ -107,7 +109,7 @@ String img4theme(String imgName, var context) {
     return imgName;
   }
   var brightness = MediaQuery.of(context).platformBrightness;
-  if (brightness == Brightness.dark || true) {
+  if (brightness == Brightness.dark) {
     imgName = imgName + '_dark';
   }
   return imgName;
@@ -117,7 +119,7 @@ List circleColors4Context(var context) {
   Color circleColor1 = HexColor.fromHex('#f9f0f0');
   Color circleColor2 = HexColor.fromHex('#f9e2e1');
   Color circleColor3 = HexColor.fromHex('#f9dcdb');
-  if (MediaQuery.of(context).platformBrightness == Brightness.dark || true) {
+  if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     circleColor1 = HexColor.fromHex('#f0f0f0');
     circleColor2 = HexColor.fromHex('#e4e4e4');
     circleColor3 = HexColor.fromHex('#dcdcdc');

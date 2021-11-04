@@ -66,7 +66,7 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
           title: Text(this.widget.label),
           trailing: CupertinoSwitch(
             value: Prefs().boolForKey(prefKey),
-            activeColor: Theme.of(context).primaryColorLight,
+            activeColor: Theme.of(context).primaryColorDark,
             onChanged: (bool value) {
               setState(() {
                 Prefs().setBoolForKey(prefKey, value);
@@ -414,8 +414,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
     return Container(
         child: MergeSemantics(
             child: ListTile(
-      title: Text(this.label),
-      trailing: Text(this.value),
+      title: Text(this.label, style: menuTextStyle),
+      trailing: Text(this.value, style: menuTextStyle),
     )));
   }
 }

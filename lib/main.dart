@@ -88,7 +88,7 @@ class EmblaApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AdaptiveTheme(
-      light: darkThemeData,
+      light: lightThemeData,
       dark: darkThemeData,
       initial: AdaptiveThemeMode.light,
       builder: (theme, darkTheme) => MaterialApp(

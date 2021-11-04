@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 
 import './common.dart';
 import './settings.dart' show SettingsRoute;
-import './theme.dart' show img4theme, standardAppBar;
+import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
 //import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;
 
@@ -58,7 +58,7 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
 ListTile _generateTile(
     String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
-    title: Text(name),
+    title: Text(name, style: menuTextStyle),
     leading: Image(image: AssetImage("assets/images/${img4theme(imageName, context)}.png")),
     trailing: Icon(Icons.arrow_right),
     onTap: () {
