@@ -90,7 +90,7 @@ class EmblaApp extends StatelessWidget {
     return AdaptiveTheme(
       light: lightThemeData,
       dark: darkThemeData,
-      initial: AdaptiveThemeMode.light,
+      initial: AdaptiveThemeMode.system,
       builder: (theme, darkTheme) => MaterialApp(
         title: kSoftwareName,
         theme: theme,

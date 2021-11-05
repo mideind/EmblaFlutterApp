@@ -58,7 +58,7 @@ flutter:
     - assets/hotword/
     # Logo animation frames
     - assets/images/anim/logo/light/
-    - assets/images/anim/logo/dark/
+    # - assets/images/anim/logo/dark/
   fonts:
     - family: Lato
       fonts:

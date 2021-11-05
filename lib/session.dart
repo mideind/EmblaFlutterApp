@@ -246,7 +246,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         addSample(SpeechRecognizer().lastSignal);
       } else if (state == SessionState.answering) {
         currFrame += 1;
-        if (currFrame >= animationFrames[0].length) {
+        if (currFrame >= animationFrames.length) {
           currFrame = 0; // Reset animation
         }
       }
@@ -596,11 +596,11 @@ class SessionButtonPainter extends CustomPainter {
 
   // Draw current logo animation frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
-    if (animationFrames[0].length == 0) {
+    if (animationFrames.length == 0) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
     int idx = (MediaQuery.of(sessionContext).platformBrightness == Brightness.dark) ? 1 : 0;
-    ui.Image img = animationFrames[idx][fnum];
+    ui.Image img = animationFrames[fnum];
     // Source image rect
     Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
 
@@ -634,8 +634,10 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
-    var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
-    var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
+    //var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
+    var topPaint = Paint()..color = HexColor.fromHex('#e83939');
+    //var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
+    var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
 
     // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {

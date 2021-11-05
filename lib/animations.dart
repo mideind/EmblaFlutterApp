@@ -30,7 +30,7 @@ const String kFrameFilePrefix = 'anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
 
-List animationFrames = [];
+final List animationFrames = [];
 
 // Load a PNG image into memory from Flutter assets bundle
 Future<ui.Image> _loadImageAsset(String asset) async {
@@ -42,17 +42,11 @@ Future<ui.Image> _loadImageAsset(String asset) async {
 
 // Preload all logo animation frames
 Future<void> preloadAnimationFrames() async {
-  List lightAnimationFrames = [];
-  List darkAnimationFrames = [];
   for (int i = 0; i < kNumAnimationFrames; i++) {
     String padnum = i.toString().padLeft(5, '0');
     // Light mode anim frame
     String fnl = kFrameFilePath + 'light/' + kFrameFilePrefix + padnum + kFrameFileSuffix;
-    lightAnimationFrames.add(await _loadImageAsset(fnl));
-    // Dark mode anim frame
-    String fnd = kFrameFilePath + 'dark/' + kFrameFilePrefix + padnum + kFrameFileSuffix;
-    darkAnimationFrames.add(await _loadImageAsset(fnd));
+    animationFrames.add(await _loadImageAsset(fnl));
   }
-  animationFrames = [lightAnimationFrames, darkAnimationFrames];
-  dlog("Preloaded ${lightAnimationFrames.length} animation frames");
+  dlog("Preloaded ${animationFrames.length} animation frames");
 }
