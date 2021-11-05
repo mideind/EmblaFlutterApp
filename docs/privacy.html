@@ -8,6 +8,13 @@
     <meta http-equiv="Content-Language" content="is">
     <title>Embla - Persónuvernd</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <script type="text/javascript">
+        var urlParams = new URLSearchParams(window.location.search);
+        var dark = urlParams.get('dark');
+        if (dark != null) {
+            document.write('<link rel="stylesheet" href="dark.css">');
+        }
+    </script>
     <meta name="robots" content="noindex, nofollow, noimageindex, noarchive">
     <meta name="googlebot" content="noindex, nofollow, noimageindex, noarchive">
 </head>

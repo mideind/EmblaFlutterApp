@@ -28,6 +28,7 @@ import './common.dart' show dlog;
 
 const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
+const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
@@ -77,8 +78,14 @@ class _WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled HTML document on network error.
+    var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+    var loadingURL = kLoadingHTMLFilePath;
+    if (darkMode) {
+      loadingURL = kLoadingDarkHTMLFilePath;
+    }
+
     InAppWebView webView = InAppWebView(
-      initialFile: kLoadingHTMLFilePath,
+      initialFile: loadingURL,
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
@@ -88,9 +95,14 @@ class _WebViewRouteState extends State<WebViewRoute> {
         dlog("Loading URL ${url.toString()}");
       },
       onLoadStop: (InAppWebViewController controller, Uri url) {
-        if (url.toString().endsWith(kLoadingHTMLFilePath)) {
+        if (url.toString().endsWith(kLoadingHTMLFilePath) ||
+            url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
           setState(() {
-            Uri uri = Uri.parse(this.widget.initialURL);
+            String url = this.widget.initialURL;
+            if (darkMode) {
+              url += '?dark=1';
+            }
+            Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));
           });
         }
