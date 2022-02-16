@@ -434,7 +434,11 @@ Future<String> genVersionString() async {
   //final String buildNumber = packageInfo.buildNumber;
 
   final String osName = osName2Pretty[Platform.operatingSystem];
-  return "$version ($osName)";
+  String swInfoStr = "$version ($osName)";
+  if (kReleaseMode == true) {
+    swInfoStr += " dbg";
+  }
+  return swInfoStr;
 }
 
 // List of settings widgets
