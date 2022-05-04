@@ -2,7 +2,7 @@
 [![Language](https://img.shields.io/badge/language-dart-lightblue)]()
 [![Build](https://github.com/mideind/Embla_Flutter/actions/workflows/main.yml/badge.svg)]()
 
-<img src="assets/images/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
+<img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
 # Embla Flutter client
 
@@ -13,6 +13,10 @@ the cross-platform Embla mobile client.
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on
 Android 8.0+ (SDK ≥ 26), with iOS support on the roadmap.
+
+<a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
+    <img alt="Download on Google Play" src="img/play_store.png" width="180">
+</a>
 
 ## Build instructions
 
@@ -26,7 +30,7 @@ requires a recent version of Xcode.
 Clone the repository:
 
 ```
-$ git clone https://github.com/mideind/Embla
+$ git clone https://github.com/mideind/Embla_Flutter
 ```
 
 In order to work as intended, the app requires a JSON configuration file containing a key
@@ -60,7 +64,7 @@ $ bash build.sh
 
 TBD
 
-## Credits
+## Acknowledgements
 
 The Embla client uses [Snowboy](https://github.com/seasalt-ai/snowboy) for hotword
 detection and Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text) for
@@ -69,7 +73,7 @@ speech recognition. Speech synthesis is accomplished via synthetic voices commis
 
 ## License
 
-Embla is Copyright (C) 2021 [Miðeind ehf.](https://mideind.is)
+Embla is Copyright (C) 2019-2022 [Miðeind ehf.](https://mideind.is)
 
 <a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf." width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
 
