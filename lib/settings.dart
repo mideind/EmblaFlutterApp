@@ -29,6 +29,7 @@ import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
+import './voices.dart' show VoiceSelectionRoute;
 import './theme.dart';
 
 // UI string constants
@@ -442,12 +443,31 @@ Future<String> genVersionString() async {
 }
 
 // List of settings widgets
-List<Widget> _settings() {
+List<Widget> _settings(BuildContext context) {
   return <Widget>[
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-    SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
+    //SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
+    //SettingsLabelValueWidget('Rödd', Prefs().stringForKey('voice_id')),
+    ListTile(
+        title: Text("Rödd", style: menuTextStyle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(Prefs().stringForKey('voice_id')),
+            Icon(Icons.arrow_right),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VoiceSelectionRoute(),
+            ),
+          );
+        }),
+
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',
@@ -482,7 +502,7 @@ List<Widget> _settings() {
 class SettingsRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    List<Widget> slist = _settings();
+    List<Widget> slist = _settings(context);
     // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
       slist.addAll([
