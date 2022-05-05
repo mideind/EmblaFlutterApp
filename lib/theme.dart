@@ -19,7 +19,6 @@
 // Configure app theme: colors, fonts and other styling
 
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import './util.dart' show HexColor;
 
