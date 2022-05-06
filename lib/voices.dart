@@ -26,10 +26,18 @@ import './query.dart' show QueryService;
 import './common.dart' show dlog;
 import './theme.dart';
 
+// Fallback voices and default voice if offline
+// and unable to query server for voices list
 const List _fallbackVoices = ["Dora", "Karl"];
 const String _fallbackDefaultVoice = "Dora";
 
+List voices = null;
+
 Future<List> fetchVoiceList() async {
+  if (voices != null) {
+    return voices;
+  }
+
   Map res = await QueryService.requestSupportedVoices();
   List voiceList = _fallbackVoices;
   String defaultVoice = _fallbackDefaultVoice;
@@ -55,6 +63,9 @@ Future<List> fetchVoiceList() async {
   if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
     Prefs().setStringForKey("voice_id", defaultVoice);
   }
+
+  // Store voices list once fetched
+  voices = voiceList;
 
   return voiceList;
 }
