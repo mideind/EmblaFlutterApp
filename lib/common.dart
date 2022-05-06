@@ -45,6 +45,7 @@ const String kDefaultSTTServer = 'speech.googleapis.com';
 const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
 const String kSpeechSynthesisAPIPath = '/speech.api/v1';
+const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Voice speed range
 const double kVoiceSpeedMin = 0.7;
@@ -59,7 +60,6 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 const List kQueryServerPresetOptions = [
   ['Greynir', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Vinna', 'http://192.168.1.113:5000'],
   ['Heima', 'http://192.168.1.8:5000']
 ];
 

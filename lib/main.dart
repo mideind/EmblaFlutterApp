@@ -44,6 +44,13 @@ void main() async {
   if (launched == null || launched == false) {
     Prefs().setDefaults();
   }
+  // Make sure we map voice "Kona" to "Dora" for backward compatibility
+  // Previous versions of the app used "Kona" as the default voice with
+  // the option of "Karl" as an alternative. As of 1.3.0, we now use
+  // voice names e.g. "Dora"
+  if (Prefs().stringForKey("voice_id") == "Kona") {
+    Prefs().setStringForKey("voice_id", "Dora");
+  }
   dlog("Shared prefs: ${Prefs().desc()}");
 
   // Init/preload these to prevent any lag after launching app

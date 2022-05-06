@@ -421,6 +421,58 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+class SettingsAsyncLabelValueWidget extends StatelessWidget {
+  final String label;
+  final Future<String> future;
+
+  SettingsAsyncLabelValueWidget(this.label, this.future);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+        future: this.future,
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SettingsLabelValueWidget(this.label, snapshot.data);
+          }
+          return SettingsLabelValueWidget(this.label, '...');
+        });
+  }
+}
+
+class SettingsVoiceSelectWidget extends StatefulWidget {
+  final String label;
+  SettingsVoiceSelectWidget({Key key, this.label}) : super(key: key);
+
+  @override
+  _SettingsVoiceSelectWidgetState createState() => _SettingsVoiceSelectWidgetState();
+}
+
+class _SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(this.widget.label, style: menuTextStyle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(Prefs().stringForKey('voice_id')),
+            Icon(Icons.arrow_right),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => VoiceSelectionRoute(),
+            ),
+          ).then((val) {
+            setState(() {});
+          });
+        });
+  }
+}
+
 Future<String> genVersionString() async {
   final Map osName2Pretty = {
     "linux": "Linux",
@@ -448,40 +500,14 @@ List<Widget> _settings(BuildContext context) {
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-    //SettingsSegmentedWidget(label: 'Rödd', items: ['Karl', 'Kona'], prefKey: 'voice_id'),
-    //SettingsLabelValueWidget('Rödd', Prefs().stringForKey('voice_id')),
-    ListTile(
-        title: Text("Rödd", style: menuTextStyle),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(Prefs().stringForKey('voice_id')),
-            Icon(Icons.arrow_right),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => VoiceSelectionRoute(),
-            ),
-          );
-        }),
-
+    SettingsVoiceSelectWidget(label: 'Rödd'),
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
-    FutureBuilder<String>(
-        future: genVersionString(),
-        builder: (context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.hasData) {
-            return SettingsLabelValueWidget('Útgáfa', snapshot.data);
-          }
-          return SettingsLabelValueWidget('Útgáfa', '...');
-        }),
+    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString()),
     SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,

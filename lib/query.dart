@@ -94,7 +94,7 @@ class QueryService {
     Map<String, String> qargs = {
       'q': queries.join('|'),
       'voice': '1',
-      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora'
+      'voice_id': Prefs().stringForKey('voice_id')
     };
 
     // Never send client information in privacy mode
@@ -153,5 +153,15 @@ class QueryService {
     };
 
     await _makeRequest(kSpeechSynthesisAPIPath, qargs, handler);
+  }
+
+  // Send request to voices API
+  static Future<Map> requestSupportedVoices() async {
+    Response r = await _makeRequest(kVoiceListAPIPath, {}, null);
+    if (r == null) {
+      return null;
+    } else {
+      return json.decode(r.body);
+    }
   }
 }
