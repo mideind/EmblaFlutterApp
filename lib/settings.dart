@@ -415,8 +415,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
     return Container(
         child: MergeSemantics(
             child: ListTile(
-      title: Text(this.label, style: menuTextStyle),
-      trailing: Text(this.value, style: menuTextStyle),
+      title: Text(this.label, style: Theme.of(context).textTheme.caption),
+      trailing: Text(this.value, style: Theme.of(context).textTheme.caption),
     )));
   }
 }
@@ -456,7 +456,7 @@ class _SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(Prefs().stringForKey('voice_id')),
+            Text(Prefs().stringForKey('voice_id'), style: Theme.of(context).textTheme.caption),
             Icon(Icons.arrow_right),
           ],
         ),

@@ -74,7 +74,7 @@ final darkThemeData = ThemeData(
     brightness: Brightness.dark,
     scaffoldBackgroundColor: darkBgColor,
     primarySwatch: Colors.grey,
-    primaryColor: darkBgColor,
+    primaryColor: darkMainColor,
     backgroundColor: darkBgColor,
     fontFamily: defaultFontFamily,
     textTheme: TextTheme(
@@ -112,6 +112,17 @@ String img4theme(String imgName, var context) {
     imgName = imgName + '_dark';
   }
   return imgName;
+}
+
+Color color4ctx(var context) {
+  if (context == null) {
+    return lightMainColor;
+  }
+  var brightness = MediaQuery.of(context).platformBrightness;
+  if (brightness == Brightness.dark) {
+    return darkMainColor;
+  }
+  return lightMainColor;
 }
 
 List circleColors4Context(var context) {
