@@ -41,7 +41,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     languageCode: kSpeechToTextLanguage);
 
 class SpeechRecognizer {
-  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
+  final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
   StreamSubscription _recordingDataSubscription;
   StreamSubscription _recordingProgressSubscription;
   StreamController _recordingDataController;

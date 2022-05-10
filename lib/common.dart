@@ -66,6 +66,7 @@ const List kQueryServerPresetOptions = [
 // Debug logging
 void dlog(dynamic msg) {
   if (kReleaseMode == false) {
+    // ignore: avoid_print
     print(msg.toString());
   }
 }

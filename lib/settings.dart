@@ -61,25 +61,23 @@ class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   @override
   Widget build(BuildContext context) {
     String prefKey = this.widget.prefKey;
-    return Container(
-      child: MergeSemantics(
-        child: ListTile(
-          title: Text(this.widget.label),
-          trailing: CupertinoSwitch(
-            value: Prefs().boolForKey(prefKey),
-            activeColor: Theme.of(context).primaryColorDark,
-            onChanged: (bool value) {
-              setState(() {
-                Prefs().setBoolForKey(prefKey, value);
-              });
-            },
-          ),
-          onTap: () {
+    return MergeSemantics(
+      child: ListTile(
+        title: Text(this.widget.label),
+        trailing: CupertinoSwitch(
+          value: Prefs().boolForKey(prefKey),
+          activeColor: Theme.of(context).primaryColorDark,
+          onChanged: (bool value) {
             setState(() {
-              Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
+              Prefs().setBoolForKey(prefKey, value);
             });
           },
         ),
+        onTap: () {
+          setState(() {
+            Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
+          });
+        },
       ),
     );
   }
@@ -136,33 +134,31 @@ class _SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidge
   @override
   Widget build(BuildContext context) {
     String prefKey = this.widget.prefKey;
-    return Container(
-      child: MergeSemantics(
-        child: ListTile(
-          title: Text(this.widget.label),
-          trailing: CupertinoSwitch(
-            value: Prefs().boolForKey(prefKey),
-            activeColor: Theme.of(context).primaryColorLight,
-            onChanged: (bool value) {
-              if (value == true) {
-                _showPromptDialog(context);
-              } else {
-                setState(() {
-                  Prefs().setBoolForKey(prefKey, false);
-                });
-              }
-            },
-          ),
-          onTap: () {
-            if (Prefs().boolForKey(prefKey) == false) {
+    return MergeSemantics(
+      child: ListTile(
+        title: Text(this.widget.label),
+        trailing: CupertinoSwitch(
+          value: Prefs().boolForKey(prefKey),
+          activeColor: Theme.of(context).primaryColorLight,
+          onChanged: (bool value) {
+            if (value == true) {
               _showPromptDialog(context);
             } else {
               setState(() {
-                Prefs().setBoolForKey(prefKey, true);
+                Prefs().setBoolForKey(prefKey, false);
               });
             }
           },
         ),
+        onTap: () {
+          if (Prefs().boolForKey(prefKey) == false) {
+            _showPromptDialog(context);
+          } else {
+            setState(() {
+              Prefs().setBoolForKey(prefKey, true);
+            });
+          }
+        },
       ),
     );
   }
@@ -174,7 +170,7 @@ class SettingsSegmentedWidget extends StatefulWidget {
   final List<String> items;
   final String prefKey;
 
-  SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
+  const SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
 
   @override
   _SettingsSegmentedWidgetState createState() => _SettingsSegmentedWidgetState();
@@ -203,18 +199,16 @@ class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      child: ListTile(
-        title: Text(this.widget.label),
-        trailing: CupertinoSegmentedControl(
-            children: _genChildren(),
-            groupValue: selectedSegment(),
-            onValueChanged: (value) {
-              setState(() {
-                Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
-              });
-            }),
-      ),
+    return ListTile(
+      title: Text(this.widget.label),
+      trailing: CupertinoSegmentedControl(
+          children: _genChildren(),
+          groupValue: selectedSegment(),
+          onValueChanged: (value) {
+            setState(() {
+              Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
+            });
+          }),
     );
   }
 }
@@ -280,7 +274,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   final String label;
   final String alertText;
   final String buttonTitle;
-  final handler;
+  final Function handler;
 
   SettingsButtonPromptWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
@@ -412,12 +406,11 @@ class SettingsLabelValueWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-        child: MergeSemantics(
-            child: ListTile(
+    return MergeSemantics(
+        child: ListTile(
       title: Text(this.label, style: Theme.of(context).textTheme.caption),
       trailing: Text(this.value, style: Theme.of(context).textTheme.caption),
-    )));
+    ));
   }
 }
 
@@ -488,7 +481,7 @@ Future<String> genVersionString() async {
 
   final String osName = osName2Pretty[Platform.operatingSystem];
   String swInfoStr = "$version ($osName)";
-  if (kReleaseMode == true) {
+  if (kReleaseMode == false) {
     swInfoStr += " dbg";
   }
   return swInfoStr;

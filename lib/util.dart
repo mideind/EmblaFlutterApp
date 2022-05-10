@@ -42,7 +42,7 @@ extension StringExtension on String {
 
   // Return period-terminated string if not already ending w. punctuation
   String periodTerminated() {
-    if (this.length >= 0 && this.isPunctuationTerminated() == false) {
+    if (this.isPunctuationTerminated() == false) {
       return this + '.';
     }
     return this;

@@ -85,7 +85,7 @@ const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
 const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
 
-var sessionContext;
+BuildContext sessionContext;
 
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
@@ -140,6 +140,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   @protected
   @mustCallSuper
+  @override
   void dispose() {
     appStateSubscription.cancel();
     super.dispose();

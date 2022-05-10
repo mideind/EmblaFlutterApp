@@ -31,7 +31,7 @@ import './theme.dart';
 const List _fallbackVoices = ["Dora", "Karl"];
 const String _fallbackDefaultVoice = "Dora";
 
-List voices = null;
+List voices;
 
 Future<List> fetchVoiceList() async {
   if (voices != null) {

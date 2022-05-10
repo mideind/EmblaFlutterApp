@@ -8,11 +8,11 @@ import '../lib/util.dart';
 import '../lib/prefs.dart';
 
 void main() {
-  test_prefs();
-  test_util();
+  testPrefs();
+  testUtil();
 }
 
-void test_prefs() {
+void testPrefs() {
   test("Prefs should be singleton", () {
     Prefs p1 = Prefs();
     Prefs p2 = Prefs();
@@ -20,7 +20,7 @@ void test_prefs() {
   });
 }
 
-void test_util() {
+void testUtil() {
   // String extensions
   test('Strings should be identified as punctuation-terminated', () {
     final List term = [

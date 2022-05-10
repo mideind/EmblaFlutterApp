@@ -34,7 +34,7 @@ class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
 
   Snowboy detector;
-  FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
+  final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
   StreamController _recordingDataController;
   StreamSubscription _recordingDataSubscription;
 

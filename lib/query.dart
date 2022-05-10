@@ -31,7 +31,7 @@ import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './util.dart' show readQueryServerKey;
 
-const int kRequestTimeout = 10; // Seconds
+const kRequestTimeout = Duration(seconds: 10); // Seconds
 
 String _clientType() {
   return "${Platform.operatingSystem}_flutter";
@@ -53,9 +53,8 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
   Response response;
   try {
-    response = await http
-        .post(Uri.parse(apiURL), body: qargs)
-        .timeout(Duration(seconds: kRequestTimeout), onTimeout: () {
+    response =
+        await http.post(Uri.parse(apiURL), body: qargs).timeout(kRequestTimeout, onTimeout: () {
       if (handler != null) {
         handler(null);
       }
