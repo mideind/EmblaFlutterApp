@@ -102,7 +102,7 @@ class AudioPlayer {
   // Load all asset-bundled audio files into memory
   Future<void> _preloadAudioFiles() async {
     dlog("Preloading audio assets: ${audioFiles.toString()}");
-    audioFileCache = Map();
+    audioFileCache = <String, Uint8List>{};
     for (String fn in audioFiles) {
       ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
       audioFileCache[fn] = bytes.buffer.asUint8List();

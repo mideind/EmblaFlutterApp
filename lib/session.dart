@@ -91,7 +91,7 @@ var sessionContext;
 List<double> audioSamples = populateSamples();
 
 List<double> populateSamples() {
-  return new List.filled(kWaveformNumBars, kWaveformDefaultSampleLevel, growable: true);
+  return List.filled(kWaveformNumBars, kWaveformDefaultSampleLevel, growable: true);
 }
 
 void addSample(double level) {
@@ -378,8 +378,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       imageURL = null;
       audioSamples = populateSamples();
       animationTimer?.cancel();
-      animationTimer =
-          new Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
+      animationTimer = Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
     });
 
     // Start recognizing speech from microphone input
@@ -437,12 +436,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: new Text('Villa í talgreiningu'),
-          content: new Text(
-              'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.'),
+          title: Text('Villa í talgreiningu'),
+          content:
+              Text('Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.'),
           actions: <Widget>[
-            new TextButton(
-              child: new Text('Allt í lagi'),
+            TextButton(
+              child: Text('Allt í lagi'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -561,7 +560,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                           label: buttonLabel,
                           child: GestureDetector(
                               onTap: toggle,
-                              child: new SizedBox(
+                              child: SizedBox(
                                 width: buttonSize,
                                 height: buttonSize,
                                 child: CustomPaint(painter: SessionButtonPainter()),
@@ -599,7 +598,6 @@ class SessionButtonPainter extends CustomPainter {
     if (animationFrames.length == 0) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
-    int idx = (MediaQuery.of(sessionContext).platformBrightness == Brightness.dark) ? 1 : 0;
     ui.Image img = animationFrames[fnum];
     // Source image rect
     Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
@@ -645,7 +643,7 @@ class SessionButtonPainter extends CustomPainter {
       double level = min(max(kWaveformMinSampleLevel, audioSamples[i]), kWaveformMaxSampleLevel);
 
       // Draw top bar
-      Rect topRect = new Rect.fromLTWH(
+      Rect topRect = Rect.fromLTWH(
           i * (barWidth + margin) + (margin / 2) + xOffset, // x
           barHeight - (level * barHeight) + yOffset, // y
           barWidth, // width
@@ -660,7 +658,7 @@ class SessionButtonPainter extends CustomPainter {
           topPaint);
 
       // Draw bottom bar
-      Rect bottomRect = new Rect.fromLTWH(
+      Rect bottomRect = Rect.fromLTWH(
           i * (barWidth + margin) + (margin / 2) + xOffset, // x
           centerY + yOffset, // y
           barWidth, // width

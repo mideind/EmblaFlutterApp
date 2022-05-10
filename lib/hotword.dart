@@ -79,7 +79,7 @@ class HotwordDetector {
     _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
       // When we get data, feed it into Snowboy detector
       if (buffer is FoodData) {
-        Uint8List copy = new Uint8List.fromList(buffer.data); // Do we need to copy?
+        Uint8List copy = Uint8List.fromList(buffer.data); // Do we need to copy?
         detector.detect(copy);
       }
     });

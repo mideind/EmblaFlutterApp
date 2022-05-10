@@ -77,10 +77,11 @@ Widget _buildVoiceList(BuildContext context, List voices) {
       return ListTile(
         title: Text(voices[index]),
         leading: IconButton(
+            onPressed: null,
             icon: ImageIcon(
-          AssetImage('assets/images/waveform.png'),
-          color: color4ctx(context),
-        )),
+              AssetImage('assets/images/waveform.png'),
+              color: color4ctx(context),
+            )),
         trailing: voices[index] == Prefs().stringForKey("voice_id")
             ? Icon(
                 Icons.done,

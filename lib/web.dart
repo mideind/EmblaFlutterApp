@@ -35,7 +35,7 @@ class WebViewRoute extends StatefulWidget {
   WebViewRoute({Key key, this.initialURL}) : super(key: key);
 
   @override
-  _WebViewRouteState createState() => new _WebViewRouteState();
+  _WebViewRouteState createState() => _WebViewRouteState();
 }
 
 class _WebViewRouteState extends State<WebViewRoute> {

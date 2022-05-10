@@ -5,11 +5,9 @@ import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 
 import '../lib/util.dart';
-import '../lib/hotword.dart';
 import '../lib/prefs.dart';
 
 void main() {
-  // test_hotword();
   test_prefs();
   test_util();
 }
@@ -20,10 +18,6 @@ void test_prefs() {
     Prefs p2 = Prefs();
     expect(p1 == p2, true);
   });
-}
-
-void test_hotword() {
-  HotwordDetector hwd = HotwordDetector();
 }
 
 void test_util() {

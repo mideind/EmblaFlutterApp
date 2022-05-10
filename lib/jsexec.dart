@@ -22,7 +22,7 @@ import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
-  final _flutterWebviewPlugin = new FlutterWebviewPlugin();
+  final _flutterWebviewPlugin = FlutterWebviewPlugin();
 
   // Singleton pattern
   factory JSExecutor() {
