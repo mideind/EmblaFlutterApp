@@ -20,7 +20,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 
 import './theme.dart' show standardAppBar;
 import './common.dart' show dlog;
@@ -66,10 +66,10 @@ class _WebViewRouteState extends State<WebViewRoute> {
     String fallbackFilename = _fallbackAssetForURL(urlStr);
     if (urlStr != widget.initialURL && urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
-      launch(urlStr);
+      await launchUrl(req.url, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
     }
-    return NavigationActionPolicy.ALLOW;
+    return NavigationActionPolicy.CANCEL;
   }
 
   @override

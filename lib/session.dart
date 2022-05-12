@@ -24,7 +24,7 @@ import 'dart:ui' as ui;
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart' show launch;
+import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -217,7 +217,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Stream done');
       stopSpeechRecognition();
       dlog('Transcripts: ' + transcripts.toString());
-      if (transcripts.length != 0) {
+      if (transcripts.isNotEmpty) {
         AudioPlayer().playSound('rec_confirm');
         answerQuery(transcripts);
       } else {
@@ -285,7 +285,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       if (resp['open_url'] != null) {
         stop();
         dlog("Opening URL ${resp['open_url']}");
-        launch(resp['open_url']);
+        launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
       }
       // Javascript payload
       else if (resp['command'] != null) {
