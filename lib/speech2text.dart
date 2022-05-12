@@ -112,10 +112,11 @@ class SpeechRecognizer {
     await _micRecorder.openAudioSession();
 
     // Listen for audio status (duration, decibel) at fixed interval
-    _micRecorder.setSubscriptionDuration(Duration(milliseconds: 80));
+    _micRecorder.setSubscriptionDuration(Duration(milliseconds: 50));
     _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
       double decibels = e.decibels - 70.0; // This number is arbitrary but works
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
+      print(lastSignal);
     });
 
     // Start recording audio

@@ -60,7 +60,7 @@ enum SessionState {
 SessionState state = SessionState.resting;
 
 // Waveform configuration
-const int kWaveformNumBars = 12; // Number of waveform bars drawn
+const int kWaveformNumBars = 15; // Number of waveform bars drawn
 const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars as proportion of width
 const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
@@ -471,7 +471,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       stop(); // Terminate any ongoing session
       Wakelock.disable();
       HotwordDetector().stop();
-      AudioPlayer().stop();
 
       Navigator.push(
         context,
