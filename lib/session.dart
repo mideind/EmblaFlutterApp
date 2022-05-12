@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
+import 'package:flutter/cupertino.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
@@ -68,6 +69,7 @@ const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
 // Animation framerate
 const int msecPerFrame = (1000 ~/ 24);
+const Duration durationPerFrame = Duration(milliseconds: msecPerFrame);
 
 // Logo animation status
 const kFullLogoFrame = 99;
@@ -379,7 +381,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       imageURL = null;
       audioSamples = populateSamples();
       animationTimer?.cancel();
-      animationTimer = Timer.periodic(Duration(milliseconds: msecPerFrame), (Timer t) => ticker());
+      animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
     });
 
     // Start recognizing speech from microphone input
@@ -474,7 +476,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
       Navigator.push(
         context,
-        MaterialPageRoute(
+        CupertinoPageRoute(
           builder: (context) => MenuRoute(), // Push menu route
         ),
       ).then((val) {

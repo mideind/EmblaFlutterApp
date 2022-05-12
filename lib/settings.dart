@@ -456,7 +456,7 @@ class _SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
         onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(
+            CupertinoPageRoute(
               builder: (context) => VoiceSelectionRoute(),
             ),
           ).then((val) {

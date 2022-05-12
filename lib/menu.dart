@@ -19,6 +19,7 @@
 // Menu route
 
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import './common.dart';
 import './settings.dart' show SettingsRoute;
@@ -29,7 +30,7 @@ import './web.dart' show WebViewRoute;
 void _pushSettingsRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
-    MaterialPageRoute(
+    CupertinoPageRoute(
       builder: (context) => SettingsRoute(),
     ),
   );
@@ -38,7 +39,7 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
 // void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
 // Navigator.push(
 //   context,
-//   MaterialPageRoute(
+//   CupertinoPageRoute(
 //     builder: (context) => TrainingRoute(),
 //   ),
 // );
@@ -47,7 +48,7 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
 void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
-    MaterialPageRoute(
+    CupertinoPageRoute(
       builder: (context) => WebViewRoute(initialURL: arg),
     ),
   );
