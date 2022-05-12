@@ -28,12 +28,12 @@ import './keys.dart' show googleServiceAccount, queryAPIKey;
 extension StringExtension on String {
   // Does string end w. standard punctuation?
   bool isPunctuationTerminated() {
-    if (this.length == 0) {
+    if (length == 0) {
       return false;
     }
     List<String> punctuation = ['.', '?', '!', '."', '.“', ".'"];
     for (String p in punctuation) {
-      if (this.endsWith(p)) {
+      if (endsWith(p)) {
         return true;
       }
     }
@@ -42,7 +42,7 @@ extension StringExtension on String {
 
   // Return period-terminated string if not already ending w. punctuation
   String periodTerminated() {
-    if (this.isPunctuationTerminated() == false) {
+    if (isPunctuationTerminated() == false) {
       return this + '.';
     }
     return this;
@@ -51,10 +51,10 @@ extension StringExtension on String {
   // Return string with first character capitalized.
   // Why isn't this part of of the standard library?
   String sentenceCapitalized() {
-    if (this.length == 0) {
+    if (length == 0) {
       return this;
     }
-    return "${this[0].toUpperCase()}${this.substring(1)}";
+    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }
 

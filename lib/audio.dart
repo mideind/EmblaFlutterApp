@@ -148,7 +148,7 @@ class AudioPlayer {
     int rnd = Random().nextInt(7) + 1;
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
-    this.playSound(fn, completionHandler);
+    playSound(fn, completionHandler);
     Map dunnoStrings = {
       "dunno01": "Ég get ekki svarað því.",
       "dunno02": "Ég get því miður ekki svarað því.",
