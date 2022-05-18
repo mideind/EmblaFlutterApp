@@ -62,7 +62,7 @@ void testUtil() {
       '"Ei skal höggva"',
     ];
     for (String s in nt) {
-      expect(s.periodTerminated(), s + ".");
+      expect(s.periodTerminated(), "$s.");
     }
   });
 

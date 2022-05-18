@@ -42,7 +42,7 @@ class Prefs {
   }
 
   void setBoolForKey(String key, bool val) {
-    dlog("Setting pref key '" + key + "' to bool '" + val.toString() + "'");
+    dlog("Setting pref key '$key' to bool '${val.toString()}'");
     _sp?.setBool(key, val);
     if (key == 'share_location') {
       if (val == true) {
@@ -58,7 +58,7 @@ class Prefs {
   }
 
   void setFloatForKey(String key, double val) {
-    dlog("Setting pref key '" + key + "' to float '" + val.toString() + "'");
+    dlog("Setting pref key '$key' to float '${val.toString()}'");
     _sp?.setDouble(key, val);
   }
 
@@ -67,7 +67,7 @@ class Prefs {
   }
 
   void setStringForKey(String key, String val) {
-    dlog("Setting pref key '" + key + "' to string '" + val + "'");
+    dlog("Setting pref key '$key' to string '$val'");
     _sp?.setString(key, val);
   }
 

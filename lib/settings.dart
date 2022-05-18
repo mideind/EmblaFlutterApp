@@ -285,7 +285,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text(this.label + '?'),
+          title: Text("$label?"),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[

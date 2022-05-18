@@ -44,7 +44,7 @@ Future<void> preloadAnimationFrames() async {
   for (int i = 0; i < kNumAnimationFrames; i++) {
     String padnum = i.toString().padLeft(5, '0');
     // Light mode anim frame
-    String fnl = kFrameFilePath + 'light/' + kFrameFilePrefix + padnum + kFrameFileSuffix;
+    String fnl = "${kFrameFilePath}light/$kFrameFilePrefix$padnum$kFrameFileSuffix";
     animationFrames.add(await _loadImageAsset(fnl));
   }
   dlog("Preloaded ${animationFrames.length} animation frames");
