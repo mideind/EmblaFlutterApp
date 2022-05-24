@@ -109,7 +109,7 @@ String img4theme(String imgName, var context) {
   }
   var brightness = MediaQuery.of(context).platformBrightness;
   if (brightness == Brightness.dark) {
-    imgName = imgName + '_dark';
+    imgName = "${imgName}_dark";
   }
   return imgName;
 }

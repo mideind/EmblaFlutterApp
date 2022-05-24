@@ -43,7 +43,7 @@ extension StringExtension on String {
   // Return period-terminated string if not already ending w. punctuation
   String periodTerminated() {
     if (isPunctuationTerminated() == false) {
-      return this + '.';
+      return "${this}.";
     }
     return this;
   }

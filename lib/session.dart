@@ -77,7 +77,7 @@ int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
 const kRestingButtonPropSize = 0.58;
-const kExpandedButtonPropSize = 0.74;
+const kExpandedButtonPropSize = 0.58;
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';
@@ -218,7 +218,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         () {
       dlog('Stream done');
       stopSpeechRecognition();
-      dlog('Transcripts: ' + transcripts.toString());
+      dlog("Transcripts: ${transcripts.toString()}");
       if (transcripts.isNotEmpty) {
         AudioPlayer().playSound('rec_confirm');
         answerQuery(transcripts);
@@ -257,7 +257,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void answerQuery(List<String> alternatives) {
-    dlog("Answering query: " + alternatives.toString());
+    dlog("Answering query: ${alternatives.toString()}");
     // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
@@ -530,7 +530,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           leading: Semantics(
               label: hotwordLabel,
               child: IconButton(
-                icon: ImageIcon(AssetImage('assets/images/' + hotwordIcon)),
+                icon: ImageIcon(AssetImage("assets/images/$hotwordIcon")),
                 onPressed: toggleHotwordActivation,
               )),
           // Hamburger menu button
@@ -560,13 +560,16 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                   child: Center(
                       child: Semantics(
                           label: buttonLabel,
-                          child: GestureDetector(
-                              onTap: toggle,
-                              child: SizedBox(
-                                width: buttonSize,
-                                height: buttonSize,
-                                child: CustomPaint(painter: SessionButtonPainter()),
-                              )))))),
+                          child: AnimatedSize(
+                              child: GestureDetector(
+                                  onTap: toggle,
+                                  child: SizedBox(
+                                    width: buttonSize,
+                                    height: buttonSize,
+                                    child: CustomPaint(painter: SessionButtonPainter()),
+                                  )),
+                              curve: Curves.bounceInOut,
+                              duration: Duration(seconds: 1)))))),
         ],
       ),
     );
@@ -597,7 +600,7 @@ class SessionButtonPainter extends CustomPainter {
 
   // Draw current logo animation frame
   void drawFrame(Canvas canvas, Size size, int fnum) {
-    if (animationFrames.length == 0) {
+    if (animationFrames.isEmpty) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
     ui.Image img = animationFrames[fnum];
