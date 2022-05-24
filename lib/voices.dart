@@ -28,8 +28,8 @@ import './theme.dart';
 
 // Fallback voices and default voice if offline
 // and unable to query server for voices list
-const List _fallbackVoices = ["Dora", "Karl"];
-const String _fallbackDefaultVoice = "Dora";
+const List _fallbackVoices = ["Dóra", "Karl"];
+const String _fallbackDefaultVoice = "Dóra";
 
 List voices;
 

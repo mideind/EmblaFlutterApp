@@ -49,7 +49,7 @@ void main() async {
   // the option of "Karl" as an alternative. As of 1.3.0, we now use
   // voice names e.g. "Dora"
   if (Prefs().stringForKey("voice_id") == "Kona") {
-    Prefs().setStringForKey("voice_id", "Dora");
+    Prefs().setStringForKey("voice_id", "Dóra");
   }
   dlog("Shared prefs: ${Prefs().desc()}");
 
