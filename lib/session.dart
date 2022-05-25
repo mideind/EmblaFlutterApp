@@ -77,7 +77,7 @@ int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
 const kRestingButtonPropSize = 0.58;
-const kExpandedButtonPropSize = 0.58;
+const kExpandedButtonPropSize = 0.70;
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';
@@ -560,16 +560,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                   child: Center(
                       child: Semantics(
                           label: buttonLabel,
-                          child: AnimatedSize(
-                              child: GestureDetector(
-                                  onTap: toggle,
-                                  child: SizedBox(
-                                    width: buttonSize,
-                                    height: buttonSize,
-                                    child: CustomPaint(painter: SessionButtonPainter()),
-                                  )),
-                              curve: Curves.bounceInOut,
-                              duration: Duration(seconds: 1)))))),
+                          child: GestureDetector(
+                              onTap: toggle,
+                              child: SizedBox(
+                                width: buttonSize,
+                                height: buttonSize,
+                                child: CustomPaint(painter: SessionButtonPainter()),
+                              )))))),
         ],
       ),
     );

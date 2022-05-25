@@ -34,40 +34,44 @@ const String _fallbackDefaultVoice = "Dóra";
 List voices;
 
 Future<List> fetchVoiceList() async {
+  if (kReleaseMode) {
+    voices = _fallbackVoices;
+  }
+
   if (voices != null) {
     return voices;
   }
 
-  Map res = await QueryService.requestSupportedVoices();
-  List voiceList = _fallbackVoices;
-  String defaultVoice = _fallbackDefaultVoice;
+  try {
+    Map res = await QueryService.requestSupportedVoices();
+    List voiceList = _fallbackVoices;
+    String defaultVoice = _fallbackDefaultVoice;
 
-  if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
-    // We have a valid response from the server
+    if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
+      // We have a valid response from the server
 
-    if (res.containsKey("default") == true && res["default"] != null) {
-      defaultVoice = res["default"];
+      if (res.containsKey("default") == true && res["default"] != null) {
+        defaultVoice = res["default"];
+      }
+
+      // Debug mode
+      if (res.containsKey("supported") == true) {
+        voiceList = res["supported"];
+      }
+    }
+    // Make sure current voice is sane
+    if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
+      Prefs().setStringForKey("voice_id", defaultVoice);
     }
 
-    // Release mode
-    if (kReleaseMode == true && res.containsKey("recommended") == true) {
-      voiceList = res["recommended"];
-    }
-
-    // Debug mode
-    if (kReleaseMode == false && res.containsKey("supported") == true) {
-      voiceList = res["supported"];
-    }
+    // Store voices list once fetched
+    voices = voiceList;
+  } catch (e) {
+    dlog("Error fetching voice list: $e");
+    voices = _fallbackVoices;
   }
-  // Make sure current voice is sane
-  if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
-    Prefs().setStringForKey("voice_id", defaultVoice);
-  }
 
-  // Store voices list once fetched
-  voices = voiceList;
-
-  return voiceList;
+  return voices;
 }
 
 Widget _buildVoiceList(BuildContext context, List voices) {
