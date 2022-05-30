@@ -91,14 +91,6 @@ class AudioPlayer {
     player.openAudioSession();
   }
 
-  // This is never called since we keep the same audio
-  // session for the duration of the app's lifetime.
-  // Unfortunately, this means the app will crash on
-  // Flutter's "hot restart" (but not "hot reload").
-  // Future<void> _teardown() async {
-  //   await player?.closeAudioSession();
-  // }
-
   // Load all asset-bundled audio files into memory
   Future<void> _preloadAudioFiles() async {
     dlog("Preloading audio assets: ${audioFiles.toString()}");
@@ -165,7 +157,7 @@ class AudioPlayer {
   void playSound(String soundName, [Function() completionHandler]) {
     _instance.stop();
 
-    // Different file name depending on whether female or male voice is set in prefs
+    // Different file name depending on voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
       String voiceName = Prefs().stringForKey('voice_id').toLowerCase();

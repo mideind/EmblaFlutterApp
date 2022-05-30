@@ -139,7 +139,7 @@ class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget
         title: Text(this.widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
-          activeColor: Theme.of(context).primaryColorLight,
+          activeColor: Theme.of(context).primaryColorDark,
           onChanged: (bool value) {
             if (value == true) {
               _showPromptDialog(context);
