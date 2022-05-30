@@ -49,7 +49,7 @@ const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Voice speed range
 const double kVoiceSpeedMin = 0.7;
-const double kVoiceSpeedMax = 1.3;
+const double kVoiceSpeedMax = 2.0;
 
 // Documentation URLs
 const String kAboutURL = 'https://embla.is/about.html';

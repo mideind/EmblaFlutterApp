@@ -4,8 +4,8 @@
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 
-import '../lib/util.dart';
-import '../lib/prefs.dart';
+import 'package:embla/util.dart';
+import 'package:embla/prefs.dart';
 
 void main() {
   testPrefs();

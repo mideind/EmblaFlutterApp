@@ -32,7 +32,7 @@ const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
-  WebViewRoute({Key key, this.initialURL}) : super(key: key);
+  const WebViewRoute({Key key, this.initialURL}) : super(key: key);
 
   @override
   WebViewRouteState createState() => WebViewRouteState();

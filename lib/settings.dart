@@ -51,7 +51,7 @@ class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
 
-  SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
+  const SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
   @override
   SettingsSwitchWidgetState createState() => SettingsSwitchWidgetState();
@@ -88,7 +88,7 @@ class SettingsSwitchConfirmWidget extends StatefulWidget {
   final String label;
   final String prefKey;
 
-  SettingsSwitchConfirmWidget({Key key, this.label, this.prefKey}) : super(key: key);
+  const SettingsSwitchConfirmWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
   @override
   SettingsSwitchConfirmWidgetState createState() => SettingsSwitchConfirmWidgetState();
@@ -221,7 +221,7 @@ class SettingsSliderWidget extends StatefulWidget {
   final double maxValue;
   final double stepSize;
 
-  SettingsSliderWidget(
+  const SettingsSliderWidget(
       {Key key, this.label, this.prefKey, this.minValue, this.maxValue, this.stepSize})
       : super(key: key);
 
@@ -276,7 +276,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   final String buttonTitle;
   final Function handler;
 
-  SettingsButtonPromptWidget({Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+  const SettingsButtonPromptWidget(
+      {Key key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
@@ -329,13 +330,13 @@ class QueryServerSegmentedWidget extends StatefulWidget {
   final List items;
   final String prefKey;
 
-  QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
+  const QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
 
   @override
-  _QueryServerSegmentedWidgetState createState() => _QueryServerSegmentedWidgetState();
+  QueryServerSegmentedWidgetState createState() => QueryServerSegmentedWidgetState();
 }
 
-class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
+class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
   String text;
   TextEditingController textController;
 
@@ -399,7 +400,7 @@ class _QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget>
 }
 
 class SettingsLabelValueWidget extends StatelessWidget {
-  SettingsLabelValueWidget(this.label, this.value);
+  const SettingsLabelValueWidget(this.label, this.value);
 
   final String label;
   final String value;
@@ -418,7 +419,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
 
-  SettingsAsyncLabelValueWidget(this.label, this.future);
+  const SettingsAsyncLabelValueWidget(this.label, this.future);
 
   @override
   Widget build(BuildContext context) {
@@ -435,7 +436,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
 
 class SettingsVoiceSelectWidget extends StatefulWidget {
   final String label;
-  SettingsVoiceSelectWidget({Key key, this.label}) : super(key: key);
+  const SettingsVoiceSelectWidget({Key key, this.label}) : super(key: key);
 
   @override
   SettingsVoiceSelectWidgetState createState() => SettingsVoiceSelectWidgetState();
