@@ -35,10 +35,10 @@ class WebViewRoute extends StatefulWidget {
   WebViewRoute({Key key, this.initialURL}) : super(key: key);
 
   @override
-  _WebViewRouteState createState() => _WebViewRouteState();
+  WebViewRouteState createState() => WebViewRouteState();
 }
 
-class _WebViewRouteState extends State<WebViewRoute> {
+class WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
   // Fall back to local HTML document if error comes up when fetching document from remote server

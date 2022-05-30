@@ -54,10 +54,10 @@ class SettingsSwitchWidget extends StatefulWidget {
   SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
   @override
-  _SettingsSwitchWidgetState createState() => _SettingsSwitchWidgetState();
+  SettingsSwitchWidgetState createState() => SettingsSwitchWidgetState();
 }
 
-class _SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
+class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   @override
   Widget build(BuildContext context) {
     String prefKey = this.widget.prefKey;
@@ -91,10 +91,10 @@ class SettingsSwitchConfirmWidget extends StatefulWidget {
   SettingsSwitchConfirmWidget({Key key, this.label, this.prefKey}) : super(key: key);
 
   @override
-  _SettingsSwitchConfirmWidgetState createState() => _SettingsSwitchConfirmWidgetState();
+  SettingsSwitchConfirmWidgetState createState() => SettingsSwitchConfirmWidgetState();
 }
 
-class _SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget> {
+class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
@@ -173,10 +173,10 @@ class SettingsSegmentedWidget extends StatefulWidget {
   const SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
 
   @override
-  _SettingsSegmentedWidgetState createState() => _SettingsSegmentedWidgetState();
+  SettingsSegmentedWidgetState createState() => SettingsSegmentedWidgetState();
 }
 
-class _SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
+class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   Map<int, Widget> _genChildren() {
     List<String> items = this.widget.items;
     Map<int, Widget> wlist = {};
@@ -226,10 +226,10 @@ class SettingsSliderWidget extends StatefulWidget {
       : super(key: key);
 
   @override
-  _SettingsSliderWidgetState createState() => _SettingsSliderWidgetState();
+  SettingsSliderWidgetState createState() => SettingsSliderWidgetState();
 }
 
-class _SettingsSliderWidgetState extends State<SettingsSliderWidget> {
+class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   double currVal;
 
   double _constrainValue(double pval) {
@@ -438,10 +438,10 @@ class SettingsVoiceSelectWidget extends StatefulWidget {
   SettingsVoiceSelectWidget({Key key, this.label}) : super(key: key);
 
   @override
-  _SettingsVoiceSelectWidgetState createState() => _SettingsVoiceSelectWidgetState();
+  SettingsVoiceSelectWidgetState createState() => SettingsVoiceSelectWidgetState();
 }
 
-class _SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
+class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(

@@ -58,9 +58,9 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Alternate query server options f. debugging purposes
 const List kQueryServerPresetOptions = [
-  ['Greynir', 'https://greynir.is'],
+  ['Greynir.is', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Heima', 'http://192.168.1.8:5000']
+  ['Staðarnet', 'http://192.168.1.8:5000']
 ];
 
 // Debug logging
