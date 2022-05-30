@@ -2,7 +2,6 @@ PRÓFUN Á EMBLU F. ANDROID:
     * Gera allt til að trufla state á meðan fyrirspurnar-sessjón er í gangi, annað hvort að hlusta eða
     svara (smella á hnappinn, hætta í forritinu, skipta yfir í valblað, slökkva á nettengingu o.s.fv.)
     * Hvernig er leturstærðin? Breytist hún rétt eftir stillingum í kerfinu? Kemur hún vel út?
-    * Accessibility? Ekki viss hvernig er best að meta það á Android.
     * Staðsetning. Veit Embla hvar þú ert? Hvað ef þú slekkur á "Deila staðsetningu" í stillingum?
     * Ræsist forritið hratt?
     * Er viðmót þess hratt og snappí?
@@ -15,6 +14,4 @@ PRÓFUN Á EMBLU F. ANDROID:
     * Er við viðmótið skiljanlegt, einfalt, eðlilegt? Í samræmi við hefðirnar á Android?
     * Er forritið stórt og dýrt að sækja miðað við önnur Android forrit?
     * Hvernig er forritið miðað við Android native forritið? Betra, verra, áreiðanlegra, minna áreiðanlegt?
-
-SEINNA:
     * Virkar myrkrahamur þ.e.a.s. dark mode? Er hann læsilegur?

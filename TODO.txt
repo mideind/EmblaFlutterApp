@@ -1,6 +1,5 @@
 TODO for Embla Flutter client
 
-DONE * Dark mode support
 * Analyse audio samples in smaller chunks - find solution
 * Full iOS support (via updated flutter_snowboy plugin)
 * Optimize redraws, or switch over to APNG for animation when Flutter adds support

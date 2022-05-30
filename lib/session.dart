@@ -31,6 +31,7 @@ import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
     show StreamingRecognizeResponse_SpeechEventType;
+import 'package:open_settings/open_settings.dart';
 
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
@@ -49,6 +50,8 @@ const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þes
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
 const kNoInternetMessage = 'Ekki næst samband við netið.';
+const kNoMicPermissionMessage =
+    'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.';
 
 // Global session state enum
 enum SessionState {
@@ -440,13 +443,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       builder: (BuildContext context) {
         return AlertDialog(
           title: Text('Villa í talgreiningu'),
-          content:
-              Text('Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.'),
+          content: Text(kNoMicPermissionMessage),
           actions: <Widget>[
             TextButton(
               child: Text('Allt í lagi'),
               onPressed: () {
                 Navigator.of(context).pop();
+                OpenSettings.openPrivacySetting();
               },
             ),
           ],
