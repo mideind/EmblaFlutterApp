@@ -47,7 +47,10 @@ const String kQueryHistoryAPIPath = '/query_history.api/v1';
 const String kSpeechSynthesisAPIPath = '/speech.api/v1';
 const String kVoiceListAPIPath = '/voices.api/v1';
 
-// Voice speed range
+// Speech synthesis
+const List kSpeechSynthesisVoices = ["Dóra", "Karl"];
+const String kDefaultVoice = "Dóra";
+
 const double kVoiceSpeedMin = 0.7;
 const double kVoiceSpeedMax = 2.0;
 

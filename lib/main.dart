@@ -51,6 +51,12 @@ void main() async {
   if (Prefs().stringForKey("voice_id") == "Kona") {
     Prefs().setStringForKey("voice_id", "Dóra");
   }
+  // Hack mapping "Dora" to "Dóra" in Prefs. This is purely for cosmetic
+  // reasons, as the voice name is displayed in the UI.
+  if (Prefs().stringForKey("voice_id") == "Dora") {
+    Prefs().setStringForKey("voice_id", "Dóra");
+  }
+
   dlog("Shared prefs: ${Prefs().desc()}");
 
   // Init/preload these to prevent any lag after launching app

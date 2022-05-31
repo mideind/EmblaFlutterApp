@@ -23,19 +23,14 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
-import './common.dart' show dlog;
+import './common.dart' show dlog, kSpeechSynthesisVoices, kDefaultVoice;
 import './theme.dart';
-
-// Fallback voices and default voice if offline
-// and unable to query server for voices list
-const List _fallbackVoices = ["Dóra", "Karl"];
-const String _fallbackDefaultVoice = "Dóra";
 
 List voices;
 
 Future<List> fetchVoiceList() async {
   if (kReleaseMode) {
-    voices = _fallbackVoices;
+    voices = kSpeechSynthesisVoices;
   }
 
   if (voices != null) {
@@ -44,8 +39,8 @@ Future<List> fetchVoiceList() async {
 
   try {
     Map res = await QueryService.requestSupportedVoices();
-    List voiceList = _fallbackVoices;
-    String defaultVoice = _fallbackDefaultVoice;
+    List voiceList = kSpeechSynthesisVoices;
+    String defaultVoice = kDefaultVoice;
 
     if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
       // We have a valid response from the server
@@ -68,7 +63,7 @@ Future<List> fetchVoiceList() async {
     voices = voiceList;
   } catch (e) {
     dlog("Error fetching voice list: $e");
-    voices = _fallbackVoices;
+    voices = kSpeechSynthesisVoices;
   }
 
   return voices;
