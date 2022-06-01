@@ -12,7 +12,7 @@ the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on
-Android 8.1+ (SDK >= 27), with full iOS support on the roadmap.
+Android 8.1+ (SDK >= 27), with iOS support on the roadmap.
 
 <a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
     <img alt="Download on Google Play" src="img/play_store.png" width="180">
@@ -33,9 +33,9 @@ Clone the repository:
 $ git clone https://github.com/mideind/Embla_Flutter
 ```
 
-In order to work as intended, the app requires a JSON configuration file containing a key
-for Google's Speech-to-Text API. Get this document from Google's API console and and save
-it at the following path within the repository:
+In order to work as intended, the app requires a Service Account JSON configuration
+file containing a key for Google's Speech-to-Text API. Get this document from
+Google's API console and and save it at the following path within the repository:
 
 ```keys/gaccount.json```
 
@@ -96,3 +96,6 @@ GNU GPLv3 license, please contact us at [mideind@mideind.is](mailto:mideind@mide
 to negotiate a custom license. This applies for instance if you want to include or use
 this software, in part or in full, in other software that is not licensed under
 GNU GPLv3 or other compatible licenses.
+
+The Embla logo, icon and other images are Copyright (C) Miðeind ehf. and may not
+be used without permission.
