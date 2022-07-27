@@ -11,3 +11,4 @@ TODO for Embla Flutter client
 * Open preferences if microphone/location enabled in settings but not allowed in system settings
 * Add Widget tests
 * Black background on switch buttons in dark mode should be lighter color
+* Request permissions all at once on Android to address issues w. requesting geoloc + mic separately
