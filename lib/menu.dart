@@ -23,6 +23,7 @@ import 'package:flutter/cupertino.dart';
 
 import './common.dart';
 import './settings.dart' show SettingsRoute;
+import './iot.dart' show IoTRoute;
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
 //import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;
@@ -32,6 +33,15 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
     context,
     CupertinoPageRoute(
       builder: (context) => SettingsRoute(),
+    ),
+  );
+}
+
+void _pushIoTRoute(BuildContext context, dynamic arg) {
+  Navigator.push(
+    context,
+    CupertinoPageRoute(
+      builder: (context) => IoTRoute(),
     ),
   );
 }
@@ -75,6 +85,7 @@ ListView _generateMenu(BuildContext context) {
     padding: const EdgeInsets.all(8),
     children: <Widget>[
       _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+      _generateTile('Snjalltæki', 'iot', _pushIoTRoute, context, null),
       //_generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
       _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
       _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
