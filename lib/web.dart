@@ -20,10 +20,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+// import 'package:platform_device_id/platform_device_id.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 
 import './theme.dart' show standardAppBar;
 import './common.dart' show dlog;
+import './query.dart' as query;
 
 const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
@@ -42,7 +44,8 @@ class WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController webView;
 
   // Fall back to local HTML document if error comes up when fetching document from remote server
-  void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
+  void errHandler(InAppWebViewController controller, Uri url, int errCode,
+      String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url.toString());
     dlog("Falling back to local asset $path");
@@ -64,7 +67,8 @@ class WebViewRouteState extends State<WebViewRoute> {
     URLRequest req = action.request;
     String urlStr = req.url.toString();
     String fallbackFilename = _fallbackAssetForURL(urlStr);
-    if (urlStr != widget.initialURL && urlStr.endsWith(fallbackFilename) == false) {
+    if (urlStr != widget.initialURL &&
+        urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
       await launchUrl(req.url, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
@@ -77,7 +81,8 @@ class WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled HTML document on network error.
-    var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+    var darkMode =
+        (MediaQuery.of(context).platformBrightness == Brightness.dark);
     var loadingURL = kLoadingHTMLFilePath;
     if (darkMode) {
       loadingURL = kLoadingDarkHTMLFilePath;
@@ -93,13 +98,15 @@ class WebViewRouteState extends State<WebViewRoute> {
       onLoadStart: (InAppWebViewController controller, Uri url) {
         dlog("Loading URL ${url.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, Uri url) {
+      onLoadStop: (InAppWebViewController controller, Uri url) async {
         if (url.toString().endsWith(kLoadingHTMLFilePath) ||
             url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
+          // String clientID = await PlatformDeviceId.getDeviceId;
+          // dlog("Client id: " + clientID);
           setState(() {
-            String url = widget.initialURL;
+            String url = widget.initialURL; //+ "?client_id=$clientID";
             if (darkMode) {
-              url += '?dark=1';
+              url += '&dark=1';
             }
             Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));
