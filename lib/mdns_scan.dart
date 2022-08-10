@@ -134,9 +134,9 @@ class _MDNSRouteState extends State<MDNSRoute> {
   bool isSearching = false;
 
   void makeCard(String name, String domainName) async {
+    String clientID = await PlatformDeviceId.getDeviceId;
     Future<String> getUrl(String domainName) async {
       String url = '';
-      String clientID = await PlatformDeviceId.getDeviceId;
       String host = kHost;
       if (domainName.contains('_sonos._tcp.local')) {
         String sonosKey = await loadText('SonosKey.txt');
@@ -144,6 +144,11 @@ class _MDNSRouteState extends State<MDNSRoute> {
             "https://api.sonos.com/login/v3/oauth?client_id=$sonosKey&response_type=code&state=$clientID&scope=playback-control-all&redirect_uri=$host/connect_sonos.api";
       }
       return url;
+    }
+
+    Future<String> hueUrl() async {
+      clientID = await PlatformDeviceId.getDeviceId;
+      return "$kHost/iot/hue-connection?client_id=$clientID&request_url=$kHost";
     }
 
     final Map<String, Map<String, dynamic>> devices = {
@@ -155,7 +160,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
           color: Theme.of(context).primaryColor,
           size: 30.0,
         ),
-        "webview": "hue",
+        "webview": await hueUrl(),
       },
       "_sonos._tcp.local": {
         "name": 'Sonos',

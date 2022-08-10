@@ -2,18 +2,18 @@
 // ^ Removes checks for null safety
 //import 'dart:html';
 
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:http/http.dart' as http;
+import 'package:platform_device_id/platform_device_id.dart';
+import 'package:rxdart/rxdart.dart';
 
 import './common.dart';
-import './query.dart' show QueryService;
-import './prefs.dart' show Prefs;
-import './voices.dart' show VoiceSelectionRoute;
 import './theme.dart';
-import './mdns.dart';
 import './connection_card.dart';
 import './connection.dart';
 import './add_connection.dart';
@@ -21,7 +21,7 @@ import './add_connection.dart';
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
-const String kHost = "http://192.168.1.76:5000/iot/";
+const String kHost = "http://192.168.1.76:5000";
 
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
 
@@ -35,13 +35,7 @@ void _pushMDNSRoute(BuildContext context, dynamic arg) {
 }
 
 // List of IoT widgets
-List<Widget> _iot(BuildContext context) {
-  // MulticastDNSSearcher mdns = MulticastDNSSearcher();
-
-  // mdns.findLocalDevices(kmDNSServiceFilters, (String x) {
-  //   dlog("CALLBACK: Found device $x");
-  // });
-
+List<Widget> _iot(BuildContext context, connectionCards, isSearching) {
   dlog("Context: , $context");
   return <Widget>[
     Container(
@@ -69,91 +63,155 @@ List<Widget> _iot(BuildContext context) {
     Container(
       margin: const EdgeInsets.only(left: 25.0, bottom: 20.0),
       child: Text(
-        'Tækin mín',
+        'Mínar tengingar',
         style: Theme.of(context).textTheme.headline4,
       ),
     ),
-    Center(
-        child: Column(
-      children: <Widget>[
-        Wrap(
-          spacing: 10.0,
-          runSpacing: 10.0,
-          children: <Widget>[
-            ConnectionCard(
-              connection: Connection(
-                name: 'Hue Hub',
-                brand: 'Philips',
-                icon: Icon(
-                  Icons.lightbulb_outline_rounded,
-                  color: Theme.of(context).primaryColor,
-                  size: 30.0,
-                ),
-                webview: '${kHost}hue-instructions',
+    Container(
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.start,
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              Wrap(
+                spacing: 8.0,
+                runSpacing: 10.0,
+                children: connectionCards,
               ),
-            ),
-            ConnectionCard(
-              connection: Connection(
-                name: 'Home Smart',
-                brand: 'Ikea',
-                icon: Icon(
-                  Icons.lightbulb_outline_rounded,
-                  color: Theme.of(context).primaryColor,
-                  size: 30.0, // TODO: Make this dynamic
+              Visibility(
+                visible: !isSearching && connectionCards.isEmpty,
+                child: Center(
+                  child: Container(
+                    margin: const EdgeInsets.only(
+                        top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+                    child: Text(
+                      'Engar tengingar til staðar.',
+                      style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                    ),
+                  ),
                 ),
-                webview: '${kHost}ikea-instructions',
               ),
-            ),
-            ConnectionCard(
-              connection: Connection(
-                name: 'Sonos',
-                brand: 'Sonos, Inc.',
-                icon: Icon(
-                  Icons.speaker_outlined,
+              const SizedBox(height: 50.0),
+              Visibility(
+                visible: isSearching,
+                child: SpinKitRing(
                   color: Theme.of(context).primaryColor,
-                  size: 30.0,
+                  size: 50.0,
                 ),
-                webview: '${kHost}sonos-instructions',
               ),
-            ),
-            ConnectionCard(
-              connection: Connection(
-                name: 'Shelly',
-                brand: 'Shelly, Inc.',
-                icon: Icon(
-                  Icons.lightbulb_outline_rounded,
-                  color: Theme.of(context).primaryColor,
-                  size: 30.0,
-                ),
-                webview: '${kHost}shelly-instructions',
-              ),
-            ),
-            ConnectionCard(
-              connection: Connection(
-                name: 'Spotify',
-                brand: 'Spotify Technologies S.A.',
-                icon: Icon(
-                  Icons.music_note_outlined,
-                  color: Theme.of(context).primaryColor,
-                  size: 30.0,
-                ),
-                webview: '${kHost}spotify-instructions',
-              ),
-            ),
-          ],
-        ),
-        // TODO: Add widget for filtering connected devices (dropdown?)
-        // TODO: Add widget for connected devices
-        // TODO: Add widget for going into "Tengja snjalltæki"
-      ],
-    )),
+            ],
+          ),
+        ],
+      ),
+    ),
   ];
 }
 
-class IoTRoute extends StatelessWidget {
+class IoTRoute extends StatefulWidget {
+  const IoTRoute({Key key}) : super(key: key);
+
+  @override
+  State<IoTRoute> createState() => _IoTRouteState();
+}
+
+class _IoTRouteState extends State<IoTRoute> {
+  List<ConnectionCard> connectionCards = [];
+  bool isSearching = false;
+
+  void makeCard(String name, String clientID, String iotGroup) async {
+    print("Client ID: $clientID");
+    print("IoT Group: $iotGroup");
+    print("Name: $name");
+    print(
+        'URL: $kHost/iot/hue-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name');
+    final Map<String, Map<String, dynamic>> devices = {
+      "philips_hue": {
+        "name": 'Hue Hub',
+        "brand": 'Philips',
+        "icon": Icon(
+          Icons.lightbulb_outline_rounded,
+          color: Theme.of(context).primaryColor,
+          size: 30.0,
+        ),
+        "webview":
+            '$kHost/iot/hue-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name',
+      },
+      "sonos": {
+        "name": 'Sonos',
+        "brand": 'Sonos, Inc.',
+        "icon": Icon(
+          Icons.speaker_outlined,
+          color: Theme.of(context).primaryColor,
+          size: 30.0,
+        ),
+        "webview":
+            '$kHost/iot/sonos-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name',
+      },
+    };
+
+    dlog("MAKING CARD: $name");
+    setState(() {
+      connectionCards.add(ConnectionCard(
+        connection: Connection(
+          name: devices[name]['name'],
+          brand: devices[name]['brand'],
+          icon: devices[name]['icon'],
+          webview: devices[name]['webview'],
+        ),
+      ));
+    });
+  }
+
+  void scanForDevices() async {
+    dlog("Scanning for devices...");
+    if (isSearching) {
+      return;
+    }
+    setState(() {
+      connectionCards.clear();
+    });
+    isSearching = true;
+    String clientID = await PlatformDeviceId.getDeviceId;
+
+    // Fetching connections from data base
+    Future<http.Response> fetchConnections() async {
+      return http
+          .get(Uri.parse('$kHost/get_iot_devices.api?client_id=$clientID'));
+    }
+
+    fetchConnections().then((http.Response response) {
+      Map<String, dynamic> json = jsonDecode(response.body);
+      if (json['valid'] == true) {
+        json.removeWhere((key, value) => key == "valid");
+        for (Map<String, dynamic> groups in json.values) {
+          for (final group in groups.entries) {
+            String iotGroup = group.key;
+            Map<String, dynamic> devices = group.value;
+            for (String device in devices.keys) {
+              makeCard(device, clientID, iotGroup);
+            }
+          }
+        }
+      }
+    }).catchError((error) {
+      dlog("Error: $error");
+    }).whenComplete(() {
+      setState(() {
+        isSearching = false;
+      });
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    scanForDevices();
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _iot(context);
+    List<Widget> wlist = _iot(context, connectionCards, isSearching);
 
     return Scaffold(
         appBar: standardAppBar,

@@ -3,7 +3,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './common.dart';
-import './web.dart';
+import './iot_web.dart';
 import './connection.dart';
 
 // TODO: Maybe not stateful?
@@ -32,8 +32,8 @@ class _ConnectionCardState extends State<ConnectionCard> {
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
-    //print(width);
-    var cardWidth = (width < 500.0) ? (width * 0.35) : (width * 0.175);
+    print(width);
+    var cardWidth = (width < 500.0) ? (width * 0.34) : (width * 0.175);
 
     return GestureDetector(
       onTap: () {
