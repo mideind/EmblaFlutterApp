@@ -38,11 +38,11 @@ const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 const String kHost = "http://192.168.1.76:5000";
 
-Future<String> loadText(String textFile) async {
-  dlog("Loading text file: $textFile");
-  String tFile = await rootBundle.loadString('assets/iot_keys/$textFile');
-  return tFile;
-}
+// Future<String> loadText(String textFile) async {
+//   dlog("Loading text file: $textFile");
+//   String tFile = await rootBundle.loadString('assets/iot_keys/$textFile');
+//   return tFile;
+// }
 
 // List of IoT widgets
 List<Widget> _mdns(
@@ -83,10 +83,23 @@ List<Widget> _mdns(
     Center(
       child: Column(
         children: <Widget>[
-          Wrap(
-            spacing: 10.0,
-            runSpacing: 10.0,
-            children: connectionCards,
+          Container(
+            color: Colors.red,
+            margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Wrap(
+                      spacing: 10.0,
+                      runSpacing: 10.0,
+                      children: connectionCards,
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
           Visibility(
             visible: !isSearching && connectionCards.isEmpty,
@@ -108,11 +121,13 @@ List<Widget> _mdns(
             ),
           ),
           const SizedBox(height: 50.0),
-          Visibility(
-            visible: isSearching,
-            child: SpinKitRing(
-              color: Theme.of(context).primaryColor,
-              size: 50.0,
+          Center(
+            child: Visibility(
+              visible: isSearching,
+              child: SpinKitRing(
+                color: Theme.of(context).primaryColor,
+                size: 50.0,
+              ),
             ),
           ),
         ],
@@ -122,7 +137,9 @@ List<Widget> _mdns(
 }
 
 class MDNSRoute extends StatefulWidget {
-  const MDNSRoute({Key key}) : super(key: key);
+  final Map<String, dynamic> connectionInfo;
+
+  const MDNSRoute({Key key, this.connectionInfo}) : super(key: key);
 
   @override
   State<MDNSRoute> createState() => _MDNSRouteState();
@@ -134,56 +151,33 @@ class _MDNSRouteState extends State<MDNSRoute> {
   bool isSearching = false;
 
   void makeCard(String name, String domainName) async {
+    dlog("${widget.connectionInfo}");
     String clientID = await PlatformDeviceId.getDeviceId;
-    Future<String> getUrl(String domainName) async {
-      String url = '';
-      String host = kHost;
-      if (domainName.contains('_sonos._tcp.local')) {
-        String sonosKey = await loadText('SonosKey.txt');
-        url =
-            "https://api.sonos.com/login/v3/oauth?client_id=$sonosKey&response_type=code&state=$clientID&scope=playback-control-all&redirect_uri=$host/connect_sonos.api";
-      }
-      return url;
-    }
-
-    Future<String> hueUrl() async {
-      clientID = await PlatformDeviceId.getDeviceId;
-      return "$kHost/iot/hue-connection?client_id=$clientID&request_url=$kHost";
-    }
-
-    final Map<String, Map<String, dynamic>> devices = {
-      "_hue._tcp.local": {
-        "name": 'Hue Hub',
-        "brand": 'Philips',
-        "icon": Icon(
-          Icons.lightbulb_outline_rounded,
-          color: Theme.of(context).primaryColor,
-          size: 30.0,
-        ),
-        "webview": await hueUrl(),
-      },
-      "_sonos._tcp.local": {
-        "name": 'Sonos',
-        "brand": 'Sonos, Inc.',
-        "icon": Icon(
-          Icons.speaker_outlined,
-          color: Theme.of(context).primaryColor,
-          size: 30.0,
-        ),
-        "webview": await getUrl(domainName),
-      },
+    Map<String, String> domain_map = {
+      "_hue._tcp.local": "philips_hue",
+      "_sonos._tcp.local": "sonos",
     };
+    String connection_name = domain_map[domainName];
 
-    dlog("MAKING CARD: $name");
+    dlog("MAKING CARD: $connection_name");
+    dlog("Connectioninfo: ${widget.connectionInfo}");
     setState(() {
+      dlog("Making card: $connection_name");
       connectionCards.add(ConnectionCard(
         connection: Connection(
-          name: devices[domainName]['name'],
-          brand: devices[domainName]['brand'],
-          icon: devices[domainName]['icon'],
-          webview: devices[domainName]['webview'],
+          name: widget.connectionInfo[connection_name]['name'],
+          brand: widget.connectionInfo[connection_name]['brand'],
+          icon: Icon(
+            IconData(widget.connectionInfo[connection_name]['icon'],
+                fontFamily: 'MaterialIcons'),
+            // connectionInfo[name]['icon'] as IconData,
+            color: Theme.of(context).primaryColor,
+            size: 30.0,
+          ),
+          webview: widget.connectionInfo[connection_name]['webview_connect'],
         ),
       ));
+      dlog("Connection cards: ${connectionCards.length}");
     });
   }
 

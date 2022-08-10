@@ -64,6 +64,7 @@ class MulticastDNSSearcher {
       dlog(ptr);
       for (final RegExp filter in filters) {
         if (filter.hasMatch(ptr.domainName)) {
+          dlog("Found device: ${ptr.domainName}");
           await for (final PtrResourceRecord ptr2
               in _client.lookup<PtrResourceRecord>(
                   ResourceRecordQuery.serverPointer(ptr.domainName))) {

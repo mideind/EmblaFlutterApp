@@ -29,13 +29,16 @@ void _pushMDNSRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => ConnectionRoute(),
+      builder: (context) => ConnectionRoute(
+        connectionInfo: arg,
+      ),
     ),
   );
 }
 
 // List of IoT widgets
-List<Widget> _iot(BuildContext context, connectionCards, isSearching) {
+List<Widget> _iot(BuildContext context, List<ConnectionCard> connectionCards,
+    bool isSearching, Map<String, dynamic> connectionInfo) {
   dlog("Context: , $context");
   return <Widget>[
     Container(
@@ -50,7 +53,7 @@ List<Widget> _iot(BuildContext context, connectionCards, isSearching) {
             ),
             IconButton(
               onPressed: () {
-                _pushMDNSRoute(context, null);
+                _pushMDNSRoute(context, connectionInfo);
               },
               icon: Icon(
                 Icons.add,
@@ -118,48 +121,48 @@ class IoTRoute extends StatefulWidget {
 class _IoTRouteState extends State<IoTRoute> {
   List<ConnectionCard> connectionCards = [];
   bool isSearching = false;
+  Map<String, dynamic> connectionInfo = {};
 
   void makeCard(String name, String clientID, String iotGroup) async {
-    print("Client ID: $clientID");
-    print("IoT Group: $iotGroup");
-    print("Name: $name");
-    print(
-        'URL: $kHost/iot/hue-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name');
-    final Map<String, Map<String, dynamic>> devices = {
-      "philips_hue": {
-        "name": 'Hue Hub',
-        "brand": 'Philips',
-        "icon": Icon(
-          Icons.lightbulb_outline_rounded,
-          color: Theme.of(context).primaryColor,
-          size: 30.0,
-        ),
-        "webview":
-            '$kHost/iot/hue-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name',
-      },
-      "sonos": {
-        "name": 'Sonos',
-        "brand": 'Sonos, Inc.',
-        "icon": Icon(
-          Icons.speaker_outlined,
-          color: Theme.of(context).primaryColor,
-          size: 30.0,
-        ),
-        "webview":
-            '$kHost/iot/sonos-instructions?client_id=$clientID&iot_group=$iotGroup&iot_name=$name',
-      },
-    };
-
-    dlog("MAKING CARD: $name");
     setState(() {
       connectionCards.add(ConnectionCard(
         connection: Connection(
-          name: devices[name]['name'],
-          brand: devices[name]['brand'],
-          icon: devices[name]['icon'],
-          webview: devices[name]['webview'],
+          name: connectionInfo[name]['name'],
+          brand: connectionInfo[name]['brand'],
+          icon: Icon(
+            IconData(connectionInfo[name]['icon'], fontFamily: 'MaterialIcons'),
+            // connectionInfo[name]['icon'] as IconData,
+            color: Theme.of(context).primaryColor,
+            size: 30.0,
+          ),
+          webview: connectionInfo[name]['webview_home'],
+          // context: context,
         ),
       ));
+    });
+  }
+
+  void getSupportedConnections() async {
+    setState(() {
+      isSearching = true;
+    });
+    String clientID = await PlatformDeviceId.getDeviceId;
+    await http
+        .get(Uri.parse(
+            '$kHost/get_supported_iot_connections.api?client_id=$clientID&host=$kHost'))
+        .then((response) {
+      final Map<String, dynamic> body = json.decode(response.body);
+      connectionInfo = body['data']['connections'];
+      setState(() {
+        isSearching = false;
+      });
+    }).catchError((error) {
+      dlog("Error: $error");
+    }).whenComplete(() {
+      setState(() {
+        isSearching = false;
+        scanForDevices();
+      });
     });
   }
 
@@ -189,6 +192,7 @@ class _IoTRouteState extends State<IoTRoute> {
             String iotGroup = group.key;
             Map<String, dynamic> devices = group.value;
             for (String device in devices.keys) {
+              dlog("Making card after fetching connections");
               makeCard(device, clientID, iotGroup);
             }
           }
@@ -206,12 +210,13 @@ class _IoTRouteState extends State<IoTRoute> {
   @override
   void initState() {
     super.initState();
-    scanForDevices();
+    getSupportedConnections();
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _iot(context, connectionCards, isSearching);
+    List<Widget> wlist =
+        _iot(context, connectionCards, isSearching, connectionInfo);
 
     return Scaffold(
         appBar: standardAppBar,

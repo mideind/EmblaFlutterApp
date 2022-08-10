@@ -37,13 +37,16 @@ void _pushConnectionRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => const MDNSRoute(),
+      builder: (context) => MDNSRoute(
+        connectionInfo: arg,
+      ),
     ),
   );
 }
 
 // List of IoT widgets
-List<Widget> _options(BuildContext context) {
+List<Widget> _options(
+    BuildContext context, Map<String, dynamic> connectionInfo) {
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
@@ -63,7 +66,7 @@ List<Widget> _options(BuildContext context) {
         child: ElevatedButton(
           onPressed: () async {
             dlog("Navigating to scan...");
-            _pushConnectionRoute(context, null);
+            _pushConnectionRoute(context, connectionInfo);
           },
           style: const ButtonStyle(),
           child: const Text(
@@ -76,11 +79,13 @@ List<Widget> _options(BuildContext context) {
 }
 
 class ConnectionRoute extends StatelessWidget {
-  const ConnectionRoute({Key key}) : super(key: key);
+  final Map<String, dynamic> connectionInfo;
+
+  const ConnectionRoute({Key key, this.connectionInfo}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _options(context);
+    List<Widget> wlist = _options(context, connectionInfo);
 
     if (kReleaseMode == false) {
       // Special debug widgets go here
