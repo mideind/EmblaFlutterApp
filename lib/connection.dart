@@ -4,9 +4,11 @@ import 'package:flutter/material.dart';
 
 class Connection {
   final String name;
-  final String brand;
+  String brand;
   final Icon icon;
+  Image logo;
   final String webview;
 
-  Connection({this.name, this.brand, this.icon, this.webview});
+  Connection.card({this.name, this.brand, this.icon, this.webview});
+  Connection.list({this.name, this.icon, this.logo, this.webview});
 }
