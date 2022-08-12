@@ -21,6 +21,8 @@
 
 // mDNS scan route
 
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -29,8 +31,8 @@ import 'package:platform_device_id/platform_device_id.dart';
 
 import './common.dart';
 import './theme.dart';
-import 'connection.dart';
-import 'connection_card.dart';
+import './connection.dart';
+import './connection_card.dart';
 import './mdns.dart';
 
 // UI String constants
@@ -80,27 +82,17 @@ List<Widget> _mdns(
             ),
           ],
         )),
+    Container(
+      margin: const EdgeInsets.only(top: 20.0, left: 15.0, bottom: 30.0),
+      child: Wrap(
+        spacing: 10.0,
+        runSpacing: 10.0,
+        children: connectionCards,
+      ),
+    ),
     Center(
       child: Column(
         children: <Widget>[
-          Container(
-            color: Colors.red,
-            margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Wrap(
-                      spacing: 10.0,
-                      runSpacing: 10.0,
-                      children: connectionCards,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           Visibility(
             visible: !isSearching && connectionCards.isEmpty,
             child: Container(
@@ -149,22 +141,24 @@ class _MDNSRouteState extends State<MDNSRoute> {
   List<ConnectionCard> connectionCards = [];
   String searchingText = "Leita að snjalltækjum...";
   bool isSearching = false;
+  List<RegExp> kmDNSServiceFilters = <RegExp>[];
+  Map<String, String> serviceMap = {};
 
-  void makeCard(String name, String domainName) async {
+  void makeCard(String connection_name) async {
     dlog("${widget.connectionInfo}");
     String clientID = await PlatformDeviceId.getDeviceId;
-    Map<String, String> domain_map = {
-      "_hue._tcp.local": "philips_hue",
-      "_sonos._tcp.local": "sonos",
-    };
-    String connection_name = domain_map[domainName];
+    // Map<String, String> domain_map = {
+    //   "_hue._tcp.local": "philips_hue",
+    //   "_sonos._tcp.local": "sonos",
+    // };
+    // String connection_name = domain_map[domainName];
 
     dlog("MAKING CARD: $connection_name");
     dlog("Connectioninfo: ${widget.connectionInfo}");
     setState(() {
       dlog("Making card: $connection_name");
       connectionCards.add(ConnectionCard(
-        connection: Connection(
+        connection: Connection.card(
           name: widget.connectionInfo[connection_name]['name'],
           brand: widget.connectionInfo[connection_name]['brand'],
           icon: Icon(
@@ -191,8 +185,9 @@ class _MDNSRouteState extends State<MDNSRoute> {
     });
     isSearching = true;
     MulticastDNSSearcher mdns = MulticastDNSSearcher();
+
     dlog("Finding devices");
-    await mdns.findLocalDevices(kmDNSServiceFilters, makeCard);
+    await mdns.findLocalDevices(kmDNSServiceFilters, serviceMap, makeCard);
     isSearching = false;
 
     setState(() {
@@ -201,9 +196,20 @@ class _MDNSRouteState extends State<MDNSRoute> {
     });
   }
 
+  void createServiceFilters() {
+    widget.connectionInfo.forEach((key, connection) {
+      dlog("Creating service filter for: ${connection['mdns_name']}");
+      RegExp regex = RegExp("${connection["mdns_name"]}");
+      kmDNSServiceFilters.add(regex);
+      dlog("Service filters: ${kmDNSServiceFilters.length}");
+      serviceMap[connection["mdns_name"]] = key;
+    });
+  }
+
   @override
   void initState() {
     super.initState();
+    createServiceFilters();
     scanForDevices();
   }
 
