@@ -33,8 +33,10 @@ const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
+  final Function callbackFromJavascript;
 
-  const WebViewRoute({Key key, this.initialURL}) : super(key: key);
+  const WebViewRoute({Key key, this.initialURL, this.callbackFromJavascript})
+      : super(key: key);
 
   @override
   WebViewRouteState createState() => WebViewRouteState();
@@ -118,6 +120,14 @@ class WebViewRouteState extends State<WebViewRoute> {
       onLoadError: errHandler,
       onLoadHttpError: errHandler,
       //shouldOverrideUrlLoading: urlClickHandler,
+      onWebViewCreated: (InAppWebViewController controller) {
+        controller.addJavaScriptHandler(
+            handlerName: "flutter_handler",
+            callback: (args) {
+              dlog("flutter_handler called from javascript!!! $args");
+              widget.callbackFromJavascript(args);
+            });
+      },
     );
 
     return Scaffold(
