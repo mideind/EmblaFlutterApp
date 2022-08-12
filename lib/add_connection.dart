@@ -28,6 +28,8 @@ import 'package:flutter/cupertino.dart';
 import './common.dart';
 import './theme.dart';
 import './mdns_scan.dart';
+import 'connection_listitem.dart';
+import '././connection.dart';
 
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
@@ -45,47 +47,116 @@ void _pushConnectionRoute(BuildContext context, dynamic arg) {
 }
 
 // List of IoT widgets
-List<Widget> _options(
-    BuildContext context, Map<String, dynamic> connectionInfo) {
+List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
+    List<ConnectionListItem> connectionList) {
   return <Widget>[
     Container(
-        margin: const EdgeInsets.only(
-            top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: const [
-            Text(
-              "Tækjaleit",
-              style: TextStyle(fontSize: 25.0, color: Colors.black),
-            ),
-          ],
-        )),
-    Container(
-      margin: const EdgeInsets.only(bottom: 20.0),
-      child: Center(
-        child: ElevatedButton(
-          onPressed: () async {
-            dlog("Navigating to scan...");
-            _pushConnectionRoute(context, connectionInfo);
-          },
-          style: const ButtonStyle(),
-          child: const Text(
-            'Skanna',
+      margin: const EdgeInsets.only(
+          top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: <Widget>[
+          Text(
+            "Bæta við tengingu",
+            style: TextStyle(fontSize: 25.0, color: Colors.black),
           ),
-        ),
+          Container(
+            margin: EdgeInsets.only(bottom: 20.0, top: 40.0),
+            child: Center(
+              child: ElevatedButton(
+                onPressed: () async {
+                  dlog("Navigating to scan...");
+                  _pushConnectionRoute(context, connectionInfo);
+                },
+                style: const ButtonStyle(),
+                child: const Text(
+                  'Skanna eftir tækjum',
+                ),
+              ),
+            ),
+          ),
+          Text('Tengingalisti', style: Theme.of(context).textTheme.headline1),
+          SizedBox(
+            height: MediaQuery.of(context).size.height * 0.02,
+          ),
+          Column(
+            children: <Widget>[
+              ListView.builder(
+                physics: NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemCount: connectionList.length,
+                itemBuilder: (context, index) {
+                  return connectionList[index];
+                },
+              ),
+            ],
+          ),
+        ],
       ),
     ),
   ];
 }
 
-class ConnectionRoute extends StatelessWidget {
+class ConnectionRoute extends StatefulWidget {
   final Map<String, dynamic> connectionInfo;
 
   const ConnectionRoute({Key key, this.connectionInfo}) : super(key: key);
 
   @override
+  State<ConnectionRoute> createState() => _ConnectionRouteState();
+}
+
+class _ConnectionRouteState extends State<ConnectionRoute> {
+  final List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
+
+  void initializeConnectionList() async {
+    Future<void> makeCard(String key, dynamic value) async {
+      _connectionList.add(
+        ConnectionListItem(
+          connection: Connection.list(
+              name: value['display_name'],
+              icon: Icon(
+                IconData(value['icon'], fontFamily: 'MaterialIcons'),
+                //TODO: use theme here. Was causing errors
+                color: Colors.red, //Theme.of(context).primaryColor
+                size: 24.0,
+              ),
+              logo: Image(
+                image: NetworkImage(value['logo'], scale: 1.0),
+                width: 25.0,
+              ),
+              webview: value['webview_connect']),
+        ),
+      );
+      dlog("Card added: ${value['display_name']}");
+    }
+
+    Future<void> makeCards() async {
+      widget.connectionInfo.forEach((key, value) async {
+        dlog("Key: $key, value: $value");
+        await makeCard(key, value);
+      });
+    }
+
+    await makeCards();
+
+    setState(() {
+      dlog("Initializing connection list...");
+      dlog("Connection list initialized with ${_connectionList.length} items");
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    dlog("Connection info: ${widget.connectionInfo}");
+    initializeConnectionList();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _options(context, connectionInfo);
+    List<Widget> wlist =
+        _options(context, widget.connectionInfo, _connectionList);
 
     if (kReleaseMode == false) {
       // Special debug widgets go here
