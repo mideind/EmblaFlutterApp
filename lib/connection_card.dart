@@ -9,26 +9,41 @@ import './connection.dart';
 // TODO: Maybe not stateful?
 class ConnectionCard extends StatefulWidget {
   final Connection connection;
+  final Function navigationCallback;
+  final Function callbackFromJavascript;
 
-  const ConnectionCard({Key key, this.connection}) : super(key: key);
+  const ConnectionCard(
+      {Key key,
+      @required this.connection,
+      this.navigationCallback,
+      this.callbackFromJavascript})
+      : super(key: key);
 
   @override
   _ConnectionCardState createState() => _ConnectionCardState();
 }
 
-void _pushWebRoute(BuildContext context, dynamic arg) {
+void _pushWebRoute(BuildContext context, Function navigationCallback,
+    dynamic arg, Function callbackFromJavascript) {
   dlog("URL: " + arg);
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => WebViewRoute(initialURL: arg),
+      builder: (context) => WebViewRoute(
+        initialURL: arg,
+        callbackFromJavascript: callbackFromJavascript,
+      ),
     ),
+  ).then(
+    (value) {
+      if (navigationCallback != null) {
+        navigationCallback();
+      }
+    },
   );
 }
 
 class _ConnectionCardState extends State<ConnectionCard> {
-  int counter = 0;
-
   @override
   Widget build(BuildContext context) {
     var width = MediaQuery.of(context).size.width;
@@ -37,11 +52,8 @@ class _ConnectionCardState extends State<ConnectionCard> {
 
     return GestureDetector(
       onTap: () {
-        //counter++;
-        dlog("Counter: $counter");
-        _pushWebRoute(context,
-            '${widget.connection.webview}'); // http://192.168.1.76:5000/iot/
-        // kAboutURL);
+        _pushWebRoute(context, widget.navigationCallback,
+            '${widget.connection.webview}', widget.callbackFromJavascript);
       },
       child: Card(
         child: Padding(
