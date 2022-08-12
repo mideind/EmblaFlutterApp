@@ -83,9 +83,9 @@ List<Widget> _mdns(
           ],
         )),
     Container(
-      margin: const EdgeInsets.only(top: 20.0, left: 15.0, bottom: 30.0),
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
       child: Wrap(
-        spacing: 10.0,
+        spacing: 8.0,
         runSpacing: 10.0,
         children: connectionCards,
       ),

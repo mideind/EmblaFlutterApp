@@ -80,26 +80,17 @@ List<Widget> _iot(
         style: Theme.of(context).textTheme.headline4,
       ),
     ),
+    Container(
+      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+      child: Wrap(
+        spacing: 8.0,
+        runSpacing: 10.0,
+        children: connectionCards,
+      ),
+    ),
     Center(
       child: Column(
         children: <Widget>[
-          Container(
-            margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                Column(
-                  children: <Widget>[
-                    Wrap(
-                      spacing: 8.0,
-                      runSpacing: 10.0,
-                      children: connectionCards,
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
           Visibility(
             visible: !isSearching && connectionCards.isEmpty,
             child: Center(

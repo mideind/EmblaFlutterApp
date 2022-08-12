@@ -21,6 +21,8 @@
 
 // mDNS scan route
 
+import 'dart:core';
+
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -61,21 +63,51 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
             style: TextStyle(fontSize: 25.0, color: Colors.black),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 20.0, top: 40.0),
+            margin: EdgeInsets.only(bottom: 40.0, top: 40.0),
             child: Center(
-              child: ElevatedButton(
+              child: ElevatedButton.icon(
                 onPressed: () async {
                   dlog("Navigating to scan...");
                   _pushConnectionRoute(context, connectionInfo);
                 },
-                style: const ButtonStyle(),
-                child: const Text(
-                  'Skanna eftir tækjum',
+                style: ButtonStyle(
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(50.0),
+                    ),
+                  ),
+                  padding: MaterialStateProperty.all(
+                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                    (Set<MaterialState> states) {
+                      if (states.isEmpty) {
+                        return Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.5);
+                      }
+                      if (states.contains(MaterialState.pressed)) {
+                        return Theme.of(context)
+                            .colorScheme
+                            .secondary
+                            .withOpacity(0.4);
+                      }
+                      return null; // Use the component's default.
+                    },
+                  ),
+                ),
+                label: Text(
+                  'Finna tæki',
+                ),
+                icon: Icon(
+                  Icons.wifi,
+                  color: Theme.of(context).colorScheme.background,
                 ),
               ),
             ),
           ),
-          Text('Tengingalisti', style: Theme.of(context).textTheme.headline1),
+          Text('Studdar tengingar',
+              style: Theme.of(context).textTheme.headline1),
           SizedBox(
             height: MediaQuery.of(context).size.height * 0.02,
           ),
@@ -107,27 +139,34 @@ class ConnectionRoute extends StatefulWidget {
 }
 
 class _ConnectionRouteState extends State<ConnectionRoute> {
-  final List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
+  List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
+
+  void _returnCallback(args) {
+    dlog("Returning from scan: ");
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+  }
 
   void initializeConnectionList() async {
-    Future<void> makeCard(String key, dynamic value) async {
-      _connectionList.add(
-        ConnectionListItem(
-          connection: Connection.list(
-              name: value['display_name'],
-              icon: Icon(
-                IconData(value['icon'], fontFamily: 'MaterialIcons'),
-                //TODO: use theme here. Was causing errors
-                color: Colors.red, //Theme.of(context).primaryColor
-                size: 24.0,
-              ),
-              logo: Image(
-                image: NetworkImage(value['logo'], scale: 1.0),
-                width: 25.0,
-              ),
-              webview: value['webview_connect']),
+    Future<void> makeCard(String key, Map<String, dynamic> value) async {
+      _connectionList.add(ConnectionListItem(
+        connection: Connection.list(
+          name: value['display_name'],
+          icon: Icon(
+            IconData(value['icon'], fontFamily: 'MaterialIcons'),
+            //TODO: use theme here. Was causing errors
+            color: Colors.red, //Theme.of(context).primaryColor
+            size: 24.0,
+          ),
+          logo: Image(
+            image: NetworkImage(value['logo'], scale: 1.0),
+            width: 25.0,
+          ),
+          webview:
+              '${value['webview_connect']}${value.containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(value['connect_url'])}' : ''}',
         ),
-      );
+        callbackFromJavascript: _returnCallback,
+      ));
       dlog("Card added: ${value['display_name']}");
     }
 
