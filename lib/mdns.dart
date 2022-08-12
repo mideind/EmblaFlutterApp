@@ -4,10 +4,10 @@ import 'dart:io';
 import 'package:multicast_dns/multicast_dns.dart';
 import './common.dart';
 
-final List<RegExp> kmDNSServiceFilters = <RegExp>[
-  RegExp(r"_hue._tcp.local"),
-  RegExp(r"_sonos._tcp.local"),
-];
+// final List<RegExp> kmDNSServiceFilters = <RegExp>[
+//   RegExp(r"_hue._tcp.local"),
+//   RegExp(r"_sonos._tcp.local"),
+// ];
 
 /// Dataclass for storing information about a discovered device.
 class MDNSDevice {
@@ -48,8 +48,8 @@ class MulticastDNSSearcher {
 
   /// Finds all devices on the local network using mDNS.
   /// Calls deviceCallback for each found device that matches a filter regex.
-  Future<void> findLocalDevices(
-      List<RegExp> filters, Function deviceCallback) async {
+  Future<void> findLocalDevices(List<RegExp> filters,
+      Map<String, String> serviceMap, Function deviceCallback) async {
     // Start the client with default options.
     await _client.start();
     dlog("Started mDNS client");
@@ -63,6 +63,7 @@ class MulticastDNSSearcher {
       dlog('>>>>>>>>>>>>>>> ${ptr.domainName}');
       dlog(ptr);
       for (final RegExp filter in filters) {
+        print("Filter: $filter");
         if (filter.hasMatch(ptr.domainName)) {
           dlog("Found device: ${ptr.domainName}");
           await for (final PtrResourceRecord ptr2
@@ -82,7 +83,7 @@ class MulticastDNSSearcher {
                 // Check if this device matches any of the filters.
                 dlog('Device matches filter "${filter.pattern}".');
                 // Call the callback with the device info.
-                deviceCallback(srv.name, ptr.domainName);
+                deviceCallback(serviceMap[ptr.domainName]);
               }
             }
           }
