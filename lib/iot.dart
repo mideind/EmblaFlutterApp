@@ -21,11 +21,13 @@ import './add_connection.dart';
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
-const String kHost = "http://192.168.1.76:5000";
+const String kHost =
+    "http://192.168.1.76:5000"; // TODO: Replace all references to kHost with kDefaultQueryServer
 
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
 
-void _pushMDNSRoute(BuildContext context, dynamic arg) {
+void _pushMDNSRoute(
+    BuildContext context, Function refreshDevices, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
@@ -33,12 +35,20 @@ void _pushMDNSRoute(BuildContext context, dynamic arg) {
         connectionInfo: arg,
       ),
     ),
-  );
+  ).then((value) {
+    // Refresh the list of devices
+    refreshDevices();
+  });
 }
 
 // List of IoT widgets
-List<Widget> _iot(BuildContext context, List<ConnectionCard> connectionCards,
-    bool isSearching, Map<String, dynamic> connectionInfo) {
+List<Widget> _iot(
+  BuildContext context,
+  List<ConnectionCard> connectionCards,
+  bool isSearching,
+  Map<String, dynamic> connectionInfo,
+  Function scanCallback,
+) {
   dlog("Context: , $context");
   return <Widget>[
     Container(
@@ -53,7 +63,7 @@ List<Widget> _iot(BuildContext context, List<ConnectionCard> connectionCards,
             ),
             IconButton(
               onPressed: () {
-                _pushMDNSRoute(context, connectionInfo);
+                _pushMDNSRoute(context, scanCallback, connectionInfo);
               },
               icon: Icon(
                 Icons.add,
@@ -70,40 +80,48 @@ List<Widget> _iot(BuildContext context, List<ConnectionCard> connectionCards,
         style: Theme.of(context).textTheme.headline4,
       ),
     ),
-    Container(
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
+    Center(
+      child: Column(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Wrap(
-                spacing: 8.0,
-                runSpacing: 10.0,
-                children: connectionCards,
-              ),
-              Visibility(
-                visible: !isSearching && connectionCards.isEmpty,
-                child: Center(
-                  child: Container(
-                    margin: const EdgeInsets.only(
-                        top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
-                    child: Text(
-                      'Engar tengingar til staðar.',
-                      style: TextStyle(fontSize: 16.0, color: Colors.grey),
+          Container(
+            margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                Column(
+                  children: <Widget>[
+                    Wrap(
+                      spacing: 8.0,
+                      runSpacing: 10.0,
+                      children: connectionCards,
                     ),
-                  ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Visibility(
+            visible: !isSearching && connectionCards.isEmpty,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.only(
+                    top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+                child: Text(
+                  'Engar tengingar til staðar.',
+                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
                 ),
               ),
-              const SizedBox(height: 50.0),
-              Visibility(
-                visible: isSearching,
-                child: SpinKitRing(
-                  color: Theme.of(context).primaryColor,
-                  size: 50.0,
-                ),
+            ),
+          ),
+          const SizedBox(height: 50.0),
+          Center(
+            child: Visibility(
+              visible: isSearching,
+              child: SpinKitRing(
+                color: Theme.of(context).primaryColor,
+                size: 50.0,
               ),
-            ],
+            ),
           ),
         ],
       ),
@@ -122,11 +140,55 @@ class _IoTRouteState extends State<IoTRoute> {
   List<ConnectionCard> connectionCards = [];
   bool isSearching = false;
   Map<String, dynamic> connectionInfo = {};
+  DisconnectButtonPromptWidget disconnectButtonPromptWidget;
+
+  void disconnectCallback(args) {
+    dlog("Disconnect callback: $args");
+    dlog("iotName: ${args[0]["iotName"]}");
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Aftengja tæki"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(
+                    "Ertu viss um að þú viljir aftengja ${connectionInfo[args[0]["iotName"]]["display_name"]}?"),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hætta við'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text("Aftengja"),
+              onPressed: () {
+                http
+                    .delete(Uri.parse(
+                        "$kHost/delete_iot_data.api?client_id=${args[0]["clientId"]}&iot_group=${args[0]["iotGroup"]}&iot_name=${args[0]["iotName"]}"))
+                    .then((value) {
+                  Navigator.of(context).pop();
+                  Navigator.of(context).pop();
+                }).catchError((error) => dlog("Error: $error"));
+                dlog("!!!!Notandi aftengdi tæki!!!!");
+              },
+            ),
+          ],
+        );
+      },
+    );
+    dlog("Dialogue made");
+  }
 
   void makeCard(String name, String clientID, String iotGroup) async {
     setState(() {
       connectionCards.add(ConnectionCard(
-        connection: Connection(
+        connection: Connection.card(
           name: connectionInfo[name]['name'],
           brand: connectionInfo[name]['brand'],
           icon: Icon(
@@ -138,6 +200,8 @@ class _IoTRouteState extends State<IoTRoute> {
           webview: connectionInfo[name]['webview_home'],
           // context: context,
         ),
+        navigationCallback: scanCallback,
+        callbackFromJavascript: disconnectCallback,
       ));
     });
   }
@@ -213,10 +277,17 @@ class _IoTRouteState extends State<IoTRoute> {
     getSupportedConnections();
   }
 
+  void scanCallback() {
+    dlog("Scan callback");
+    setState(() {
+      scanForDevices();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist =
-        _iot(context, connectionCards, isSearching, connectionInfo);
+    List<Widget> wlist = _iot(
+        context, connectionCards, isSearching, connectionInfo, scanCallback);
 
     return Scaffold(
         appBar: standardAppBar,
@@ -224,5 +295,61 @@ class _IoTRouteState extends State<IoTRoute> {
           padding: const EdgeInsets.all(8),
           children: wlist,
         ));
+  }
+}
+
+// Button that presents an alert with an action name + handler
+class DisconnectButtonPromptWidget extends StatelessWidget {
+  final String label;
+  final String alertText;
+  final String buttonTitle;
+  final Function handler;
+
+  const DisconnectButtonPromptWidget(
+      {Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+      : super(key: key);
+
+  Future<void> _showPromptDialog(BuildContext context) async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // User must tap button
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("$label?"),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text(this.alertText),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Hætta við'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(this.buttonTitle),
+              onPressed: () {
+                this.handler();
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        _showPromptDialog(context);
+      },
+      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
+    );
   }
 }
