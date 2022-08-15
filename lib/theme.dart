@@ -32,12 +32,15 @@ const double defaultFontSize = 19.0;
 const double sessionFontSize = 24.0;
 
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
-final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
+final sessionTextStyle =
+    TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
 // Define default (light) app styling and color scheme
 final Color lightMainColor = HexColor.fromHex('#e83939');
 final Color lightBgColor = HexColor.fromHex('#f9f9f9');
 final Color lightTextColor = HexColor.fromHex('#202020');
+final Color lightCardColor = HexColor.fromHex('#ffffff');
+final Color lightSplashColor = HexColor.fromHex('#f6b0b0');
 
 final lightThemeData = ThemeData(
     brightness: Brightness.light,
@@ -45,6 +48,9 @@ final lightThemeData = ThemeData(
     primarySwatch: Colors.red,
     primaryColor: lightMainColor,
     backgroundColor: lightBgColor,
+    // hoverColor: lightMainColor,
+    cardColor: lightCardColor,
+    splashColor: lightSplashColor,
     fontFamily: defaultFontFamily,
     textTheme: TextTheme(
       subtitle1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
@@ -69,33 +75,39 @@ final lightThemeData = ThemeData(
 // Define dark mode app styling and color scheme
 final darkMainColor = HexColor.fromHex('#f7f7f7');
 final darkBgColor = HexColor.fromHex('#202020');
+final darkCardColor = HexColor.fromHex('#505050');
+final darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 final darkThemeData = ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: darkBgColor,
-    primarySwatch: Colors.grey,
-    primaryColor: darkMainColor,
-    backgroundColor: darkBgColor,
-    fontFamily: defaultFontFamily,
-    textTheme: TextTheme(
-      subtitle1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      subtitle2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      overline: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      button: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      caption: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      bodyText1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      bodyText2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline3: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline4: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline5: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headline6: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    ),
-    appBarTheme: AppBarTheme(
-      color: darkBgColor,
-      iconTheme: IconThemeData(color: darkMainColor),
-    ));
+  brightness: Brightness.dark,
+  scaffoldBackgroundColor: darkBgColor,
+  primarySwatch: Colors.grey,
+  primaryColor: darkMainColor,
+  backgroundColor: darkBgColor,
+  cardColor: darkCardColor,
+  splashColor: darkSplashColor,
+  // hoverColor: Colors.black,
+  fontFamily: defaultFontFamily,
+  textTheme: TextTheme(
+    subtitle1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    subtitle2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    overline: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    button: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    caption: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyText1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyText2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline3: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline4: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline5: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headline6: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+  ),
+  appBarTheme: AppBarTheme(
+    color: darkBgColor,
+    iconTheme: IconThemeData(color: darkMainColor),
+  ),
+);
 
 final standardAppBar = AppBar(
   bottomOpacity: 0.0,

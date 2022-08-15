@@ -64,7 +64,8 @@ List<Widget> _mdns(
               margin: const EdgeInsets.only(top: 9.0, bottom: 9.0),
               child: Text(
                 searchingText,
-                style: const TextStyle(fontSize: 25.0, color: Colors.black),
+                // style: const TextStyle(fontSize: 25.0, color: Colors.black),
+                style: sessionTextStyle,
               ),
             ),
             Visibility(
@@ -144,6 +145,13 @@ class _MDNSRouteState extends State<MDNSRoute> {
   List<RegExp> kmDNSServiceFilters = <RegExp>[];
   Map<String, String> serviceMap = {};
 
+  void _returnCallback(args) {
+    dlog("Returning from scan: ");
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+    Navigator.of(context).pop();
+  }
+
   void makeCard(String connection_name) async {
     dlog("${widget.connectionInfo}");
     String clientID = await PlatformDeviceId.getDeviceId;
@@ -155,45 +163,54 @@ class _MDNSRouteState extends State<MDNSRoute> {
 
     dlog("MAKING CARD: $connection_name");
     dlog("Connectioninfo: ${widget.connectionInfo}");
-    setState(() {
-      dlog("Making card: $connection_name");
-      connectionCards.add(ConnectionCard(
-        connection: Connection.card(
-          name: widget.connectionInfo[connection_name]['name'],
-          brand: widget.connectionInfo[connection_name]['brand'],
-          icon: Icon(
-            IconData(widget.connectionInfo[connection_name]['icon'],
-                fontFamily: 'MaterialIcons'),
-            // connectionInfo[name]['icon'] as IconData,
-            color: Theme.of(context).primaryColor,
-            size: 30.0,
+    if (mounted) {
+      dlog("!!!!!!!Mounted!!!!!!!!!");
+      setState(() {
+        dlog("Making card: $connection_name");
+        connectionCards.add(ConnectionCard(
+          connection: Connection.card(
+            name: widget.connectionInfo[connection_name]['name'],
+            brand: widget.connectionInfo[connection_name]['brand'],
+            icon: Icon(
+              IconData(widget.connectionInfo[connection_name]['icon'],
+                  fontFamily: 'MaterialIcons'),
+              // connectionInfo[name]['icon'] as IconData,
+              color: Colors.red.withOpacity(0.5),
+              size: 30.0,
+            ),
+            webview:
+                '${widget.connectionInfo[connection_name]['webview_connect']}${widget.connectionInfo[connection_name].containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(widget.connectionInfo[connection_name]['connect_url'])}' : ''}',
           ),
-          webview: widget.connectionInfo[connection_name]['webview_connect'],
-        ),
-      ));
-      dlog("Connection cards: ${connectionCards.length}");
-    });
+          callbackFromJavascript: _returnCallback,
+        ));
+        dlog("Connection cards: ${connectionCards.length}");
+      });
+    }
   }
 
   void scanForDevices() async {
     if (isSearching) {
       return;
     }
-    setState(() {
-      searchingText = "Tækjaleit í gangi...";
-      connectionCards.clear();
-    });
-    isSearching = true;
-    MulticastDNSSearcher mdns = MulticastDNSSearcher();
+    if (mounted) {
+      setState(() {
+        searchingText = "Tækjaleit í gangi...";
+        connectionCards.clear();
+      });
 
-    dlog("Finding devices");
-    await mdns.findLocalDevices(kmDNSServiceFilters, serviceMap, makeCard);
-    isSearching = false;
+      isSearching = true;
+      MulticastDNSSearcher mdns = MulticastDNSSearcher();
 
-    setState(() {
-      searchingText = 'Tækjaleit lokið';
-      dlog("Search text set");
-    });
+      dlog("Finding devices");
+      await mdns.findLocalDevices(kmDNSServiceFilters, serviceMap, makeCard);
+      isSearching = false;
+      if (mounted) {
+        setState(() {
+          searchingText = 'Tækjaleit lokið';
+          dlog("Search text set");
+        });
+      }
+    }
   }
 
   void createServiceFilters() {

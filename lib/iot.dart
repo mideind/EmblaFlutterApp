@@ -5,12 +5,13 @@
 import 'dart:convert';
 import 'dart:io' show Platform;
 
+import 'package:embla/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:http/http.dart' as http;
 import 'package:platform_device_id/platform_device_id.dart';
-import 'package:rxdart/rxdart.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import './common.dart';
 import './theme.dart';
@@ -25,6 +26,7 @@ const String kHost =
     "http://192.168.1.76:5000"; // TODO: Replace all references to kHost with kDefaultQueryServer
 
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
+FToast fToast;
 
 void _pushMDNSRoute(
     BuildContext context, Function refreshDevices, dynamic arg) {
@@ -57,9 +59,12 @@ List<Widget> _iot(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Text(
+            Text(
               "Embla snjallheimili",
-              style: TextStyle(fontSize: 25.0, color: Colors.black),
+              style: sessionTextStyle,
+              // style: Theme.of(context)
+              //     .textTheme
+              //     .headline1, //TextStyle(fontSize: 25.0, color: Colors.black),
             ),
             IconButton(
               onPressed: () {
@@ -165,7 +170,11 @@ class _IoTRouteState extends State<IoTRoute> {
                     .then((value) {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
-                }).catchError((error) => dlog("Error: $error"));
+                  _showToast(true);
+                }).catchError((error) {
+                  dlog("Error: $error");
+                  _showToast(false);
+                });
                 dlog("!!!!Notandi aftengdi tæki!!!!");
               },
             ),
@@ -185,7 +194,7 @@ class _IoTRouteState extends State<IoTRoute> {
           icon: Icon(
             IconData(connectionInfo[name]['icon'], fontFamily: 'MaterialIcons'),
             // connectionInfo[name]['icon'] as IconData,
-            color: Theme.of(context).primaryColor,
+            color: Colors.red.withOpacity(0.5),
             size: 30.0,
           ),
           webview: connectionInfo[name]['webview_home'],
@@ -262,9 +271,41 @@ class _IoTRouteState extends State<IoTRoute> {
     });
   }
 
+  _showToast(bool isSuccess) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: (isSuccess)
+            ? HexColor.fromHex('#87c997')
+            : Theme.of(context).primaryColor,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon((isSuccess) ? Icons.check : Icons.error_outline_rounded,
+              color: Colors.white),
+          SizedBox(
+            width: 12.0,
+          ),
+          Text((isSuccess) ? "Aftenging tókst" : "Villa kom upp, reyndu aftur.",
+              style: TextStyle(color: Colors.white)),
+        ],
+      ),
+    );
+
+    fToast.showToast(
+      child: toast,
+      gravity: ToastGravity.BOTTOM,
+      toastDuration: Duration(seconds: 3),
+    );
+  }
+
   @override
   void initState() {
     super.initState();
+    fToast = FToast();
+    fToast.init(context);
     getSupportedConnections();
   }
 

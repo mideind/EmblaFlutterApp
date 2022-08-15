@@ -8,6 +8,7 @@
 
 import 'package:connectivity_plus_web/connectivity_plus_web.dart';
 import 'package:flutter_sound_web/flutter_sound_web.dart';
+import 'package:fluttertoast/fluttertoast_web.dart';
 import 'package:geolocator_web/geolocator_web.dart';
 import 'package:package_info_plus_web/package_info_plus_web.dart';
 import 'package:platform_device_id_web/platform_device_id_web.dart';
@@ -21,6 +22,7 @@ import 'package:flutter_web_plugins/flutter_web_plugins.dart';
 void registerPlugins(Registrar registrar) {
   ConnectivityPlusPlugin.registerWith(registrar);
   FlutterSoundPlugin.registerWith(registrar);
+  FluttertoastWebPlugin.registerWith(registrar);
   GeolocatorPlugin.registerWith(registrar);
   PackageInfoPlugin.registerWith(registrar);
   PlatformDeviceIdWebPlugin.registerWith(registrar);

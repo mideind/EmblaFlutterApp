@@ -56,11 +56,12 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
       margin: const EdgeInsets.only(
           top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Text(
             "Bæta við tengingu",
-            style: TextStyle(fontSize: 25.0, color: Colors.black),
+            // style: TextStyle(fontSize: 25.0, color: Colors.black),
+            style: sessionTextStyle,
           ),
           Container(
             margin: EdgeInsets.only(bottom: 40.0, top: 40.0),
@@ -70,46 +71,56 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
                   dlog("Navigating to scan...");
                   _pushConnectionRoute(context, connectionInfo);
                 },
-                style: ButtonStyle(
-                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                    RoundedRectangleBorder(
+                style: ElevatedButton.styleFrom(
+                    primary: Theme.of(context).primaryColor.withOpacity(0.5),
+                    // onPrimary: Theme.of(context).hoverColor.withOpacity(0.1),
+                    shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                  ),
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
-                  backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                    (Set<MaterialState> states) {
-                      if (states.isEmpty) {
-                        return Theme.of(context)
-                            .colorScheme
-                            .primary
-                            .withOpacity(0.5);
-                      }
-                      if (states.contains(MaterialState.pressed)) {
-                        return Theme.of(context)
-                            .colorScheme
-                            .secondary
-                            .withOpacity(0.4);
-                      }
-                      return null; // Use the component's default.
-                    },
-                  ),
-                ),
+                    padding:
+                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+
+                // style: ButtonStyle(
+                //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                //     RoundedRectangleBorder(
+                //       borderRadius: BorderRadius.circular(50.0),
+                //     ),
+                //   ),
+                //   padding: MaterialStateProperty.all(
+                //       EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+                //   backgroundColor: MaterialStateProperty.resolveWith<Color>(
+                //     (Set<MaterialState> states) {
+                //       if (states.isEmpty) {
+                //         return Theme.of(context)
+                //             .colorScheme
+                //             .primary
+                //             .withOpacity(0.5);
+                //       }
+                //       if (states.contains(MaterialState.pressed)) {
+                //         return Theme.of(context)
+                //             .colorScheme
+                //             .secondary
+                //             .withOpacity(0.4);
+                //       }
+                //       return null; // Use the component's default.
+                //     },
+                //   ),
+                // ),
                 label: Text(
                   'Finna tæki',
+                  style: TextStyle(color: Colors.white),
                 ),
                 icon: Icon(
                   Icons.wifi,
-                  color: Theme.of(context).colorScheme.background,
+                  color: Colors.white,
                 ),
               ),
             ),
           ),
-          Text('Studdar tengingar',
-              style: Theme.of(context).textTheme.headline1),
-          SizedBox(
-            height: MediaQuery.of(context).size.height * 0.02,
+          Container(
+            margin: EdgeInsets.only(bottom: 40.0),
+            child: Text('Studdar tengingar',
+                style: Theme.of(context).textTheme.headline1),
           ),
           Column(
             children: <Widget>[
@@ -155,7 +166,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
           icon: Icon(
             IconData(value['icon'], fontFamily: 'MaterialIcons'),
             //TODO: use theme here. Was causing errors
-            color: Colors.red, //Theme.of(context).primaryColor
+            color: Colors.red.withOpacity(0.5), //Theme.of(context).primaryColor
             size: 24.0,
           ),
           logo: Image(
