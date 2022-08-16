@@ -38,7 +38,7 @@ import '././connection.dart';
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
-FToast fToast;
+FToast fToastAdd;
 
 void _pushConnectionRoute(BuildContext context, dynamic arg) {
   Navigator.push(
@@ -156,12 +156,15 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
 
   void _returnCallback(args) {
+    fToastAdd = FToast();
+    fToastAdd.init(context);
+
     _showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: Theme.of(context).primaryColor,
+          color: Colors.red,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -175,10 +178,10 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         ),
       );
 
-      fToast.showToast(
+      fToastAdd.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 3),
+        toastDuration: Duration(seconds: 4),
       );
     }
 
@@ -196,10 +199,11 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       hubError = args[0]['hub_error'];
     }
     if (isButtonPressMissing) {
-      _showToast("Tengibox ekki í pörunarham.");
+      _showToast("Ýta þarf á hnapp á tengiboxi.");
     } else if (hubError != null) {
       if (hubError == 429) {
-        _showToast("Of margar pörunarbeiðnir.");
+        _showToast(
+            "Tenging mistókst.\n Reyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else {
         _showToast("Villa í tengingu við tengibox.");
       }
@@ -252,8 +256,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   @override
   void initState() {
     super.initState();
-    fToast = FToast();
-    fToast.init(context);
+
     dlog("Connection info: ${widget.connectionInfo}");
     initializeConnectionList();
   }

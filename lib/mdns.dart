@@ -83,7 +83,7 @@ class MulticastDNSSearcher {
                 // Check if this device matches any of the filters.
                 dlog('Device matches filter "${filter.pattern}".');
                 // Call the callback with the device info.
-                deviceCallback(serviceMap[ptr.domainName]);
+                deviceCallback(serviceMap[ptr.domainName], ipa.address.address);
               }
             }
           }

@@ -7,7 +7,7 @@ class Connection {
   String brand;
   final Icon icon;
   Image logo;
-  final String webview;
+  String webview;
 
   Connection.card({this.name, this.brand, this.icon, this.webview});
   Connection.list({this.name, this.icon, this.logo, this.webview});

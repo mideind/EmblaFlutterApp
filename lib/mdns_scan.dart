@@ -42,7 +42,7 @@ const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 const String kHost = "http://192.168.1.76:5000";
 
-FToast fToast;
+FToast fToastMdns;
 
 // Future<String> loadText(String textFile) async {
 //   dlog("Loading text file: $textFile");
@@ -150,12 +150,15 @@ class _MDNSRouteState extends State<MDNSRoute> {
   Map<String, String> serviceMap = {};
 
   void _returnCallback(args) {
+    fToastMdns = FToast();
+    fToastMdns.init(context);
+
     _showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: Theme.of(context).primaryColor,
+          color: Colors.red,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -169,10 +172,10 @@ class _MDNSRouteState extends State<MDNSRoute> {
         ),
       );
 
-      fToast.showToast(
+      fToastMdns.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 3),
+        toastDuration: Duration(seconds: 4),
       );
     }
 
@@ -190,10 +193,10 @@ class _MDNSRouteState extends State<MDNSRoute> {
       hubError = args[0]['hub_error'];
     }
     if (isButtonPressMissing) {
-      _showToast("Tengibox ekki í pörunarham.");
+      _showToast("Ýta þarf á hnapp á tengiboxi.");
     } else if (hubError != null) {
       if (hubError == 429) {
-        _showToast("Of margar pörunarbeiðnir.");
+        _showToast("Of margar pörunarbeiðnir.\nReyndu aftur síðar.");
       } else {
         _showToast("Villa í tengingu við tengibox.");
       }
@@ -206,7 +209,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
     }
   }
 
-  void makeCard(String connection_name) async {
+  void makeCard(String connectionName, String ipAddress) async {
     dlog("${widget.connectionInfo}");
     String clientID = await PlatformDeviceId.getDeviceId;
     // Map<String, String> domain_map = {
@@ -215,25 +218,26 @@ class _MDNSRouteState extends State<MDNSRoute> {
     // };
     // String connection_name = domain_map[domainName];
 
-    dlog("MAKING CARD: $connection_name");
+    dlog("MAKING CARD: $connectionName");
     dlog("Connectioninfo: ${widget.connectionInfo}");
     if (mounted) {
       dlog("!!!!!!!Mounted!!!!!!!!!");
       setState(() {
-        dlog("Making card: $connection_name");
+        dlog("Making card: $connectionName");
+        dlog("!!!!!!IP: $ipAddress");
         connectionCards.add(ConnectionCard(
           connection: Connection.card(
-            name: widget.connectionInfo[connection_name]['name'],
-            brand: widget.connectionInfo[connection_name]['brand'],
+            name: widget.connectionInfo[connectionName]['name'],
+            brand: widget.connectionInfo[connectionName]['brand'],
             icon: Icon(
-              IconData(widget.connectionInfo[connection_name]['icon'],
+              IconData(widget.connectionInfo[connectionName]['icon'],
                   fontFamily: 'MaterialIcons'),
               // connectionInfo[name]['icon'] as IconData,
               color: Colors.red.withOpacity(0.5),
               size: 30.0,
             ),
             webview:
-                '${widget.connectionInfo[connection_name]['webview_connect']}${widget.connectionInfo[connection_name].containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(widget.connectionInfo[connection_name]['connect_url'])}' : ''}',
+                '${widget.connectionInfo[connectionName]['webview_connect']}${widget.connectionInfo[connectionName].containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(widget.connectionInfo[connectionName]['connect_url'])}' : ''}${(connectionName == 'philips_hue') ? '&hub_ip_address=$ipAddress' : ''}',
           ),
           callbackFromJavascript: _returnCallback,
         ));
@@ -280,8 +284,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
   @override
   void initState() {
     super.initState();
-    fToast = FToast();
-    fToast.init(context);
+
     createServiceFilters();
     scanForDevices();
   }

@@ -26,7 +26,7 @@ const String kHost =
     "http://192.168.1.76:5000"; // TODO: Replace all references to kHost with kDefaultQueryServer
 
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
-FToast fToast;
+FToast fToastIot;
 
 void _pushMDNSRoute(
     BuildContext context, Function refreshDevices, dynamic arg) {
@@ -139,6 +139,41 @@ class _IoTRouteState extends State<IoTRoute> {
   DisconnectButtonPromptWidget disconnectButtonPromptWidget;
 
   void disconnectCallback(args) {
+    fToastIot = FToast();
+    fToastIot.init(context);
+    _showToast(bool isSuccess) {
+      Widget toast = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(25.0),
+            color: //(isSuccess)
+                HexColor.fromHex('#87c997')
+            //: Theme.of(context).primaryColor,
+            ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+                /*(isSuccess) ? */ Icons
+                    .check /* : Icons.error_outline_rounded*/,
+                color: Colors.white),
+            SizedBox(
+              width: 12.0,
+            ),
+            Text(
+                /*(isSuccess) ? */ "Aftenging tókst" /* : "Villa kom upp, reyndu aftur."*/,
+                style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      );
+
+      fToastIot.showToast(
+        child: toast,
+        gravity: ToastGravity.BOTTOM,
+        toastDuration: Duration(seconds: 3),
+      );
+    }
+
     dlog("Disconnect callback: $args");
     dlog("iotName: ${args[0]["iotName"]}");
     showDialog(
@@ -271,41 +306,9 @@ class _IoTRouteState extends State<IoTRoute> {
     });
   }
 
-  _showToast(bool isSuccess) {
-    Widget toast = Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(25.0),
-        color: (isSuccess)
-            ? HexColor.fromHex('#87c997')
-            : Theme.of(context).primaryColor,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon((isSuccess) ? Icons.check : Icons.error_outline_rounded,
-              color: Colors.white),
-          SizedBox(
-            width: 12.0,
-          ),
-          Text((isSuccess) ? "Aftenging tókst" : "Villa kom upp, reyndu aftur.",
-              style: TextStyle(color: Colors.white)),
-        ],
-      ),
-    );
-
-    fToast.showToast(
-      child: toast,
-      gravity: ToastGravity.BOTTOM,
-      toastDuration: Duration(seconds: 3),
-    );
-  }
-
   @override
   void initState() {
     super.initState();
-    fToast = FToast();
-    fToast.init(context);
     getSupportedConnections();
   }
 
