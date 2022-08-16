@@ -26,16 +26,19 @@ import 'dart:core';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 import './common.dart';
 import './theme.dart';
 import './mdns_scan.dart';
-import 'connection_listitem.dart';
+import './connection_listitem.dart';
 import '././connection.dart';
 
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
+
+FToast fToast;
 
 void _pushConnectionRoute(BuildContext context, dynamic arg) {
   Navigator.push(
@@ -153,9 +156,59 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
 
   void _returnCallback(args) {
-    dlog("Returning from scan: ");
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
+    _showToast(String message) {
+      Widget toast = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25.0),
+          color: Theme.of(context).primaryColor,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded, color: Colors.white),
+            SizedBox(
+              width: 12.0,
+            ),
+            Text(message, style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      );
+
+      fToast.showToast(
+        child: toast,
+        gravity: ToastGravity.BOTTOM,
+        toastDuration: Duration(seconds: 3),
+      );
+    }
+
+    dlog("Returning from scan: $args");
+    bool isError = false;
+    bool isButtonPressMissing = false;
+    int hubError;
+    if (args[0].containsKey('error')) {
+      isError = true;
+    }
+    if (args[0].containsKey('button_press_missing')) {
+      isButtonPressMissing = true;
+    }
+    if (args[0].containsKey('hub_error')) {
+      hubError = args[0]['hub_error'];
+    }
+    if (isButtonPressMissing) {
+      _showToast("Tengibox ekki í pörunarham.");
+    } else if (hubError != null) {
+      if (hubError == 429) {
+        _showToast("Of margar pörunarbeiðnir.");
+      } else {
+        _showToast("Villa í tengingu við tengibox.");
+      }
+    } else {
+      Navigator.of(context).pop();
+      if (!isError) {
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   void initializeConnectionList() async {
@@ -199,6 +252,8 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   @override
   void initState() {
     super.initState();
+    fToast = FToast();
+    fToast.init(context);
     dlog("Connection info: ${widget.connectionInfo}");
     initializeConnectionList();
   }

@@ -23,10 +23,12 @@
 
 import 'dart:convert';
 
+import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 import './common.dart';
@@ -39,6 +41,8 @@ import './mdns.dart';
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 const String kHost = "http://192.168.1.76:5000";
+
+FToast fToast;
 
 // Future<String> loadText(String textFile) async {
 //   dlog("Loading text file: $textFile");
@@ -146,10 +150,60 @@ class _MDNSRouteState extends State<MDNSRoute> {
   Map<String, String> serviceMap = {};
 
   void _returnCallback(args) {
+    _showToast(String message) {
+      Widget toast = Container(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25.0),
+          color: Theme.of(context).primaryColor,
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.error_outline_rounded, color: Colors.white),
+            SizedBox(
+              width: 12.0,
+            ),
+            Text(message, style: TextStyle(color: Colors.white)),
+          ],
+        ),
+      );
+
+      fToast.showToast(
+        child: toast,
+        gravity: ToastGravity.BOTTOM,
+        toastDuration: Duration(seconds: 3),
+      );
+    }
+
     dlog("Returning from scan: ");
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
-    Navigator.of(context).pop();
+    bool isError = false;
+    bool isButtonPressMissing = false;
+    int hubError;
+    if (args[0].containsKey('error')) {
+      isError = true;
+    }
+    if (args[0].containsKey('button_press_missing')) {
+      isButtonPressMissing = true;
+    }
+    if (args[0].containsKey('hub_error')) {
+      hubError = args[0]['hub_error'];
+    }
+    if (isButtonPressMissing) {
+      _showToast("Tengibox ekki í pörunarham.");
+    } else if (hubError != null) {
+      if (hubError == 429) {
+        _showToast("Of margar pörunarbeiðnir.");
+      } else {
+        _showToast("Villa í tengingu við tengibox.");
+      }
+    } else {
+      Navigator.of(context).pop();
+      if (!isError) {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      }
+    }
   }
 
   void makeCard(String connection_name) async {
@@ -226,6 +280,8 @@ class _MDNSRouteState extends State<MDNSRoute> {
   @override
   void initState() {
     super.initState();
+    fToast = FToast();
+    fToast.init(context);
     createServiceFilters();
     scanForDevices();
   }
