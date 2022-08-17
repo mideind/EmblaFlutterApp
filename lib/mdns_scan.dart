@@ -110,7 +110,7 @@ List<Widget> _mdns(
                     style: Theme.of(context).textTheme.headline4,
                   ),
                   Text(
-                    'Vinsamlegast reyndu aftur eða veldu tæki handvirkt.',
+                    'Vinsamlegast reyndu aftur\neða veldu tæki handvirkt.',
                     style: Theme.of(context).textTheme.headline4,
                   ),
                 ],
@@ -158,7 +158,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: Colors.red,
+          color: HexColor.fromHex("#C00004"),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,

@@ -145,23 +145,23 @@ class _IoTRouteState extends State<IoTRoute> {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(25.0),
-            color: //(isSuccess)
-                HexColor.fromHex('#87c997')
-            //: Theme.of(context).primaryColor,
-            ),
+          borderRadius: BorderRadius.circular(25.0),
+          color: (isSuccess)
+              ? HexColor.fromHex('#87c997')
+              : HexColor.fromHex("#C00004"),
+        ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
-                /*(isSuccess) ? */ Icons
-                    .check /* : Icons.error_outline_rounded*/,
+            Icon((isSuccess) ? Icons.check : Icons.error_outline_rounded,
                 color: Colors.white),
             SizedBox(
               width: 12.0,
             ),
             Text(
-                /*(isSuccess) ? */ "Aftenging tókst" /* : "Villa kom upp, reyndu aftur."*/,
+                (isSuccess)
+                    ? "Aftenging tókst"
+                    : "Villa kom upp, reyndu aftur.",
                 style: TextStyle(color: Colors.white)),
           ],
         ),

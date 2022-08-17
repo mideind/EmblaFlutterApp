@@ -23,6 +23,7 @@
 
 import 'dart:core';
 
+import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -164,7 +165,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: Colors.red,
+          color: HexColor.fromHex("#C00004"),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -188,7 +189,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     dlog("Returning from scan: $args");
     bool isError = false;
     bool isButtonPressMissing = false;
-    int hubError;
+    String hubError;
     if (args[0].containsKey('error')) {
       isError = true;
     }
@@ -201,9 +202,12 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     if (isButtonPressMissing) {
       _showToast("Ýta þarf á hnapp á tengiboxi.");
     } else if (hubError != null) {
-      if (hubError == 429) {
+      if (hubError == '429') {
         _showToast(
             "Tenging mistókst.\n Reyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
+      } else if (hubError == 'no-hub') {
+        _showToast(
+            "Ekkert tengibox fannst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else {
         _showToast("Villa í tengingu við tengibox.");
       }
