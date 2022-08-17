@@ -178,6 +178,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
           ],
         ),
       );
+      fToastAdd.removeQueuedCustomToasts();
 
       fToastAdd.showToast(
         child: toast,
@@ -260,7 +261,6 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   @override
   void initState() {
     super.initState();
-
     dlog("Connection info: ${widget.connectionInfo}");
     initializeConnectionList();
   }

@@ -170,6 +170,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
           ],
         ),
       );
+      fToastMdns.removeQueuedCustomToasts();
 
       fToastMdns.showToast(
         child: toast,
@@ -283,7 +284,6 @@ class _MDNSRouteState extends State<MDNSRoute> {
   @override
   void initState() {
     super.initState();
-
     createServiceFilters();
     scanForDevices();
   }

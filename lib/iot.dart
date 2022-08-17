@@ -165,6 +165,8 @@ class _IoTRouteState extends State<IoTRoute> {
         ),
       );
 
+      fToastIot.removeQueuedCustomToasts();
+
       fToastIot.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
