@@ -56,12 +56,19 @@ List<Widget> _mdns(
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
-            top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+          top: 20.0,
+          left: 25.0,
+          bottom: 30.0,
+          right: 25.0,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Container(
-              margin: const EdgeInsets.only(top: 9.0, bottom: 9.0),
+              margin: const EdgeInsets.only(
+                top: 9.0,
+                bottom: 9.0,
+              ),
               child: Text(
                 searchingText,
                 style: sessionTextStyle,
@@ -83,7 +90,11 @@ List<Widget> _mdns(
           ],
         )),
     Container(
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+      margin: const EdgeInsets.only(
+        top: 20.0,
+        left: 20.0,
+        bottom: 30.0,
+      ),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 10.0,
@@ -97,7 +108,11 @@ List<Widget> _mdns(
             visible: !isSearching && connectionCards.isEmpty,
             child: Container(
               margin: const EdgeInsets.only(
-                  top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+                top: 20.0,
+                left: 25.0,
+                bottom: 30.0,
+                right: 25.0,
+              ),
               child: Column(
                 children: [
                   Text(
@@ -112,7 +127,9 @@ List<Widget> _mdns(
               ),
             ),
           ),
-          const SizedBox(height: 50.0),
+          const SizedBox(
+            height: 50.0,
+          ),
           Center(
             child: Visibility(
               visible: isSearching,
@@ -154,7 +171,10 @@ class _MDNSRouteState extends State<MDNSRoute> {
     // Toast widget with a given message
     _showToast(String message) {
       Widget toast = Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 12.0,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
           color: HexColor.fromHex("#C00004"),
@@ -162,11 +182,19 @@ class _MDNSRouteState extends State<MDNSRoute> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded, color: Colors.white),
+            Icon(
+              Icons.error_outline_rounded,
+              color: Colors.white,
+            ),
             SizedBox(
               width: 12.0,
             ),
-            Text(message, style: TextStyle(color: Colors.white)),
+            Text(
+              message,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       );
@@ -210,8 +238,6 @@ class _MDNSRouteState extends State<MDNSRoute> {
 
   // Makes a card out of the connectionName and connectionInfo
   void makeCard(String connectionName, String ipAddress) async {
-    String clientID = await PlatformDeviceId.getDeviceId;
-
     if (mounted) {
       setState(() {
         connectionCards.add(ConnectionCard(
@@ -219,8 +245,10 @@ class _MDNSRouteState extends State<MDNSRoute> {
             name: widget.connectionInfo[connectionName]['name'],
             brand: widget.connectionInfo[connectionName]['brand'],
             icon: Icon(
-              IconData(widget.connectionInfo[connectionName]['icon'],
-                  fontFamily: 'MaterialIcons'),
+              IconData(
+                widget.connectionInfo[connectionName]['icon'],
+                fontFamily: 'MaterialIcons',
+              ),
               color: Colors.red.withOpacity(0.5),
               size: 30.0,
             ),
@@ -247,24 +275,22 @@ class _MDNSRouteState extends State<MDNSRoute> {
       isSearching = true;
       MulticastDNSSearcher mdns = MulticastDNSSearcher();
 
-      dlog("Finding devices");
       await mdns.findLocalDevices(kmDNSServiceFilters, serviceMap, makeCard);
       isSearching = false;
       if (mounted) {
         setState(() {
           searchingText = 'Tækjaleit lokið';
-          dlog("Search text set");
         });
       }
     }
   }
 
+  // Creates mdns service filters for each connection
+  // in the connectionInfo map
   void createServiceFilters() {
     widget.connectionInfo.forEach((key, connection) {
-      dlog("Creating service filter for: ${connection['mdns_name']}");
       RegExp regex = RegExp("${connection["mdns_name"]}");
       kmDNSServiceFilters.add(regex);
-      dlog("Service filters: ${kmDNSServiceFilters.length}");
       serviceMap[connection["mdns_name"]] = key;
     });
   }

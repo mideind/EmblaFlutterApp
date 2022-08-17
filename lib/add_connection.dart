@@ -138,7 +138,10 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     // Toast widget with a given message
     _showToast(String message) {
       Widget toast = Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 12.0,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
           color: HexColor.fromHex("#C00004"),
@@ -146,11 +149,19 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(Icons.error_outline_rounded, color: Colors.white),
+            Icon(
+              Icons.error_outline_rounded,
+              color: Colors.white,
+            ),
             SizedBox(
               width: 12.0,
             ),
-            Text(message, style: TextStyle(color: Colors.white)),
+            Text(
+              message,
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       );
@@ -159,7 +170,9 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       fToastAdd.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: Duration(
+          seconds: 4,
+        ),
       );
     }
 
@@ -204,12 +217,18 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         connection: Connection.list(
           name: value['display_name'],
           icon: Icon(
-            IconData(value['icon'], fontFamily: 'MaterialIcons'),
+            IconData(
+              value['icon'],
+              fontFamily: 'MaterialIcons',
+            ),
             color: Colors.red.withOpacity(0.5),
             size: 24.0,
           ),
           logo: Image(
-            image: NetworkImage(value['logo'], scale: 1.0),
+            image: NetworkImage(
+              value['logo'],
+              scale: 1.0,
+            ),
             width: 25.0,
           ),
           webview:
@@ -222,7 +241,6 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     // Makes all of the cards from the connectionInfo map
     Future<void> makeCards() async {
       widget.connectionInfo.forEach((key, value) async {
-        dlog("Key: $key, value: $value");
         await makeCard(key, value);
       });
     }

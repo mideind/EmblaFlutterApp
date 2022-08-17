@@ -56,7 +56,10 @@ class _ConnectionCardState extends State<ConnectionCard> {
       semanticContainer: false,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 10.0),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 15.0,
+            vertical: 10.0,
+          ),
           primary: Theme.of(context).cardColor,
           onPrimary: Theme.of(context).splashColor,
           splashFactory: InkRipple.splashFactory,

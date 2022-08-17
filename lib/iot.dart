@@ -54,7 +54,11 @@ List<Widget> _iot(
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
-            top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+          top: 20.0,
+          left: 25.0,
+          bottom: 30.0,
+          right: 25.0,
+        ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -75,14 +79,21 @@ List<Widget> _iot(
           ],
         )),
     Container(
-      margin: const EdgeInsets.only(left: 25.0, bottom: 20.0),
+      margin: const EdgeInsets.only(
+        left: 25.0,
+        bottom: 20.0,
+      ),
       child: Text(
         'Mínar tengingar',
         style: Theme.of(context).textTheme.headline4,
       ),
     ),
     Container(
-      margin: const EdgeInsets.only(top: 20.0, left: 20.0, bottom: 30.0),
+      margin: const EdgeInsets.only(
+        top: 20.0,
+        left: 20.0,
+        bottom: 30.0,
+      ),
       child: Wrap(
         spacing: 8.0,
         runSpacing: 10.0,
@@ -97,15 +108,24 @@ List<Widget> _iot(
             child: Center(
               child: Container(
                 margin: const EdgeInsets.only(
-                    top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+                  top: 20.0,
+                  left: 25.0,
+                  bottom: 30.0,
+                  right: 25.0,
+                ),
                 child: Text(
                   'Engar tengingar til staðar.',
-                  style: TextStyle(fontSize: 16.0, color: Colors.grey),
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey,
+                  ),
                 ),
               ),
             ),
           ),
-          const SizedBox(height: 50.0),
+          const SizedBox(
+            height: 50.0,
+          ),
           Center(
             child: Visibility(
               visible: isSearching,
@@ -143,7 +163,10 @@ class _IoTRouteState extends State<IoTRoute> {
     // Toast widget with a given message
     _showToast(bool isSuccess) {
       Widget toast = Container(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+        padding: const EdgeInsets.symmetric(
+          horizontal: 24.0,
+          vertical: 12.0,
+        ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
           color: (isSuccess)
@@ -153,16 +176,19 @@ class _IoTRouteState extends State<IoTRoute> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon((isSuccess) ? Icons.check : Icons.error_outline_rounded,
-                color: Colors.white),
+            Icon(
+              (isSuccess) ? Icons.check : Icons.error_outline_rounded,
+              color: Colors.white,
+            ),
             SizedBox(
               width: 12.0,
             ),
             Text(
-                (isSuccess)
-                    ? "Aftenging tókst"
-                    : "Villa kom upp, reyndu aftur.",
-                style: TextStyle(color: Colors.white)),
+              (isSuccess) ? "Aftenging tókst" : "Villa kom upp, reyndu aftur.",
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
           ],
         ),
       );
@@ -185,7 +211,8 @@ class _IoTRouteState extends State<IoTRoute> {
             child: ListBody(
               children: <Widget>[
                 Text(
-                    "Ertu viss um að þú viljir aftengja ${connectionInfo[args[0]["iotName"]]["display_name"]}?"),
+                  "Ertu viss um að þú viljir aftengja ${connectionInfo[args[0]["iotName"]]["display_name"]}?",
+                ),
               ],
             ),
           ),
@@ -227,7 +254,10 @@ class _IoTRouteState extends State<IoTRoute> {
           name: connectionInfo[name]['name'],
           brand: connectionInfo[name]['brand'],
           icon: Icon(
-            IconData(connectionInfo[name]['icon'], fontFamily: 'MaterialIcons'),
+            IconData(
+              connectionInfo[name]['icon'],
+              fontFamily: 'MaterialIcons',
+            ),
             color: Colors.red.withOpacity(0.5),
             size: 30.0,
           ),
@@ -381,7 +411,12 @@ class DisconnectButtonPromptWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(label, style: TextStyle(fontSize: defaultFontSize)),
+      child: Text(
+        label,
+        style: TextStyle(
+          fontSize: defaultFontSize,
+        ),
+      ),
     );
   }
 }
