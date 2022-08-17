@@ -127,6 +127,15 @@ class WebViewRouteState extends State<WebViewRoute> {
               dlog("flutter_handler called from javascript!!! $args");
               widget.callbackFromJavascript(args);
             });
+        controller.addJavaScriptHandler(
+            handlerName: "darkmode_handler",
+            callback: (args) {
+              dlog("darkmode_handler called from javascript!!! $args");
+              var darkMode = (MediaQuery.of(context).platformBrightness ==
+                  Brightness.dark);
+              dlog("darkMode: $darkMode");
+              return darkMode;
+            });
       },
     );
 
