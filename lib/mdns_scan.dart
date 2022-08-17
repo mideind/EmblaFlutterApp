@@ -21,13 +21,10 @@
 
 // mDNS scan route
 
-import 'dart:convert';
-
 import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
@@ -49,7 +46,7 @@ FToast fToastMdns;
 //   return tFile;
 // }
 
-// List of IoT widgets
+// List of widgets on the mDNS scan route
 List<Widget> _mdns(
     BuildContext context,
     Function scanForDevices,
@@ -67,7 +64,6 @@ List<Widget> _mdns(
               margin: const EdgeInsets.only(top: 9.0, bottom: 9.0),
               child: Text(
                 searchingText,
-                // style: const TextStyle(fontSize: 25.0, color: Colors.black),
                 style: sessionTextStyle,
               ),
             ),
@@ -148,10 +144,14 @@ class _MDNSRouteState extends State<MDNSRoute> {
   List<RegExp> kmDNSServiceFilters = <RegExp>[];
   Map<String, String> serviceMap = {};
 
+  // Callback from javascript to show toast message
+  // if the connection failed, or navigates back to
+  // The smart home screen if the connection succeeded
   void _returnCallback(args) {
     fToastMdns = FToast();
     fToastMdns.init(context);
 
+    // Toast widget with a given message
     _showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -179,7 +179,6 @@ class _MDNSRouteState extends State<MDNSRoute> {
       );
     }
 
-    dlog("Returning from scan: ");
     bool isError = false;
     bool isButtonPressMissing = false;
     int hubError;
@@ -209,22 +208,12 @@ class _MDNSRouteState extends State<MDNSRoute> {
     }
   }
 
+  // Makes a card out of the connectionName and connectionInfo
   void makeCard(String connectionName, String ipAddress) async {
-    dlog("${widget.connectionInfo}");
     String clientID = await PlatformDeviceId.getDeviceId;
-    // Map<String, String> domain_map = {
-    //   "_hue._tcp.local": "philips_hue",
-    //   "_sonos._tcp.local": "sonos",
-    // };
-    // String connection_name = domain_map[domainName];
 
-    dlog("MAKING CARD: $connectionName");
-    dlog("Connectioninfo: ${widget.connectionInfo}");
     if (mounted) {
-      dlog("!!!!!!!Mounted!!!!!!!!!");
       setState(() {
-        dlog("Making card: $connectionName");
-        dlog("!!!!!!IP: $ipAddress");
         connectionCards.add(ConnectionCard(
           connection: Connection.card(
             name: widget.connectionInfo[connectionName]['name'],
@@ -232,7 +221,6 @@ class _MDNSRouteState extends State<MDNSRoute> {
             icon: Icon(
               IconData(widget.connectionInfo[connectionName]['icon'],
                   fontFamily: 'MaterialIcons'),
-              // connectionInfo[name]['icon'] as IconData,
               color: Colors.red.withOpacity(0.5),
               size: 30.0,
             ),
@@ -241,11 +229,11 @@ class _MDNSRouteState extends State<MDNSRoute> {
           ),
           callbackFromJavascript: _returnCallback,
         ));
-        dlog("Connection cards: ${connectionCards.length}");
       });
     }
   }
 
+  // Scans for devices and adds them to the list of connection cards.
   void scanForDevices() async {
     if (isSearching) {
       return;

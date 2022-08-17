@@ -3,7 +3,6 @@
 //import 'dart:html';
 
 import 'dart:convert';
-import 'dart:io' show Platform;
 
 import 'package:embla/util.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,10 @@ const String kFindDevices = "Finna snjalltæki";
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
 FToast fToastIot;
 
-void _pushMDNSRoute(
+// Pushes the add_connection route on the navigation stack
+// If you navigate back to this route, the list of devices
+// will be refreshed
+void _pushConnectionRoute(
     BuildContext context, Function refreshDevices, dynamic arg) {
   Navigator.push(
     context,
@@ -41,7 +43,7 @@ void _pushMDNSRoute(
   });
 }
 
-// List of IoT widgets
+// List of IoT home screen widgets
 List<Widget> _iot(
   BuildContext context,
   List<ConnectionCard> connectionCards,
@@ -49,7 +51,6 @@ List<Widget> _iot(
   Map<String, dynamic> connectionInfo,
   Function scanCallback,
 ) {
-  dlog("Context: , $context");
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
@@ -60,13 +61,10 @@ List<Widget> _iot(
             Text(
               "Embla snjallheimili",
               style: sessionTextStyle,
-              // style: Theme.of(context)
-              //     .textTheme
-              //     .headline1, //TextStyle(fontSize: 25.0, color: Colors.black),
             ),
             IconButton(
               onPressed: () {
-                _pushMDNSRoute(context, scanCallback, connectionInfo);
+                _pushConnectionRoute(context, scanCallback, connectionInfo);
               },
               icon: Icon(
                 Icons.add,
@@ -136,9 +134,13 @@ class _IoTRouteState extends State<IoTRoute> {
   Map<String, dynamic> connectionInfo = {};
   DisconnectButtonPromptWidget disconnectButtonPromptWidget;
 
+  // Callback from javascript for when a device is disconnected
+  // Displays a toast message to confirm the disconnection
   void disconnectCallback(args) {
     fToastIot = FToast();
     fToastIot.init(context);
+
+    // Toast widget with a given message
     _showToast(bool isSuccess) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -174,8 +176,6 @@ class _IoTRouteState extends State<IoTRoute> {
       );
     }
 
-    dlog("Disconnect callback: $args");
-    dlog("iotName: ${args[0]["iotName"]}");
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -210,17 +210,17 @@ class _IoTRouteState extends State<IoTRoute> {
                   dlog("Error: $error");
                   _showToast(false);
                 });
-                dlog("!!!!Notandi aftengdi tæki!!!!");
               },
             ),
           ],
         );
       },
     );
-    dlog("Dialogue made");
   }
 
-  void makeCard(String name, String clientID, String iotGroup) async {
+  // Makes a single connection card from a given connection info
+  // with the name as key
+  void makeCard(String name) async {
     setState(() {
       connectionCards.add(ConnectionCard(
         connection: Connection.card(
@@ -228,12 +228,10 @@ class _IoTRouteState extends State<IoTRoute> {
           brand: connectionInfo[name]['brand'],
           icon: Icon(
             IconData(connectionInfo[name]['icon'], fontFamily: 'MaterialIcons'),
-            // connectionInfo[name]['icon'] as IconData,
             color: Colors.red.withOpacity(0.5),
             size: 30.0,
           ),
           webview: connectionInfo[name]['webview_home'],
-          // context: context,
         ),
         navigationCallback: scanCallback,
         callbackFromJavascript: disconnectCallback,
@@ -241,6 +239,8 @@ class _IoTRouteState extends State<IoTRoute> {
     });
   }
 
+  // Fetches all available connections from the server
+  // and puts it in the connection info map
   void getSupportedConnections() async {
     setState(() {
       isSearching = true;
@@ -265,8 +265,8 @@ class _IoTRouteState extends State<IoTRoute> {
     });
   }
 
+  // Gets all connections for a given client id
   void scanForDevices() async {
-    dlog("Scanning for devices...");
     if (isSearching) {
       return;
     }
@@ -288,11 +288,9 @@ class _IoTRouteState extends State<IoTRoute> {
         json.removeWhere((key, value) => key == "valid");
         for (Map<String, dynamic> groups in json.values) {
           for (final group in groups.entries) {
-            String iotGroup = group.key;
             Map<String, dynamic> devices = group.value;
             for (String device in devices.keys) {
-              dlog("Making card after fetching connections");
-              makeCard(device, clientID, iotGroup);
+              makeCard(device);
             }
           }
         }
@@ -313,7 +311,6 @@ class _IoTRouteState extends State<IoTRoute> {
   }
 
   void scanCallback() {
-    dlog("Scan callback");
     setState(() {
       scanForDevices();
     });
@@ -354,7 +351,7 @@ class DisconnectButtonPromptWidget extends StatelessWidget {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(this.alertText),
+                Text(alertText),
               ],
             ),
           ),
@@ -366,9 +363,9 @@ class DisconnectButtonPromptWidget extends StatelessWidget {
               },
             ),
             TextButton(
-              child: Text(this.buttonTitle),
+              child: Text(buttonTitle),
               onPressed: () {
-                this.handler();
+                handler();
                 Navigator.of(context).pop();
               },
             ),
@@ -384,7 +381,7 @@ class DisconnectButtonPromptWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
+      child: Text(label, style: TextStyle(fontSize: defaultFontSize)),
     );
   }
 }

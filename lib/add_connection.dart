@@ -41,7 +41,8 @@ const String kFindDevices = "Finna snjalltæki";
 
 FToast fToastAdd;
 
-void _pushConnectionRoute(BuildContext context, dynamic arg) {
+// Pushes the mDNS scan route on the navigation stack
+void _pushMDNSRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
@@ -52,7 +53,7 @@ void _pushConnectionRoute(BuildContext context, dynamic arg) {
   );
 }
 
-// List of IoT widgets
+// List of widgets that get displayed on the add connection route
 List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
     List<ConnectionListItem> connectionList) {
   return <Widget>[
@@ -64,7 +65,6 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
         children: <Widget>[
           Text(
             "Bæta við tengingu",
-            // style: TextStyle(fontSize: 25.0, color: Colors.black),
             style: sessionTextStyle,
           ),
           Container(
@@ -73,43 +73,15 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
               child: ElevatedButton.icon(
                 onPressed: () async {
                   dlog("Navigating to scan...");
-                  _pushConnectionRoute(context, connectionInfo);
+                  _pushMDNSRoute(context, connectionInfo);
                 },
                 style: ElevatedButton.styleFrom(
                     primary: Theme.of(context).primaryColor.withOpacity(0.5),
-                    // onPrimary: Theme.of(context).hoverColor.withOpacity(0.1),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
                     ),
                     padding:
                         EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
-
-                // style: ButtonStyle(
-                //   shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                //     RoundedRectangleBorder(
-                //       borderRadius: BorderRadius.circular(50.0),
-                //     ),
-                //   ),
-                //   padding: MaterialStateProperty.all(
-                //       EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
-                //   backgroundColor: MaterialStateProperty.resolveWith<Color>(
-                //     (Set<MaterialState> states) {
-                //       if (states.isEmpty) {
-                //         return Theme.of(context)
-                //             .colorScheme
-                //             .primary
-                //             .withOpacity(0.5);
-                //       }
-                //       if (states.contains(MaterialState.pressed)) {
-                //         return Theme.of(context)
-                //             .colorScheme
-                //             .secondary
-                //             .withOpacity(0.4);
-                //       }
-                //       return null; // Use the component's default.
-                //     },
-                //   ),
-                // ),
                 label: Text(
                   'Finna tæki',
                   style: TextStyle(color: Colors.white),
@@ -156,10 +128,14 @@ class ConnectionRoute extends StatefulWidget {
 class _ConnectionRouteState extends State<ConnectionRoute> {
   List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
 
+  // Callback from javascript to show toast message
+  // if the connection failed, or navigates back to
+  // The smart home screen if the connection succeeded
   void _returnCallback(args) {
     fToastAdd = FToast();
     fToastAdd.init(context);
 
+    // Toast widget with a given message
     _showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
@@ -187,7 +163,6 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       );
     }
 
-    dlog("Returning from scan: $args");
     bool isError = false;
     bool isButtonPressMissing = false;
     String hubError;
@@ -220,15 +195,17 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     }
   }
 
+  // Initializes the connection list by making cards
+  // for each connection in the connectionInfo map
   void initializeConnectionList() async {
+    // Makes a connection card from the given key and values
     Future<void> makeCard(String key, Map<String, dynamic> value) async {
       _connectionList.add(ConnectionListItem(
         connection: Connection.list(
           name: value['display_name'],
           icon: Icon(
             IconData(value['icon'], fontFamily: 'MaterialIcons'),
-            //TODO: use theme here. Was causing errors
-            color: Colors.red.withOpacity(0.5), //Theme.of(context).primaryColor
+            color: Colors.red.withOpacity(0.5),
             size: 24.0,
           ),
           logo: Image(
@@ -240,9 +217,9 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         ),
         callbackFromJavascript: _returnCallback,
       ));
-      dlog("Card added: ${value['display_name']}");
     }
 
+    // Makes all of the cards from the connectionInfo map
     Future<void> makeCards() async {
       widget.connectionInfo.forEach((key, value) async {
         dlog("Key: $key, value: $value");
@@ -251,17 +228,11 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     }
 
     await makeCards();
-
-    setState(() {
-      dlog("Initializing connection list...");
-      dlog("Connection list initialized with ${_connectionList.length} items");
-    });
   }
 
   @override
   void initState() {
     super.initState();
-    dlog("Connection info: ${widget.connectionInfo}");
     initializeConnectionList();
   }
 
