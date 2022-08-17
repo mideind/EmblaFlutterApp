@@ -22,8 +22,6 @@ import './add_connection.dart';
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
-const String kHost =
-    "http://192.168.1.76:5000"; // TODO: Replace all references to kHost with kDefaultQueryServer
 
 const List<String> kDeviceTypes = <String>["Öll tæki", "Ljós", "Gardínur"];
 FToast fToastIot;
@@ -201,7 +199,7 @@ class _IoTRouteState extends State<IoTRoute> {
               onPressed: () {
                 http
                     .delete(Uri.parse(
-                        "$kHost/delete_iot_data.api?client_id=${args[0]["clientId"]}&iot_group=${args[0]["iotGroup"]}&iot_name=${args[0]["iotName"]}"))
+                        "$kDefaultQueryServer/delete_iot_data.api?client_id=${args[0]["clientId"]}&iot_group=${args[0]["iotGroup"]}&iot_name=${args[0]["iotName"]}"))
                     .then((value) {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
@@ -248,7 +246,7 @@ class _IoTRouteState extends State<IoTRoute> {
     String clientID = await PlatformDeviceId.getDeviceId;
     await http
         .get(Uri.parse(
-            '$kHost/get_supported_iot_connections.api?client_id=$clientID&host=$kHost'))
+            '$kDefaultQueryServer/get_supported_iot_connections.api?client_id=$clientID&host=$kDefaultQueryServer'))
         .then((response) {
       final Map<String, dynamic> body = json.decode(response.body);
       connectionInfo = body['data']['connections'];
@@ -278,8 +276,8 @@ class _IoTRouteState extends State<IoTRoute> {
 
     // Fetching connections from data base
     Future<http.Response> fetchConnections() async {
-      return http
-          .get(Uri.parse('$kHost/get_iot_devices.api?client_id=$clientID'));
+      return http.get(Uri.parse(
+          '$kDefaultQueryServer/get_iot_devices.api?client_id=$clientID'));
     }
 
     fetchConnections().then((http.Response response) {

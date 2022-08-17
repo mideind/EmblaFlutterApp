@@ -40,7 +40,6 @@ import './mdns.dart';
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
-const String kHost = "http://192.168.1.76:5000";
 
 FToast fToastMdns;
 
