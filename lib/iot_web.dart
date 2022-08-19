@@ -49,7 +49,15 @@ class WebViewRouteState extends State<WebViewRoute> {
   void errHandler(InAppWebViewController controller, Uri url, int errCode,
       String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
-    String path = _fallbackAssetForURL(url.toString());
+    String path;
+    if (errCode == -8) {
+      // Page load error -8 is "net::ERR_TIMED_OUT"
+      // This is a timeout error, so we'll just load the local file
+      path = "$kDocsDir/iot_server_error.html";
+    } else {
+      // Other errors, just show the error page
+      path = _fallbackAssetForURL("$kDocsDir/error.html");
+    }
     dlog("Falling back to local asset $path");
     setState(() {
       controller.loadFile(assetFilePath: path);
@@ -58,8 +66,9 @@ class WebViewRouteState extends State<WebViewRoute> {
 
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
-    Uri uri = Uri.parse(url);
-    return "$kDocsDir/${uri.pathSegments.last}";
+    // dlog("IOT fallback: $url");
+    // Uri uri = Uri.parse(url);
+    return "$kDocsDir/iot_network_error.html"; //${uri.pathSegments.last}";
   }
 
   // Handle clicks on links in HTML documentation.

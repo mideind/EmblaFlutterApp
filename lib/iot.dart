@@ -4,6 +4,8 @@
 
 import 'dart:convert';
 
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:embla/session.dart';
 import 'package:embla/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
@@ -48,9 +50,14 @@ List<Widget> _iot(
   BuildContext context,
   List<ConnectionCard> connectionCards,
   bool isSearching,
+  bool isNetworkConnection,
+  bool isServerError,
   Map<String, dynamic> connectionInfo,
   Function scanCallback,
 ) {
+  dlog("isSearching in _iot: $isSearching");
+  dlog("isNetworkConnection in _iot: $isNetworkConnection");
+  dlog("isServerError in _iot: $isServerError");
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
@@ -62,18 +69,27 @@ List<Widget> _iot(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              "Embla snjallheimili",
-              style: sessionTextStyle,
+            Container(
+              margin: const EdgeInsets.only(
+                top: 9.0,
+                bottom: 9.0,
+              ),
+              child: Text(
+                "Embla snjallheimili",
+                style: sessionTextStyle,
+              ),
             ),
-            IconButton(
-              onPressed: () {
-                _pushConnectionRoute(context, scanCallback, connectionInfo);
-              },
-              icon: Icon(
-                Icons.add,
-                size: 30.0,
-                color: Theme.of(context).primaryColor,
+            Visibility(
+              visible: !isSearching && isNetworkConnection && !isServerError,
+              child: IconButton(
+                onPressed: () {
+                  _pushConnectionRoute(context, scanCallback, connectionInfo);
+                },
+                icon: Icon(
+                  Icons.add,
+                  size: 30.0,
+                  color: Theme.of(context).primaryColor,
+                ),
               ),
             ),
           ],
@@ -104,7 +120,62 @@ List<Widget> _iot(
       child: Column(
         children: <Widget>[
           Visibility(
-            visible: !isSearching && connectionCards.isEmpty,
+            visible: !isSearching &&
+                isNetworkConnection &&
+                !isServerError &&
+                connectionCards.isEmpty,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.only(
+                  top: 20.0,
+                  left: 25.0,
+                  bottom: 30.0,
+                  right: 25.0,
+                ),
+                child: Column(
+                  children: [
+                    Text(
+                      'Engar tengingar til staðar.',
+                      style: TextStyle(
+                        fontSize: 16.0,
+                        color: Colors.grey,
+                      ),
+                    ),
+                    Container(
+                      margin: EdgeInsets.only(bottom: 40.0, top: 40.0),
+                      child: Center(
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            _pushConnectionRoute(
+                                context, scanCallback, connectionInfo);
+                          },
+                          style: ElevatedButton.styleFrom(
+                              primary: Theme.of(context)
+                                  .primaryColor
+                                  .withOpacity(0.5),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(50.0),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 20.0, vertical: 10.0)),
+                          label: Text(
+                            'Bæta við tengingu',
+                            style: TextStyle(color: Colors.white),
+                          ),
+                          icon: Icon(
+                            Icons.add,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: !isNetworkConnection,
             child: Center(
               child: Container(
                 margin: const EdgeInsets.only(
@@ -114,7 +185,27 @@ List<Widget> _iot(
                   right: 25.0,
                 ),
                 child: Text(
-                  'Engar tengingar til staðar.',
+                  kNoInternetMessage,
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    color: Colors.grey,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          Visibility(
+            visible: isServerError,
+            child: Center(
+              child: Container(
+                margin: const EdgeInsets.only(
+                  top: 20.0,
+                  left: 25.0,
+                  bottom: 30.0,
+                  right: 25.0,
+                ),
+                child: Text(
+                  kServerErrorMessage,
                   style: TextStyle(
                     fontSize: 16.0,
                     color: Colors.grey,
@@ -128,7 +219,7 @@ List<Widget> _iot(
           ),
           Center(
             child: Visibility(
-              visible: isSearching,
+              visible: isSearching && !isServerError,
               child: SpinKitRing(
                 color: Theme.of(context).primaryColor,
                 size: 50.0,
@@ -151,8 +242,16 @@ class IoTRoute extends StatefulWidget {
 class _IoTRouteState extends State<IoTRoute> {
   List<ConnectionCard> connectionCards = [];
   bool isSearching = false;
+  bool isNetworkConnection = true;
+  bool isServerError = false;
   Map<String, dynamic> connectionInfo = {};
   DisconnectButtonPromptWidget disconnectButtonPromptWidget;
+
+  Future<bool> isConnectedToInternet() async {
+    ConnectivityResult connectivityResult =
+        await Connectivity().checkConnectivity();
+    return (connectivityResult != ConnectivityResult.none);
+  }
 
   // Callback from javascript for when a device is disconnected
   // Displays a toast message to confirm the disconnection
@@ -272,31 +371,74 @@ class _IoTRouteState extends State<IoTRoute> {
   // Fetches all available connections from the server
   // and puts it in the connection info map
   void getSupportedConnections() async {
+    // Check for internet connectivity
+    if (await isConnectedToInternet() == false) {
+      setState(() {
+        isNetworkConnection = false;
+        isServerError = false;
+        isSearching = false;
+      });
+      return;
+    }
     setState(() {
+      isNetworkConnection = true;
       isSearching = true;
+      isServerError = false;
     });
     String clientID = await PlatformDeviceId.getDeviceId;
-    await http
-        .get(Uri.parse(
-            '$kDefaultQueryServer/get_supported_iot_connections.api?client_id=$clientID&host=$kDefaultQueryServer'))
-        .then((response) {
-      final Map<String, dynamic> body = json.decode(response.body);
-      connectionInfo = body['data']['connections'];
+    await Future.any([
+      http
+          .get(Uri.parse(
+              '$kDefaultQueryServer/get_supported_iot_connections.api?client_id=$clientID&host=$kDefaultQueryServer'))
+          .then((response) {
+        dlog("Response: ${response.body}");
+        final Map<String, dynamic> body = json.decode(response.body);
+        connectionInfo = body['data']['connections'];
+        // setState(() {
+        //   isSearching = false;
+        // });
+      }).whenComplete(() {
+        setState(() {
+          isSearching = false;
+          isServerError = false;
+          scanForDevices();
+        });
+      }),
+      Future.delayed(Duration(seconds: 5)).then(
+        (value) {
+          dlog("Timeout");
+          if (isSearching == true) {
+            setState(() {
+              dlog("isSearching: $isSearching");
+              isSearching = false;
+              isServerError = true;
+              dlog("isSearching: $isSearching");
+            });
+          }
+        },
+      ),
+    ]).catchError((error) {
       setState(() {
+        dlog("isSaerching: $isSearching");
         isSearching = false;
+        dlog("isSaerching: $isSearching");
       });
-    }).catchError((error) {
       dlog("Error: $error");
-    }).whenComplete(() {
-      setState(() {
-        isSearching = false;
-        scanForDevices();
-      });
     });
   }
 
   // Gets all connections for a given client id
   void scanForDevices() async {
+    if (await isConnectedToInternet() == false) {
+      setState(() {
+        isNetworkConnection = false;
+        isServerError = false;
+        isSearching = false;
+        connectionCards.clear();
+      });
+      return;
+    }
+    dlog("scanForDevices");
     if (isSearching) {
       return;
     }
@@ -312,25 +454,42 @@ class _IoTRouteState extends State<IoTRoute> {
           '$kDefaultQueryServer/get_iot_devices.api?client_id=$clientID'));
     }
 
-    fetchConnections().then((http.Response response) {
-      Map<String, dynamic> json = jsonDecode(response.body);
-      if (json['valid'] == true) {
-        json.removeWhere((key, value) => key == "valid");
-        for (Map<String, dynamic> groups in json.values) {
-          for (final group in groups.entries) {
-            Map<String, dynamic> devices = group.value;
-            for (String device in devices.keys) {
-              makeCard(device);
+    await Future.any([
+      fetchConnections().then((http.Response response) {
+        Map<String, dynamic> json = jsonDecode(response.body);
+        if (json['valid'] == true) {
+          json.removeWhere((key, value) => key == "valid");
+          for (Map<String, dynamic> groups in json.values) {
+            for (final group in groups.entries) {
+              Map<String, dynamic> devices = group.value;
+              for (String device in devices.keys) {
+                makeCard(device);
+              }
             }
           }
         }
-      }
-    }).catchError((error) {
+      }).whenComplete(() {
+        setState(() {
+          isSearching = false;
+          isServerError = false;
+          isNetworkConnection = true;
+        });
+      }),
+      Future.delayed(Duration(seconds: 5)).then(
+        (value) {
+          dlog("Timeout");
+          if (isSearching == true) {
+            setState(() {
+              dlog("isSearching: $isSearching");
+              isSearching = false;
+              isServerError = true;
+              dlog("isSearching: $isSearching");
+            });
+          }
+        },
+      ),
+    ]).catchError((error) {
       dlog("Error: $error");
-    }).whenComplete(() {
-      setState(() {
-        isSearching = false;
-      });
     });
   }
 
@@ -348,8 +507,8 @@ class _IoTRouteState extends State<IoTRoute> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _iot(
-        context, connectionCards, isSearching, connectionInfo, scanCallback);
+    List<Widget> wlist = _iot(context, connectionCards, isSearching,
+        isNetworkConnection, isServerError, connectionInfo, scanCallback);
 
     return Scaffold(
         appBar: standardAppBar,

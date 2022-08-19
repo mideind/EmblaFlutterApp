@@ -52,7 +52,11 @@ class ConnectionListItem extends StatelessWidget {
               callbackFromJavascript);
         },
         child: ListTile(
-          leading: connection.logo,
+          leading: SizedBox(
+            width: 25.0,
+            height: 25.0,
+            child: connection.logo,
+          ),
           title: Text(connection.name),
           trailing: connection.icon,
         ),

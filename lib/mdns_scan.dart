@@ -116,12 +116,25 @@ List<Widget> _mdns(
               child: Column(
                 children: [
                   Text(
-                    'Engin tæki fundust.',
-                    style: Theme.of(context).textTheme.headline4,
+                    'Engin tæki fundust.\n',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey,
+                    ),
                   ),
                   Text(
-                    'Vinsamlegast reyndu aftur\neða veldu tæki handvirkt.',
-                    style: Theme.of(context).textTheme.headline4,
+                    'Vinsamlegast reyndu aftur',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey,
+                    ),
+                  ),
+                  Text(
+                    'eða veldu tæki handvirkt.',
+                    style: TextStyle(
+                      fontSize: 16.0,
+                      color: Colors.grey,
+                    ),
                   ),
                 ],
               ),

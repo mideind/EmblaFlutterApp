@@ -225,12 +225,17 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
             size: 24.0,
           ),
           logo: Image(
-            image: NetworkImage(
-              value['logo'],
-              scale: 1.0,
-            ),
-            width: 25.0,
-          ),
+              image: FadeInImage.assetNetwork(
+                      image: value['logo'],
+                      placeholder: 'assets/images/cube.png',
+                      width: 25.0,
+                      height: 25.0)
+                  .image,
+              errorBuilder: (context, error, stackTrace) {
+                return Image.asset('assets/images/cube.png');
+              },
+              width: 25.0,
+              height: 25.0),
           webview:
               '${value['webview_connect']}${value.containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(value['connect_url'])}' : ''}',
         ),
