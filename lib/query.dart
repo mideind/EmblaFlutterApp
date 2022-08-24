@@ -87,7 +87,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 
 // Wrapper class around communication with query server
 class QueryService {
-  // Send request to query API
+  // Send request to query server API
   static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
     // Query args
     Map<String, String> qargs = {

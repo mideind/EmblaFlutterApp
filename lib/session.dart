@@ -360,11 +360,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Starting session');
 
-    if (await SpeechRecognizer().canRecognizeSpeech() == false) {
-      AudioPlayer().playSound('rec_cancel');
-      showRecognitionErrorAlert(context);
-      return;
-    }
+    // if (await SpeechRecognizer().canRecognizeSpeech() == false) {
+    //   AudioPlayer().playSound('rec_cancel');
+    //   showRecognitionErrorAlert(context);
+    //   return;
+    // }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
