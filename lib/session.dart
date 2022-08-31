@@ -270,7 +270,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Process response from query server
-  void handleQueryResponse(Map resp) async {
+  void handleQueryResponse(Map<String, dynamic> resp) async {
     if (state != SessionState.answering) {
       dlog("Received query answer after session terminated: ${resp.toString()}");
       return;

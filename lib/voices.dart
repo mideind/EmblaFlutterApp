@@ -28,6 +28,7 @@ import './theme.dart';
 
 List<String> voices;
 
+// Fetch list of voice IDs (strings) from server
 Future<List<String>> fetchVoiceList() async {
   if (kReleaseMode) {
     voices = kSpeechSynthesisVoices;

@@ -45,7 +45,7 @@ void main() async {
     Prefs().setDefaults();
   }
 
-  // Make sure we map voice "Kona" to "Dora" for backward compatibility
+  // Make sure we change voice "Kona" to "Dora" for backward compatibility
   // Previous versions of the app used "Kona" as the default voice with
   // the option of "Karl" as an alternative. As of 1.3.0, we now use
   // voice names e.g. "Dora"
