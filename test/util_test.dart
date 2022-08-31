@@ -71,11 +71,23 @@ void testUtil() {
       "mikið er þetta gaman",
       "HVAÐ ER EIGINLEGA Í GANGI?",
       "The rain in Spain stays mainly in the plain",
-      'iT\'s by no means possible',
+      "iT's by no means possible",
     ];
     for (String s in ts) {
       expect(s[0].toUpperCase() == s.sentenceCapitalized()[0], true);
     }
+  });
+
+  test('Strings should be asciified', () {
+    final Map<String, String> m = {
+      "mikið er þetta gaman": "mikid er thetta gaman",
+      "HVAÐ ER EIGINLEGA Í GANGI?": "HVAD ER EIGINLEGA I GANGI?",
+      "Örnólfur Gyrðir Möðvarsson": "Ornolfur Gyrdir Modvarsson"
+    };
+    m.forEach((k, v) {
+      String s = k.asciify();
+      expect(s == v, true);
+    });
   });
 
   // Color extensions
@@ -83,6 +95,7 @@ void testUtil() {
     final Map colors = {
       "#ffffff": Colors.white,
       "#000000": Colors.black,
+      //"#ff0000": Colors.red,
     };
     colors.forEach((k, v) {
       expect(HexColor.fromHex(k), v);
