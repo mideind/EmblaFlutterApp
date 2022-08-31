@@ -142,7 +142,7 @@ class AudioPlayer {
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
     playSound(fn, completionHandler);
-    Map dunnoStrings = {
+    Map<String, String> dunnoStrings = {
       "dunno01": "Ég get ekki svarað því.",
       "dunno02": "Ég get því miður ekki svarað því.",
       "dunno03": "Ég kann ekki svar við því.",

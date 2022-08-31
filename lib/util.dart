@@ -59,7 +59,7 @@ extension StringExtension on String {
 
   // Convert Icelandic characters to their ASCII equivalent.
   String asciify() {
-    Map icechar2ascii = {
+    Map<String, String> icechar2ascii = {
       "ð": "d",
       "Ð": "D",
       "á": "a",

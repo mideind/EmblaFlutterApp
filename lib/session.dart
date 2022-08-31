@@ -583,7 +583,7 @@ class SessionButtonPainter extends CustomPainter {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
-    List circleColors = circleColors4Context(sessionContext);
+    List<Color> circleColors = circleColors4Context(sessionContext);
 
     // First, outermost, circle
     var paint = Paint()..color = circleColors[0];

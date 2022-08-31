@@ -125,7 +125,7 @@ Color color4ctx(var context) {
   return lightMainColor;
 }
 
-List circleColors4Context(var context) {
+List<Color> circleColors4Context(var context) {
   Color circleColor1 = HexColor.fromHex('#f9f0f0');
   Color circleColor2 = HexColor.fromHex('#f9e2e1');
   Color circleColor3 = HexColor.fromHex('#f9dcdb');

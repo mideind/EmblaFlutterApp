@@ -155,7 +155,7 @@ class QueryService {
   }
 
   // Send request to voices API
-  static Future<Map> requestSupportedVoices() async {
+  static Future<Map<String, dynamic>> requestSupportedVoices() async {
     Response r = await _makeRequest(kVoiceListAPIPath, {}, null);
     if (r == null) {
       return null;
