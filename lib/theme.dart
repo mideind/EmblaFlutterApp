@@ -28,8 +28,8 @@ final Color circleColor2 = HexColor.fromHex('#f9e2e1');
 final Color circleColor3 = HexColor.fromHex('#f9dcdb');
 
 const String defaultFontFamily = 'Lato';
-const double defaultFontSize = 19.0;
-const double sessionFontSize = 24.0;
+const double defaultFontSize = 18.0;
+const double sessionFontSize = 23.0;
 
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
 final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);

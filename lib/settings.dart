@@ -60,10 +60,10 @@ class SettingsSwitchWidget extends StatefulWidget {
 class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   @override
   Widget build(BuildContext context) {
-    String prefKey = this.widget.prefKey;
+    String prefKey = widget.prefKey;
     return MergeSemantics(
       child: ListTile(
-        title: Text(this.widget.label),
+        title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
           activeColor: Theme.of(context).primaryColorDark,
@@ -120,7 +120,7 @@ class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget
               child: Text('Virkja'),
               onPressed: () {
                 setState(() {
-                  Prefs().setBoolForKey(this.widget.prefKey, true);
+                  Prefs().setBoolForKey(widget.prefKey, true);
                 });
                 Navigator.of(context).pop();
               },
@@ -133,10 +133,10 @@ class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget
 
   @override
   Widget build(BuildContext context) {
-    String prefKey = this.widget.prefKey;
+    String prefKey = widget.prefKey;
     return MergeSemantics(
       child: ListTile(
-        title: Text(this.widget.label),
+        title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
           activeColor: Theme.of(context).primaryColorDark,
@@ -178,7 +178,7 @@ class SettingsSegmentedWidget extends StatefulWidget {
 
 class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   Map<int, Widget> _genChildren() {
-    List<String> items = this.widget.items;
+    List<String> items = widget.items;
     Map<int, Widget> wlist = {};
     for (int i = 0; i < items.length; i++) {
       wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(items[i]));
@@ -187,8 +187,8 @@ class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   }
 
   int selectedSegment() {
-    List<String> items = this.widget.items;
-    String prefKey = this.widget.prefKey;
+    List<String> items = widget.items;
+    String prefKey = widget.prefKey;
     for (int i = 0; i < items.length; i++) {
       if (Prefs().stringForKey(prefKey) == items[i]) {
         return i;
@@ -200,13 +200,13 @@ class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(this.widget.label),
+      title: Text(widget.label),
       trailing: CupertinoSegmentedControl(
           children: _genChildren(),
           groupValue: selectedSegment(),
           onValueChanged: (value) {
             setState(() {
-              Prefs().setStringForKey(this.widget.prefKey, this.widget.items[value]);
+              Prefs().setStringForKey(widget.prefKey, widget.items[value]);
             });
           }),
     );
@@ -233,39 +233,39 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   double currVal;
 
   double _constrainValue(double pval) {
-    pval = pval > this.widget.maxValue ? this.widget.maxValue : pval;
-    pval = pval < this.widget.minValue ? this.widget.maxValue : pval;
-    if (this.widget.stepSize > 0) {
-      pval = (pval / this.widget.stepSize).round() * this.widget.stepSize;
+    pval = pval > widget.maxValue ? widget.maxValue : pval;
+    pval = pval < widget.minValue ? widget.maxValue : pval;
+    if (widget.stepSize > 0) {
+      pval = (pval / widget.stepSize).round() * widget.stepSize;
     }
     return pval;
   }
 
   String genSliderLabel() {
-    double val = Prefs().floatForKey(this.widget.prefKey);
+    double val = Prefs().floatForKey(widget.prefKey);
     String valStr = val.toStringAsFixed(2);
     if (valStr.endsWith("0")) {
       valStr = valStr.substring(0, valStr.length - 1);
     }
     valStr = valStr.replaceAll('.', ',');
-    return "${this.widget.label} (${valStr}x)";
+    return "${widget.label} (${valStr}x)";
   }
 
   @override
   Widget build(BuildContext context) {
-    this.currVal = _constrainValue(Prefs().floatForKey(this.widget.prefKey));
+    currVal = _constrainValue(Prefs().floatForKey(widget.prefKey));
     return ListTile(
         title: Text(genSliderLabel()),
         trailing: CupertinoSlider(
             onChanged: (double value) {
               setState(() {
                 currVal = _constrainValue(value);
-                Prefs().setFloatForKey(this.widget.prefKey, currVal);
+                Prefs().setFloatForKey(widget.prefKey, currVal);
               });
             },
-            value: this.currVal,
-            min: this.widget.minValue,
-            max: this.widget.maxValue));
+            value: currVal,
+            min: widget.minValue,
+            max: widget.maxValue));
   }
 }
 
@@ -290,7 +290,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(this.alertText),
+                Text(alertText),
               ],
             ),
           ),
@@ -302,9 +302,9 @@ class SettingsButtonPromptWidget extends StatelessWidget {
               },
             ),
             TextButton(
-              child: Text(this.buttonTitle),
+              child: Text(buttonTitle),
               onPressed: () {
-                this.handler();
+                handler();
                 Navigator.of(context).pop();
               },
             ),
@@ -320,7 +320,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(this.label, style: TextStyle(fontSize: defaultFontSize)),
+      child: Text(label, style: TextStyle(fontSize: defaultFontSize)),
     );
   }
 }
@@ -354,15 +354,15 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
-    for (int i = 0; i < this.widget.items.length; i++) {
-      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(this.widget.items[i][0]));
+    for (int i = 0; i < widget.items.length; i++) {
+      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(widget.items[i][0]));
     }
     return wlist;
   }
 
   int selectedSegment() {
-    for (int i = 0; i < this.widget.items.length; i++) {
-      if (Prefs().stringForKey(this.widget.prefKey) == this.widget.items[i][1]) {
+    for (int i = 0; i < widget.items.length; i++) {
+      if (Prefs().stringForKey(widget.prefKey) == widget.items[i][1]) {
         return i;
       }
     }
@@ -374,21 +374,20 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
     if (val is String) {
       finalVal = val;
     } else {
-      finalVal = this.widget.items[val][1];
+      finalVal = widget.items[val][1];
     }
 
     setState(() {
-      this.text = finalVal;
-      Prefs().setStringForKey(this.widget.prefKey, this.text);
+      text = finalVal;
+      Prefs().setStringForKey(widget.prefKey, text);
       textController.value = TextEditingValue(
-          text: this.text,
-          selection: TextSelection(baseOffset: this.text.length, extentOffset: this.text.length));
+          text: text, selection: TextSelection(baseOffset: text.length, extentOffset: text.length));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    this.text = Prefs().stringForKey(this.widget.prefKey);
+    text = Prefs().stringForKey(widget.prefKey);
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
@@ -409,8 +408,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
         child: ListTile(
-      title: Text(this.label, style: Theme.of(context).textTheme.caption),
-      trailing: Text(this.value, style: Theme.of(context).textTheme.caption),
+      title: Text(label, style: Theme.of(context).textTheme.caption),
+      trailing: Text(value, style: Theme.of(context).textTheme.caption),
     ));
   }
 }
@@ -424,12 +423,12 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-        future: this.future,
+        future: future,
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return SettingsLabelValueWidget(this.label, snapshot.data);
+            return SettingsLabelValueWidget(label, snapshot.data);
           }
-          return SettingsLabelValueWidget(this.label, '...');
+          return SettingsLabelValueWidget(label, '...');
         });
   }
 }
@@ -446,7 +445,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-        title: Text(this.widget.label, style: menuTextStyle),
+        title: Text(widget.label, style: menuTextStyle),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
