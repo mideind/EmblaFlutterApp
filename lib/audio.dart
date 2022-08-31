@@ -30,6 +30,7 @@ import 'package:http/http.dart' as http;
 
 import './common.dart';
 import './prefs.dart' show Prefs;
+import './util.dart';
 
 // List of audio file assets in bundle
 const List<String> audioFiles = [
@@ -160,7 +161,7 @@ class AudioPlayer {
     // Different file name depending on voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
-      String voiceName = Prefs().stringForKey('voice_id').toLowerCase();
+      String voiceName = Prefs().stringForKey('voice_id').toLowerCase().asciify();
       fileName = "$soundName-$voiceName";
     }
 
