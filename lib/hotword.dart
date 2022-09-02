@@ -26,7 +26,7 @@ import 'package:logger/logger.dart' show Level;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
-import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 
 import './common.dart';
 
@@ -72,7 +72,8 @@ class HotwordDetector {
     detector.hotwordHandler = hwHandler;
 
     // Prep recording session
-    await _micRecorder.openAudioSession();
+    await _micRecorder.openRecorder();
+    //await _micRecorder.openAudioSession();
 
     // Create recording stream
     _recordingDataController = StreamController<Food>();
@@ -96,7 +97,7 @@ class HotwordDetector {
   Future<void> stop() async {
     dlog('Stopping hotword detection');
     await _micRecorder?.stopRecorder();
-    await _micRecorder?.closeAudioSession();
+    await _micRecorder?.closeRecorder();
     await _recordingDataSubscription?.cancel();
     await _recordingDataController?.close();
   }

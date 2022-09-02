@@ -24,7 +24,7 @@ import 'dart:math';
 
 import 'package:filesize/filesize.dart' show filesize;
 import 'package:logger/logger.dart' show Level;
-import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 
@@ -89,7 +89,7 @@ class AudioPlayer {
     dlog('Initing audio player');
     _preloadAudioFiles();
     player = FlutterSoundPlayer(logLevel: Level.error);
-    player.openAudioSession();
+    await player.openPlayer();
   }
 
   // Load all asset-bundled audio files into memory
