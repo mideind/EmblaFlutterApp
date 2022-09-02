@@ -1,5 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
 import 'dart:io';
 import 'package:multicast_dns/multicast_dns.dart';
 import './common.dart';
@@ -34,8 +32,7 @@ class MulticastDNSSearcher {
       bool reusePort,
       int ttl,
     }) =>
-            RawDatagramSocket.bind(host, port,
-                reuseAddress: true, reusePort: false, ttl: ttl));
+            RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl));
   }
 
   // NULL SAFE VERSION
@@ -48,14 +45,14 @@ class MulticastDNSSearcher {
 
   /// Finds all devices on the local network using mDNS.
   /// Calls deviceCallback for each found device that matches a filter regex.
-  Future<void> findLocalDevices(List<RegExp> filters,
-      Map<String, String> serviceMap, Function deviceCallback) async {
+  Future<void> findLocalDevices(
+      List<RegExp> filters, Map<String, String> serviceMap, Function deviceCallback) async {
     // Start the client with default options.
     await _client.start();
     dlog("Started mDNS client");
     // Get the PTR record for the service.
-    await for (final PtrResourceRecord ptr in _client.lookup<PtrResourceRecord>(
-        ResourceRecordQuery.serverPointer(_endpoint))) {
+    await for (final PtrResourceRecord ptr
+        in _client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(_endpoint))) {
       // Use the domainName from the PTR record to get the SRV record,
       // which will have the port and local hostname.
       // Note that duplicate messages may come through, especially if any
@@ -63,22 +60,18 @@ class MulticastDNSSearcher {
       dlog('>>>>>>>>>>>>>>> ${ptr.domainName}');
       dlog(ptr);
       for (final RegExp filter in filters) {
-        print("Filter: $filter");
+        dlog("Filter: $filter");
         if (filter.hasMatch(ptr.domainName)) {
           dlog("Found device: ${ptr.domainName}");
-          await for (final PtrResourceRecord ptr2
-              in _client.lookup<PtrResourceRecord>(
-                  ResourceRecordQuery.serverPointer(ptr.domainName))) {
+          await for (final PtrResourceRecord ptr2 in _client
+              .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(ptr.domainName))) {
             dlog("!!!!!!!!!!!!!!! ${ptr2.domainName}");
 
-            await for (final SrvResourceRecord srv
-                in _client.lookup<SrvResourceRecord>(
-                    ResourceRecordQuery.service(ptr2.domainName))) {
-              dlog(
-                  'Something found at ${srv.target}:${srv.port} for "${srv.name}".');
-              await for (final IPAddressResourceRecord ipa
-                  in _client.lookup<IPAddressResourceRecord>(
-                      ResourceRecordQuery.addressIPv4(srv.target))) {
+            await for (final SrvResourceRecord srv in _client
+                .lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr2.domainName))) {
+              dlog('Something found at ${srv.target}:${srv.port} for "${srv.name}".');
+              await for (final IPAddressResourceRecord ipa in _client
+                  .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
                 dlog('IP address is ${ipa.address.address}:${srv.port}');
                 // Check if this device matches any of the filters.
                 dlog('Device matches filter "${filter.pattern}".');

@@ -1,6 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
-
 /*
  * This file is part of the Embla Flutter app
  * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
@@ -26,9 +23,7 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:platform_device_id/platform_device_id.dart';
 
-import './common.dart';
 import './theme.dart';
 import './connection.dart';
 import './connection_card.dart';
@@ -40,19 +35,9 @@ const String kFindDevices = "Finna snjalltæki";
 
 FToast fToastMdns;
 
-// Future<String> loadText(String textFile) async {
-//   dlog("Loading text file: $textFile");
-//   String tFile = await rootBundle.loadString('assets/iot_keys/$textFile');
-//   return tFile;
-// }
-
 // List of widgets on the mDNS scan route
-List<Widget> _mdns(
-    BuildContext context,
-    Function scanForDevices,
-    List<ConnectionCard> connectionCards,
-    String searchingText,
-    bool isSearching) {
+List<Widget> _mdns(BuildContext context, Function scanForDevices,
+    List<ConnectionCard> connectionCards, String searchingText, bool isSearching) {
   return <Widget>[
     Container(
         margin: const EdgeInsets.only(
@@ -317,8 +302,8 @@ class _MDNSRouteState extends State<MDNSRoute> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _mdns(
-        context, scanForDevices, connectionCards, searchingText, isSearching);
+    List<Widget> wlist =
+        _mdns(context, scanForDevices, connectionCards, searchingText, isSearching);
 
     if (kReleaseMode == false) {
       // Special debug widgets go here

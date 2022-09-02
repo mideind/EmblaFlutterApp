@@ -40,8 +40,7 @@ const int kAudioSampleRate = 16000;
 const int kAudioNumChannels = 1;
 
 // Server communication
-const String kDefaultQueryServer =
-    'http://192.168.1.76:5000'; //TODO: change back to greynir 'https://greynir.is';
+const String kDefaultQueryServer = 'https://greynir.is';
 const String kDefaultSTTServer = 'speech.googleapis.com';
 const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';

@@ -112,6 +112,8 @@ String introMsg() {
 
 // Main widget for session view
 class SessionRoute extends StatefulWidget {
+  const SessionRoute({Key key}) : super(key: key);
+
   @override
   State<StatefulWidget> createState() => SessionRouteState();
 }

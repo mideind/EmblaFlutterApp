@@ -32,8 +32,7 @@ const double defaultFontSize = 19.0;
 const double sessionFontSize = 24.0;
 
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
-final sessionTextStyle =
-    TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
+final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
 // Define default (light) app styling and color scheme
 final Color lightMainColor = HexColor.fromHex('#e83939');

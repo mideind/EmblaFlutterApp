@@ -1,6 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
-
 /*
  * This file is part of the Embla Flutter app
  * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
@@ -58,8 +55,7 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
     List<ConnectionListItem> connectionList) {
   return <Widget>[
     Container(
-      margin: const EdgeInsets.only(
-          top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
+      margin: const EdgeInsets.only(top: 20.0, left: 25.0, bottom: 30.0, right: 25.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
@@ -80,8 +76,7 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    padding:
-                        EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
                 label: Text(
                   'Finna tæki',
                   style: TextStyle(color: Colors.white),
@@ -95,8 +90,7 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
           ),
           Container(
             margin: EdgeInsets.only(bottom: 40.0),
-            child: Text('Studdar tengingar',
-                style: Theme.of(context).textTheme.headline1),
+            child: Text('Studdar tengingar', style: Theme.of(context).textTheme.headline1),
           ),
           Column(
             children: <Widget>[
@@ -126,6 +120,7 @@ class ConnectionRoute extends StatefulWidget {
 }
 
 class _ConnectionRouteState extends State<ConnectionRoute> {
+  // ignore: prefer_final_fields
   List<ConnectionListItem> _connectionList = <ConnectionListItem>[];
 
   // Callback from javascript to show toast message
@@ -192,11 +187,9 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       _showToast("Ýta þarf á hnapp á tengiboxi.");
     } else if (hubError != null) {
       if (hubError == '429') {
-        _showToast(
-            "Tenging mistókst.\n Reyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
+        _showToast("Tenging mistókst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else if (hubError == 'no-hub') {
-        _showToast(
-            "Ekkert tengibox fannst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
+        _showToast("Ekkert tengibox fannst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else {
         _showToast("Villa í tengingu við tengibox.");
       }
@@ -261,8 +254,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist =
-        _options(context, widget.connectionInfo, _connectionList);
+    List<Widget> wlist = _options(context, widget.connectionInfo, _connectionList);
 
     if (kReleaseMode == false) {
       // Special debug widgets go here

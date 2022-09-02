@@ -1,5 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
 import 'package:flutter/material.dart';
 
 class Connection {

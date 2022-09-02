@@ -1,7 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
-//import 'dart:html';
-
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -30,8 +26,7 @@ FToast fToastIot;
 // Pushes the add_connection route on the navigation stack
 // If you navigate back to this route, the list of devices
 // will be refreshed
-void _pushConnectionRoute(
-    BuildContext context, Function refreshDevices, dynamic arg) {
+void _pushConnectionRoute(BuildContext context, Function refreshDevices, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
@@ -120,10 +115,8 @@ List<Widget> _iot(
       child: Column(
         children: <Widget>[
           Visibility(
-            visible: !isSearching &&
-                isNetworkConnection &&
-                !isServerError &&
-                connectionCards.isEmpty,
+            visible:
+                !isSearching && isNetworkConnection && !isServerError && connectionCards.isEmpty,
             child: Center(
               child: Container(
                 margin: const EdgeInsets.only(
@@ -146,18 +139,14 @@ List<Widget> _iot(
                       child: Center(
                         child: ElevatedButton.icon(
                           onPressed: () async {
-                            _pushConnectionRoute(
-                                context, scanCallback, connectionInfo);
+                            _pushConnectionRoute(context, scanCallback, connectionInfo);
                           },
                           style: ElevatedButton.styleFrom(
-                              primary: Theme.of(context)
-                                  .primaryColor
-                                  .withOpacity(0.5),
+                              primary: Theme.of(context).primaryColor.withOpacity(0.5),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 20.0, vertical: 10.0)),
+                              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
                           label: Text(
                             'Bæta við tengingu',
                             style: TextStyle(color: Colors.white),
@@ -248,8 +237,7 @@ class _IoTRouteState extends State<IoTRoute> {
   DisconnectButtonPromptWidget disconnectButtonPromptWidget;
 
   Future<bool> isConnectedToInternet() async {
-    ConnectivityResult connectivityResult =
-        await Connectivity().checkConnectivity();
+    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
   }
 
@@ -268,9 +256,7 @@ class _IoTRouteState extends State<IoTRoute> {
         ),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(25.0),
-          color: (isSuccess)
-              ? HexColor.fromHex('#87c997')
-              : HexColor.fromHex("#C00004"),
+          color: (isSuccess) ? HexColor.fromHex('#87c997') : HexColor.fromHex("#C00004"),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -450,8 +436,7 @@ class _IoTRouteState extends State<IoTRoute> {
 
     // Fetching connections from data base
     Future<http.Response> fetchConnections() async {
-      return http.get(Uri.parse(
-          '$kDefaultQueryServer/get_iot_devices.api?client_id=$clientID'));
+      return http.get(Uri.parse('$kDefaultQueryServer/get_iot_devices.api?client_id=$clientID'));
     }
 
     await Future.any([
@@ -507,8 +492,8 @@ class _IoTRouteState extends State<IoTRoute> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _iot(context, connectionCards, isSearching,
-        isNetworkConnection, isServerError, connectionInfo, scanCallback);
+    List<Widget> wlist = _iot(context, connectionCards, isSearching, isNetworkConnection,
+        isServerError, connectionInfo, scanCallback);
 
     return Scaffold(
         appBar: standardAppBar,

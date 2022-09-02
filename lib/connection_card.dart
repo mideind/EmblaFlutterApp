@@ -1,5 +1,3 @@
-// @dart=2.9
-// ^ Removes checks for null safety
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import './common.dart';
@@ -13,10 +11,7 @@ class ConnectionCard extends StatefulWidget {
   final Function callbackFromJavascript;
 
   const ConnectionCard(
-      {Key key,
-      @required this.connection,
-      this.navigationCallback,
-      this.callbackFromJavascript})
+      {Key key, @required this.connection, this.navigationCallback, this.callbackFromJavascript})
       : super(key: key);
 
   @override
@@ -26,8 +21,8 @@ class ConnectionCard extends StatefulWidget {
 // Pushes a webroute on the navigation stack
 // If there is a navigation callback, call it
 // when returning to the previous route
-void _pushWebRoute(BuildContext context, Function navigationCallback,
-    dynamic arg, Function callbackFromJavascript) {
+void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic arg,
+    Function callbackFromJavascript) {
   dlog("URL: $arg");
   Navigator.push(
     context,
@@ -65,8 +60,8 @@ class _ConnectionCardState extends State<ConnectionCard> {
           splashFactory: InkRipple.splashFactory,
         ),
         onPressed: () {
-          _pushWebRoute(context, widget.navigationCallback,
-              widget.connection.webview, widget.callbackFromJavascript);
+          _pushWebRoute(context, widget.navigationCallback, widget.connection.webview,
+              widget.callbackFromJavascript);
         },
         child: SizedBox(
           width: cardWidth,

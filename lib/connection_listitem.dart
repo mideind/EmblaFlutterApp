@@ -6,8 +6,8 @@ import './connection.dart';
 // Pushes a webroute on the navigation stack
 // If there is a navigation callback, call it
 // when returning to the previous route
-void _pushWebRoute(BuildContext context, Function navigationCallback,
-    dynamic arg, Function callbackFromJavascript) {
+void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic arg,
+    Function callbackFromJavascript) {
   Navigator.push(
     context,
     CupertinoPageRoute(
@@ -31,10 +31,7 @@ class ConnectionListItem extends StatelessWidget {
   final Function callbackFromJavascript;
 
   const ConnectionListItem(
-      {Key key,
-      @required this.connection,
-      this.navigationCallback,
-      this.callbackFromJavascript})
+      {Key key, @required this.connection, this.navigationCallback, this.callbackFromJavascript})
       : super(key: key);
 
   @override
@@ -48,8 +45,7 @@ class ConnectionListItem extends StatelessWidget {
           splashFactory: InkRipple.splashFactory,
         ),
         onPressed: () {
-          _pushWebRoute(context, navigationCallback, connection.webview,
-              callbackFromJavascript);
+          _pushWebRoute(context, navigationCallback, connection.webview, callbackFromJavascript);
         },
         child: ListTile(
           leading: SizedBox(
