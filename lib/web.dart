@@ -98,12 +98,11 @@ class WebViewRouteState extends State<WebViewRoute> {
       onLoadStop: (InAppWebViewController controller, Uri url) async {
         if (url.toString().endsWith(kLoadingHTMLFilePath) ||
             url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
-          // String clientID = await PlatformDeviceId.getDeviceId;
-          // dlog("Client id: " + clientID);
           setState(() {
-            String url = widget.initialURL; //+ "?client_id=$clientID";
+            String url = widget.initialURL;
             if (darkMode) {
-              url += '&dark=1';
+              String prefix = url.contains('?') ? '&' : '?';
+              url += '${prefix}dark=1';
             }
             Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));

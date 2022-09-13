@@ -15,6 +15,7 @@ import './theme.dart';
 import './connection_card.dart';
 import './connection.dart';
 import './add_connection.dart';
+import './prefs.dart' show Prefs;
 
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
@@ -237,6 +238,7 @@ class _IoTRouteState extends State<IoTRoute> {
   DisconnectButtonPromptWidget disconnectButtonPromptWidget;
 
   Future<bool> isConnectedToInternet() async {
+    // TODO: Is this needed? Doc says to not use it for wifi status
     ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
   }
@@ -313,7 +315,7 @@ class _IoTRouteState extends State<IoTRoute> {
               onPressed: () {
                 http
                     .delete(Uri.parse(
-                        "$kDefaultQueryServer/delete_iot_data.api?client_id=${args[0]["clientId"]}&iot_group=${args[0]["iotGroup"]}&iot_name=${args[0]["iotName"]}"))
+                        "${Prefs().stringForKey('query_server')}/delete_iot_data.api?client_id=${args[0]["clientId"]}&iot_group=${args[0]["iotGroup"]}&iot_name=${args[0]["iotName"]}"))
                     .then((value) {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
@@ -375,14 +377,11 @@ class _IoTRouteState extends State<IoTRoute> {
     await Future.any([
       http
           .get(Uri.parse(
-              '$kDefaultQueryServer/get_supported_iot_connections.api?client_id=$clientID&host=$kDefaultQueryServer'))
+              "${Prefs().stringForKey('query_server')}/get_supported_iot_connections.api?client_id=$clientID&host=${Prefs().stringForKey('query_server')}"))
           .then((response) {
         dlog("Response: ${response.body}");
         final Map<String, dynamic> body = json.decode(response.body);
         connectionInfo = body['data']['connections'];
-        // setState(() {
-        //   isSearching = false;
-        // });
       }).whenComplete(() {
         setState(() {
           isSearching = false;
@@ -436,7 +435,8 @@ class _IoTRouteState extends State<IoTRoute> {
 
     // Fetching connections from data base
     Future<http.Response> fetchConnections() async {
-      return http.get(Uri.parse('$kDefaultQueryServer/get_iot_devices.api?client_id=$clientID'));
+      return http.get(Uri.parse(
+          "${Prefs().stringForKey('query_server')}/get_iot_devices.api?client_id=$clientID"));
     }
 
     await Future.any([
