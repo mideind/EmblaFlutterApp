@@ -26,9 +26,10 @@ import './query.dart' show QueryService;
 import './common.dart' show dlog, kSpeechSynthesisVoices, kDefaultVoice;
 import './theme.dart';
 
-List voices;
+List<String> voices;
 
-Future<List> fetchVoiceList() async {
+// Fetch list of voice IDs (strings) from server
+Future<List<String>> fetchVoiceList() async {
   if (kReleaseMode) {
     voices = kSpeechSynthesisVoices;
   }
@@ -38,8 +39,8 @@ Future<List> fetchVoiceList() async {
   }
 
   try {
-    Map res = await QueryService.requestSupportedVoices();
-    List voiceList = kSpeechSynthesisVoices;
+    Map<String, dynamic> res = await QueryService.requestSupportedVoices();
+    List<String> voiceList = kSpeechSynthesisVoices;
     String defaultVoice = kDefaultVoice;
 
     if (res != null && res.containsKey("valid") == true && res["valid"] == true) {

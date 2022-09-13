@@ -44,6 +44,7 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '${val.toString()}'");
     _sp?.setBool(key, val);
+    // This is hacky and should be solved in some other way
     if (key == 'share_location') {
       if (val == true) {
         LocationTracking().start();
@@ -72,7 +73,7 @@ class Prefs {
   }
 
   String desc() {
-    List list = _sp
+    List<dynamic> list = _sp
         ?.getKeys()
         ?.map<String>((key) => "$key: ${_sp?.get(key).toString()}")
         ?.toList(growable: false);

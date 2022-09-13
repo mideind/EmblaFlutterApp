@@ -24,12 +24,13 @@ import 'dart:math';
 
 import 'package:filesize/filesize.dart' show filesize;
 import 'package:logger/logger.dart' show Level;
-import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:http/http.dart' as http;
 
 import './common.dart';
 import './prefs.dart' show Prefs;
+import './util.dart';
 
 // List of audio file assets in bundle
 const List<String> audioFiles = [
@@ -88,7 +89,7 @@ class AudioPlayer {
     dlog('Initing audio player');
     _preloadAudioFiles();
     player = FlutterSoundPlayer(logLevel: Level.error);
-    player.openAudioSession();
+    await player.openPlayer();
   }
 
   // Load all asset-bundled audio files into memory
@@ -141,7 +142,7 @@ class AudioPlayer {
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
     playSound(fn, completionHandler);
-    Map dunnoStrings = {
+    Map<String, String> dunnoStrings = {
       "dunno01": "Ég get ekki svarað því.",
       "dunno02": "Ég get því miður ekki svarað því.",
       "dunno03": "Ég kann ekki svar við því.",
@@ -160,7 +161,7 @@ class AudioPlayer {
     // Different file name depending on voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
-      String voiceName = Prefs().stringForKey('voice_id').toLowerCase();
+      String voiceName = Prefs().stringForKey('voice_id').toLowerCase().asciify();
       fileName = "$soundName-$voiceName";
     }
 

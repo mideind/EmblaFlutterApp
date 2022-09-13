@@ -47,7 +47,7 @@ Future<String> _clientVersion() async {
 }
 
 // Send a request to query server
-Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async {
+Future<Response> _makeRequest(String path, Map<String, dynamic> qargs, [Function handler]) async {
   String apiURL = Prefs().stringForKey('query_server') + path;
 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
@@ -87,7 +87,7 @@ Future<Response> _makeRequest(String path, Map qargs, [Function handler]) async 
 
 // Wrapper class around communication with query server
 class QueryService {
-  // Send request to query API
+  // Send request to query server API
   static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
     // Query args
     Map<String, String> qargs = {
@@ -155,7 +155,7 @@ class QueryService {
   }
 
   // Send request to voices API
-  static Future<Map> requestSupportedVoices() async {
+  static Future<Map<String, dynamic>> requestSupportedVoices() async {
     Response r = await _makeRequest(kVoiceListAPIPath, {}, null);
     if (r == null) {
       return null;

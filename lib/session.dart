@@ -272,7 +272,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Process response from query server
-  void handleQueryResponse(Map resp) async {
+  void handleQueryResponse(Map<String, dynamic> resp) async {
     if (state != SessionState.answering) {
       dlog("Received query answer after session terminated: ${resp.toString()}");
       return;
@@ -362,11 +362,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Starting session');
 
-    if (await SpeechRecognizer().canRecognizeSpeech() == false) {
-      AudioPlayer().playSound('rec_cancel');
-      showRecognitionErrorAlert(context);
-      return;
-    }
+    // if (await SpeechRecognizer().canRecognizeSpeech() == false) {
+    //   AudioPlayer().playSound('rec_cancel');
+    //   showRecognitionErrorAlert(context);
+    //   return;
+    // }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
@@ -585,7 +585,7 @@ class SessionButtonPainter extends CustomPainter {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
-    List circleColors = circleColors4Context(sessionContext);
+    List<Color> circleColors = circleColors4Context(sessionContext);
 
     // First, outermost, circle
     var paint = Paint()..color = circleColors[0];

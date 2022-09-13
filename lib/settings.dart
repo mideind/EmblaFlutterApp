@@ -327,7 +327,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
 
 // Widget that controls query server prefs i.e. text field + preset buttons
 class QueryServerSegmentedWidget extends StatefulWidget {
-  final List items;
+  final List<List<String>> items;
   final String prefKey;
 
   const QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
@@ -467,7 +467,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
 }
 
 Future<String> genVersionString() async {
-  final Map osName2Pretty = {
+  final Map<String, String> osName2Pretty = {
     "linux": "Linux",
     "macos": "macOS",
     "windows": "Windows",

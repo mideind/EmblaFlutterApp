@@ -29,7 +29,7 @@ const String kFrameFilePrefix = 'anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
 
-final List animationFrames = [];
+final List<ui.Image> animationFrames = [];
 
 // Load a PNG image into memory from Flutter assets bundle
 Future<ui.Image> _loadImageAsset(String asset) async {

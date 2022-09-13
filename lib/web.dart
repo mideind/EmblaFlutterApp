@@ -66,12 +66,13 @@ class WebViewRouteState extends State<WebViewRoute> {
     URLRequest req = action.request;
     String urlStr = req.url.toString();
     String fallbackFilename = _fallbackAssetForURL(urlStr);
-    if (urlStr != widget.initialURL && urlStr.endsWith(fallbackFilename) == false) {
+    if (urlStr.startsWith(widget.initialURL) == false &&
+        urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
       await launchUrl(req.url, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
     }
-    return NavigationActionPolicy.CANCEL;
+    return NavigationActionPolicy.ALLOW;
   }
 
   @override
@@ -85,8 +86,14 @@ class WebViewRouteState extends State<WebViewRoute> {
       loadingURL = kLoadingDarkHTMLFilePath;
     }
 
+    var url = widget.initialURL;
+    if (darkMode) {
+      url += "?dark=1";
+    }
+
     InAppWebView webView = InAppWebView(
       initialFile: loadingURL,
+      //initialUrlRequest: URLRequest(url: Uri.parse(url)),
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,

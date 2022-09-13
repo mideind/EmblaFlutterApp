@@ -54,17 +54,17 @@ class LocationTracking {
       return;
     }
     dlog('Starting location tracking');
-    positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
-        .listen((Position position) {
-      if (position == null) {
-        known = false;
-        return;
-      }
-      lat = position.latitude;
-      lon = position.longitude;
-      known = true;
-      //dlog("Location: ${lat.toString()}, ${lon.toString()}");
-    });
+    // positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
+    //     .listen((Position position) {
+    //   if (position == null) {
+    //     known = false;
+    //     return;
+    //   }
+    //   lat = position.latitude;
+    //   lon = position.longitude;
+    //   known = true;
+    //   //dlog("Location: ${lat.toString()}, ${lon.toString()}");
+    // });
   }
 
   void stop() {

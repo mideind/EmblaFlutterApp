@@ -48,7 +48,7 @@ const String kSpeechSynthesisAPIPath = '/speech.api/v1';
 const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Speech synthesis
-const List kSpeechSynthesisVoices = ["Dóra", "Karl"];
+const List<String> kSpeechSynthesisVoices = ["Dóra", "Karl"];
 const String kDefaultVoice = "Dóra";
 
 const double kVoiceSpeedMin = 0.7;
@@ -60,7 +60,7 @@ const String kInstructionsURL = 'https://embla.is/instructions.html';
 const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Alternate query server options f. debugging purposes
-const List kQueryServerPresetOptions = [
+const List<List<String>> kQueryServerPresetOptions = [
   ['Greynir.is', 'https://greynir.is'],
   ['Brandur', 'http://brandur.mideind.is:5000'],
   ['Staðarnet', 'http://192.168.1.8:5000']

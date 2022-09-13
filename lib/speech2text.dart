@@ -22,7 +22,8 @@ import 'dart:async';
 import 'dart:math' show pow;
 
 import 'package:logger/logger.dart' show Level;
-import 'package:flutter_sound_lite/flutter_sound.dart';
+import 'package:audio_session/audio_session.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:google_speech/google_speech.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:rxdart/rxdart.dart';
@@ -109,11 +110,32 @@ class SpeechRecognizer {
     });
 
     // Open microphone recording session
-    await _micRecorder.openAudioSession();
+    await _micRecorder.openRecorder();
+
+    final session = await AudioSession.instance;
+    await session.configure(AudioSessionConfiguration(
+      avAudioSessionCategory: AVAudioSessionCategory.playAndRecord,
+      avAudioSessionCategoryOptions: AVAudioSessionCategoryOptions.allowBluetooth |
+          AVAudioSessionCategoryOptions.defaultToSpeaker,
+      // avAudioSessionMode: AVAudioSessionMode.spokenAudio,
+      avAudioSessionRouteSharingPolicy: AVAudioSessionRouteSharingPolicy.defaultPolicy,
+      avAudioSessionSetActiveOptions: AVAudioSessionSetActiveOptions.none,
+      androidAudioAttributes: const AndroidAudioAttributes(
+        contentType: AndroidAudioContentType.speech,
+        flags: AndroidAudioFlags.none,
+        usage: AndroidAudioUsage.voiceCommunication,
+      ),
+      androidAudioFocusGainType: AndroidAudioFocusGainType.gain,
+      androidWillPauseWhenDucked: true,
+    ));
 
     // Listen for audio status (duration, decibel) at fixed interval
     _micRecorder.setSubscriptionDuration(Duration(milliseconds: 50));
     _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
+      dlog(e);
+      if (e.decibels == 0.0) {
+        return;
+      }
       double decibels = e.decibels - 70.0; // This number is arbitrary but works
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     });
@@ -148,7 +170,7 @@ class SpeechRecognizer {
     double seconds = totalAudioDataSize / (2.0 * kAudioSampleRate);
     dlog("Total audio length: $seconds seconds ($totalAudioDataSize bytes)");
     await _micRecorder?.stopRecorder();
-    await _micRecorder?.closeAudioSession();
+    await _micRecorder?.closeRecorder();
     await _recordingDataSubscription?.cancel();
     await _recordingProgressSubscription?.cancel();
     await _recordingDataController?.close();

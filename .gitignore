@@ -80,3 +80,4 @@ assets/iot_keys/*.txt
 
 *upload-keystore.uu
 
+lib/generated_plugin_registrant.dart
