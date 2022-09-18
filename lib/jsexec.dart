@@ -18,11 +18,14 @@
 
 // Singleton wrapper class around headless web view to execute JS code
 
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+import 'common.dart';
+// TODO: Better error handling
 
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
-  final _flutterWebviewPlugin = FlutterWebviewPlugin();
+  HeadlessInAppWebView headlessWebView;
 
   // Singleton pattern
   factory JSExecutor() {
@@ -32,10 +35,33 @@ class JSExecutor {
   // Constructor
   JSExecutor._internal() {
     // Only called once, when singleton is instantiated
-    _flutterWebviewPlugin.launch('about:blank', hidden: true);
+    headlessWebView = HeadlessInAppWebView(
+      initialUrlRequest: URLRequest(url: Uri.parse("about:blank")),
+      initialOptions: InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(),
+      ),
+      onWebViewCreated: (controller) {
+        dlog('HeadlessInAppWebView created!');
+      },
+      onConsoleMessage: (controller, consoleMessage) {
+        dlog("JAVASCRIPT CONSOLE MESSAGE: ${consoleMessage.message}");
+      },
+    );
   }
 
-  Future<String> run(String jsCode) {
-    return _flutterWebviewPlugin.evalJavascript(jsCode);
+  Future<String> run(String jsCode) async {
+    await headlessWebView.dispose();
+    await headlessWebView.run();
+    String answer = "Upp kom villa.";
+    try {
+      var result =
+          await headlessWebView.webViewController.callAsyncJavaScript(functionBody: jsCode);
+      if (result.error == null && result.value != null) {
+        answer = result.value.toString();
+      }
+    } on Exception {
+      dlog("ERROR: HeadlessInAppWebView is not running!");
+    }
+    return answer;
   }
 }
