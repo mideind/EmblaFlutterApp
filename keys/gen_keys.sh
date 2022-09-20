@@ -10,14 +10,14 @@ GOBF=""
 if [ ! -e $GOOGLE_ACCOUNT_PATH ]; then
     echo "File ${GOOGLE_ACCOUNT_PATH} not found in script directory, using empty string"
 else
-    GOBF=`base64 -i ${GOOGLE_ACCOUNT_PATH}`
+    GOBF=$(base64 -i ${GOOGLE_ACCOUNT_PATH} | tr -d '\n')
 fi
 
 QOBF=""
 if [ ! -e $QUERY_KEY_PATH ]; then
     echo "File ${QUERY_KEY_PATH} not found in script directory, using empty string"
 else
-    QOBF=`base64 -i ${QUERY_KEY_PATH}`
+    QOBF=$(base64 -i ${QUERY_KEY_PATH} | tr -d '\n')
 fi
 
 cat > '../lib/keys.dart' << EOF
