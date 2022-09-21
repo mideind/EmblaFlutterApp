@@ -25,7 +25,6 @@ dependencies:
   audio_session: '>=0.1.10'
   permission_handler: '>=9.2.0'
   flutter_fgbg: '>=0.2.0'
-  flutter_webview_plugin: '>=0.4.0'
   logger: '>=1.1.0'
   filesize: '>=2.0.1'
   adaptive_theme: '>=3.0.0'
