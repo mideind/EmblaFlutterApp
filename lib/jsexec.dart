@@ -21,7 +21,6 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'common.dart';
-// TODO: Better error handling
 
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();

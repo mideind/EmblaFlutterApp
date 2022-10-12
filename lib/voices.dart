@@ -52,7 +52,7 @@ Future<List<String>> fetchVoiceList() async {
 
       // Debug mode
       if (res.containsKey("supported") == true) {
-        voiceList = res["supported"];
+        voiceList = res["supported"] as List<String>;
       }
     }
     // Make sure current voice is sane
@@ -101,7 +101,6 @@ FutureBuilder<List> _genVoiceList() {
   return FutureBuilder<List>(
       future: fetchVoiceList(),
       builder: (context, AsyncSnapshot<List> snapshot) {
-        dlog(snapshot.toString());
         if (snapshot.hasData == false) {
           // No data yet
           return Center(
