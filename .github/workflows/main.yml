@@ -29,15 +29,25 @@ jobs:
       - uses: subosito/flutter-action@v1
         with:
           channel: 'stable' # or: 'beta', 'dev' or 'master'
-      - run: touch keys/gaccount.json
-      - run: touch keys/query_api.key
-      - run: bash keys/gen_keys.sh
-      - run: echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
-      - run: git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
-      - run: flutter pub get
-      - run: flutter test
-      - run: dart analyze lib
-      - run: bash build.sh
+      - name: Create dummy API keys
+        run: |
+          touch keys/gaccount.json
+          touch keys/query_api.key
+          bash keys/gen_keys.sh
+          echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
+      - name: Clone flutter_snowboy dependency repo
+        run: |
+          git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
+      - name: Install dependencies
+        run: |
+          flutter pub get
+      - name: Run tests
+        run: |
+          flutter test
+          dart analyze lib
+      - name: Build APK
+        run: |
+          bash build.sh
       - name: Slack notification
         uses: 8398a7/action-slack@v2
         with:
