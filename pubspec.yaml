@@ -23,7 +23,7 @@ dependencies:
   wakelock: '>=0.6.1'
   flutter_sound: '>=9.2.13'
   audio_session: '>=0.1.10'
-  permission_handler: '>=9.2.0'
+  permission_handler: '^9.2.0'
   flutter_fgbg: '>=0.2.0'
   logger: '>=1.1.0'
   filesize: '>=2.0.1'
