@@ -62,4 +62,4 @@ flutter:
         - asset: assets/fonts/Lato-Italic.ttf
           style: italic
         - asset: assets/fonts/Lato-Bold.ttf
-          style: bold
+          weight: 700
