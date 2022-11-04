@@ -27,7 +27,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
-import './common.dart' show dlog, kSoftwareName;
+import './common.dart' show dlog, kSoftwareName, kDefaultVoice;
 import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
@@ -45,18 +45,16 @@ void main() async {
     Prefs().setDefaults();
   }
 
-  // Make sure we change voice "Kona" to "Dora" for backward compatibility
+  // Make sure we change voice "Kona" or "Dora" to new "Gudrun" voice
   // Previous versions of the app used "Kona" as the default voice with
   // the option of "Karl" as an alternative. As of 1.3.0, we now use
-  // voice names e.g. "Dora"
-  if (Prefs().stringForKey("voice_id") == "Kona") {
-    Prefs().setStringForKey("voice_id", "Dóra");
+  // voice names, and "Gudrun" is the default voice.
+  var voiceID = Prefs().stringForKey("voice_id");
+  if (voiceID == "Dóra" || voiceID == "Kona" || voiceID == "Dora" || voiceID == null) {
+    Prefs().setStringForKey("voice_id", kDefaultVoice);
   }
-
-  // Hack mapping "Dora" to "Dóra" in Prefs. This is purely for cosmetic
-  // reasons, as the voice name is displayed in the UI.
-  if (Prefs().stringForKey("voice_id") == "Dora") {
-    Prefs().setStringForKey("voice_id", "Dóra");
+  if (voiceID == "Karl") {
+    Prefs().setStringForKey("voice_id", "Gunnar");
   }
 
   dlog("Shared prefs: ${Prefs().desc()}");

@@ -146,7 +146,7 @@ class QueryService {
   static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
     Map<String, String> qargs = {
       'text': text,
-      'voice_id': Prefs().stringForKey('voice_id') == 'Karl' ? 'Karl' : 'Dora',
+      'voice_id': Prefs().stringForKey('voice_id'),
       'format': 'text', // No SSML for now...
       'api_key': readQueryServerKey(),
     };

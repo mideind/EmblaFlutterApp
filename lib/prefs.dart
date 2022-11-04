@@ -91,7 +91,7 @@ class Prefs {
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
     Prefs().setFloatForKey('voice_speed', 1.0);
-    Prefs().setStringForKey('voice_id', 'Dora');
+    Prefs().setStringForKey('voice_id', kDefaultVoice);
     Prefs().setStringForKey('query_server', kDefaultQueryServer);
     Prefs().setStringForKey('stt_server', kDefaultSTTServer);
   }
