@@ -117,6 +117,8 @@ FutureBuilder<List> _genVoiceList() {
 }
 
 class VoiceSelectionRoute extends StatelessWidget {
+  const VoiceSelectionRoute({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: standardAppBar, body: _genVoiceList());

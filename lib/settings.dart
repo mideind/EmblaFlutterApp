@@ -399,7 +399,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 }
 
 class SettingsLabelValueWidget extends StatelessWidget {
-  const SettingsLabelValueWidget(this.label, this.value);
+  const SettingsLabelValueWidget(this.label, this.value, {Key key}) : super(key: key);
 
   final String label;
   final String value;
@@ -418,7 +418,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
 
-  const SettingsAsyncLabelValueWidget(this.label, this.future);
+  const SettingsAsyncLabelValueWidget(this.label, this.future, {Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -460,6 +460,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
               builder: (context) => VoiceSelectionRoute(),
             ),
           ).then((val) {
+            // Trigger re-render since voice selection may have changed
             setState(() {});
           });
         });
@@ -519,14 +520,14 @@ List<Widget> _settings(BuildContext context) {
 }
 
 class SettingsRoute extends StatelessWidget {
+  const SettingsRoute({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     List<Widget> slist = _settings(context);
     // Only include query server selection widget in debug builds
     if (kReleaseMode == false) {
       slist.addAll([
-        // SettingsSegmentedWidget(
-        //     label: 'Talgreining', items: ['Google', 'Tiro'], prefKey: 'speech2text_server'),
         QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
       ]);
     }

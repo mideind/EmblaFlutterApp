@@ -84,6 +84,8 @@ ListView _generateMenu(BuildContext context) {
 }
 
 class MenuRoute extends StatelessWidget {
+  const MenuRoute({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(appBar: standardAppBar, body: _generateMenu(context));
