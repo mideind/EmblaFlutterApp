@@ -57,6 +57,10 @@ class WebViewRouteState extends State<WebViewRoute> {
     return "$kDocsDir/${uri.pathSegments.last}";
   }
 
+  String _darkURLForURL(String url) {
+    return "$url?dark=1";
+  }
+
   // Handle clicks on links in HTML documentation.
   // These links should be opened in an external browser.
   Future<NavigationActionPolicy> urlClickHandler(
@@ -86,7 +90,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     // var url = widget.initialURL;
     // if (darkMode) {
-    //   url += "?dark=1";
+    //   url = _darkURLForURL(url);
     // }
 
     InAppWebView webView = InAppWebView(
@@ -107,7 +111,7 @@ class WebViewRouteState extends State<WebViewRoute> {
           setState(() {
             String url = widget.initialURL;
             if (darkMode) {
-              url += '?dark=1';
+              _darkURLForURL(url);
             }
             Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));

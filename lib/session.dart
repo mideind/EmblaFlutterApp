@@ -601,7 +601,7 @@ class SessionButtonPainter extends CustomPainter {
   }
 
   // Draw current logo animation frame
-  void drawFrame(Canvas canvas, Size size, int fnum) {
+  void drawLogoFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.isEmpty) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
@@ -639,6 +639,7 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
+    // TODO: These colors should be set via theme
     //var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
     var topPaint = Paint()..color = HexColor.fromHex('#e83939');
     //var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
@@ -672,7 +673,7 @@ class SessionButtonPainter extends CustomPainter {
           level * barHeight); // height
       canvas.drawRect(bottomRect, bottomPaint);
 
-      // Draw circle at end of bar
+      // Draw circle at end of bottom bar
       canvas.drawCircle(
           Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
               centerY + (level * barHeight) + yOffset), // offset
@@ -692,11 +693,11 @@ class SessionButtonPainter extends CustomPainter {
     }
     // Draw logo animation during answering phase
     else if (state == SessionState.answering) {
-      drawFrame(canvas, size, currFrame);
+      drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo
     else {
-      drawFrame(canvas, size, kFullLogoFrame); // Always same frame
+      drawLogoFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
   }
 

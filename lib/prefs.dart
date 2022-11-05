@@ -38,12 +38,12 @@ class Prefs {
   }
 
   bool boolForKey(String key) {
-    return _sp?.getBool(key) ?? false;
+    return _sp.getBool(key) ?? false;
   }
 
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '${val.toString()}'");
-    _sp?.setBool(key, val);
+    _sp.setBool(key, val);
     // This is hacky and should be solved in some other way
     if (key == 'share_location') {
       if (val == true) {
@@ -55,21 +55,21 @@ class Prefs {
   }
 
   double floatForKey(String key) {
-    return _sp?.getDouble(key);
+    return _sp.getDouble(key);
   }
 
   void setFloatForKey(String key, double val) {
     dlog("Setting pref key '$key' to float '${val.toString()}'");
-    _sp?.setDouble(key, val);
+    _sp.setDouble(key, val);
   }
 
   String stringForKey(String key) {
-    return _sp?.getString(key);
+    return _sp.getString(key);
   }
 
   void setStringForKey(String key, String val) {
     dlog("Setting pref key '$key' to string '$val'");
-    _sp?.setString(key, val);
+    _sp.setString(key, val);
   }
 
   String desc() {
@@ -93,6 +93,5 @@ class Prefs {
     Prefs().setFloatForKey('voice_speed', 1.0);
     Prefs().setStringForKey('voice_id', kDefaultVoice);
     Prefs().setStringForKey('query_server', kDefaultQueryServer);
-    Prefs().setStringForKey('stt_server', kDefaultSTTServer);
   }
 }

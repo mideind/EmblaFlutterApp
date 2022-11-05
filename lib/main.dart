@@ -45,14 +45,15 @@ void main() async {
     Prefs().setDefaults();
   }
 
-  // Make sure we change voice "Kona" or "Dora" to new "Gudrun" voice
+  // Make sure we change voice "Kona" or "Dora" to new "Gudrun" voice.
   // Previous versions of the app used "Kona" as the default voice with
-  // the option of "Karl" as an alternative. As of 1.3.0, we now use
-  // voice names, and "Gudrun" is the default voice.
+  // the option of "Karl" as an alternative. As of 1.3.0, we use
+  // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
   var voiceID = Prefs().stringForKey("voice_id");
   if (voiceID == "Dóra" || voiceID == "Kona" || voiceID == "Dora" || voiceID == null) {
     Prefs().setStringForKey("voice_id", kDefaultVoice);
   }
+  // If user had selected "Karl" as the voice, change it to "Gunnar"
   if (voiceID == "Karl") {
     Prefs().setStringForKey("voice_id", "Gunnar");
   }
@@ -61,14 +62,15 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  AudioPlayer();
-  HotwordDetector();
+  AudioPlayer(); // singleton
+  HotwordDetector(); // singleton
 
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
   Wakelock.enable();
 
   // Request microphone permission
+  // TODO: We should ask for all permissions in one request
   PermissionStatus status = await Permission.microphone.request();
   if (status != PermissionStatus.granted) {
     dlog("Microphone permission refused");
