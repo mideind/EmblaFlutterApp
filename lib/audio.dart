@@ -41,6 +41,14 @@ const List<String> audioFiles = [
   // Voice dependent
   'conn-dora',
   'conn-karl',
+  'conn-gudrun',
+  'conn-gunnar',
+
+  'err-dora',
+  'err-karl',
+  'err-gudrun',
+  'err-gunnar',
+
   'dunno01-dora',
   'dunno02-dora',
   'dunno03-dora',
@@ -48,6 +56,7 @@ const List<String> audioFiles = [
   'dunno05-dora',
   'dunno06-dora',
   'dunno07-dora',
+
   'dunno01-karl',
   'dunno02-karl',
   'dunno03-karl',
@@ -55,8 +64,22 @@ const List<String> audioFiles = [
   'dunno05-karl',
   'dunno06-karl',
   'dunno07-karl',
-  'err-dora',
-  'err-karl',
+
+  'dunno01-gudrun',
+  'dunno02-gudrun',
+  'dunno03-gudrun',
+  'dunno04-gudrun',
+  'dunno05-gudrun',
+  'dunno06-gudrun',
+  'dunno07-gudrun',
+
+  'dunno01-gunnar',
+  'dunno02-gunnar',
+  'dunno03-gunnar',
+  'dunno04-gunnar',
+  'dunno05-gunnar',
+  'dunno06-gunnar',
+  'dunno07-gunnar',
 ];
 
 // These sounds are the same regardless of voice ID settings.
@@ -111,8 +134,11 @@ class AudioPlayer {
   // Play remote audio file
   Future<void> playURL(String url, Function(bool) completionHandler) async {
     //_instance.stop();
-
-    dlog("Playing audio file URL '${url.substring(0, 200)}'");
+    String displayURL = url;
+    if (displayURL.length >= 200) {
+      displayURL = "${displayURL.substring(0, 200)}...";
+    }
+    dlog("Playing audio file URL '$displayURL'");
     try {
       Uint8List data;
       Uri uri = Uri.parse(url);
