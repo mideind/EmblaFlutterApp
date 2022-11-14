@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:filesize/filesize.dart' show filesize;
 import 'package:logger/logger.dart' show Level;
 import 'package:flutter_sound/flutter_sound.dart';
@@ -31,56 +32,6 @@ import 'package:http/http.dart' as http;
 import './common.dart';
 import './prefs.dart' show Prefs;
 import './util.dart';
-
-// List of audio file assets in bundle
-const List<String> audioFiles = [
-  // Voice-independent
-  'rec_begin',
-  'rec_cancel',
-  'rec_confirm',
-  // Voice dependent
-  'conn-dora',
-  'conn-karl',
-  'conn-gudrun',
-  'conn-gunnar',
-
-  'err-dora',
-  'err-karl',
-  'err-gudrun',
-  'err-gunnar',
-
-  'dunno01-dora',
-  'dunno02-dora',
-  'dunno03-dora',
-  'dunno04-dora',
-  'dunno05-dora',
-  'dunno06-dora',
-  'dunno07-dora',
-
-  'dunno01-karl',
-  'dunno02-karl',
-  'dunno03-karl',
-  'dunno04-karl',
-  'dunno05-karl',
-  'dunno06-karl',
-  'dunno07-karl',
-
-  'dunno01-gudrun',
-  'dunno02-gudrun',
-  'dunno03-gudrun',
-  'dunno04-gudrun',
-  'dunno05-gudrun',
-  'dunno06-gudrun',
-  'dunno07-gudrun',
-
-  'dunno01-gunnar',
-  'dunno02-gunnar',
-  'dunno03-gunnar',
-  'dunno04-gunnar',
-  'dunno05-gunnar',
-  'dunno06-gunnar',
-  'dunno07-gunnar',
-];
 
 // These sounds are the same regardless of voice ID settings.
 const List<String> sessionSounds = [
@@ -117,6 +68,32 @@ class AudioPlayer {
 
   // Load all asset-bundled audio files into memory
   Future<void> _preloadAudioFiles() async {
+    // List of audio file assets in bundle
+    List<String> audioFiles = List.from(sessionSounds);
+
+    List<String> voiceSpecificSounds = [
+      "conn",
+      "err",
+      "dunno01",
+      "dunno02",
+      "dunno03",
+      "dunno04",
+      "dunno05",
+      "dunno06",
+      "dunno07"
+    ];
+
+    List<String> voiceNames = kSpeechSynthesisVoices;
+    if (kReleaseMode == false) {
+      voiceNames = kSpeechSynthesisDebugVoices;
+    }
+    for (String voiceName in voiceNames) {
+      String vn = voiceName.asciify().toLowerCase();
+      for (String sound in voiceSpecificSounds) {
+        audioFiles.add("$sound-$vn");
+      }
+    }
+
     dlog("Preloading audio assets: ${audioFiles.toString()}");
     audioFileCache = <String, Uint8List>{};
     for (String fn in audioFiles) {
@@ -184,11 +161,17 @@ class AudioPlayer {
   void playSound(String soundName, [Function() completionHandler]) {
     _instance.stop();
 
-    // Different file name depending on voice is set in prefs
+    // Different file name depending on which voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
-      String voiceName = Prefs().stringForKey('voice_id').toLowerCase().asciify();
+      String voiceName = Prefs().stringForKey('voice_id').asciify().toLowerCase();
       fileName = "$soundName-$voiceName";
+    }
+
+    // Make sure the file is in the cache
+    if (audioFileCache.containsKey(fileName) == false) {
+      dlog("Audio file '$fileName' not found in cache!");
+      return;
     }
 
     dlog("Playing audio file '$fileName.wav'");

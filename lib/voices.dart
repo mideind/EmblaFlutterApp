@@ -23,16 +23,19 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
-import './common.dart' show dlog, kSpeechSynthesisVoices, kDefaultVoice;
+import './common.dart'
+    show dlog, kSpeechSynthesisVoices, kDefaultVoice, kSpeechSynthesisDebugVoices;
 import './theme.dart';
 
 List<dynamic> voices;
 
 // Fetch list of voice IDs (strings) from server
 Future<List<String>> fetchVoiceList() async {
-  // if (kReleaseMode) {
-  voices = kSpeechSynthesisVoices;
-  // }
+  if (kReleaseMode) {
+    voices = kSpeechSynthesisVoices;
+  } else {
+    voices = kSpeechSynthesisDebugVoices;
+  }
 
   if (voices != null) {
     return voices;
