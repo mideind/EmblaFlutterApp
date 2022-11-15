@@ -69,30 +69,21 @@ void main() async {
   // This wakelock is disabled when leaving session route
   Wakelock.enable();
 
-  // Request microphone permission
-  // TODO: We should ask for all permissions in one request
-  PermissionStatus status = await Permission.microphone.request();
-  if (status != PermissionStatus.granted) {
-    dlog("Microphone permission refused");
+  // Request permissions
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.microphone,
+    Permission.location,
+  ].request();
+
+  if (statuses[Permission.microphone].isDenied) {
+    dlog("Microphone permission is denied.");
   }
 
-  // Request and activate location tracking
-  if (Prefs().boolForKey('share_location') == true) {
-    // Wrap in try/catch in case another location permission request is ongoing.
-    // This is a hack. For some reason, some versions of Android can activate a
-    // location permission request without being triggered by the Flutter
-    // permissions package, and simultaneous requests trigger an exception.
-    try {
-      LocationPermission permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.denied &&
-          permission != LocationPermission.deniedForever) {
-        LocationTracking().start();
-      } else {
-        Prefs().setBoolForKey('share_location', false);
-      }
-    } catch (err) {
-      LocationTracking().start();
-    }
+  if (statuses[Permission.location].isDenied) {
+    print("Location permission is denied.");
+    Prefs().setBoolForKey('share_location', false);
+  } else {
+    LocationTracking().start();
   }
 
   // Launch app with session route

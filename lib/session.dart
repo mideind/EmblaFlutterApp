@@ -154,14 +154,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
-    // Request microphone permission
-    PermissionStatus status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      dlog("Microphone permission refused");
-    } else {
+    if (await Permission.microphone.isGranted) {
       if (Prefs().boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler);
       }
+    } else {
+      dlog("Cannot start hotword detection, microphone permission refused");
     }
   }
 
@@ -360,13 +358,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Session start called during pre-existing session!');
       return;
     }
+
     dlog('Starting session');
 
-    // if (await SpeechRecognizer().canRecognizeSpeech() == false) {
-    //   AudioPlayer().playSound('rec_cancel');
-    //   showRecognitionErrorAlert(context);
-    //   return;
-    // }
+    if (await Permission.microphone.isGranted == false) {
+      AudioPlayer().playSound('rec_cancel');
+      showRecognitionErrorAlert(context);
+      return;
+    }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
