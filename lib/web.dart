@@ -88,15 +88,14 @@ class WebViewRouteState extends State<WebViewRoute> {
       loadingURL = kLoadingDarkHTMLFilePath;
     }
 
-    // var url = widget.initialURL;
-    // if (darkMode) {
-    //   url = _darkURLForURL(url);
-    // }
+    var url = widget.initialURL;
+    if (darkMode) {
+      url = _darkURLForURL(url);
+    }
 
     InAppWebView webView = InAppWebView(
       initialFile: loadingURL,
-      // TODO: Fix this
-      //initialUrlRequest: URLRequest(url: Uri.parse(url)),
+      initialUrlRequest: URLRequest(url: Uri.parse(url)),
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
@@ -111,7 +110,7 @@ class WebViewRouteState extends State<WebViewRoute> {
           setState(() {
             String url = widget.initialURL;
             if (darkMode) {
-              _darkURLForURL(url);
+              url = _darkURLForURL(url);
             }
             Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));
