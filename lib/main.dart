@@ -18,7 +18,6 @@
 
 // App initialization and presentation of main (session) view
 
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
@@ -80,7 +79,7 @@ void main() async {
   }
 
   if (statuses[Permission.location].isDenied) {
-    print("Location permission is denied.");
+    dlog("Location permission is denied.");
     Prefs().setBoolForKey('share_location', false);
   } else {
     LocationTracking().start();

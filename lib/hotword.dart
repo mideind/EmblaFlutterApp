@@ -73,7 +73,6 @@ class HotwordDetector {
 
     // Prep recording session
     await _micRecorder.openRecorder();
-    //await _micRecorder.openAudioSession();
 
     // Create recording stream
     _recordingDataController = StreamController<Food>();
