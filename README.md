@@ -74,8 +74,7 @@ bash build.sh
 
 The Embla client uses [Snowboy](https://github.com/seasalt-ai/snowboy) for hotword
 detection and Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text) for
-speech recognition. Speech synthesis is accomplished via synthetic voices commissioned by
-[Blindrafélagið](https://blind.is), the Icelandic Association of the Visually Impaired.
+speech recognition.
 
 ## License
 
