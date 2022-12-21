@@ -6,7 +6,7 @@
 
 <img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
-# Embla Flutter client
+# Embla Flutter Client
 
 Embla is an Icelandic-language voice assistant app powered by the
 [Greynir](https://greynir.is) query engine. This is the repository for
@@ -31,7 +31,7 @@ requires a recent version of Xcode.
 
 Clone the repository:
 
-```
+```bash
 git clone https://github.com/mideind/Embla_Flutter
 ```
 
@@ -43,13 +43,13 @@ Google's API console and and save it at the following path within the repository
 
 Then run the following script:
 
-```
-/bin/bash keys/gen_keysfile.sh
+```bash
+bash keys/gen_keysfile.sh
 ```
 
 You should now be able to build and run the app:
 
-```
+```bash
 flutter run
 ```
 
@@ -58,13 +58,17 @@ simulator, attached physical device, etc.).
 
 To build an Android `apk` debug binary for arm64, run the following script:
 
-```
+```bash
 bash build.sh
 ```
 
 ## Screenshots
 
-TBD
+<p float="left">
+    <img src="img/screenshot_1.jpg" width="30%" alt="Embla Android screenshot 1">
+    <img src="img/screenshot_2.jpg" width="30%" alt="Embla Android screenshot 2">
+    <img src="img/screenshot_3.jpg" width="30%" alt="Embla Android screenshot 3">
+</p>
 
 ## Acknowledgements
 
