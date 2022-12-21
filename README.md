@@ -1,5 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Language](https://img.shields.io/badge/language-dart-lightblue)]()
+![Release](https://shields.io/github/v/release/mideind/Embla_Flutter?display_name=tag)
+![Play Store](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dis.mideind.embla%26l%3DPlay%2520Store%26m%3D%24version)
 [![Build](https://github.com/mideind/Embla_Flutter/actions/workflows/main.yml/badge.svg)]()
 
 <img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
@@ -30,7 +32,7 @@ requires a recent version of Xcode.
 Clone the repository:
 
 ```
-$ git clone https://github.com/mideind/Embla_Flutter
+git clone https://github.com/mideind/Embla_Flutter
 ```
 
 In order to work as intended, the app requires a Service Account JSON configuration
@@ -42,13 +44,13 @@ Google's API console and and save it at the following path within the repository
 Then run the following script:
 
 ```
-$ /bin/bash keys/gen_keysfile.sh
+/bin/bash keys/gen_keysfile.sh
 ```
 
 You should now be able to build and run the app:
 
 ```
-$ flutter run
+flutter run
 ```
 
 This should launch the app in development mode on your device of choice (e.g.
@@ -57,7 +59,7 @@ simulator, attached physical device, etc.).
 To build an Android `apk` debug binary for arm64, run the following script:
 
 ```
-$ bash build.sh
+bash build.sh
 ```
 
 ## Screenshots
