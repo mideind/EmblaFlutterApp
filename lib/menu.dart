@@ -55,7 +55,7 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
 }
 
 // Generate a menu tile based on args
-ListTile _generateTile(
+ListTile _menuTile(
     String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
@@ -70,15 +70,15 @@ ListTile _generateTile(
 }
 
 // Generate list of menu tiles
-ListView _generateMenu(BuildContext context) {
+ListView _menu(BuildContext context) {
   return ListView(
     padding: const EdgeInsets.all(8),
     children: <Widget>[
-      _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+      _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
       //_generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
-      _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
-      _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
-      _generateTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
+      _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
+      _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
+      _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
     ],
   );
 }
@@ -88,6 +88,6 @@ class MenuRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: standardAppBar, body: _generateMenu(context));
+    return Scaffold(appBar: standardAppBar, body: _menu(context));
   }
 }
