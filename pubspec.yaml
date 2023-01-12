@@ -29,8 +29,7 @@ dependencies:
   filesize: '^2.0.1'
   adaptive_theme: '^3.0.0'
   open_settings: '^2.0.2'
-  flutter_snowboy:
-    path: ../flutter_snowboy/
+  flutter_snowboy: '>=0.1.1'
 
 dev_dependencies:
   flutter_test:
