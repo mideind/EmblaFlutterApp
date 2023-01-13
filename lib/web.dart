@@ -32,17 +32,17 @@ const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
-  const WebViewRoute({Key key, this.initialURL}) : super(key: key);
+  const WebViewRoute({Key? key, required this.initialURL}) : super(key: key);
 
   @override
   WebViewRouteState createState() => WebViewRouteState();
 }
 
 class WebViewRouteState extends State<WebViewRoute> {
-  InAppWebViewController webView;
+  InAppWebViewController? webView;
 
   // Fall back to local HTML document if error comes up when fetching document from remote server
-  void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
+  void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url.toString());
     dlog("Falling back to local asset $path");
@@ -71,7 +71,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     if (urlStr.startsWith(widget.initialURL) == false &&
         urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
-      await launchUrl(req.url, mode: LaunchMode.externalApplication);
+      await launchUrl(req.url!, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
     }
     return NavigationActionPolicy.ALLOW;
@@ -101,10 +101,10 @@ class WebViewRouteState extends State<WebViewRoute> {
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),
-      onLoadStart: (InAppWebViewController controller, Uri url) {
+      onLoadStart: (InAppWebViewController controller, Uri? url) {
         dlog("Loading URL ${url.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, Uri url) {
+      onLoadStop: (InAppWebViewController controller, Uri? url) {
         if (url.toString().endsWith(kLoadingHTMLFilePath) ||
             url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
           setState(() {

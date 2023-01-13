@@ -43,12 +43,12 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
 
 class SpeechRecognizer {
   final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
-  StreamSubscription _recordingDataSubscription;
-  StreamSubscription _recordingProgressSubscription;
-  StreamController _recordingDataController;
+  StreamSubscription? _recordingDataSubscription;
+  StreamSubscription? _recordingProgressSubscription;
+  StreamController? _recordingDataController;
 
-  StreamSubscription<List<int>> _recognitionStreamSubscription;
-  BehaviorSubject<List<int>> _recognitionStream;
+  StreamSubscription<List<int>>? _recognitionStreamSubscription;
+  BehaviorSubject<List<int>>? _recognitionStream;
 
   bool isRecognizing = false;
   double lastSignal = 0.0; // Strength of last audio signal, on a scale of 0.0 to 1.0
@@ -84,11 +84,12 @@ class SpeechRecognizer {
     return pow(
         (pow(10.0, exp * decibels) - pow(10.0, exp * -60.0)) *
             (1.0 / (1.0 - pow(10.0, exp * -60.0))),
-        1.0 / 2.0);
+        1.0 / 2.0) as double;
   }
 
   // Set things off
-  Future<void> start(Function dataHandler, Function completionHandler, Function errHandler) async {
+  Future<void> start(void Function(dynamic) dataHandler, void Function()? completionHandler,
+      Function errHandler) async {
     if (isRecognizing == true) {
       dlog('Speech recognition already running!');
       return;
@@ -102,10 +103,10 @@ class SpeechRecognizer {
 
     // Create recording stream
     _recordingDataController = StreamController<Food>();
-    _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
+    _recordingDataSubscription = _recordingDataController?.stream.listen((buffer) {
       if (buffer is FoodData) {
-        _recognitionStream?.add(buffer.data);
-        totalAudioDataSize += buffer.data.lengthInBytes;
+        _recognitionStream?.add(buffer.data!);
+        totalAudioDataSize += buffer.data!.lengthInBytes;
       }
     });
 
@@ -131,18 +132,18 @@ class SpeechRecognizer {
 
     // Listen for audio status (duration, decibel) at fixed interval
     _micRecorder.setSubscriptionDuration(Duration(milliseconds: 50));
-    _recordingProgressSubscription = _micRecorder.onProgress.listen((e) {
+    _recordingProgressSubscription = _micRecorder.onProgress?.listen((e) {
       dlog(e);
       if (e.decibels == 0.0) {
         return;
       }
-      double decibels = e.decibels - 70.0; // This number is arbitrary but works
+      double decibels = e.decibels! - 70.0; // This number is arbitrary but works
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     });
 
     // Start recording audio
     await _micRecorder.startRecorder(
-        toStream: _recordingDataController.sink,
+        toStream: _recordingDataController?.sink as StreamSink<Food>,
         codec: Codec.pcm16,
         numChannels: kAudioNumChannels,
         sampleRate: kAudioSampleRate);
@@ -153,7 +154,7 @@ class SpeechRecognizer {
     final Stream responseStream = speechToText.streamingRecognize(
         StreamingRecognitionConfig(
             config: speechRecognitionConfig, interimResults: true, singleUtterance: true),
-        _recognitionStream);
+        _recognitionStream as Stream<List<int>>);
 
     // Listen for streaming speech recognition server responses
     responseStream.listen(dataHandler,
@@ -169,8 +170,8 @@ class SpeechRecognizer {
     dlog('Stopping speech recognition');
     double seconds = totalAudioDataSize / (2.0 * kAudioSampleRate);
     dlog("Total audio length: $seconds seconds ($totalAudioDataSize bytes)");
-    await _micRecorder?.stopRecorder();
-    await _micRecorder?.closeRecorder();
+    await _micRecorder.stopRecorder();
+    await _micRecorder.closeRecorder();
     await _recordingDataSubscription?.cancel();
     await _recordingProgressSubscription?.cancel();
     await _recordingDataController?.close();

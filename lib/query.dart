@@ -37,28 +37,29 @@ String _clientType() {
   return "${Platform.operatingSystem}_flutter";
 }
 
-Future<String> _clientID() async {
+Future<String?> _clientID() async {
   return await PlatformDeviceId.getDeviceId;
 }
 
-Future<String> _clientVersion() async {
+Future<String?> _clientVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.version;
 }
 
 // Send a request to query server
-Future<Response> _makeRequest(String path, Map<String, dynamic> qargs, [Function handler]) async {
-  String apiURL = Prefs().stringForKey('query_server') + path;
+Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Function? handler]) async {
+  String? apiURL = Prefs().stringForKey('query_server') ?? kDefaultQueryServer;
+  apiURL += path;
 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
-  Response response;
+  Response? response;
   try {
     response =
         await http.post(Uri.parse(apiURL), body: qargs).timeout(kRequestTimeout, onTimeout: () {
       if (handler != null) {
         handler(null);
       }
-      return;
+      return Response("Request timed out", 408);
     });
   } catch (e) {
     response = null;
@@ -77,7 +78,7 @@ Future<Response> _makeRequest(String path, Map<String, dynamic> qargs, [Function
   dlog("Response body: ${response.body}");
   if (handler != null) {
     // Parse JSON body and feed ensuing data structure to handler function
-    dynamic arg = response.statusCode == 200 ? json.decode(response.body) : null;
+    dynamic arg = (response.statusCode == 200) ? json.decode(response.body) : null;
     arg = (arg is Map) == false ? null : arg; // Should be a dict, otherwise something's gone wrong
     handler(arg);
   }
@@ -88,13 +89,10 @@ Future<Response> _makeRequest(String path, Map<String, dynamic> qargs, [Function
 // Wrapper class around communication with query server
 class QueryService {
   // Send request to query server API
-  static Future<void> sendQuery(List<String> queries, [Function handler, bool test]) async {
+  static Future<void> sendQuery(List<String> queries, [Function? handler, bool? test]) async {
     // Query args
-    Map<String, String> qargs = {
-      'q': queries.join('|'),
-      'voice': '1',
-      'voice_id': Prefs().stringForKey('voice_id')
-    };
+    String? voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
+    Map<String, String> qargs = {'q': queries.join('|'), 'voice': '1', 'voice_id': voiceID};
 
     // Never send client information in privacy mode
     bool privacyMode = Prefs().boolForKey('privacy_mode');
@@ -102,22 +100,22 @@ class QueryService {
       qargs['private'] = '1';
     } else {
       qargs['client_type'] = _clientType();
-      qargs['client_id'] = await _clientID();
-      qargs['client_version'] = await _clientVersion();
+      qargs['client_id'] = await _clientID() ?? "";
+      qargs['client_version'] = await _clientVersion() ?? "";
     }
 
     if (test == true) {
       qargs['test'] = '1';
     }
 
-    double speed = Prefs().floatForKey('voice_speed');
+    double? speed = Prefs().floatForKey('voice_speed');
     if (speed != null) {
       qargs['voice_speed'] = speed.toString();
     }
 
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
-    if (shareLocation) {
-      List<double> latlon = LocationTracking().location;
+    if (shareLocation == true) {
+      List<double>? latlon = LocationTracking().location;
       if (latlon != null) {
         qargs['latitude'] = latlon[0].toString();
         qargs['longitude'] = latlon[1].toString();
@@ -130,23 +128,23 @@ class QueryService {
   // Send request to query history API
   // allData boolean param determines whether all device-specific
   // data or only query history should be deleted server-side
-  static Future<void> clearUserData(bool allData, [Function handler]) async {
+  static Future<void> clearUserData(bool allData, [Function? handler]) async {
     Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
-      'client_id': await _clientID(),
+      'api_key': readQueryServerKey(),
       'client_type': _clientType(),
-      'client_version': await _clientVersion(),
-      'api_key': readQueryServerKey()
+      'client_id': await _clientID() ?? "",
+      'client_version': await _clientVersion() ?? ""
     };
 
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
   }
 
   // Send request to speech synthesis API
-  static Future<void> requestSpeechSynthesis(String text, [Function handler]) async {
+  static Future<void> requestSpeechSynthesis(String text, [Function? handler]) async {
     Map<String, String> qargs = {
       'text': text,
-      'voice_id': Prefs().stringForKey('voice_id'),
+      'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
       'format': 'text', // No SSML for now...
       'api_key': readQueryServerKey(),
     };
@@ -155,8 +153,8 @@ class QueryService {
   }
 
   // Send request to voices API
-  static Future<Map<String, dynamic>> requestSupportedVoices() async {
-    Response r = await _makeRequest(kVoiceListAPIPath, {}, null);
+  static Future<Map<String, dynamic>?> requestSupportedVoices() async {
+    Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
     if (r == null) {
       return null;
     } else {

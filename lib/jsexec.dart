@@ -26,7 +26,7 @@ const kJSExecErrorMessage = "Upp kom villa við keyrslu á JavaScript.";
 
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
-  HeadlessInAppWebView headlessWebView;
+  HeadlessInAppWebView? headlessWebView;
 
   // Singleton pattern
   factory JSExecutor() {
@@ -49,14 +49,14 @@ class JSExecutor {
   }
 
   Future<String> run(String jsCode) async {
-    await headlessWebView.dispose();
-    await headlessWebView.run();
+    await headlessWebView?.dispose();
+    await headlessWebView?.run();
     String answer = kJSExecErrorMessage;
     try {
       var result =
-          await headlessWebView.webViewController.callAsyncJavaScript(functionBody: jsCode);
-      if (result.error == null && result.value != null) {
-        answer = result.value.toString();
+          await headlessWebView?.webViewController.callAsyncJavaScript(functionBody: jsCode);
+      if (result?.error == null && result?.value != null) {
+        answer = result!.value.toString();
       }
     } on Exception catch (e) {
       dlog("Error: HeadlessInAppWebView not running: $e");

@@ -42,8 +42,8 @@ const List<String> sessionSounds = [
 
 // Singleton class that handles all audio playback
 class AudioPlayer {
-  FlutterSoundPlayer player;
-  Map<String, Uint8List> audioFileCache;
+  FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.error);
+  Map<String, Uint8List> audioFileCache = <String, Uint8List>{};
 
   // Constructor
   static final AudioPlayer _instance = AudioPlayer._internal();
@@ -62,7 +62,6 @@ class AudioPlayer {
   Future<void> _init() async {
     dlog('Initing audio player');
     _preloadAudioFiles();
-    player = FlutterSoundPlayer(logLevel: Level.error);
     await player.openPlayer();
   }
 
@@ -105,7 +104,7 @@ class AudioPlayer {
   // Stop playback
   void stop() {
     dlog('Stopping audio playback');
-    player?.stopPlayer();
+    player.stopPlayer();
   }
 
   // Play remote audio file
@@ -113,7 +112,7 @@ class AudioPlayer {
     //_instance.stop();
     String displayURL = url;
     if (displayURL.length >= 200) {
-      displayURL = "${displayURL.substring(0, 200)}...";
+      displayURL = "${displayURL.substring(0, 200)}…";
     }
     dlog("Playing audio file URL '$displayURL'");
     try {
@@ -140,7 +139,7 @@ class AudioPlayer {
     }
   }
 
-  String playDunno([Function() completionHandler]) {
+  String? playDunno([Function()? completionHandler]) {
     int rnd = Random().nextInt(7) + 1;
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
@@ -158,13 +157,14 @@ class AudioPlayer {
   }
 
   // Play a preloaded wav audio file bundled with the app
-  void playSound(String soundName, [Function() completionHandler]) {
+  void playSound(String soundName, [Function()? completionHandler]) {
     _instance.stop();
 
     // Different file name depending on which voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
-      String voiceName = Prefs().stringForKey('voice_id').asciify().toLowerCase();
+      String? prefVoice = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
+      String voiceName = prefVoice.asciify().toLowerCase();
       fileName = "$soundName-$voiceName";
     }
 

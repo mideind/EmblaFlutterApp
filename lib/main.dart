@@ -40,7 +40,7 @@ void main() async {
   // Load prefs, populate with default values if required
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
-  if (launched == null || launched == false) {
+  if (launched == false) {
     Prefs().setDefaults();
   }
 
@@ -48,7 +48,7 @@ void main() async {
   // Previous versions of the app used "Kona" as the default voice with
   // the option of "Karl" as an alternative. As of 1.3.0, we use
   // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
-  var voiceID = Prefs().stringForKey("voice_id");
+  String? voiceID = Prefs().stringForKey("voice_id");
   if (voiceID == "Dóra" || voiceID == "Kona" || voiceID == "Dora" || voiceID == null) {
     Prefs().setStringForKey("voice_id", kDefaultVoice);
   }
@@ -74,11 +74,11 @@ void main() async {
     Permission.location,
   ].request();
 
-  if (statuses[Permission.microphone].isDenied) {
+  if (statuses[Permission.microphone]!.isDenied) {
     dlog("Microphone permission is denied.");
   }
 
-  if (statuses[Permission.location].isDenied) {
+  if (statuses[Permission.location]!.isDenied) {
     dlog("Location permission is denied.");
     Prefs().setBoolForKey('share_location', false);
   } else {
@@ -90,7 +90,7 @@ void main() async {
 }
 
 class EmblaApp extends StatelessWidget {
-  const EmblaApp({Key key}) : super(key: key);
+  const EmblaApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

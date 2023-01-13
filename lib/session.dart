@@ -90,7 +90,7 @@ const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
 const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
 
-BuildContext sessionContext;
+BuildContext? sessionContext;
 
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
@@ -112,17 +112,17 @@ String introMsg() {
 
 // Main widget for session view
 class SessionRoute extends StatefulWidget {
-  const SessionRoute({Key key}) : super(key: key);
+  const SessionRoute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => SessionRouteState();
 }
 
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
-  Timer animationTimer;
+  Timer? animationTimer;
   String text = introMsg();
-  String imageURL;
-  StreamSubscription<FGBGType> appStateSubscription;
+  String? imageURL;
+  StreamSubscription<FGBGType>? appStateSubscription;
 
   @override
   void initState() {
@@ -149,7 +149,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @mustCallSuper
   @override
   void dispose() {
-    appStateSubscription.cancel();
+    appStateSubscription?.cancel();
     super.dispose();
   }
 
@@ -270,7 +270,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Process response from query server
-  void handleQueryResponse(Map<String, dynamic> resp) async {
+  void handleQueryResponse(Map<String, dynamic>? resp) async {
     if (state != SessionState.answering) {
       dlog("Received query answer after session terminated: ${resp.toString()}");
       return;
@@ -331,9 +331,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Don't know
     else if (resp != null && resp['error'] != null) {
       String dunnoMsg = AudioPlayer().playDunno(() {
-        dlog('Playback finished');
-        stop();
-      });
+            dlog('Playback finished');
+            stop();
+          }) ??
+          "";
       msg("${resp["q"]}\n\n$dunnoMsg");
     }
     // Error in server response
@@ -345,7 +346,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Set text field string (and optionally, an associated image)
-  void msg(String s, {String imgURL}) {
+  void msg(String s, {String? imgURL}) {
     setState(() {
       text = s;
       imageURL = imgURL;
@@ -518,7 +519,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
       ];
       if (imageURL != null) {
-        widgets.add(Image.network(imageURL));
+        widgets.add(Image.network(imageURL!));
       }
       return Column(
         children: widgets,

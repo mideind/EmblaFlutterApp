@@ -33,10 +33,10 @@ import './common.dart';
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
 
-  Snowboy detector;
+  Snowboy detector = Snowboy();
   final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
-  StreamController _recordingDataController;
-  StreamSubscription _recordingDataSubscription;
+  StreamController _recordingDataController = StreamController<Food>();
+  StreamSubscription? _recordingDataSubscription;
 
   // Singleton pattern
   factory HotwordDetector() {
@@ -79,14 +79,14 @@ class HotwordDetector {
     _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
       // When we get data, feed it into Snowboy detector
       if (buffer is FoodData) {
-        Uint8List copy = Uint8List.fromList(buffer.data); // Do we need to copy?
+        Uint8List copy = Uint8List.fromList(buffer.data as List<int>); // Do we need to copy?
         detector.detect(copy);
       }
     });
 
     // Start recording
     await _micRecorder.startRecorder(
-        toStream: _recordingDataController.sink,
+        toStream: _recordingDataController.sink as StreamSink<Food>,
         codec: Codec.pcm16,
         numChannels: 1,
         sampleRate: 16000);
@@ -95,10 +95,10 @@ class HotwordDetector {
   // Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
-    await _micRecorder?.stopRecorder();
-    await _micRecorder?.closeRecorder();
+    await _micRecorder.stopRecorder();
+    await _micRecorder.closeRecorder();
     await _recordingDataSubscription?.cancel();
-    await _recordingDataController?.close();
+    await _recordingDataController.close();
   }
 
   // Release any assets loaded by hotword detector

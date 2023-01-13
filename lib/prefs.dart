@@ -26,7 +26,7 @@ import './loc.dart' show LocationTracking;
 class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
-  static SharedPreferences _sp;
+  static SharedPreferences? _sp;
 
   // Singleton pattern
   factory Prefs() {
@@ -38,13 +38,13 @@ class Prefs {
   }
 
   bool boolForKey(String key) {
-    return _sp.getBool(key) ?? false;
+    return _sp?.getBool(key) ?? false;
   }
 
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '${val.toString()}'");
-    _sp.setBool(key, val);
-    // This is hacky and should be solved in some other way
+    _sp?.setBool(key, val);
+    // TODO: This is hacky and should be solved in some other way
     if (key == 'share_location') {
       if (val == true) {
         LocationTracking().start();
@@ -54,29 +54,29 @@ class Prefs {
     }
   }
 
-  double floatForKey(String key) {
-    return _sp.getDouble(key);
+  double? floatForKey(String key) {
+    return _sp?.getDouble(key);
   }
 
   void setFloatForKey(String key, double val) {
     dlog("Setting pref key '$key' to float '${val.toString()}'");
-    _sp.setDouble(key, val);
+    _sp?.setDouble(key, val);
   }
 
-  String stringForKey(String key) {
-    return _sp.getString(key);
+  String? stringForKey(String key) {
+    return _sp?.getString(key);
   }
 
   void setStringForKey(String key, String val) {
     dlog("Setting pref key '$key' to string '$val'");
-    _sp.setString(key, val);
+    _sp?.setString(key, val);
   }
 
   String desc() {
-    List<dynamic> list = _sp
-        ?.getKeys()
-        ?.map<String>((key) => "$key: ${_sp?.get(key).toString()}")
-        ?.toList(growable: false);
+    List<dynamic> list = _sp!
+        .getKeys()
+        .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
+        .toList(growable: false);
     return list.toString();
   }
 

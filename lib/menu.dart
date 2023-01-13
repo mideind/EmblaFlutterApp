@@ -62,9 +62,7 @@ ListTile _menuTile(
     leading: Image(image: AssetImage("assets/images/${img4theme(imageName, context)}.png")),
     trailing: Icon(Icons.arrow_right),
     onTap: () {
-      if (onTapFunc is Function) {
-        onTapFunc(context, arg);
-      }
+      onTapFunc(context, arg);
     },
   );
 }
@@ -84,7 +82,7 @@ ListView _menu(BuildContext context) {
 }
 
 class MenuRoute extends StatelessWidget {
-  const MenuRoute({Key key}) : super(key: key);
+  const MenuRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

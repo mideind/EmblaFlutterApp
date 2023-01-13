@@ -33,10 +33,10 @@ class LocationTracking {
     return _instance;
   }
 
-  double lat;
-  double lon;
+  double? lat;
+  double? lon;
   bool known = false;
-  StreamSubscription<Position> positionStream;
+  StreamSubscription<Position>? positionStream;
 
   void start() async {
     // We never start location tracking if it's disabled in prefs or if we don't have permission
@@ -51,7 +51,7 @@ class LocationTracking {
     }
 
     dlog('Starting location tracking');
-    positionStream = Geolocator.getPositionStream().listen((Position position) {
+    positionStream = Geolocator.getPositionStream().listen((Position? position) {
       if (position == null) {
         known = false;
         return;
@@ -72,10 +72,10 @@ class LocationTracking {
     }
   }
 
-  List<double> get location {
+  List<double>? get location {
     if (!known || lat == null || lon == null) {
       return null;
     }
-    return [lat, lon];
+    return [lat!, lon!];
   }
 }
