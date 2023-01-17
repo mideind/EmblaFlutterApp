@@ -21,7 +21,6 @@ dependencies:
   path_provider: '^2.0.10'
   rxdart: '^0.27.3'
   wakelock: '^0.6.1'
-  flutter_sound: '^9.2.13'
   audio_session: '^0.1.10'
   permission_handler: '^10.2.0'
   flutter_fgbg: '^0.2.0'
@@ -30,6 +29,8 @@ dependencies:
   adaptive_theme: '^3.0.0'
   open_settings: '^2.0.2'
   flutter_snowboy: '>=0.1.1'
+  flutter_sound:
+    path: "../flutter_sound/flutter_sound"
 
 dev_dependencies:
   flutter_test:
