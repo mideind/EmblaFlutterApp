@@ -505,7 +505,7 @@ Future<String> genVersionString() async {
 
 // List of settings widgets
 List<Widget> _settings(BuildContext context) {
-  return <Widget>[
+  List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
@@ -532,6 +532,13 @@ List<Widget> _settings(BuildContext context) {
           QueryService.clearUserData(true);
         }),
   ];
+  // Only include query server selection widget in debug builds
+  if (kReleaseMode == false) {
+    settingsWidgets.addAll([
+      QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+    ]);
+  }
+  return settingsWidgets;
 }
 
 class SettingsRoute extends StatelessWidget {
@@ -539,15 +546,8 @@ class SettingsRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> slist = _settings(context);
-    // Only include query server selection widget in debug builds
-    if (kReleaseMode == false) {
-      slist.addAll([
-        QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-      ]);
-    }
-
     return Scaffold(
-        appBar: standardAppBar, body: ListView(padding: const EdgeInsets.all(8), children: slist));
+        appBar: standardAppBar,
+        body: ListView(padding: const EdgeInsets.all(8), children: _settings(context)));
   }
 }

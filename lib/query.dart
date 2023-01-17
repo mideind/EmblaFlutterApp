@@ -48,7 +48,7 @@ Future<String?> _clientVersion() async {
 
 // Send a request to query server
 Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Function? handler]) async {
-  String? apiURL = Prefs().stringForKey('query_server') ?? kDefaultQueryServer;
+  String apiURL = Prefs().stringForKey('query_server') ?? kDefaultQueryServer;
   apiURL += path;
 
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");

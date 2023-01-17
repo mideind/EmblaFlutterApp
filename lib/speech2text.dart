@@ -133,10 +133,10 @@ class SpeechRecognizer {
     // Listen for audio status (duration, decibel) at fixed interval
     _micRecorder.setSubscriptionDuration(Duration(milliseconds: 50));
     _recordingProgressSubscription = _micRecorder.onProgress?.listen((e) {
-      dlog(e);
       if (e.decibels == 0.0) {
         return;
       }
+      dlog(e);
       double decibels = e.decibels! - 70.0; // This number is arbitrary but works
       lastSignal = _normalizedPowerLevelFromDecibels(decibels);
     });

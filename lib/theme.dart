@@ -126,13 +126,15 @@ Color color4ctx(var context) {
 }
 
 List<Color> circleColors4Context(var context) {
-  Color circleColor1 = HexColor.fromHex('#f9f0f0');
-  Color circleColor2 = HexColor.fromHex('#f9e2e1');
-  Color circleColor3 = HexColor.fromHex('#f9dcdb');
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
-    circleColor1 = HexColor.fromHex('#f0f0f0');
-    circleColor2 = HexColor.fromHex('#e4e4e4');
-    circleColor3 = HexColor.fromHex('#dcdcdc');
+    Color circleColor1 = HexColor.fromHex('#f0f0f0');
+    Color circleColor2 = HexColor.fromHex('#e4e4e4');
+    Color circleColor3 = HexColor.fromHex('#dcdcdc');
+    return [circleColor1, circleColor2, circleColor3];
+  } else {
+    Color circleColor1 = HexColor.fromHex('#f9f0f0');
+    Color circleColor2 = HexColor.fromHex('#f9e2e1');
+    Color circleColor3 = HexColor.fromHex('#f9dcdb');
+    return [circleColor1, circleColor2, circleColor3];
   }
-  return [circleColor1, circleColor2, circleColor3];
 }

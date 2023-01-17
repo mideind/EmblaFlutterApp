@@ -49,7 +49,7 @@ void main() async {
   // the option of "Karl" as an alternative. As of 1.3.0, we use
   // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
   String? voiceID = Prefs().stringForKey("voice_id");
-  if (voiceID == "Dóra" || voiceID == "Kona" || voiceID == "Dora" || voiceID == null) {
+  if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
     Prefs().setStringForKey("voice_id", kDefaultVoice);
   }
   // If user had selected "Karl" as the voice, change it to "Gunnar"

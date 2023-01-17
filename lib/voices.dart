@@ -27,6 +27,8 @@ import './common.dart'
     show dlog, kSpeechSynthesisVoices, kSpeechSynthesisDebugVoices /*, kDefaultVoice*/;
 import './theme.dart';
 
+const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
+
 List<String> voices = kSpeechSynthesisVoices;
 
 // Fetch list of voice IDs (strings) from server
@@ -107,7 +109,7 @@ FutureBuilder<List> _genVoiceList() {
           // No data yet
           return Center(
             child: CircularProgressIndicator(
-              semanticsLabel: 'Raddir eru að hlaðast…',
+              semanticsLabel: kVoicesLoadingMsg,
             ),
           );
         } else {
