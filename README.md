@@ -14,7 +14,7 @@ the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on
-Android 8.1+ (SDK >= 27), with iOS support on the roadmap.
+Android 8.1+ (SDK >= 27) and iOS 12+.
 
 <a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
     <img alt="Download on Google Play" src="img/play_store.png" width="180">
@@ -78,7 +78,7 @@ speech recognition.
 
 ## License
 
-Embla is Copyright (C) 2019-2022 [Miðeind ehf.](https://mideind.is)
+Embla is Copyright (C) 2019-2023 [Miðeind ehf.](https://mideind.is)
 
 <a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf." width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
 
