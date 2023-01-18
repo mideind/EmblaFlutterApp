@@ -6,9 +6,11 @@ name: tests
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ master ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ master ]
+    branches:
+      - '*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -39,6 +41,7 @@ jobs:
       - name: Clone flutter_snowboy dependency repo
         run: |
           git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
+          git clone --recurse-submodules -j4 https://github.com/canardoux/flutter_sound ../flutter_sound
       - name: Install dependencies
         run: |
           flutter config --no-analytics
