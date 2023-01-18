@@ -21,6 +21,7 @@
 import 'dart:async';
 import 'dart:math' show pow;
 
+import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart' show Level;
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -105,10 +106,10 @@ class SpeechRecognizer {
     _recordingDataController = StreamController<Food>();
     _recordingDataSubscription = _recordingDataController?.stream.listen((buffer) {
       if (buffer is FoodData && buffer.data != null) {
-        _recognitionStream?.add(buffer.data!);
+        _recognitionStream?.add(buffer.data as Uint8List);
         totalAudioDataSize += buffer.data!.lengthInBytes;
       } else {
-        dlog('Got null data in recording stream');
+        dlog('Got null data in recording stream: $buffer');
       }
     });
 
