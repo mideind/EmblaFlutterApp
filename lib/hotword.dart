@@ -78,9 +78,10 @@ class HotwordDetector {
     _recordingDataController = StreamController<Food>();
     _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
       // When we get data, feed it into Snowboy detector
-      if (buffer is FoodData) {
-        Uint8List copy = Uint8List.fromList(buffer.data as List<int>); // Do we need to copy?
-        detector.detect(copy);
+      if (buffer is FoodData && buffer.data != null) {
+        detector.detect(buffer.data as Uint8List);
+      } else {
+        dlog('Hotword detector received null data: $buffer');
       }
     });
 
