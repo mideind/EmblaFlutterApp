@@ -422,8 +422,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
         child: ListTile(
-      title: Text(label, style: Theme.of(context).textTheme.caption),
-      trailing: Text(value, style: Theme.of(context).textTheme.caption),
+      title: Text(label, style: Theme.of(context).textTheme.bodySmall),
+      trailing: Text(value, style: Theme.of(context).textTheme.bodySmall),
     ));
   }
 }
@@ -464,7 +464,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Text(Prefs().stringForKey('voice_id') ?? "(engin rödd valin)",
-                style: Theme.of(context).textTheme.caption),
+                style: Theme.of(context).textTheme.bodySmall),
             Icon(Icons.arrow_right),
           ],
         ),
