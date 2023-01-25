@@ -107,21 +107,14 @@ final standardAppBar = AppBar(
   toolbarOpacity: 1.0,
 );
 
-String img4theme(String imgName, var context) {
-  if (context == null) {
-    return imgName;
-  }
-  var brightness = MediaQuery.of(context).platformBrightness;
-  if (brightness == Brightness.dark) {
+AssetImage img4theme(String imgName, BuildContext context) {
+  if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     imgName = "${imgName}_dark";
   }
-  return imgName;
+  return AssetImage("assets/images/$imgName.png");
 }
 
-Color color4ctx(var context) {
-  if (context == null) {
-    return lightMainColor;
-  }
+Color color4ctx(BuildContext context) {
   var brightness = MediaQuery.of(context).platformBrightness;
   if (brightness == Brightness.dark) {
     return darkMainColor;

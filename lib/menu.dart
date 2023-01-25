@@ -59,7 +59,7 @@ ListTile _menuTile(
     String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
-    leading: Image(image: AssetImage("assets/images/${img4theme(imageName, context)}.png")),
+    leading: Image(image: img4theme(imageName, context)),
     trailing: Icon(Icons.arrow_right),
     onTap: () {
       onTapFunc(context, arg);
