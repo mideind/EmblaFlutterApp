@@ -21,6 +21,7 @@ else
 fi
 
 cat > '../lib/keys.dart' << EOF
+// This is a generated file. Do *not* check into version control.
 const String googleServiceAccount = '${GOBF}';
 const String queryAPIKey = '${QOBF}';
 EOF

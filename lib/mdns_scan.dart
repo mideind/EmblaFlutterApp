@@ -18,12 +18,12 @@
 
 // mDNS scan route
 
-import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import './util.dart';
 import './theme.dart';
 import './connection.dart';
 import './connection_card.dart';
