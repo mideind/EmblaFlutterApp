@@ -67,7 +67,7 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
         title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
-          activeColor: Theme.of(context).primaryColorDark,
+          activeColor: Theme.of(context).primaryColor,
           onChanged: (bool value) {
             setState(() {
               Prefs().setBoolForKey(prefKey, value);

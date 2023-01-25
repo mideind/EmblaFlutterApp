@@ -40,64 +40,66 @@ final Color lightBgColor = HexColor.fromHex('#f9f9f9');
 final Color lightTextColor = HexColor.fromHex('#202020');
 
 final lightThemeData = ThemeData(
-    brightness: Brightness.light,
-    scaffoldBackgroundColor: lightBgColor,
-    primarySwatch: Colors.red,
-    primaryColor: lightMainColor,
-    backgroundColor: lightBgColor,
-    fontFamily: defaultFontFamily,
-    textTheme: TextTheme(
-      titleSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      titleMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      titleLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      labelSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      labelLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      bodySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      bodyMedium: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      bodyLarge: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      displaySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      displayMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      displayLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headlineLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headlineMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headlineSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-    ),
-    appBarTheme: AppBarTheme(
-      color: lightBgColor,
-      iconTheme: IconThemeData(color: lightMainColor),
-    ));
+  brightness: Brightness.light,
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red, brightness: Brightness.light)
+      .copyWith(background: lightBgColor),
+  scaffoldBackgroundColor: lightBgColor,
+  primaryColor: lightMainColor,
+  fontFamily: defaultFontFamily,
+  textTheme: TextTheme(
+    titleSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    titleMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    titleLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    labelSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    labelLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    bodySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    bodyMedium: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+    bodyLarge: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+    displaySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    displayMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    displayLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+  ),
+  appBarTheme: AppBarTheme(
+    color: lightBgColor,
+    iconTheme: IconThemeData(color: lightMainColor),
+  ),
+);
 
 // Define dark mode app styling and color scheme
 final darkMainColor = HexColor.fromHex('#f7f7f7');
 final darkBgColor = HexColor.fromHex('#202020');
 
 final darkThemeData = ThemeData(
-    brightness: Brightness.dark,
-    scaffoldBackgroundColor: darkBgColor,
-    primarySwatch: Colors.grey,
-    primaryColor: darkMainColor,
-    backgroundColor: darkBgColor,
-    fontFamily: defaultFontFamily,
-    textTheme: TextTheme(
-      titleSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      titleMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      titleLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      labelSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      labelLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      bodySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      bodyMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      bodyLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      displaySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      displayMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      displayLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headlineLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headlineMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-      headlineSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    ),
-    appBarTheme: AppBarTheme(
-      color: darkBgColor,
-      iconTheme: IconThemeData(color: darkMainColor),
-    ));
+  brightness: Brightness.dark,
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey, brightness: Brightness.dark)
+      .copyWith(background: darkBgColor),
+  scaffoldBackgroundColor: darkBgColor,
+  primaryColor: darkMainColor,
+  fontFamily: defaultFontFamily,
+  textTheme: TextTheme(
+    titleSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    titleMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    titleLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    labelSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    labelLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displaySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displayMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displayLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+  ),
+  appBarTheme: AppBarTheme(
+    color: darkBgColor,
+    iconTheme: IconThemeData(color: darkMainColor),
+  ),
+);
 
 final standardAppBar = AppBar(
   bottomOpacity: 0.0,
