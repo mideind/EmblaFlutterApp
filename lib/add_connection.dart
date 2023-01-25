@@ -1,7 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
- * Original author: Sveinbjorn Thordarson
+ * Copyright (c) 2023 Miðeind ehf. <mideind@mideind.is>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +19,12 @@
 
 import 'dart:core';
 
-import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import './util.dart';
 import './common.dart';
 import './theme.dart';
 import './mdns_scan.dart';

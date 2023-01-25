@@ -1,7 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
- * Original author: Sveinbjorn Thordarson
+ * Copyright (c) 2023 Miðeind ehf. <mideind@mideind.is>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,8 +18,6 @@
 import 'dart:convert';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
-import 'package:embla/session.dart';
-import 'package:embla/util.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -28,6 +25,8 @@ import 'package:http/http.dart' as http;
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import './session.dart';
+import './util.dart';
 import './common.dart';
 import './theme.dart';
 import './connection_card.dart';

@@ -1,7 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
- * Original author: Sveinbjorn Thordarson
+ * Copyright (c) 2023 Miðeind ehf. <mideind@mideind.is>
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
