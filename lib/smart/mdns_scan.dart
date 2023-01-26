@@ -34,7 +34,7 @@ import './mdns.dart';
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
-FToast fToastMdns;
+FToast? fToastMdns;
 
 // List of widgets on the mDNS scan route
 List<Widget> _mdns(BuildContext context, Function scanForDevices,
@@ -145,9 +145,9 @@ List<Widget> _mdns(BuildContext context, Function scanForDevices,
 }
 
 class MDNSRoute extends StatefulWidget {
-  final Map<String, dynamic> connectionInfo;
+  final Map<String, dynamic>? connectionInfo;
 
-  const MDNSRoute({Key key, this.connectionInfo}) : super(key: key);
+  const MDNSRoute({Key? key, this.connectionInfo}) : super(key: key);
 
   @override
   State<MDNSRoute> createState() => _MDNSRouteState();
@@ -165,10 +165,10 @@ class _MDNSRouteState extends State<MDNSRoute> {
   // The smart home screen if the connection succeeded
   void _returnCallback(args) {
     fToastMdns = FToast();
-    fToastMdns.init(context);
+    fToastMdns!.init(context);
 
     // Toast widget with a given message
-    _showToast(String message) {
+    void showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 24.0,
@@ -197,9 +197,9 @@ class _MDNSRouteState extends State<MDNSRoute> {
           ],
         ),
       );
-      fToastMdns.removeQueuedCustomToasts();
+      fToastMdns!.removeQueuedCustomToasts();
 
-      fToastMdns.showToast(
+      fToastMdns!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
         toastDuration: Duration(seconds: 4),
@@ -208,7 +208,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
 
     bool isError = false;
     bool isButtonPressMissing = false;
-    int hubError;
+    int hubError = 0;
     if (args[0].containsKey('error')) {
       isError = true;
     }
@@ -219,12 +219,12 @@ class _MDNSRouteState extends State<MDNSRoute> {
       hubError = args[0]['hub_error'];
     }
     if (isButtonPressMissing) {
-      _showToast("Ýta þarf á hnapp á tengiboxi.");
-    } else if (hubError != null) {
+      showToast("Ýta þarf á hnapp á tengiboxi.");
+    } else if (hubError != 0) {
       if (hubError == 429) {
-        _showToast("Of margar pörunarbeiðnir.\nReyndu aftur síðar.");
+        showToast("Of margar pörunarbeiðnir.\nReyndu aftur síðar.");
       } else {
-        _showToast("Villa í tengingu við tengibox.");
+        showToast("Villa í tengingu við tengibox.");
       }
     } else {
       Navigator.of(context).pop();

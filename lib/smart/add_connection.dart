@@ -37,7 +37,7 @@ import './connection.dart';
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
-FToast fToastAdd;
+FToast? fToastAdd;
 
 // Pushes the mDNS scan route on the navigation stack
 void _pushMDNSRoute(BuildContext context, dynamic arg) {
@@ -129,7 +129,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   // The smart home screen if the connection succeeded
   void _returnCallback(args) {
     fToastAdd = FToast();
-    fToastAdd.init(context);
+    fToastAdd!.init(context);
 
     // Toast widget with a given message
     _showToast(String message) {
@@ -161,9 +161,9 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
           ],
         ),
       );
-      fToastAdd.removeQueuedCustomToasts();
+      fToastAdd!.removeQueuedCustomToasts();
 
-      fToastAdd.showToast(
+      fToastAdd!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
         toastDuration: Duration(

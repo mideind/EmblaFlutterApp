@@ -49,7 +49,10 @@ class ConnectionListItem extends StatelessWidget {
   final Function callbackFromJavascript;
 
   const ConnectionListItem(
-      {Key key, @required this.connection, this.navigationCallback, this.callbackFromJavascript})
+      {Key? key,
+      required this.connection,
+      required this.navigationCallback,
+      required this.callbackFromJavascript})
       : super(key: key);
 
   @override
@@ -58,8 +61,8 @@ class ConnectionListItem extends StatelessWidget {
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
           padding: const EdgeInsets.all(0),
-          primary: Theme.of(context).cardColor,
-          onPrimary: Theme.of(context).splashColor,
+          backgroundColor: Theme.of(context).cardColor,
+          foregroundColor: Theme.of(context).splashColor,
           splashFactory: InkRipple.splashFactory,
         ),
         onPressed: () {

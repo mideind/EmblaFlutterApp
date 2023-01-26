@@ -28,9 +28,9 @@ import '../common.dart';
 
 /// Dataclass for storing information about a discovered device.
 class MDNSDevice {
-  String fqdn; // Fully qualified domain name
-  String ip; // IP address
-  int port; // Port
+  String? fqdn; // Fully qualified domain name
+  String? ip; // IP address
+  int? port; // Port
   MDNSDevice({this.fqdn, this.ip, this.port});
 }
 

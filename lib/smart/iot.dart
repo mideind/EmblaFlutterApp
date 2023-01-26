@@ -40,7 +40,7 @@ import './add_connection.dart';
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
-FToast fToastIot;
+FToast? fToastIot;
 
 // Pushes the add_connection route on the navigation stack
 // If you navigate back to this route, the list of devices
@@ -115,7 +115,7 @@ List<Widget> _iot(
       ),
       child: Text(
         'Mínar tengingar',
-        style: Theme.of(context).textTheme.headline4,
+        style: Theme.of(context).textTheme.headlineMedium,
       ),
     ),
     Container(
@@ -161,7 +161,7 @@ List<Widget> _iot(
                             _pushConnectionRoute(context, scanCallback, connectionInfo);
                           },
                           style: ElevatedButton.styleFrom(
-                              primary: Theme.of(context).primaryColor.withOpacity(0.5),
+                              backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
@@ -265,10 +265,10 @@ class _IoTRouteState extends State<IoTRoute> {
   // Displays a toast message to confirm the disconnection
   void disconnectCallback(args) {
     fToastIot = FToast();
-    fToastIot.init(context);
+    fToastIot!.init(context);
 
     // Toast widget with a given message
-    _showToast(bool isSuccess) {
+    void showToast(bool isSuccess) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 24.0,
@@ -298,9 +298,9 @@ class _IoTRouteState extends State<IoTRoute> {
         ),
       );
 
-      fToastIot.removeQueuedCustomToasts();
+      fToastIot!.removeQueuedCustomToasts();
 
-      fToastIot.showToast(
+      fToastIot!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
         toastDuration: Duration(seconds: 3),
@@ -337,10 +337,10 @@ class _IoTRouteState extends State<IoTRoute> {
                     .then((value) {
                   Navigator.of(context).pop();
                   Navigator.of(context).pop();
-                  _showToast(true);
+                  showToast(true);
                 }).catchError((error) {
                   dlog("Error: $error");
-                  _showToast(false);
+                  showToast(false);
                 });
               },
             ),
@@ -391,7 +391,7 @@ class _IoTRouteState extends State<IoTRoute> {
       isSearching = true;
       isServerError = false;
     });
-    String clientID = await PlatformDeviceId.getDeviceId;
+    String? clientID = await PlatformDeviceId.getDeviceId;
     await Future.any([
       http
           .get(Uri.parse(
@@ -449,7 +449,7 @@ class _IoTRouteState extends State<IoTRoute> {
       connectionCards.clear();
     });
     isSearching = true;
-    String clientID = await PlatformDeviceId.getDeviceId;
+    String? clientID = await PlatformDeviceId.getDeviceId;
 
     // Fetching connections from data base
     Future<http.Response> fetchConnections() async {
@@ -530,7 +530,7 @@ class DisconnectButtonPromptWidget extends StatelessWidget {
   final Function handler;
 
   const DisconnectButtonPromptWidget(
-      {Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+      {Key? key, this.label, this.alertText, this.buttonTitle, this.handler})
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {

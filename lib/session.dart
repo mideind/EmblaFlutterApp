@@ -364,6 +364,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     if (await Permission.microphone.isGranted == false) {
       AudioPlayer().playSound('rec_cancel');
+      if (!context.mounted) {
+        return;
+      }
       showRecognitionErrorAlert(context);
       return;
     }

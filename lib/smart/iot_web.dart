@@ -31,7 +31,7 @@ class WebViewRoute extends StatefulWidget {
   final String initialURL;
   final Function callbackFromJavascript;
 
-  const WebViewRoute({Key key, this.initialURL, this.callbackFromJavascript}) : super(key: key);
+  const WebViewRoute({Key? key, this.initialURL, this.callbackFromJavascript}) : super(key: key);
 
   @override
   WebViewRouteState createState() => WebViewRouteState();
@@ -99,10 +99,10 @@ class WebViewRouteState extends State<WebViewRoute> {
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),
-      onLoadStart: (InAppWebViewController controller, Uri url) {
+      onLoadStart: (InAppWebViewController controller, Uri? url) {
         dlog("Loading URL ${url.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, Uri url) async {
+      onLoadStop: (InAppWebViewController controller, Uri? url) async {
         if (url.toString().endsWith(kLoadingHTMLFilePath) ||
             url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
           // String clientID = await PlatformDeviceId.getDeviceId;

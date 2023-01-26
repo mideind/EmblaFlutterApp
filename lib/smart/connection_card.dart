@@ -30,11 +30,14 @@ class ConnectionCard extends StatefulWidget {
   final Function callbackFromJavascript;
 
   const ConnectionCard(
-      {Key key, @required this.connection, this.navigationCallback, this.callbackFromJavascript})
+      {Key? key,
+      required this.connection,
+      required this.navigationCallback,
+      required this.callbackFromJavascript})
       : super(key: key);
 
   @override
-  _ConnectionCardState createState() => _ConnectionCardState();
+  ConnectionCardState createState() => ConnectionCardState();
 }
 
 // Pushes a webroute on the navigation stack
@@ -60,7 +63,7 @@ void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic ar
   );
 }
 
-class _ConnectionCardState extends State<ConnectionCard> {
+class ConnectionCardState extends State<ConnectionCard> {
   @override
   Widget build(BuildContext context) {
     double width = MediaQuery.of(context).size.width;
@@ -74,8 +77,8 @@ class _ConnectionCardState extends State<ConnectionCard> {
             horizontal: 15.0,
             vertical: 10.0,
           ),
-          primary: Theme.of(context).cardColor,
-          onPrimary: Theme.of(context).splashColor,
+          backgroundColor: Theme.of(context).cardColor,
+          foregroundColor: Theme.of(context).splashColor,
           splashFactory: InkRipple.splashFactory,
         ),
         onPressed: () {
