@@ -22,8 +22,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import './common.dart';
-import './settings.dart' show SettingsRoute;
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
+import './settings.dart' show SettingsRoute;
+//import './smart/iot.dart' show IoTRoute;
 //import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;
 
@@ -35,6 +36,15 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
     ),
   );
 }
+
+// void _pushIoTRoute(BuildContext context, dynamic arg) {
+//   Navigator.push(
+//     context,
+//     CupertinoPageRoute(
+//       builder: (context) => IoTRoute(),
+//     ),
+//   );
+// }
 
 // void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
 // Navigator.push(
@@ -73,7 +83,8 @@ ListView _menu(BuildContext context) {
     padding: const EdgeInsets.all(8),
     children: <Widget>[
       _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-      //_generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
+      // _menuTile('Snjalltæki', 'iot', _pushIoTRoute, context, null),
+      // _menuTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
       _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
       _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
       _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),

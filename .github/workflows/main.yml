@@ -49,7 +49,7 @@ jobs:
       - name: Run tests
         run: |
           flutter test
-          dart analyze lib
+          dart analyze lib/*
       - name: Build APK
         run: |
           bash build.sh

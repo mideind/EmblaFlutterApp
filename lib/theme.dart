@@ -38,6 +38,8 @@ final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontSty
 final Color lightMainColor = HexColor.fromHex('#e83939');
 final Color lightBgColor = HexColor.fromHex('#f9f9f9');
 final Color lightTextColor = HexColor.fromHex('#202020');
+final Color lightCardColor = HexColor.fromHex('#ffffff');
+final Color lightSplashColor = HexColor.fromHex('#f6b0b0');
 
 final lightThemeData = ThemeData(
   brightness: Brightness.light,
@@ -45,6 +47,8 @@ final lightThemeData = ThemeData(
       .copyWith(background: lightBgColor),
   scaffoldBackgroundColor: lightBgColor,
   primaryColor: lightMainColor,
+  cardColor: lightCardColor,
+  splashColor: lightSplashColor,
   fontFamily: defaultFontFamily,
   textTheme: TextTheme(
     titleSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
@@ -71,6 +75,8 @@ final lightThemeData = ThemeData(
 // Define dark mode app styling and color scheme
 final darkMainColor = HexColor.fromHex('#f7f7f7');
 final darkBgColor = HexColor.fromHex('#202020');
+final darkCardColor = HexColor.fromHex('#505050');
+final darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 final darkThemeData = ThemeData(
   brightness: Brightness.dark,
@@ -78,6 +84,8 @@ final darkThemeData = ThemeData(
       .copyWith(background: darkBgColor),
   scaffoldBackgroundColor: darkBgColor,
   primaryColor: darkMainColor,
+  cardColor: darkCardColor,
+  splashColor: darkSplashColor,
   fontFamily: defaultFontFamily,
   textTheme: TextTheme(
     titleSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
