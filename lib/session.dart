@@ -90,7 +90,7 @@ const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
 const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
 
-BuildContext sessionContext;
+BuildContext? sessionContext;
 
 // Samples (0.0-1.0) used for waveform animation
 List<double> audioSamples = populateSamples();
@@ -112,17 +112,17 @@ String introMsg() {
 
 // Main widget for session view
 class SessionRoute extends StatefulWidget {
-  const SessionRoute({Key key}) : super(key: key);
+  const SessionRoute({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => SessionRouteState();
 }
 
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
-  Timer animationTimer;
+  Timer? animationTimer;
   String text = introMsg();
-  String imageURL;
-  StreamSubscription<FGBGType> appStateSubscription;
+  String? imageURL;
+  StreamSubscription<FGBGType>? appStateSubscription;
 
   @override
   void initState() {
@@ -149,19 +149,17 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @mustCallSuper
   @override
   void dispose() {
-    appStateSubscription.cancel();
+    appStateSubscription?.cancel();
     super.dispose();
   }
 
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
-    // Request microphone permission
-    PermissionStatus status = await Permission.microphone.request();
-    if (status != PermissionStatus.granted) {
-      dlog("Microphone permission refused");
-    } else {
+    if (await Permission.microphone.isGranted) {
       if (Prefs().boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler);
       }
+    } else {
+      dlog("Cannot start hotword detection, microphone permission refused");
     }
   }
 
@@ -272,7 +270,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Process response from query server
-  void handleQueryResponse(Map<String, dynamic> resp) async {
+  void handleQueryResponse(Map<String, dynamic>? resp) async {
     if (state != SessionState.answering) {
       dlog("Received query answer after session terminated: ${resp.toString()}");
       return;
@@ -333,9 +331,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Don't know
     else if (resp != null && resp['error'] != null) {
       String dunnoMsg = AudioPlayer().playDunno(() {
-        dlog('Playback finished');
-        stop();
-      });
+            dlog('Playback finished');
+            stop();
+          }) ??
+          "";
       msg("${resp["q"]}\n\n$dunnoMsg");
     }
     // Error in server response
@@ -347,7 +346,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   // Set text field string (and optionally, an associated image)
-  void msg(String s, {String imgURL}) {
+  void msg(String s, {String? imgURL}) {
     setState(() {
       text = s;
       imageURL = imgURL;
@@ -360,13 +359,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       dlog('Session start called during pre-existing session!');
       return;
     }
+
     dlog('Starting session');
 
-    // if (await SpeechRecognizer().canRecognizeSpeech() == false) {
-    //   AudioPlayer().playSound('rec_cancel');
-    //   showRecognitionErrorAlert(context);
-    //   return;
-    // }
+    if (await Permission.microphone.isGranted == false) {
+      AudioPlayer().playSound('rec_cancel');
+      showRecognitionErrorAlert(context);
+      return;
+    }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
@@ -519,7 +519,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
       ];
       if (imageURL != null) {
-        widgets.add(Image.network(imageURL));
+        widgets.add(Image.network(imageURL!));
       }
       return Column(
         children: widgets,
@@ -601,7 +601,7 @@ class SessionButtonPainter extends CustomPainter {
   }
 
   // Draw current logo animation frame
-  void drawFrame(Canvas canvas, Size size, int fnum) {
+  void drawLogoFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.isEmpty) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
@@ -639,6 +639,7 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
+    // TODO: These colors should be set via theme
     //var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
     var topPaint = Paint()..color = HexColor.fromHex('#e83939');
     //var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
@@ -672,7 +673,7 @@ class SessionButtonPainter extends CustomPainter {
           level * barHeight); // height
       canvas.drawRect(bottomRect, bottomPaint);
 
-      // Draw circle at end of bar
+      // Draw circle at end of bottom bar
       canvas.drawCircle(
           Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
               centerY + (level * barHeight) + yOffset), // offset
@@ -692,11 +693,11 @@ class SessionButtonPainter extends CustomPainter {
     }
     // Draw logo animation during answering phase
     else if (state == SessionState.answering) {
-      drawFrame(canvas, size, currFrame);
+      drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo
     else {
-      drawFrame(canvas, size, kFullLogoFrame); // Always same frame
+      drawLogoFrame(canvas, size, kFullLogoFrame); // Always same frame
     }
   }
 

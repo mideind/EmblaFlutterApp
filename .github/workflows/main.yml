@@ -1,14 +1,16 @@
 # This is a basic workflow to help you get started with Actions
 
-name: build
+name: tests
 
 # Controls when the action will run.
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   push:
-    branches: [ main ]
+    branches:
+      - '*'
   pull_request:
-    branches: [ main ]
+    branches:
+      - '*'
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -22,22 +24,35 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - uses: actions/setup-java@v1
         with:
-            java-version: '12.x'
-      - uses: subosito/flutter-action@v1
+          java-version: '12.x'
+      - uses: subosito/flutter-action@v2
         with:
-          channel: 'stable' # or: 'beta', 'dev' or 'master'
-      - run: touch keys/gaccount.json
-      - run: touch keys/query_api.key
-      - run: bash keys/gen_keys.sh
-      - run: echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
-      - run: git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
-      - run: flutter pub get
-      - run: flutter test
-      - run: dart analyze lib
-      - run: bash build.sh
+          flutter-version: '3.3.5'
+          channel: 'stable'
+      - name: Create dummy API keys
+        run: |
+          touch keys/gaccount.json
+          touch keys/query_api.key
+          bash keys/gen_keys.sh
+          echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
+      - name: Clone flutter_snowboy dependency repo
+        run: |
+          git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
+          git clone --recurse-submodules -j4 https://github.com/canardoux/flutter_sound ../flutter_sound
+      - name: Install dependencies
+        run: |
+          flutter config --no-analytics
+          flutter pub get
+      - name: Run tests
+        run: |
+          flutter test
+          dart analyze lib
+      - name: Build APK
+        run: |
+          bash build.sh
       - name: Slack notification
         uses: 8398a7/action-slack@v2
         with:

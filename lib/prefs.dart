@@ -26,7 +26,7 @@ import './loc.dart' show LocationTracking;
 class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
-  static SharedPreferences _sp;
+  static SharedPreferences? _sp;
 
   // Singleton pattern
   factory Prefs() {
@@ -44,7 +44,7 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '${val.toString()}'");
     _sp?.setBool(key, val);
-    // This is hacky and should be solved in some other way
+    // TODO: This is hacky and should be solved in some other way
     if (key == 'share_location') {
       if (val == true) {
         LocationTracking().start();
@@ -54,7 +54,7 @@ class Prefs {
     }
   }
 
-  double floatForKey(String key) {
+  double? floatForKey(String key) {
     return _sp?.getDouble(key);
   }
 
@@ -63,7 +63,7 @@ class Prefs {
     _sp?.setDouble(key, val);
   }
 
-  String stringForKey(String key) {
+  String? stringForKey(String key) {
     return _sp?.getString(key);
   }
 
@@ -73,10 +73,10 @@ class Prefs {
   }
 
   String desc() {
-    List<dynamic> list = _sp
-        ?.getKeys()
-        ?.map<String>((key) => "$key: ${_sp?.get(key).toString()}")
-        ?.toList(growable: false);
+    List<dynamic> list = _sp!
+        .getKeys()
+        .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
+        .toList(growable: false);
     return list.toString();
   }
 
@@ -91,8 +91,7 @@ class Prefs {
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
     Prefs().setFloatForKey('voice_speed', 1.0);
-    Prefs().setStringForKey('voice_id', 'Dora');
+    Prefs().setStringForKey('voice_id', kDefaultVoice);
     Prefs().setStringForKey('query_server', kDefaultQueryServer);
-    Prefs().setStringForKey('stt_server', kDefaultSTTServer);
   }
 }

@@ -22,52 +22,56 @@ import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import './prefs.dart' show Prefs;
-import './query.dart' show QueryService;
-import './common.dart' show dlog, kSpeechSynthesisVoices, kDefaultVoice;
+// import './query.dart' show QueryService;
+import './common.dart'
+    show dlog, kSpeechSynthesisVoices, kSpeechSynthesisDebugVoices /*, kDefaultVoice*/;
 import './theme.dart';
 
-List<String> voices;
+const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
+
+List<String> voices = kSpeechSynthesisVoices;
 
 // Fetch list of voice IDs (strings) from server
 Future<List<String>> fetchVoiceList() async {
   if (kReleaseMode) {
     voices = kSpeechSynthesisVoices;
-  }
-
-  if (voices != null) {
-    return voices;
-  }
-
-  try {
-    Map<String, dynamic> res = await QueryService.requestSupportedVoices();
-    List<String> voiceList = kSpeechSynthesisVoices;
-    String defaultVoice = kDefaultVoice;
-
-    if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
-      // We have a valid response from the server
-
-      if (res.containsKey("default") == true && res["default"] != null) {
-        defaultVoice = res["default"];
-      }
-
-      // Debug mode
-      if (res.containsKey("supported") == true) {
-        voiceList = res["supported"] as List<String>;
-      }
-    }
-    // Make sure current voice is sane
-    if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
-      Prefs().setStringForKey("voice_id", defaultVoice);
-    }
-
-    // Store voices list once fetched
-    voices = voiceList;
-  } catch (e) {
-    dlog("Error fetching voice list: $e");
-    voices = kSpeechSynthesisVoices;
+  } else {
+    voices = kSpeechSynthesisDebugVoices;
   }
 
   return voices;
+
+  // This is disabled for now.
+  // try {
+  //   Map<String, dynamic> res = await QueryService.requestSupportedVoices();
+  //   List<dynamic> voiceList = kSpeechSynthesisVoices;
+  //   String defaultVoice = kDefaultVoice;
+
+  //   if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
+  //     // We have a valid response from the server
+
+  //     if (res.containsKey("default") == true && res["default"] != null) {
+  //       defaultVoice = res["default"];
+  //     }
+
+  //     // Debug mode
+  //     if (res.containsKey("supported") == true) {
+  //       voiceList = res["supported"] as List<dynamic>;
+  //     }
+  //   }
+  //   // Make sure current voice is sane
+  //   if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
+  //     Prefs().setStringForKey("voice_id", defaultVoice);
+  //   }
+
+  //   // Store voices list once fetched
+  //   voices = voiceList;
+  // } catch (e) {
+  //   dlog("Error fetching voice list: $e");
+  //   voices = kSpeechSynthesisVoices;
+  // }
+
+  // return voices;
 }
 
 Widget _buildVoiceList(BuildContext context, List voices) {
@@ -105,19 +109,19 @@ FutureBuilder<List> _genVoiceList() {
           // No data yet
           return Center(
             child: CircularProgressIndicator(
-              semanticsLabel: 'Raddir eru að hlaðast...',
+              semanticsLabel: kVoicesLoadingMsg,
             ),
           );
         } else {
           // We have received voice list from server
           dlog("Building voice list from ${snapshot.data}");
-          return _buildVoiceList(context, snapshot.data);
+          return _buildVoiceList(context, snapshot.data!);
         }
       });
 }
 
 class VoiceSelectionRoute extends StatelessWidget {
-  const VoiceSelectionRoute({Key key}) : super(key: key);
+  const VoiceSelectionRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

@@ -42,34 +42,35 @@ final Color lightCardColor = HexColor.fromHex('#ffffff');
 final Color lightSplashColor = HexColor.fromHex('#f6b0b0');
 
 final lightThemeData = ThemeData(
-    brightness: Brightness.light,
-    scaffoldBackgroundColor: lightBgColor,
-    primarySwatch: Colors.red,
-    primaryColor: lightMainColor,
-    backgroundColor: lightBgColor,
-    // hoverColor: lightMainColor,
-    cardColor: lightCardColor,
-    splashColor: lightSplashColor,
-    fontFamily: defaultFontFamily,
-    textTheme: TextTheme(
-      subtitle1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      subtitle2: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      overline: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      button: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      caption: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      bodyText1: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      bodyText2: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
-      headline1: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headline2: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headline3: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headline4: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headline5: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-      headline6: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
-    ),
-    appBarTheme: AppBarTheme(
-      color: lightBgColor,
-      iconTheme: IconThemeData(color: lightMainColor),
-    ));
+  brightness: Brightness.light,
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red, brightness: Brightness.light)
+      .copyWith(background: lightBgColor),
+  scaffoldBackgroundColor: lightBgColor,
+  primaryColor: lightMainColor,
+  cardColor: lightCardColor,
+  splashColor: lightSplashColor,
+  fontFamily: defaultFontFamily,
+  textTheme: TextTheme(
+    titleSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    titleMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    titleLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    labelSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    labelLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    bodySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    bodyMedium: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+    bodyLarge: TextStyle(color: lightMainColor, fontSize: defaultFontSize),
+    displaySmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    displayMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    displayLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineLarge: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineMedium: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+    headlineSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
+  ),
+  appBarTheme: AppBarTheme(
+    color: lightBgColor,
+    iconTheme: IconThemeData(color: lightMainColor),
+  ),
+);
 
 // Define dark mode app styling and color scheme
 final darkMainColor = HexColor.fromHex('#f7f7f7');
@@ -79,28 +80,28 @@ final darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 final darkThemeData = ThemeData(
   brightness: Brightness.dark,
+  colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey, brightness: Brightness.dark)
+      .copyWith(background: darkBgColor),
   scaffoldBackgroundColor: darkBgColor,
-  primarySwatch: Colors.grey,
   primaryColor: darkMainColor,
-  backgroundColor: darkBgColor,
   cardColor: darkCardColor,
   splashColor: darkSplashColor,
-  // hoverColor: Colors.black,
   fontFamily: defaultFontFamily,
   textTheme: TextTheme(
-    subtitle1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    subtitle2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    overline: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    button: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    caption: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    bodyText1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    bodyText2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline1: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline2: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline3: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline4: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline5: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
-    headline6: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    titleSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    titleMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    titleLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    labelSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    labelLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    bodyLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displaySmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displayMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    displayLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineLarge: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineMedium: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
+    headlineSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
   ),
   appBarTheme: AppBarTheme(
     color: darkBgColor,
@@ -114,21 +115,14 @@ final standardAppBar = AppBar(
   toolbarOpacity: 1.0,
 );
 
-String img4theme(String imgName, var context) {
-  if (context == null) {
-    return imgName;
-  }
-  var brightness = MediaQuery.of(context).platformBrightness;
-  if (brightness == Brightness.dark) {
+AssetImage img4theme(String imgName, BuildContext context) {
+  if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     imgName = "${imgName}_dark";
   }
-  return imgName;
+  return AssetImage("assets/images/$imgName.png");
 }
 
-Color color4ctx(var context) {
-  if (context == null) {
-    return lightMainColor;
-  }
+Color color4ctx(BuildContext context) {
   var brightness = MediaQuery.of(context).platformBrightness;
   if (brightness == Brightness.dark) {
     return darkMainColor;
@@ -137,13 +131,15 @@ Color color4ctx(var context) {
 }
 
 List<Color> circleColors4Context(var context) {
-  Color circleColor1 = HexColor.fromHex('#f9f0f0');
-  Color circleColor2 = HexColor.fromHex('#f9e2e1');
-  Color circleColor3 = HexColor.fromHex('#f9dcdb');
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
-    circleColor1 = HexColor.fromHex('#f0f0f0');
-    circleColor2 = HexColor.fromHex('#e4e4e4');
-    circleColor3 = HexColor.fromHex('#dcdcdc');
+    Color circleColor1 = HexColor.fromHex('#f0f0f0');
+    Color circleColor2 = HexColor.fromHex('#e4e4e4');
+    Color circleColor3 = HexColor.fromHex('#dcdcdc');
+    return [circleColor1, circleColor2, circleColor3];
+  } else {
+    Color circleColor1 = HexColor.fromHex('#f9f0f0');
+    Color circleColor2 = HexColor.fromHex('#f9e2e1');
+    Color circleColor3 = HexColor.fromHex('#f9dcdb');
+    return [circleColor1, circleColor2, circleColor3];
   }
-  return [circleColor1, circleColor2, circleColor3];
 }

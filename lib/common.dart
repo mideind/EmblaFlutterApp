@@ -41,15 +41,15 @@ const int kAudioNumChannels = 1;
 
 // Server communication
 const String kDefaultQueryServer = 'https://greynir.is';
-const String kDefaultSTTServer = 'speech.googleapis.com';
 const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
 const String kSpeechSynthesisAPIPath = '/speech.api/v1';
 const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Speech synthesis
-const List<String> kSpeechSynthesisVoices = ["Dóra", "Karl"];
-const String kDefaultVoice = "Dóra";
+const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];
+const List<String> kSpeechSynthesisDebugVoices = ["Guðrún", "Gunnar", "Dóra", "Karl"];
+const String kDefaultVoice = "Guðrún";
 
 const double kVoiceSpeedMin = 0.7;
 const double kVoiceSpeedMax = 2.0;
@@ -61,7 +61,7 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Alternate query server options f. debugging purposes
 const List<List<String>> kQueryServerPresetOptions = [
-  ['Greynir.is', 'https://greynir.is'],
+  ['Greynir.is', kDefaultQueryServer],
   ['Brandur', 'http://brandur.mideind.is:5000'],
   ['Staðarnet', 'http://192.168.1.8:5000']
 ];

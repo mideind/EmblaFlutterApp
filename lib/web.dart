@@ -33,17 +33,17 @@ const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
-  const WebViewRoute({Key key, this.initialURL}) : super(key: key);
+  const WebViewRoute({Key? key, required this.initialURL}) : super(key: key);
 
   @override
   WebViewRouteState createState() => WebViewRouteState();
 }
 
 class WebViewRouteState extends State<WebViewRoute> {
-  InAppWebViewController webView;
+  InAppWebViewController? webView;
 
   // Fall back to local HTML document if error comes up when fetching document from remote server
-  void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
+  void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url.toString());
     dlog("Falling back to local asset $path");
@@ -59,6 +59,10 @@ class WebViewRouteState extends State<WebViewRoute> {
     return "$kDocsDir/${uri.pathSegments.last}";
   }
 
+  String _darkURLForURL(String url) {
+    return "$url?dark=1";
+  }
+
   // Handle clicks on links in HTML documentation.
   // These links should be opened in an external browser.
   Future<NavigationActionPolicy> urlClickHandler(
@@ -69,7 +73,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     if (urlStr.startsWith(widget.initialURL) == false &&
         urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
-      await launchUrl(req.url, mode: LaunchMode.externalApplication);
+      await launchUrl(req.url!, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
     }
     return NavigationActionPolicy.ALLOW;
@@ -88,28 +92,27 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     var url = widget.initialURL;
     if (darkMode) {
-      url += "?dark=1";
+      url = _darkURLForURL(url);
     }
 
     InAppWebView webView = InAppWebView(
       initialFile: loadingURL,
-      //initialUrlRequest: URLRequest(url: Uri.parse(url)),
+      initialUrlRequest: URLRequest(url: Uri.parse(url)),
       initialOptions: InAppWebViewGroupOptions(
           crossPlatform: InAppWebViewOptions(
         useShouldOverrideUrlLoading: true,
         transparentBackground: true,
       )),
-      onLoadStart: (InAppWebViewController controller, Uri url) {
+      onLoadStart: (InAppWebViewController controller, Uri? url) {
         dlog("Loading URL ${url.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, Uri url) async {
+      onLoadStop: (InAppWebViewController controller, Uri? url) async {
         if (url.toString().endsWith(kLoadingHTMLFilePath) ||
             url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
           setState(() {
             String url = widget.initialURL;
             if (darkMode) {
-              String prefix = url.contains('?') ? '&' : '?';
-              url += '${prefix}dark=1';
+              url = _darkURLForURL(url);
             }
             Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));

@@ -21,6 +21,7 @@
 import 'dart:async';
 
 import 'package:geolocator/geolocator.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import './common.dart';
 import './prefs.dart';
@@ -32,39 +33,34 @@ class LocationTracking {
     return _instance;
   }
 
-  double lat;
-  double lon;
+  double? lat;
+  double? lon;
   bool known = false;
-  StreamSubscription<Position> positionStream;
+  StreamSubscription<Position>? positionStream;
 
   void start() async {
-    try {
-      LocationPermission permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied ||
-          permission == LocationPermission.deniedForever) {
-        Prefs().setBoolForKey('share_location', false);
-        return;
-      }
-    } catch (err) {
-      dlog("Error requesting permission: $err");
-    }
-
-    if (positionStream != null) {
-      // Already ongoing
+    // We never start location tracking if it's disabled in prefs or if we don't have permission
+    if (Prefs().boolForKey('share_location') == false ||
+        await Permission.location.isGranted == false) {
+      dlog("Could not start location tracking, permission not granted");
       return;
     }
+    if (positionStream != null) {
+      // Location tracking already ongoing
+      return;
+    }
+
     dlog('Starting location tracking');
-    // positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.best)
-    //     .listen((Position position) {
-    //   if (position == null) {
-    //     known = false;
-    //     return;
-    //   }
-    //   lat = position.latitude;
-    //   lon = position.longitude;
-    //   known = true;
-    //   //dlog("Location: ${lat.toString()}, ${lon.toString()}");
-    // });
+    positionStream = Geolocator.getPositionStream().listen((Position? position) {
+      if (position == null) {
+        known = false;
+        return;
+      }
+      lat = position.latitude;
+      lon = position.longitude;
+      known = true;
+      //dlog("Location: ${lat.toString()}, ${lon.toString()}");
+    });
   }
 
   void stop() {
@@ -76,10 +72,10 @@ class LocationTracking {
     }
   }
 
-  List<double> get location {
+  List<double>? get location {
     if (!known || lat == null || lon == null) {
       return null;
     }
-    return [lat, lon];
+    return [lat!, lon!];
   }
 }

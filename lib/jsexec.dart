@@ -22,9 +22,11 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import 'common.dart';
 
+const kJSExecErrorMessage = "Upp kom villa við keyrslu á JavaScript.";
+
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
-  HeadlessInAppWebView headlessWebView;
+  HeadlessInAppWebView? headlessWebView;
 
   // Singleton pattern
   factory JSExecutor() {
@@ -39,27 +41,25 @@ class JSExecutor {
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(),
       ),
-      onWebViewCreated: (controller) {
-        dlog('HeadlessInAppWebView created!');
-      },
+      onWebViewCreated: (controller) {},
       onConsoleMessage: (controller, consoleMessage) {
-        dlog("JAVASCRIPT CONSOLE MESSAGE: ${consoleMessage.message}");
+        dlog("JavaScript Console Message: ${consoleMessage.message}");
       },
     );
   }
 
   Future<String> run(String jsCode) async {
-    await headlessWebView.dispose();
-    await headlessWebView.run();
-    String answer = "Upp kom villa.";
+    await headlessWebView?.dispose();
+    await headlessWebView?.run();
+    String answer = kJSExecErrorMessage;
     try {
       var result =
-          await headlessWebView.webViewController.callAsyncJavaScript(functionBody: jsCode);
-      if (result.error == null && result.value != null) {
-        answer = result.value.toString();
+          await headlessWebView?.webViewController.callAsyncJavaScript(functionBody: jsCode);
+      if (result?.error == null && result?.value != null) {
+        answer = result!.value.toString();
       }
-    } on Exception {
-      dlog("ERROR: HeadlessInAppWebView is not running!");
+    } on Exception catch (e) {
+      dlog("Error: HeadlessInAppWebView not running: $e");
     }
     return answer;
   }

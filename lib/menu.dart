@@ -65,40 +65,38 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
 }
 
 // Generate a menu tile based on args
-ListTile _generateTile(
+ListTile _menuTile(
     String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
-    leading: Image(image: AssetImage("assets/images/${img4theme(imageName, context)}.png")),
+    leading: Image(image: img4theme(imageName, context)),
     trailing: Icon(Icons.arrow_right),
     onTap: () {
-      if (onTapFunc is Function) {
-        onTapFunc(context, arg);
-      }
+      onTapFunc(context, arg);
     },
   );
 }
 
 // Generate list of menu tiles
-ListView _generateMenu(BuildContext context) {
+ListView _menu(BuildContext context) {
   return ListView(
     padding: const EdgeInsets.all(8),
     children: <Widget>[
-      _generateTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-      // _generateTile('Snjalltæki', 'iot', _pushIoTRoute, context, null),
-      //_generateTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
-      _generateTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
-      _generateTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
-      _generateTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
+      _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+      // _menuTile('Snjalltæki', 'iot', _pushIoTRoute, context, null),
+      // _menuTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
+      _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
+      _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
+      _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
     ],
   );
 }
 
 class MenuRoute extends StatelessWidget {
-  const MenuRoute({Key key}) : super(key: key);
+  const MenuRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: standardAppBar, body: _generateMenu(context));
+    return Scaffold(appBar: standardAppBar, body: _menu(context));
   }
 }

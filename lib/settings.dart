@@ -51,7 +51,8 @@ class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
 
-  const SettingsSwitchWidget({Key key, this.label, this.prefKey}) : super(key: key);
+  const SettingsSwitchWidget({Key? key, required this.label, required this.prefKey})
+      : super(key: key);
 
   @override
   SettingsSwitchWidgetState createState() => SettingsSwitchWidgetState();
@@ -66,7 +67,7 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
         title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
-          activeColor: Theme.of(context).primaryColorDark,
+          activeColor: Theme.of(context).primaryColor,
           onChanged: (bool value) {
             setState(() {
               Prefs().setBoolForKey(prefKey, value);
@@ -88,7 +89,8 @@ class SettingsSwitchConfirmWidget extends StatefulWidget {
   final String label;
   final String prefKey;
 
-  const SettingsSwitchConfirmWidget({Key key, this.label, this.prefKey}) : super(key: key);
+  const SettingsSwitchConfirmWidget({Key? key, required this.label, required this.prefKey})
+      : super(key: key);
 
   @override
   SettingsSwitchConfirmWidgetState createState() => SettingsSwitchConfirmWidgetState();
@@ -170,7 +172,9 @@ class SettingsSegmentedWidget extends StatefulWidget {
   final List<String> items;
   final String prefKey;
 
-  const SettingsSegmentedWidget({Key key, this.label, this.items, this.prefKey}) : super(key: key);
+  const SettingsSegmentedWidget(
+      {Key? key, required this.label, required this.items, required this.prefKey})
+      : super(key: key);
 
   @override
   SettingsSegmentedWidgetState createState() => SettingsSegmentedWidgetState();
@@ -206,7 +210,7 @@ class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
           groupValue: selectedSegment(),
           onValueChanged: (value) {
             setState(() {
-              Prefs().setStringForKey(widget.prefKey, widget.items[value]);
+              Prefs().setStringForKey(widget.prefKey, widget.items[value as int]);
             });
           }),
     );
@@ -222,7 +226,12 @@ class SettingsSliderWidget extends StatefulWidget {
   final double stepSize;
 
   const SettingsSliderWidget(
-      {Key key, this.label, this.prefKey, this.minValue, this.maxValue, this.stepSize})
+      {Key? key,
+      required this.label,
+      required this.prefKey,
+      required this.minValue,
+      required this.maxValue,
+      required this.stepSize})
       : super(key: key);
 
   @override
@@ -230,7 +239,7 @@ class SettingsSliderWidget extends StatefulWidget {
 }
 
 class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
-  double currVal;
+  double currVal = 1.0;
 
   double _constrainValue(double pval) {
     pval = pval > widget.maxValue ? widget.maxValue : pval;
@@ -242,7 +251,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   }
 
   String genSliderLabel() {
-    double val = Prefs().floatForKey(widget.prefKey);
+    double val = Prefs().floatForKey(widget.prefKey) ?? 1.0;
     String valStr = val.toStringAsFixed(2);
     if (valStr.endsWith("0")) {
       valStr = valStr.substring(0, valStr.length - 1);
@@ -253,7 +262,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    currVal = _constrainValue(Prefs().floatForKey(widget.prefKey));
+    currVal = _constrainValue(Prefs().floatForKey(widget.prefKey) ?? 1.0);
     return ListTile(
         title: Text(genSliderLabel()),
         trailing: CupertinoSlider(
@@ -277,7 +286,11 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   final Function handler;
 
   const SettingsButtonPromptWidget(
-      {Key key, this.label, this.alertText, this.buttonTitle, this.handler})
+      {Key? key,
+      required this.label,
+      required this.alertText,
+      required this.buttonTitle,
+      required this.handler})
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
@@ -330,15 +343,16 @@ class QueryServerSegmentedWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
 
-  const QueryServerSegmentedWidget({Key key, this.items, this.prefKey}) : super(key: key);
+  const QueryServerSegmentedWidget({Key? key, required this.items, required this.prefKey})
+      : super(key: key);
 
   @override
   QueryServerSegmentedWidgetState createState() => QueryServerSegmentedWidgetState();
 }
 
 class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
-  String text;
-  TextEditingController textController;
+  String text = "";
+  TextEditingController? textController;
 
   @override
   void initState() {
@@ -348,7 +362,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 
   @override
   void dispose() {
-    textController.dispose();
+    textController?.dispose();
     super.dispose();
   }
 
@@ -380,14 +394,14 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
     setState(() {
       text = finalVal;
       Prefs().setStringForKey(widget.prefKey, text);
-      textController.value = TextEditingValue(
+      textController?.value = TextEditingValue(
           text: text, selection: TextSelection(baseOffset: text.length, extentOffset: text.length));
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    text = Prefs().stringForKey(widget.prefKey);
+    text = Prefs().stringForKey(widget.prefKey) ?? '';
     return Column(children: [
       Padding(
           padding: EdgeInsets.all(8.0),
@@ -399,7 +413,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 }
 
 class SettingsLabelValueWidget extends StatelessWidget {
-  const SettingsLabelValueWidget(this.label, this.value);
+  const SettingsLabelValueWidget(this.label, this.value, {Key? key}) : super(key: key);
 
   final String label;
   final String value;
@@ -408,8 +422,8 @@ class SettingsLabelValueWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
         child: ListTile(
-      title: Text(label, style: Theme.of(context).textTheme.caption),
-      trailing: Text(value, style: Theme.of(context).textTheme.caption),
+      title: Text(label, style: Theme.of(context).textTheme.bodySmall),
+      trailing: Text(value, style: Theme.of(context).textTheme.bodySmall),
     ));
   }
 }
@@ -418,7 +432,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
 
-  const SettingsAsyncLabelValueWidget(this.label, this.future);
+  const SettingsAsyncLabelValueWidget(this.label, this.future, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -426,16 +440,16 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
         future: future,
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return SettingsLabelValueWidget(label, snapshot.data);
+            return SettingsLabelValueWidget(label, snapshot.data!);
           }
-          return SettingsLabelValueWidget(label, '...');
+          return SettingsLabelValueWidget(label, '…');
         });
   }
 }
 
 class SettingsVoiceSelectWidget extends StatefulWidget {
   final String label;
-  const SettingsVoiceSelectWidget({Key key, this.label}) : super(key: key);
+  const SettingsVoiceSelectWidget({Key? key, required this.label}) : super(key: key);
 
   @override
   SettingsVoiceSelectWidgetState createState() => SettingsVoiceSelectWidgetState();
@@ -449,7 +463,8 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(Prefs().stringForKey('voice_id'), style: Theme.of(context).textTheme.caption),
+            Text(Prefs().stringForKey('voice_id') ?? "(engin rödd valin)",
+                style: Theme.of(context).textTheme.bodySmall),
             Icon(Icons.arrow_right),
           ],
         ),
@@ -460,6 +475,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
               builder: (context) => VoiceSelectionRoute(),
             ),
           ).then((val) {
+            // Trigger re-render since voice selection may have changed
             setState(() {});
           });
         });
@@ -479,7 +495,7 @@ Future<String> genVersionString() async {
   final String version = packageInfo.version;
   //final String buildNumber = packageInfo.buildNumber;
 
-  final String osName = osName2Pretty[Platform.operatingSystem];
+  final String osName = osName2Pretty[Platform.operatingSystem] ?? "";
   String swInfoStr = "$version ($osName)";
   if (kReleaseMode == false) {
     swInfoStr += " dbg";
@@ -489,7 +505,7 @@ Future<String> genVersionString() async {
 
 // List of settings widgets
 List<Widget> _settings(BuildContext context) {
-  return <Widget>[
+  List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
@@ -516,24 +532,22 @@ List<Widget> _settings(BuildContext context) {
           QueryService.clearUserData(true);
         }),
   ];
+  // Only include query server selection widget in debug builds
+  if (kReleaseMode == false) {
+    settingsWidgets.addAll([
+      QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+    ]);
+  }
+  return settingsWidgets;
 }
 
 class SettingsRoute extends StatelessWidget {
-  const SettingsRoute({Key key}) : super(key: key);
+  const SettingsRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> slist = _settings(context);
-    // Only include query server selection widget in debug builds
-    if (kReleaseMode == false) {
-      slist.addAll([
-        // SettingsSegmentedWidget(
-        //     label: 'Talgreining', items: ['Google', 'Tiro'], prefKey: 'speech2text_server'),
-        QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-      ]);
-    }
-
     return Scaffold(
-        appBar: standardAppBar, body: ListView(padding: const EdgeInsets.all(8), children: slist));
+        appBar: standardAppBar,
+        body: ListView(padding: const EdgeInsets.all(8), children: _settings(context)));
   }
 }

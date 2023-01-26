@@ -1,10 +1,12 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Language](https://img.shields.io/badge/language-dart-lightblue)]()
+![Release](https://shields.io/github/v/release/mideind/Embla_Flutter?display_name=tag)
+![Play Store](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dis.mideind.embla%26l%3DPlay%2520Store%26m%3D%24version)
 [![Build](https://github.com/mideind/Embla_Flutter/actions/workflows/main.yml/badge.svg)]()
 
 <img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
-# Embla Flutter client
+# Embla Flutter Client
 
 Embla is an Icelandic-language voice assistant app powered by the
 [Greynir](https://greynir.is) query engine. This is the repository for
@@ -12,7 +14,7 @@ the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on
-Android 8.1+ (SDK >= 27), with iOS support on the roadmap.
+Android 8.1+ (SDK >= 27) and iOS 12+.
 
 <a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
     <img alt="Download on Google Play" src="img/play_store.png" width="180">
@@ -29,8 +31,8 @@ requires a recent version of Xcode.
 
 Clone the repository:
 
-```
-$ git clone https://github.com/mideind/Embla_Flutter
+```bash
+git clone https://github.com/mideind/Embla_Flutter
 ```
 
 In order to work as intended, the app requires a Service Account JSON configuration
@@ -41,14 +43,14 @@ Google's API console and and save it at the following path within the repository
 
 Then run the following script:
 
-```
-$ /bin/bash keys/gen_keysfile.sh
+```bash
+bash keys/gen_keysfile.sh
 ```
 
 You should now be able to build and run the app:
 
-```
-$ flutter run
+```bash
+flutter run
 ```
 
 This should launch the app in development mode on your device of choice (e.g.
@@ -56,24 +58,27 @@ simulator, attached physical device, etc.).
 
 To build an Android `apk` debug binary for arm64, run the following script:
 
-```
-$ bash build.sh
+```bash
+bash build.sh
 ```
 
 ## Screenshots
 
-TBD
+<p float="left">
+    <img src="img/screenshot_1.jpg" width="30%" alt="Embla Android screenshot 1">
+    <img src="img/screenshot_2.jpg" width="30%" alt="Embla Android screenshot 2">
+    <img src="img/screenshot_3.jpg" width="30%" alt="Embla Android screenshot 3">
+</p>
 
 ## Acknowledgements
 
 The Embla client uses [Snowboy](https://github.com/seasalt-ai/snowboy) for hotword
 detection and Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text) for
-speech recognition. Speech synthesis is accomplished via synthetic voices commissioned by
-[Blindrafélagið](https://blind.is), the Icelandic Association of the Visually Impaired.
+speech recognition.
 
 ## License
 
-Embla is Copyright (C) 2019-2022 [Miðeind ehf.](https://mideind.is)
+Embla is Copyright (C) 2019-2023 [Miðeind ehf.](https://mideind.is)
 
 <a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf." width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
 

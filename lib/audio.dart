@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:math';
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:filesize/filesize.dart' show filesize;
 import 'package:logger/logger.dart' show Level;
 import 'package:flutter_sound/flutter_sound.dart';
@@ -32,33 +33,6 @@ import './common.dart';
 import './prefs.dart' show Prefs;
 import './util.dart';
 
-// List of audio file assets in bundle
-const List<String> audioFiles = [
-  // Voice-independent
-  'rec_begin',
-  'rec_cancel',
-  'rec_confirm',
-  // Voice dependent
-  'conn-dora',
-  'conn-karl',
-  'dunno01-dora',
-  'dunno02-dora',
-  'dunno03-dora',
-  'dunno04-dora',
-  'dunno05-dora',
-  'dunno06-dora',
-  'dunno07-dora',
-  'dunno01-karl',
-  'dunno02-karl',
-  'dunno03-karl',
-  'dunno04-karl',
-  'dunno05-karl',
-  'dunno06-karl',
-  'dunno07-karl',
-  'err-dora',
-  'err-karl',
-];
-
 // These sounds are the same regardless of voice ID settings.
 const List<String> sessionSounds = [
   'rec_begin',
@@ -68,8 +42,8 @@ const List<String> sessionSounds = [
 
 // Singleton class that handles all audio playback
 class AudioPlayer {
-  FlutterSoundPlayer player;
-  Map<String, Uint8List> audioFileCache;
+  FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.error);
+  Map<String, Uint8List> audioFileCache = <String, Uint8List>{};
 
   // Constructor
   static final AudioPlayer _instance = AudioPlayer._internal();
@@ -88,12 +62,37 @@ class AudioPlayer {
   Future<void> _init() async {
     dlog('Initing audio player');
     _preloadAudioFiles();
-    player = FlutterSoundPlayer(logLevel: Level.error);
     await player.openPlayer();
   }
 
   // Load all asset-bundled audio files into memory
   Future<void> _preloadAudioFiles() async {
+    // List of audio file assets in bundle
+    List<String> audioFiles = List.from(sessionSounds);
+
+    List<String> voiceSpecificSounds = [
+      "conn",
+      "err",
+      "dunno01",
+      "dunno02",
+      "dunno03",
+      "dunno04",
+      "dunno05",
+      "dunno06",
+      "dunno07"
+    ];
+
+    List<String> voiceNames = kSpeechSynthesisVoices;
+    if (kReleaseMode == false) {
+      voiceNames = kSpeechSynthesisDebugVoices;
+    }
+    for (String voiceName in voiceNames) {
+      String vn = voiceName.asciify().toLowerCase();
+      for (String sound in voiceSpecificSounds) {
+        audioFiles.add("$sound-$vn");
+      }
+    }
+
     dlog("Preloading audio assets: ${audioFiles.toString()}");
     audioFileCache = <String, Uint8List>{};
     for (String fn in audioFiles) {
@@ -105,14 +104,17 @@ class AudioPlayer {
   // Stop playback
   void stop() {
     dlog('Stopping audio playback');
-    player?.stopPlayer();
+    player.stopPlayer();
   }
 
   // Play remote audio file
   Future<void> playURL(String url, Function(bool) completionHandler) async {
     //_instance.stop();
-
-    dlog("Playing audio file URL '${url.substring(0, 200)}'");
+    String displayURL = url;
+    if (displayURL.length >= 200) {
+      displayURL = "${displayURL.substring(0, 200)}…";
+    }
+    dlog("Playing audio file URL '$displayURL'");
     try {
       Uint8List data;
       Uri uri = Uri.parse(url);
@@ -137,7 +139,7 @@ class AudioPlayer {
     }
   }
 
-  String playDunno([Function() completionHandler]) {
+  String? playDunno([Function()? completionHandler]) {
     int rnd = Random().nextInt(7) + 1;
     String num = rnd.toString().padLeft(2, '0');
     String fn = "dunno$num";
@@ -155,14 +157,21 @@ class AudioPlayer {
   }
 
   // Play a preloaded wav audio file bundled with the app
-  void playSound(String soundName, [Function() completionHandler]) {
+  void playSound(String soundName, [Function()? completionHandler]) {
     _instance.stop();
 
-    // Different file name depending on voice is set in prefs
+    // Different file name depending on which voice is set in prefs
     String fileName = soundName;
     if (sessionSounds.contains(soundName) == false) {
-      String voiceName = Prefs().stringForKey('voice_id').toLowerCase().asciify();
+      String? prefVoice = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
+      String voiceName = prefVoice.asciify().toLowerCase();
       fileName = "$soundName-$voiceName";
+    }
+
+    // Make sure the file is in the cache
+    if (audioFileCache.containsKey(fileName) == false) {
+      dlog("Audio file '$fileName' not found in cache!");
+      return;
     }
 
     dlog("Playing audio file '$fileName.wav'");

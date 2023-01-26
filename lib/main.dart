@@ -18,7 +18,6 @@
 
 // App initialization and presentation of main (session) view
 
-import 'package:geolocator/geolocator.dart';
 import 'package:flutter/material.dart';
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
@@ -27,7 +26,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
-import './common.dart' show dlog, kSoftwareName;
+import './common.dart' show dlog, kSoftwareName, kDefaultVoice;
 import './loc.dart' show LocationTracking;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
@@ -41,58 +40,49 @@ void main() async {
   // Load prefs, populate with default values if required
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
-  if (launched == null || launched == false) {
+  if (launched == false) {
     Prefs().setDefaults();
   }
 
-  // Make sure we change voice "Kona" to "Dora" for backward compatibility
+  // Make sure we change voice "Kona" or "Dora" to new "Gudrun" voice.
   // Previous versions of the app used "Kona" as the default voice with
-  // the option of "Karl" as an alternative. As of 1.3.0, we now use
-  // voice names e.g. "Dora"
-  if (Prefs().stringForKey("voice_id") == "Kona") {
-    Prefs().setStringForKey("voice_id", "Dóra");
+  // the option of "Karl" as an alternative. As of 1.3.0, we use
+  // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
+  String? voiceID = Prefs().stringForKey("voice_id");
+  if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
+    Prefs().setStringForKey("voice_id", kDefaultVoice);
   }
-
-  // Hack mapping "Dora" to "Dóra" in Prefs. This is purely for cosmetic
-  // reasons, as the voice name is displayed in the UI.
-  if (Prefs().stringForKey("voice_id") == "Dora") {
-    Prefs().setStringForKey("voice_id", "Dóra");
+  // If user had selected "Karl" as the voice, change it to "Gunnar"
+  if (voiceID == "Karl") {
+    Prefs().setStringForKey("voice_id", "Gunnar");
   }
 
   dlog("Shared prefs: ${Prefs().desc()}");
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  AudioPlayer();
-  HotwordDetector();
+  AudioPlayer(); // singleton
+  HotwordDetector(); // singleton
 
   // Activate wake lock to prevent device from going to sleep
   // This wakelock is disabled when leaving session route
   Wakelock.enable();
 
-  // Request microphone permission
-  PermissionStatus status = await Permission.microphone.request();
-  if (status != PermissionStatus.granted) {
-    dlog("Microphone permission refused");
+  // Request permissions
+  Map<Permission, PermissionStatus> statuses = await [
+    Permission.microphone,
+    Permission.location,
+  ].request();
+
+  if (statuses[Permission.microphone]!.isDenied) {
+    dlog("Microphone permission is denied.");
   }
 
-  // Request and activate location tracking
-  if (Prefs().boolForKey('share_location') == true) {
-    // Wrap in try/catch in case another location permission request is ongoing.
-    // This is a hack. For some reason, some versions of Android can activate a
-    // location permission request without being triggered by the Flutter
-    // permissions package, and simultaneous requests trigger an exception.
-    try {
-      LocationPermission permission = await Geolocator.requestPermission();
-      if (permission != LocationPermission.denied &&
-          permission != LocationPermission.deniedForever) {
-        LocationTracking().start();
-      } else {
-        Prefs().setBoolForKey('share_location', false);
-      }
-    } catch (err) {
-      LocationTracking().start();
-    }
+  if (statuses[Permission.location]!.isDenied) {
+    dlog("Location permission is denied.");
+    Prefs().setBoolForKey('share_location', false);
+  } else {
+    LocationTracking().start();
   }
 
   // Launch app with session route
@@ -100,7 +90,7 @@ void main() async {
 }
 
 class EmblaApp extends StatelessWidget {
-  const EmblaApp({Key key}) : super(key: key);
+  const EmblaApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
