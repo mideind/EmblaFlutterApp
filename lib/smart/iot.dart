@@ -17,22 +17,24 @@
 
 import 'dart:convert';
 
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import './session.dart';
-import './util.dart';
-import './common.dart';
-import './theme.dart';
+import '../session.dart';
+import '../util.dart';
+import '../common.dart';
+import '../theme.dart';
+import '../prefs.dart' show Prefs;
+
 import './connection_card.dart';
 import './connection.dart';
 import './add_connection.dart';
-import './prefs.dart' show Prefs;
 
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';

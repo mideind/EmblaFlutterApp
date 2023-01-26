@@ -23,7 +23,7 @@ import 'package:flutter/cupertino.dart';
 
 import './common.dart';
 import './settings.dart' show SettingsRoute;
-import './iot.dart' show IoTRoute;
+import './smart/iot.dart' show IoTRoute;
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
 //import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;

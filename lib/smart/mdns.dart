@@ -16,8 +16,10 @@
  */
 
 import 'dart:io';
+
 import 'package:multicast_dns/multicast_dns.dart';
-import './common.dart';
+
+import '../common.dart';
 
 // final List<RegExp> kmDNSServiceFilters = <RegExp>[
 //   RegExp(r"_hue._tcp.local"),

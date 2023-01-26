@@ -22,14 +22,16 @@ import 'dart:core';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+
 import 'package:fluttertoast/fluttertoast.dart';
 
-import './util.dart';
-import './common.dart';
-import './theme.dart';
+import '../util.dart';
+import '../common.dart';
+import '../theme.dart';
+
 import './mdns_scan.dart';
 import './connection_listitem.dart';
-import '././connection.dart';
+import './connection.dart';
 
 // UI String constants
 const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
