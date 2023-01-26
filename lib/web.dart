@@ -19,8 +19,8 @@
 // Documentation web views
 
 import 'package:flutter/material.dart';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-// import 'package:platform_device_id/platform_device_id.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 
 import './theme.dart' show standardAppBar;
