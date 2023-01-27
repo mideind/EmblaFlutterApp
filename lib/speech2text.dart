@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:math' show pow;
 
 import 'package:flutter/foundation.dart';
+
 import 'package:logger/logger.dart' show Level;
 import 'package:audio_session/audio_session.dart';
 import 'package:flutter_sound/flutter_sound.dart';

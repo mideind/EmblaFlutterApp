@@ -22,8 +22,9 @@ import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:logger/logger.dart' show Level;
 import 'package:flutter/services.dart' show rootBundle;
+
+import 'package:logger/logger.dart' show Level;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
 import 'package:flutter_sound/flutter_sound.dart';

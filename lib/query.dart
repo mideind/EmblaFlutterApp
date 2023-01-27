@@ -21,9 +21,9 @@
 import 'dart:convert' show json;
 import 'dart:io' show Platform;
 
-import 'package:platform_device_id/platform_device_id.dart';
 import 'package:http/http.dart' show Response;
 import 'package:http/http.dart' as http;
+import 'package:platform_device_id/platform_device_id.dart';
 import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';

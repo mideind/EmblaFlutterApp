@@ -20,7 +20,7 @@ import 'package:flutter/material.dart';
 
 import '../common.dart';
 
-import 'smarthome_web.dart';
+import './smarthome_web.dart';
 import './connection.dart';
 
 // TODO: Maybe not stateful?

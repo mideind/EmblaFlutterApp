@@ -20,7 +20,7 @@
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
-import 'common.dart';
+import './common.dart';
 
 const kJSExecErrorMessage = "Upp kom villa við keyrslu á JavaScript.";
 

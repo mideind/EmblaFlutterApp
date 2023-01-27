@@ -23,8 +23,9 @@ import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
-import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
+
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:flutter_fgbg/flutter_fgbg.dart';
