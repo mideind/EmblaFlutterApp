@@ -18,15 +18,16 @@
 
 // Menu route
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import './common.dart';
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
 import './settings.dart' show SettingsRoute;
-//import './smart/iot.dart' show IoTRoute;
-//import './train.dart' show TrainingRoute;
 import './web.dart' show WebViewRoute;
+import 'smart/smarthome.dart' show SmarthomeRoute;
+//import './train.dart' show TrainingRoute;
 
 void _pushSettingsRoute(BuildContext context, dynamic arg) {
   Navigator.push(
@@ -37,14 +38,14 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
   );
 }
 
-// void _pushIoTRoute(BuildContext context, dynamic arg) {
-//   Navigator.push(
-//     context,
-//     CupertinoPageRoute(
-//       builder: (context) => IoTRoute(),
-//     ),
-//   );
-// }
+void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
+  Navigator.push(
+    context,
+    CupertinoPageRoute(
+      builder: (context) => SmarthomeRoute(),
+    ),
+  );
+}
 
 // void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
 // Navigator.push(
@@ -66,29 +67,37 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
 
 // Generate a menu tile based on args
 ListTile _menuTile(
-    String name, String imageName, Function onTapFunc, BuildContext context, dynamic arg) {
+    String name, String imageName, Function onTapFunc, BuildContext ctx, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
-    leading: Image(image: img4theme(imageName, context)),
+    leading: Image(image: img4theme(imageName, ctx)),
     trailing: Icon(Icons.arrow_right),
     onTap: () {
-      onTapFunc(context, arg);
+      onTapFunc(ctx, arg);
     },
   );
 }
 
 // Generate list of menu tiles
 ListView _menu(BuildContext context) {
+  List<Widget> menuItems = [
+    _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+    // _menuTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
+    _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
+    _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
+    _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
+  ];
+
+  // Only show Smart Home menu item in debug mode
+  if (kReleaseMode == false) {
+    ListTile smarthomeTile =
+        _menuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
+    menuItems.insert(1, smarthomeTile);
+  }
+
   return ListView(
     padding: const EdgeInsets.all(8),
-    children: <Widget>[
-      _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-      // _menuTile('Snjalltæki', 'iot', _pushIoTRoute, context, null),
-      // _menuTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
-      _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
-      _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
-      _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
-    ],
+    children: menuItems,
   );
 }
 

@@ -37,10 +37,10 @@ import './connection.dart';
 import './add_connection.dart';
 
 // UI String constants
-const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
+const String kNoSmarthomeDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
-FToast? fToastIot;
+FToast? fToastSmarthome;
 
 // Pushes the add_connection route on the navigation stack
 // If you navigate back to this route, the list of devices
@@ -59,8 +59,8 @@ void _pushConnectionRoute(BuildContext context, Function refreshDevices, dynamic
   });
 }
 
-// List of IoT home screen widgets
-List<Widget> _iot(
+// List of Smarthome home screen widgets
+List<Widget> _smarthome(
   BuildContext context,
   List<ConnectionCard> connectionCards,
   bool isSearching,
@@ -240,14 +240,14 @@ List<Widget> _iot(
   ];
 }
 
-class IoTRoute extends StatefulWidget {
-  const IoTRoute({Key? key}) : super(key: key);
+class SmarthomeRoute extends StatefulWidget {
+  const SmarthomeRoute({Key? key}) : super(key: key);
 
   @override
-  State<IoTRoute> createState() => _IoTRouteState();
+  State<SmarthomeRoute> createState() => _SmarthomeRouteState();
 }
 
-class _IoTRouteState extends State<IoTRoute> {
+class _SmarthomeRouteState extends State<SmarthomeRoute> {
   List<ConnectionCard> connectionCards = [];
   bool isSearching = false;
   bool isNetworkConnection = true;
@@ -263,8 +263,8 @@ class _IoTRouteState extends State<IoTRoute> {
   // Callback from javascript for when a device is disconnected
   // Displays a toast message to confirm the disconnection
   void disconnectCallback(args) {
-    fToastIot = FToast();
-    fToastIot!.init(context);
+    fToastSmarthome = FToast();
+    fToastSmarthome!.init(context);
 
     // Toast widget with a given message
     void showToast(bool isSuccess) {
@@ -297,9 +297,9 @@ class _IoTRouteState extends State<IoTRoute> {
         ),
       );
 
-      fToastIot!.removeQueuedCustomToasts();
+      fToastSmarthome!.removeQueuedCustomToasts();
 
-      fToastIot!.showToast(
+      fToastSmarthome!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
         toastDuration: Duration(seconds: 3),
@@ -509,7 +509,7 @@ class _IoTRouteState extends State<IoTRoute> {
 
   @override
   Widget build(BuildContext context) {
-    List<Widget> wlist = _iot(context, connectionCards, isSearching, isNetworkConnection,
+    List<Widget> wlist = _smarthome(context, connectionCards, isSearching, isNetworkConnection,
         isServerError, connectionInfo, scanCallback);
 
     return Scaffold(

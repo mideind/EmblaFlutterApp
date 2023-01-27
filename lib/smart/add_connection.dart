@@ -33,7 +33,7 @@ import './connection_listitem.dart';
 import './connection.dart';
 
 // UI String constants
-const String kNoIoTDevicesFound = 'Engin snjalltæki fundin';
+const String kNoSmarthomeDevicesFound = 'Engin snjalltæki fundin';
 const String kFindDevices = "Finna snjalltæki";
 
 FToast? fToastAdd;

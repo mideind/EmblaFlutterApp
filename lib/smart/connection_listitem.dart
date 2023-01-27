@@ -25,7 +25,7 @@ import './connection.dart';
 // If there is a navigation callback, call it
 // when returning to the previous route
 void _pushWebRoute(BuildContext context, Function? navigationCallback, dynamic arg,
-    Function callbackFromJavascript) {
+    Function? callbackFromJavascript) {
   Navigator.push(
     context,
     CupertinoPageRoute(
@@ -63,7 +63,7 @@ class ConnectionListItem extends StatelessWidget {
           splashFactory: InkRipple.splashFactory,
         ),
         onPressed: () {
-          _pushWebRoute(context, navigationCallback, connection.webview, callbackFromJavascript);
+          _pushWebRoute(context, navigationCallback!, connection.webview, callbackFromJavascript);
         },
         child: ListTile(
           leading: SizedBox(

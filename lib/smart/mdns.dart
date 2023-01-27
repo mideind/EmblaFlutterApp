@@ -55,7 +55,7 @@ class MulticastDNSSearcher {
     // }
 
     // NULL SAFE VERSION
-    final MDnsClient client = MDnsClient(rawDatagramSocketFactory: (dynamic host, int port,
+    _client = MDnsClient(rawDatagramSocketFactory: (dynamic host, int port,
         {bool? reuseAddress, bool? reusePort, int? ttl}) {
       return RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl!);
     });

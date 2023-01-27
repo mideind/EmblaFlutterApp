@@ -48,7 +48,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     if (errCode == -8) {
       // Page load error -8 is "net::ERR_TIMED_OUT"
       // This is a timeout error, so we'll just load the local file
-      path = "$kDocsDir/iot_server_error.html";
+      path = "$kDocsDir/smarthome_server_error.html";
     } else {
       // Other errors, just show the error page
       path = _fallbackAssetForURL("$kDocsDir/error.html");
@@ -61,9 +61,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
-    // dlog("IOT fallback: $url");
-    // Uri uri = Uri.parse(url);
-    return "$kDocsDir/iot_network_error.html"; //${uri.pathSegments.last}";
+    return "$kDocsDir/smarthome_network_error.html";
   }
 
   // Handle clicks on links in HTML documentation.
