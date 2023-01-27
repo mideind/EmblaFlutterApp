@@ -128,7 +128,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void initState() {
     super.initState();
+
+    // This is needed to make animations work when hot reloading
     Animate.restartOnHotReload = true;
+
     requestMicPermissionAndStartHotwordDetection();
 
     // Start observing app state (foreground, background, active, inactive)
@@ -563,9 +566,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                       child: scrollableWidgets()))),
           // Session button widget
           Expanded(
-              flex: 6,
+              flex: 8,
               child: Padding(
-                  padding: EdgeInsets.only(bottom: 20, top: 20),
+                  padding: EdgeInsets.only(bottom: 30, top: 30),
                   child: Center(
                       child: Semantics(
                           label: buttonLabel,
