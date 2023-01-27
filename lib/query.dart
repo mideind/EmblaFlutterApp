@@ -86,9 +86,9 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
   return response;
 }
 
-// Wrapper class around communication with query server
+/// Wrapper class around communication with query server
 class QueryService {
-  // Send request to query server API
+  /// Send request to query server API
   static Future<void> sendQuery(List<String> queries, [Function? handler, bool? test]) async {
     // Query args
     String? voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
@@ -125,9 +125,9 @@ class QueryService {
     await _makeRequest(kQueryAPIPath, qargs, handler);
   }
 
-  // Send request to query history API
-  // allData boolean param determines whether all device-specific
-  // data or only query history should be deleted server-side
+  /// Send request to query history API
+  /// [allData] param determines whether all device-specific
+  /// data or only query history should be deleted server-side
   static Future<void> clearUserData(bool allData, [Function? handler]) async {
     Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
@@ -140,7 +140,7 @@ class QueryService {
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
   }
 
-  // Send request to speech synthesis API
+  /// Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function? handler]) async {
     Map<String, String> qargs = {
       'text': text,
@@ -152,7 +152,7 @@ class QueryService {
     await _makeRequest(kSpeechSynthesisAPIPath, qargs, handler);
   }
 
-  // Send request to voices API
+  /// Send request to voices API
   static Future<Map<String, dynamic>?> requestSupportedVoices() async {
     Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
     if (r == null) {

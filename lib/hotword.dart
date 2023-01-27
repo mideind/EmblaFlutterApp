@@ -30,6 +30,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 
 import './common.dart';
 
+/// Hotword detection class. Singleton.
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._internal();
 
@@ -49,11 +50,11 @@ class HotwordDetector {
     initialize();
   }
 
-  // Load and prepare hotword-detection-related resources
+  /// Load and prepare hotword-detection-related resources
   void initialize() async {
     String modelPath;
     try {
-      modelPath = await HotwordDetector.copyModelToFilesystem(kHotwordModelName);
+      modelPath = await HotwordDetector._copyModelToFilesystem(kHotwordModelName);
     } catch (err) {
       dlog("Error copying hotword model to filesystem: $err");
       return;
@@ -66,7 +67,7 @@ class HotwordDetector {
         applyFrontend: kHotwordApplyFrontend);
   }
 
-  // Start hotword detection
+  /// Start hotword detection
   Future<void> start(Function hwHandler) async {
     dlog('Starting hotword detection');
     detector.hotwordHandler = hwHandler;
@@ -93,7 +94,7 @@ class HotwordDetector {
         sampleRate: 16000);
   }
 
-  // Stop hotword detection
+  /// Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
     await _micRecorder.stopRecorder();
@@ -102,7 +103,7 @@ class HotwordDetector {
     await _recordingDataController.close();
   }
 
-  // Release any assets loaded by hotword detector
+  /// Release any assets loaded by hotword detector
   // void purge() {
   //   dlog('Purging hotword detector');
   //   detector.purge();
@@ -110,7 +111,7 @@ class HotwordDetector {
 
   // Copy model file from asset bundle to temp directory on the filesystem.
   // Does not overwrite the file by default.
-  static Future<String> copyModelToFilesystem(String filename, [bool overwrite = false]) async {
+  static Future<String> _copyModelToFilesystem(String filename, [bool overwrite = false]) async {
     String dir = (await getTemporaryDirectory()).path;
     String finalPath = "$dir/$filename";
     final file = File(finalPath);

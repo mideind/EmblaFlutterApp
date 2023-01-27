@@ -40,7 +40,7 @@ const List<String> sessionSounds = [
   'rec_confirm',
 ];
 
-// Singleton class that handles all audio playback
+/// Singleton class that handles all audio playback
 class AudioPlayer {
   FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.error);
   Map<String, Uint8List> audioFileCache = <String, Uint8List>{};
@@ -102,13 +102,13 @@ class AudioPlayer {
     }
   }
 
-  // Stop playback
+  /// Stop playback
   void stop() {
     dlog('Stopping audio playback');
     player.stopPlayer();
   }
 
-  // Play remote audio file
+  /// Play remote audio file
   Future<void> playURL(String url, Function(bool) completionHandler) async {
     //_instance.stop();
     String displayURL = url;
@@ -140,6 +140,7 @@ class AudioPlayer {
     }
   }
 
+  /// Play "I don't know" local audio file and return string w. spoken text
   String? playDunno([Function()? completionHandler]) {
     int rnd = Random().nextInt(7) + 1;
     String num = rnd.toString().padLeft(2, '0');
@@ -157,7 +158,7 @@ class AudioPlayer {
     return dunnoStrings[fn];
   }
 
-  // Play a preloaded wav audio file bundled with the app
+  /// Play a preloaded wav audio file bundled with the app
   void playSound(String soundName, [Function()? completionHandler]) {
     _instance.stop();
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -18,10 +18,11 @@
 
 // App initialization and presentation of main (session) view
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
-
 import 'package:adaptive_theme/adaptive_theme.dart';
 
 import './animations.dart' show preloadAnimationFrames;
@@ -41,6 +42,7 @@ void main() async {
   await Prefs().load();
   bool launched = Prefs().boolForKey('launched');
   if (launched == false) {
+    // This is the first launch of the app
     Prefs().setDefaults();
   }
 
@@ -48,16 +50,17 @@ void main() async {
   // Previous versions of the app used "Kona" as the default voice with
   // the option of "Karl" as an alternative. As of 1.3.0, we use
   // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
-  String? voiceID = Prefs().stringForKey("voice_id");
-  if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
-    Prefs().setStringForKey("voice_id", kDefaultVoice);
+  if (launched == true && kReleaseMode == true) {
+    String? voiceID = Prefs().stringForKey("voice_id");
+    if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
+      Prefs().setStringForKey("voice_id", kDefaultVoice);
+    }
+    // If user had selected "Karl" as the voice, change it to "Gunnar"
+    if (voiceID == "Karl") {
+      Prefs().setStringForKey("voice_id", "Gunnar");
+    }
   }
-  // If user had selected "Karl" as the voice, change it to "Gunnar"
-  if (voiceID == "Karl") {
-    Prefs().setStringForKey("voice_id", "Gunnar");
-  }
-
-  dlog("Shared prefs: ${Prefs().desc()}");
+  dlog("Shared prefs: ${Prefs().description()}");
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
@@ -94,6 +97,7 @@ class EmblaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Wrap app in AdaptiveTheme to support light/dark mode
     return AdaptiveTheme(
       light: lightThemeData,
       dark: darkThemeData,

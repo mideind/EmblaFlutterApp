@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './common.dart';
 import './loc.dart' show LocationTracking;
 
+/// Global user preferences singleton
 class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
@@ -72,7 +73,7 @@ class Prefs {
     _sp?.setString(key, val);
   }
 
-  String desc() {
+  String description() {
     List<dynamic> list = _sp!
         .getKeys()
         .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
@@ -84,6 +85,7 @@ class Prefs {
     _sp?.clear();
   }
 
+  /// Set default starting values for prefs
   void setDefaults() {
     dlog('Setting prefs to default values');
     Prefs().setBoolForKey('launched', true);

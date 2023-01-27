@@ -42,6 +42,7 @@ final RecognitionConfig speechRecognitionConfig = RecognitionConfig(
     maxAlternatives: kSpeechToTextMaxAlternatives,
     languageCode: kSpeechToTextLanguage);
 
+/// Wrapper class for speech to text functionality
 class SpeechRecognizer {
   final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
   StreamSubscription? _recordingDataSubscription;

@@ -24,6 +24,7 @@ import 'common.dart';
 
 const kJSExecErrorMessage = "Upp kom villa við keyrslu á JavaScript.";
 
+/// Wrapper class to execute JavaScript code in a headless web view
 class JSExecutor {
   static final JSExecutor _instance = JSExecutor._internal();
   HeadlessInAppWebView? headlessWebView;
@@ -48,6 +49,7 @@ class JSExecutor {
     );
   }
 
+  /// Run some JavaScript code in the headless web view
   Future<String> run(String jsCode) async {
     await headlessWebView?.dispose();
     await headlessWebView?.run();

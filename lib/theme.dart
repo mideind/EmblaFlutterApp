@@ -115,6 +115,7 @@ final standardAppBar = AppBar(
   toolbarOpacity: 1.0,
 );
 
+/// Get the image for the current theme
 AssetImage img4theme(String imgName, BuildContext context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     imgName = "${imgName}_dark";
@@ -122,6 +123,7 @@ AssetImage img4theme(String imgName, BuildContext context) {
   return AssetImage("assets/images/$imgName.png");
 }
 
+/// Get the main color for the current theme
 Color color4ctx(BuildContext context) {
   var brightness = MediaQuery.of(context).platformBrightness;
   if (brightness == Brightness.dark) {
@@ -130,6 +132,7 @@ Color color4ctx(BuildContext context) {
   return lightMainColor;
 }
 
+/// Get the circle colors for the current theme
 List<Color> circleColors4Context(var context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     Color circleColor1 = HexColor.fromHex('#f0f0f0');

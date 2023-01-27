@@ -362,7 +362,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
               connectionInfo[name]['icon'],
               fontFamily: 'MaterialIcons',
             ),
-            color: Colors.red.withOpacity(0.5),
+            color: Colors.red.withOpacity(0.5), // TODO: Use theme color
             size: 30.0,
           ),
           webview: connectionInfo[name]['webview_home'],

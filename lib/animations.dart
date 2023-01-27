@@ -31,7 +31,7 @@ const int kNumAnimationFrames = 100;
 
 final List<ui.Image> animationFrames = [];
 
-// Load a PNG image into memory from Flutter assets bundle
+/// Load a PNG image into memory from Flutter assets bundle
 Future<ui.Image> _loadImageAsset(String asset) async {
   ByteData data = await rootBundle.load(asset);
   ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
@@ -39,7 +39,7 @@ Future<ui.Image> _loadImageAsset(String asset) async {
   return fi.image;
 }
 
-// Preload all logo animation frames
+/// Preload all logo animation frames
 Future<void> preloadAnimationFrames() async {
   for (int i = 0; i < kNumAnimationFrames; i++) {
     String padnum = i.toString().padLeft(5, '0');

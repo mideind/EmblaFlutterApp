@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -30,6 +30,7 @@ const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
+/// Standard web view route used for displaying documentation
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 

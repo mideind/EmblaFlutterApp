@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -26,18 +26,20 @@ import 'package:permission_handler/permission_handler.dart';
 import './common.dart';
 import './prefs.dart';
 
+/// Location tracking singleton
 class LocationTracking {
   LocationTracking._privateConstructor();
   static final LocationTracking _instance = LocationTracking._privateConstructor();
+
   factory LocationTracking() {
     return _instance;
   }
 
   double? lat;
   double? lon;
-  bool known = false;
   StreamSubscription<Position>? positionStream;
 
+  /// Start location tracking
   void start() async {
     // We never start location tracking if it's disabled in prefs or if we don't have permission
     if (Prefs().boolForKey('share_location') == false ||
@@ -58,11 +60,11 @@ class LocationTracking {
       }
       lat = position.latitude;
       lon = position.longitude;
-      known = true;
       //dlog("Location: ${lat.toString()}, ${lon.toString()}");
     });
   }
 
+  /// Stop location tracking
   void stop() {
     if (positionStream != null) {
       dlog('Stopping location tracking');
@@ -72,8 +74,21 @@ class LocationTracking {
     }
   }
 
+  /// Is the current location known?
+  bool get known {
+    return (lat == null || lon == null);
+  }
+
+  set known(bool val) {
+    if (val == false) {
+      lat = null;
+      lon = null;
+    }
+  }
+
+  /// Returns a list of doubles [lat, lon] or null if location is unknown
   List<double>? get location {
-    if (!known || lat == null || lon == null) {
+    if (!known) {
       return null;
     }
     return [lat!, lon!];
