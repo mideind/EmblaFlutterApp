@@ -26,6 +26,7 @@ import './prefs.dart' show Prefs;
 import './common.dart'
     show dlog, kSpeechSynthesisVoices, kSpeechSynthesisDebugVoices /*, kDefaultVoice*/;
 import './theme.dart';
+import './audio.dart';
 
 const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
 
@@ -94,6 +95,7 @@ Widget _buildVoiceList(BuildContext context, List voices) {
             : null,
         onTap: () {
           Prefs().setStringForKey("voice_id", voices[index]);
+          AudioPlayer().playSound("mynameis");
           Navigator.pop(context);
         },
       );

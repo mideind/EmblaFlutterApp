@@ -73,6 +73,7 @@ class AudioPlayer {
     List<String> voiceSpecificSounds = [
       "conn",
       "err",
+      "mynameis",
       "dunno01",
       "dunno02",
       "dunno03",
