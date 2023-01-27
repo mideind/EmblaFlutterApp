@@ -241,7 +241,7 @@ List<Widget> _iot(
 }
 
 class IoTRoute extends StatefulWidget {
-  const IoTRoute({Key key}) : super(key: key);
+  const IoTRoute({Key? key}) : super(key: key);
 
   @override
   State<IoTRoute> createState() => _IoTRouteState();

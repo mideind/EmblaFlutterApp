@@ -43,7 +43,7 @@ class ConnectionCard extends StatefulWidget {
 // Pushes a webroute on the navigation stack
 // If there is a navigation callback, call it
 // when returning to the previous route
-void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic arg,
+void _pushWebRoute(BuildContext context, Function? navigationCallback, dynamic arg,
     Function callbackFromJavascript) {
   dlog("URL: $arg");
   Navigator.push(

@@ -52,7 +52,7 @@ void _pushMDNSRoute(BuildContext context, dynamic arg) {
 }
 
 // List of widgets that get displayed on the add connection route
-List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
+List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo,
     List<ConnectionListItem> connectionList) {
   return <Widget>[
     Container(
@@ -112,9 +112,9 @@ List<Widget> _options(BuildContext context, Map<String, dynamic> connectionInfo,
 }
 
 class ConnectionRoute extends StatefulWidget {
-  final Map<String, dynamic> connectionInfo;
+  final Map<String, dynamic>? connectionInfo;
 
-  const ConnectionRoute({Key key, this.connectionInfo}) : super(key: key);
+  const ConnectionRoute({Key? key, this.connectionInfo}) : super(key: key);
 
   @override
   State<ConnectionRoute> createState() => _ConnectionRouteState();
@@ -132,7 +132,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     fToastAdd!.init(context);
 
     // Toast widget with a given message
-    _showToast(String message) {
+    showToast(String message) {
       Widget toast = Container(
         padding: const EdgeInsets.symmetric(
           horizontal: 24.0,
@@ -174,7 +174,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
 
     bool isError = false;
     bool isButtonPressMissing = false;
-    String hubError;
+    String? hubError;
     if (args[0].containsKey('error')) {
       isError = true;
     }
@@ -185,14 +185,14 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       hubError = args[0]['hub_error'];
     }
     if (isButtonPressMissing) {
-      _showToast("Ýta þarf á hnapp á tengiboxi.");
+      showToast("Ýta þarf á hnapp á tengiboxi.");
     } else if (hubError != null) {
       if (hubError == '429') {
-        _showToast("Tenging mistókst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
+        showToast("Tenging mistókst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else if (hubError == 'no-hub') {
-        _showToast("Ekkert tengibox fannst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
+        showToast("Ekkert tengibox fannst.\nReyndu aftur í gegnum\n„Finna tæki“ á fyrri skjá.");
       } else {
-        _showToast("Villa í tengingu við tengibox.");
+        showToast("Villa í tengingu við tengibox.");
       }
     } else {
       Navigator.of(context).pop();
@@ -239,7 +239,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
 
     // Makes all of the cards from the connectionInfo map
     Future<void> makeCards() async {
-      widget.connectionInfo.forEach((key, value) async {
+      widget.connectionInfo!.forEach((key, value) async {
         await makeCard(key, value);
       });
     }
@@ -256,10 +256,6 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
   @override
   Widget build(BuildContext context) {
     List<Widget> wlist = _options(context, widget.connectionInfo, _connectionList);
-
-    if (kReleaseMode == false) {
-      // Special debug widgets go here
-    }
 
     return Scaffold(
       appBar: standardAppBar,

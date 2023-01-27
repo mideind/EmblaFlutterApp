@@ -24,7 +24,7 @@ import './connection.dart';
 // Pushes a webroute on the navigation stack
 // If there is a navigation callback, call it
 // when returning to the previous route
-void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic arg,
+void _pushWebRoute(BuildContext context, Function? navigationCallback, dynamic arg,
     Function callbackFromJavascript) {
   Navigator.push(
     context,
@@ -45,14 +45,11 @@ void _pushWebRoute(BuildContext context, Function navigationCallback, dynamic ar
 
 class ConnectionListItem extends StatelessWidget {
   final Connection connection;
-  final Function navigationCallback;
-  final Function callbackFromJavascript;
+  final Function? navigationCallback;
+  final Function? callbackFromJavascript;
 
   const ConnectionListItem(
-      {Key? key,
-      required this.connection,
-      required this.navigationCallback,
-      required this.callbackFromJavascript})
+      {Key? key, required this.connection, this.navigationCallback, this.callbackFromJavascript})
       : super(key: key);
 
   @override

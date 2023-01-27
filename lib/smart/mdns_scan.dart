@@ -287,7 +287,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
   // Creates mdns service filters for each connection
   // in the connectionInfo map
   void createServiceFilters() {
-    widget.connectionInfo.forEach((key, connection) {
+    widget.connectionInfo!.forEach((key, connection) {
       RegExp regex = RegExp("${connection["mdns_name"]}");
       kmDNSServiceFilters.add(regex);
       serviceMap[connection["mdns_name"]] = key;
