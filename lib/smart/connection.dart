@@ -19,11 +19,13 @@ import 'package:flutter/material.dart';
 
 class Connection {
   final String name;
-  String brand;
+  String brand = "";
   final Icon icon;
-  Image logo;
+  Image? logo;
   String webview;
 
-  Connection.card({this.name, this.brand, this.icon, this.webview});
-  Connection.list({this.name, this.icon, this.logo, this.webview});
+  Connection.card(
+      {required this.name, required this.brand, required this.icon, required this.webview});
+  Connection.list(
+      {required this.name, required this.icon, required this.logo, required this.webview});
 }

@@ -253,7 +253,6 @@ class _IoTRouteState extends State<IoTRoute> {
   bool isNetworkConnection = true;
   bool isServerError = false;
   Map<String, dynamic> connectionInfo = {};
-  DisconnectButtonPromptWidget disconnectButtonPromptWidget;
 
   Future<bool> isConnectedToInternet() async {
     // TODO: Is this needed? Doc says to not use it for wifi status
@@ -519,66 +518,5 @@ class _IoTRouteState extends State<IoTRoute> {
           padding: const EdgeInsets.all(8),
           children: wlist,
         ));
-  }
-}
-
-// Button that presents an alert with an action name + handler
-class DisconnectButtonPromptWidget extends StatelessWidget {
-  final String label;
-  final String alertText;
-  final String buttonTitle;
-  final Function handler;
-
-  const DisconnectButtonPromptWidget(
-      {Key? key, this.label, this.alertText, this.buttonTitle, this.handler})
-      : super(key: key);
-
-  Future<void> _showPromptDialog(BuildContext context) async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: false, // User must tap button
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text("$label?"),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(alertText),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: Text('Hætta við'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonTitle),
-              onPressed: () {
-                handler();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return TextButton(
-      onPressed: () {
-        _showPromptDialog(context);
-      },
-      child: Text(
-        label,
-        style: TextStyle(
-          fontSize: defaultFontSize,
-        ),
-      ),
-    );
   }
 }

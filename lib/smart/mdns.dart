@@ -38,40 +38,39 @@ class MDNSDevice {
 class MulticastDNSSearcher {
   // Magic address for finding services on local network
   static const String _endpoint = '_services._dns-sd._udp.local';
-  MDnsClient _client;
+  MDnsClient? _client;
 
   /// Private constructor for singleton class.
   /// Creates an MDnsClient (turn off reusePort, due to bug on some devices).
   MulticastDNSSearcher() {
-    _client = MDnsClient(
-        rawDatagramSocketFactory: (
-      dynamic host,
-      int port, {
-      bool reuseAddress,
-      bool reusePort,
-      int ttl,
-    }) =>
-            RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl));
-  }
+    //   _client = MDnsClient(
+    //       rawDatagramSocketFactory: (
+    //     dynamic host,
+    //     int port, {
+    //     bool reuseAddress = true,
+    //     bool reusePort = false,
+    //     int ttl,
+    //   }) =>
+    //           RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl));
+    // }
 
-  // NULL SAFE VERSION
-  //   final MDnsClient client = MDnsClient(rawDatagramSocketFactory:
-  //     (dynamic host, int port,
-  //         {bool? reuseAddress, bool? reusePort, int? ttl}) {
-  //   return RawDatagramSocket.bind(host, port,
-  //       reuseAddress: true, reusePort: false, ttl: ttl!);
-  // });
+    // NULL SAFE VERSION
+    final MDnsClient client = MDnsClient(rawDatagramSocketFactory: (dynamic host, int port,
+        {bool? reuseAddress, bool? reusePort, int? ttl}) {
+      return RawDatagramSocket.bind(host, port, reuseAddress: true, reusePort: false, ttl: ttl!);
+    });
+  }
 
   /// Finds all devices on the local network using mDNS.
   /// Calls deviceCallback for each found device that matches a filter regex.
   Future<void> findLocalDevices(
       List<RegExp> filters, Map<String, String> serviceMap, Function deviceCallback) async {
     // Start the client with default options.
-    await _client.start();
+    await _client!.start();
     dlog("Started mDNS client");
     // Get the PTR record for the service.
     await for (final PtrResourceRecord ptr
-        in _client.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(_endpoint))) {
+        in _client!.lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(_endpoint))) {
       // Use the domainName from the PTR record to get the SRV record,
       // which will have the port and local hostname.
       // Note that duplicate messages may come through, especially if any
@@ -82,14 +81,14 @@ class MulticastDNSSearcher {
         dlog("Filter: $filter");
         if (filter.hasMatch(ptr.domainName)) {
           dlog("Found device: ${ptr.domainName}");
-          await for (final PtrResourceRecord ptr2 in _client
+          await for (final PtrResourceRecord ptr2 in _client!
               .lookup<PtrResourceRecord>(ResourceRecordQuery.serverPointer(ptr.domainName))) {
             dlog("!!!!!!!!!!!!!!! ${ptr2.domainName}");
 
-            await for (final SrvResourceRecord srv in _client
+            await for (final SrvResourceRecord srv in _client!
                 .lookup<SrvResourceRecord>(ResourceRecordQuery.service(ptr2.domainName))) {
               dlog('Something found at ${srv.target}:${srv.port} for "${srv.name}".');
-              await for (final IPAddressResourceRecord ipa in _client
+              await for (final IPAddressResourceRecord ipa in _client!
                   .lookup<IPAddressResourceRecord>(ResourceRecordQuery.addressIPv4(srv.target))) {
                 dlog('IP address is ${ipa.address.address}:${srv.port}');
                 // Check if this device matches any of the filters.
@@ -103,7 +102,7 @@ class MulticastDNSSearcher {
       }
     }
     dlog("Finished searching for devices");
-    _client.stop();
+    _client!.stop();
     dlog('mDNS client stopped.');
   }
 }

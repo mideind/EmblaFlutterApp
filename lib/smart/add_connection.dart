@@ -19,7 +19,6 @@
 
 import 'dart:core';
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -73,7 +72,7 @@ List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo
                   _pushMDNSRoute(context, connectionInfo);
                 },
                 style: ElevatedButton.styleFrom(
-                    primary: Theme.of(context).primaryColor.withOpacity(0.5),
+                    backgroundColor: Theme.of(context).primaryColor.withOpacity(0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
                     ),
@@ -91,7 +90,7 @@ List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo
           ),
           Container(
             margin: EdgeInsets.only(bottom: 40.0),
-            child: Text('Studdar tengingar', style: Theme.of(context).textTheme.headline1),
+            child: Text('Studdar tengingar', style: Theme.of(context).textTheme.displayLarge),
           ),
           Column(
             children: <Widget>[

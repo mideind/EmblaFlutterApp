@@ -39,7 +39,6 @@ Future<List<String>> fetchVoiceList() async {
   } else {
     voices = kSpeechSynthesisDebugVoices;
   }
-
   return voices;
 
   // This is disabled for now.

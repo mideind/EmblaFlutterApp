@@ -39,10 +39,10 @@ class WebViewRoute extends StatefulWidget {
 }
 
 class WebViewRouteState extends State<WebViewRoute> {
-  InAppWebViewController webView;
+  InAppWebViewController? webView;
 
   // Fall back to local HTML document if error comes up when fetching document from remote server
-  void errHandler(InAppWebViewController controller, Uri url, int errCode, String desc) async {
+  void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path;
     if (errCode == -8) {
@@ -76,7 +76,9 @@ class WebViewRouteState extends State<WebViewRoute> {
     dlog("Clicked on $urlStr, falling back to $fallbackFilename");
     if (urlStr != widget.initialURL && urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
-      await launchUrl(req.url, mode: LaunchMode.inAppWebView); //externalApplication);
+      if (req.url != null) {
+        await launchUrl(req.url as Uri, mode: LaunchMode.inAppWebView); //externalApplication);
+      }
       return NavigationActionPolicy.ALLOW; //CANCEL;
     }
     return NavigationActionPolicy.CANCEL;
@@ -126,7 +128,7 @@ class WebViewRouteState extends State<WebViewRoute> {
             handlerName: "flutter_handler",
             callback: (args) {
               dlog("flutter_handler called from javascript!!! $args");
-              widget.callbackFromJavascript(args);
+              widget.callbackFromJavascript!(args);
             });
         controller.addJavaScriptHandler(
             handlerName: "darkmode_handler",

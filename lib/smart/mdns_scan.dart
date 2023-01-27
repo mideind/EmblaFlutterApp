@@ -17,7 +17,6 @@
 
 // mDNS scan route
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
 
 import 'package:flutter_spinkit/flutter_spinkit.dart';
@@ -241,18 +240,18 @@ class _MDNSRouteState extends State<MDNSRoute> {
       setState(() {
         connectionCards.add(ConnectionCard(
           connection: Connection.card(
-            name: widget.connectionInfo[connectionName]['name'],
-            brand: widget.connectionInfo[connectionName]['brand'],
+            name: widget.connectionInfo![connectionName]['name'],
+            brand: widget.connectionInfo![connectionName]['brand'],
             icon: Icon(
               IconData(
-                widget.connectionInfo[connectionName]['icon'],
+                widget.connectionInfo![connectionName]['icon'],
                 fontFamily: 'MaterialIcons',
               ),
               color: Colors.red.withOpacity(0.5),
               size: 30.0,
             ),
             webview:
-                '${widget.connectionInfo[connectionName]['webview_connect']}${widget.connectionInfo[connectionName].containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(widget.connectionInfo[connectionName]['connect_url'])}' : ''}${(connectionName == 'philips_hue') ? '&hub_ip_address=$ipAddress' : ''}',
+                '${widget.connectionInfo![connectionName]['webview_connect']}${widget.connectionInfo![connectionName].containsKey('connect_url') ? '&connect_url=${Uri.encodeQueryComponent(widget.connectionInfo![connectionName]['connect_url'])}' : ''}${(connectionName == 'philips_hue') ? '&hub_ip_address=$ipAddress' : ''}',
           ),
           callbackFromJavascript: _returnCallback,
         ));
@@ -305,10 +304,6 @@ class _MDNSRouteState extends State<MDNSRoute> {
   Widget build(BuildContext context) {
     List<Widget> wlist =
         _mdns(context, scanForDevices, connectionCards, searchingText, isSearching);
-
-    if (kReleaseMode == false) {
-      // Special debug widgets go here
-    }
 
     return Scaffold(
       appBar: standardAppBar,

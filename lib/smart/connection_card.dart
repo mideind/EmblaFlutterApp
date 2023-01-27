@@ -26,13 +26,13 @@ import './connection.dart';
 // TODO: Maybe not stateful?
 class ConnectionCard extends StatefulWidget {
   final Connection connection;
-  final Function navigationCallback;
+  final Function? navigationCallback;
   final Function callbackFromJavascript;
 
   const ConnectionCard(
       {Key? key,
       required this.connection,
-      required this.navigationCallback,
+      this.navigationCallback,
       required this.callbackFromJavascript})
       : super(key: key);
 
