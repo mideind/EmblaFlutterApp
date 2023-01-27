@@ -38,10 +38,10 @@ jobs:
           touch keys/query_api.key
           bash keys/gen_keys.sh
           echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
-      - name: Clone flutter_snowboy dependency repo
-        run: |
-          git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
-          git clone --recurse-submodules -j4 https://github.com/canardoux/flutter_sound ../flutter_sound
+      # - name: Clone forked/latest master dependency repo
+      #   run: |
+      #     git clone https://github.com/mideind/flutter_snowboy ../flutter_snowboy
+      #     git clone --recurse-submodules -j4 https://github.com/canardoux/flutter_sound ../flutter_sound
       - name: Install dependencies
         run: |
           flutter config --no-analytics
@@ -49,7 +49,7 @@ jobs:
       - name: Run tests
         run: |
           flutter test
-          dart analyze lib/*.dart
+          dart analyze lib/
       - name: Build APK
         run: |
           bash build.sh
