@@ -421,9 +421,9 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
       ),
     ]).catchError((error) {
       setState(() {
-        dlog("isSaerching: $isSearching");
+        dlog("isSearching: $isSearching");
         isSearching = false;
-        dlog("isSaerching: $isSearching");
+        dlog("isSearching: $isSearching");
       });
       dlog("Error: $error");
     });
