@@ -32,6 +32,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
     show StreamingRecognizeResponse_SpeechEventType;
 import 'package:open_settings/open_settings.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 import './animations.dart' show animationFrames;
 import './audio.dart' show AudioPlayer;
@@ -80,7 +81,7 @@ int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
 const kRestingButtonPropSize = 0.58;
-const kExpandedButtonPropSize = 0.70;
+// const kExpandedButtonPropSize = 0.70;
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';
@@ -127,7 +128,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void initState() {
     super.initState();
-
+    Animate.restartOnHotReload = true;
     requestMicPermissionAndStartHotwordDetection();
 
     // Start observing app state (foreground, background, active, inactive)
@@ -468,7 +469,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Session button properties depending on whether session is active
     sessionContext = context;
     bool active = (state == SessionState.resting);
-    double prop = active ? kRestingButtonPropSize : kExpandedButtonPropSize;
+    double prop = kRestingButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
     String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
     // Hotword toggle button properties depending on whether hw detection is enabled
@@ -573,7 +574,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                               child: SizedBox(
                                 width: buttonSize,
                                 height: buttonSize,
-                                child: CustomPaint(painter: SessionButtonPainter()),
+                                child: CustomPaint(painter: SessionButtonPainter())
+                                    .animate(target: state == SessionState.resting ? 0 : 1)
+                                    .scaleXY(end: 1.20, duration: 100.ms),
                               )))))),
         ],
       ),
