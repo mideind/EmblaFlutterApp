@@ -76,7 +76,7 @@ class LocationTracking {
 
   /// Is the current location known?
   bool get known {
-    return (lat == null || lon == null);
+    return (lat != null && lon != null);
   }
 
   set known(bool val) {
