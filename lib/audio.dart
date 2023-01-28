@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -34,7 +34,7 @@ import './common.dart';
 import './prefs.dart' show Prefs;
 import './util.dart';
 
-// These sounds are the same regardless of voice ID settings.
+// These sounds are always the same regardless of voice ID settings
 const List<String> sessionSounds = [
   'rec_begin',
   'rec_cancel',
@@ -43,8 +43,8 @@ const List<String> sessionSounds = [
 
 /// Singleton class that handles all audio playback
 class AudioPlayer {
-  FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.error);
-  Map<String, Uint8List> audioFileCache = <String, Uint8List>{};
+  final FlutterSoundPlayer player = FlutterSoundPlayer(logLevel: Level.error);
+  final Map<String, Uint8List> audioFileCache = <String, Uint8List>{};
 
   // Constructor
   static final AudioPlayer _instance = AudioPlayer._internal();
@@ -96,7 +96,6 @@ class AudioPlayer {
     }
 
     dlog("Preloading audio assets: ${audioFiles.toString()}");
-    audioFileCache = <String, Uint8List>{};
     for (String fn in audioFiles) {
       final ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
       audioFileCache[fn] = bytes.buffer.asUint8List();
@@ -110,22 +109,25 @@ class AudioPlayer {
   }
 
   /// Play remote audio file
-  Future<void> playURL(String url, Function(bool) completionHandler) async {
+  Future<void> playURL(String url, Function(bool)? completionHandler) async {
     //_instance.stop();
+
     String displayURL = url;
     if (displayURL.length >= 200) {
       displayURL = "${displayURL.substring(0, 200)}…";
     }
+
     dlog("Playing audio file URL '$displayURL'");
+
     try {
       Uint8List? data;
-      Uri uri = Uri.parse(url);
+      final Uri uri = Uri.parse(url);
 
       if (uri.scheme == 'data') {
         UriData dataURI = UriData.fromUri(uri);
         data = dataURI.contentAsBytes();
       } else {
-        data = await http.readBytes(Uri.parse(url));
+        data = await http.readBytes(uri);
       }
       dlog("Audio file is ${filesize(data.lengthInBytes, 1)} (${data.lengthInBytes} bytes)");
 
@@ -133,20 +135,23 @@ class AudioPlayer {
           fromDataBuffer: data,
           codec: Codec.mp3,
           whenFinished: () {
-            completionHandler(false);
+            completionHandler!(false);
           });
     } catch (e) {
       dlog('Error downloading remote file: $e');
-      completionHandler(true);
+      completionHandler!(true);
     }
   }
 
-  /// Play "I don't know" local audio file and return string w. spoken text
+  /// Play "I don't know" local audio file and return string
+  /// with the text of the spoken reply (for showing in the UI)
   String? playDunno([Function()? completionHandler]) {
     final int rnd = Random().nextInt(7) + 1;
     final String num = rnd.toString().padLeft(2, '0');
     final String fn = "dunno$num";
+
     playSound(fn, completionHandler);
+
     final Map<String, String> dunnoStrings = {
       "dunno01": "Ég get ekki svarað því.",
       "dunno02": "Ég get því miður ekki svarað því.",

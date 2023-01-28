@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2022 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -56,9 +56,7 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
   try {
     response =
         await http.post(Uri.parse(apiURL), body: qargs).timeout(kRequestTimeout, onTimeout: () {
-      if (handler != null) {
-        handler(null);
-      }
+      handler!(null);
       return Response("Request timed out", 408);
     });
   } catch (e) {
@@ -67,9 +65,7 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
 
   // Handle null response
   if (response == null) {
-    if (handler != null) {
-      handler(null);
-    }
+    handler!(null);
     return null;
   }
 
@@ -79,7 +75,8 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
   if (handler != null) {
     // Parse JSON body and feed ensuing data structure to handler function
     dynamic arg = (response.statusCode == 200) ? json.decode(response.body) : null;
-    arg = (arg is Map) == false ? null : arg; // Should be a dict, otherwise something's gone wrong
+    // JSON response should be a dict, otherwise something's gone horribly wrong
+    arg = (arg is Map) == false ? null : arg;
     handler(arg);
   }
 
@@ -91,8 +88,8 @@ class QueryService {
   /// Send request to query server API
   static Future<void> sendQuery(List<String> queries, [Function? handler, bool? test]) async {
     // Query args
-    String? voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
-    Map<String, String> qargs = {'q': queries.join('|'), 'voice': '1', 'voice_id': voiceID};
+    final String voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
+    final Map<String, String> qargs = {'q': queries.join('|'), 'voice': '1', 'voice_id': voiceID};
 
     // Never send client information in privacy mode
     bool privacyMode = Prefs().boolForKey('privacy_mode');
@@ -126,10 +123,10 @@ class QueryService {
   }
 
   /// Send request to query history API
-  /// [allData] param determines whether all device-specific
+  /// Boolean [allData] param determines whether all device-specific
   /// data or only query history should be deleted server-side
   static Future<void> clearUserData(bool allData, [Function? handler]) async {
-    Map<String, String> qargs = {
+    final Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
       'api_key': readQueryServerKey(),
       'client_type': _clientType(),
@@ -142,7 +139,7 @@ class QueryService {
 
   /// Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function? handler]) async {
-    Map<String, String> qargs = {
+    final Map<String, String> qargs = {
       'text': text,
       'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
       'format': 'text', // No SSML for now...
@@ -154,7 +151,7 @@ class QueryService {
 
   /// Send request to voices API
   static Future<Map<String, dynamic>?> requestSupportedVoices() async {
-    Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
+    final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
     if (r == null) {
       return null;
     } else {

@@ -55,7 +55,7 @@ const kNoInternetMessage = 'Ekki næst samband við netið.';
 const kNoMicPermissionMessage =
     'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.';
 
-// Global session state enum
+// Global session state enums
 enum SessionState {
   resting, // Session not active
   listening, // Receiving microphone input
@@ -507,12 +507,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Enable/disable hotword activation
     void toggleHotwordActivation() {
-      Prefs p = Prefs();
+      final p = Prefs();
       p.setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
       if (state == SessionState.resting) {
         msg(introMsg());
       }
-      if (p.boolForKey('hotword_activation') == true) {
+      if (p.boolForKey('hotword_activation')) {
         HotwordDetector().start(hotwordHandler);
       } else {
         HotwordDetector().stop();
@@ -591,7 +591,7 @@ class SessionButtonPainter extends CustomPainter {
     final radius = min(size.width, size.height) / 2;
     final center = Offset(size.width / 2, size.height / 2);
 
-    List<Color> circleColors = circleColors4Context(sessionContext);
+    final List<Color> circleColors = circleColors4Context(sessionContext);
 
     // First, outermost, circle
     var paint = Paint()..color = circleColors[0];
@@ -611,7 +611,7 @@ class SessionButtonPainter extends CustomPainter {
     if (animationFrames.isEmpty) {
       dlog('Animation frame drawing failed. No frames loaded.');
     }
-    ui.Image img = animationFrames[fnum];
+    final ui.Image img = animationFrames[fnum];
     // Source image rect
     Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
 
@@ -647,9 +647,9 @@ class SessionButtonPainter extends CustomPainter {
     // Colors for the top and bottom waveform bars
     // TODO: These colors should be set via theme
     //var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
-    var topPaint = Paint()..color = HexColor.fromHex('#e83939');
+    final topPaint = Paint()..color = HexColor.fromHex('#e83939');
     //var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
-    var bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
+    final bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
 
     // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {
