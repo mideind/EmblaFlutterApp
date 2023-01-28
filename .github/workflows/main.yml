@@ -52,7 +52,7 @@ jobs:
           dart analyze lib/
       - name: Build APK
         run: |
-          bash build.sh
+          bash build_apk.sh
       - name: Slack notification
         uses: 8398a7/action-slack@v2
         with:

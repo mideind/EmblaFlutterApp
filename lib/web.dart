@@ -46,7 +46,7 @@ class WebViewRouteState extends State<WebViewRoute> {
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
-    dlog("Local uri: $kDocsDir/${uri.pathSegments.last}");
+    //dlog("Local uri: $kDocsDir/${uri.pathSegments.last}");
     return "$kDocsDir/${uri.pathSegments.last}";
   }
 
