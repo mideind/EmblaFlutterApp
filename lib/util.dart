@@ -94,7 +94,7 @@ extension StringExtension on String {
 
 extension HexColor on Color {
   // Get standard Flutter Color object from hex string in the
-  // format "aabbcc" or "ffaabbcc", with an optional leading "#".
+  // format "aabbcc", with an optional leading "#".
   static Color fromHex(String hexString) {
     final buffer = StringBuffer();
     if (hexString.length == 6 || hexString.length == 7) {

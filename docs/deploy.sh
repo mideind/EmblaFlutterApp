@@ -1,6 +1,6 @@
 #!/bin/sh
 # Copies Embla HTML documentation to server
-# Invoke with ./deploy.sh user@greynir.is
+# Invoke with ./deploy.sh user@embla.is
 
 if [ -z "$1" ]; then
     echo "No argument supplied"
@@ -10,4 +10,4 @@ fi
 DEST="$1:/usr/share/nginx/embla.is/static/"
 
 # Copy files to server
-scp *.html *.woff2 *.ttf *.css $DEST
+scp *.html *.css *.woff2 *.ttf $DEST
