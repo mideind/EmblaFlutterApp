@@ -46,7 +46,7 @@ const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
 
-// Switch control widget associated with a boolean value pref
+/// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
@@ -84,19 +84,19 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   }
 }
 
-// Switch control associated with a boolean value pref, presents a confirmation alert prompt
-class SettingsSwitchConfirmWidget extends StatefulWidget {
+/// Special switch control for privacy mode, presents a confirmation alert prompt
+class SettingsPrivacySwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
 
-  const SettingsSwitchConfirmWidget({Key? key, required this.label, required this.prefKey})
+  const SettingsPrivacySwitchWidget({Key? key, required this.label, required this.prefKey})
       : super(key: key);
 
   @override
-  SettingsSwitchConfirmWidgetState createState() => SettingsSwitchConfirmWidgetState();
+  SettingsPrivacySwitchWidgetState createState() => SettingsPrivacySwitchWidgetState();
 }
 
-class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget> {
+class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
     return showDialog<void>(
       context: context,
@@ -166,58 +166,7 @@ class SettingsSwitchConfirmWidgetState extends State<SettingsSwitchConfirmWidget
   }
 }
 
-// Segmented control associated with a string value pref
-class SettingsSegmentedWidget extends StatefulWidget {
-  final String label;
-  final List<String> items;
-  final String prefKey;
-
-  const SettingsSegmentedWidget(
-      {Key? key, required this.label, required this.items, required this.prefKey})
-      : super(key: key);
-
-  @override
-  SettingsSegmentedWidgetState createState() => SettingsSegmentedWidgetState();
-}
-
-class SettingsSegmentedWidgetState extends State<SettingsSegmentedWidget> {
-  Map<int, Widget> _genChildren() {
-    List<String> items = widget.items;
-    Map<int, Widget> wlist = {};
-    for (int i = 0; i < items.length; i++) {
-      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(items[i]));
-    }
-    return wlist;
-  }
-
-  int selectedSegment() {
-    List<String> items = widget.items;
-    String prefKey = widget.prefKey;
-    for (int i = 0; i < items.length; i++) {
-      if (Prefs().stringForKey(prefKey) == items[i]) {
-        return i;
-      }
-    }
-    return 0;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      title: Text(widget.label),
-      trailing: CupertinoSegmentedControl(
-          children: _genChildren(),
-          groupValue: selectedSegment(),
-          onValueChanged: (value) {
-            setState(() {
-              Prefs().setStringForKey(widget.prefKey, widget.items[value as int]);
-            });
-          }),
-    );
-  }
-}
-
-// Slider widget associated with a pref value
+/// Slider widget associated with a pref float value
 class SettingsSliderWidget extends StatefulWidget {
   final String label;
   final String prefKey;
@@ -278,7 +227,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   }
 }
 
-// Button that presents an alert with an action name + handler
+/// Button that presents an alert with an action name + handler
 class SettingsButtonPromptWidget extends StatelessWidget {
   final String label;
   final String alertText;
@@ -338,7 +287,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   }
 }
 
-// Widget that controls query server prefs i.e. text field + preset buttons
+/// Widget that controls query server prefs i.e. text field
+/// and the presets presented in a segmented control.
 class QueryServerSegmentedWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
@@ -412,6 +362,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
   }
 }
 
+/// Widget that displays a label and a value
 class SettingsLabelValueWidget extends StatelessWidget {
   const SettingsLabelValueWidget(this.label, this.value, {Key? key}) : super(key: key);
 
@@ -428,6 +379,7 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+/// Widget that displays a label and a value that is fetched asynchronously
 class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
@@ -447,6 +399,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   }
 }
 
+/// Voice selection widget
 class SettingsVoiceSelectWidget extends StatefulWidget {
   final String label;
   const SettingsVoiceSelectWidget({Key? key, required this.label}) : super(key: key);
@@ -482,6 +435,7 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
   }
 }
 
+/// Generate version string for app
 Future<String> genVersionString() async {
   final Map<String, String> osName2Pretty = {
     "linux": "Linux",
@@ -508,7 +462,7 @@ List<Widget> _settings(BuildContext context) {
   List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
-    SettingsSwitchConfirmWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
+    SettingsPrivacySwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
     SettingsVoiceSelectWidget(label: 'Rödd'),
     SettingsSliderWidget(
         label: 'Talhraði',

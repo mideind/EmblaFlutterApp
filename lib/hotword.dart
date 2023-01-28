@@ -113,19 +113,26 @@ class HotwordDetector {
   // Copy model file from asset bundle to temp directory on the filesystem.
   // Does not overwrite the file by default.
   static Future<String> _copyModelToFilesystem(String filename, [bool overwrite = false]) async {
-    String dir = (await getTemporaryDirectory()).path;
-    String finalPath = "$dir/$filename";
+    final String dir = (await getTemporaryDirectory()).path;
+    final String finalPath = "$dir/$filename";
     final file = File(finalPath);
     if (await file.exists() == true) {
       if (overwrite == true) {
+        dlog("Overwriting existing hotword model file: $finalPath");
         await file.delete();
       } else {
+        // File already exists, return path
         return finalPath;
       }
     }
-    ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
-    final buffer = bytes.buffer;
-    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    try {
+      // Copy model file from asset bundle to filesystem
+      final ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
+      final buffer = bytes.buffer;
+      File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    } catch (err) {
+      dlog("Error creating writing hotword model to filesystem: $err");
+    }
     return finalPath;
   }
 }

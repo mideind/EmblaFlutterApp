@@ -68,7 +68,7 @@ void main() async {
   HotwordDetector(); // singleton
 
   // Activate wake lock to prevent device from going to sleep
-  // This wakelock is disabled when leaving session route
+  // This wakelock is disabled when leaving main session route
   Wakelock.enable();
 
   // Request permissions

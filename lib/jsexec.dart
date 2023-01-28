@@ -22,7 +22,8 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 import './common.dart';
 
-const kJSExecErrorMessage = "Upp kom villa við keyrslu á JavaScript.";
+const kJSExecErrorMessage = "Villa kom upp við keyrslu á JavaScript kóða.";
+const kJSExecDefaultWebViewURL = "about:blank";
 
 /// Wrapper class to execute JavaScript code in a headless web view
 class JSExecutor {
@@ -38,7 +39,7 @@ class JSExecutor {
   JSExecutor._internal() {
     // Only called once, when singleton is instantiated
     headlessWebView = HeadlessInAppWebView(
-      initialUrlRequest: URLRequest(url: Uri.parse("about:blank")),
+      initialUrlRequest: URLRequest(url: Uri.parse(kJSExecDefaultWebViewURL)),
       initialOptions: InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(),
       ),
@@ -53,16 +54,15 @@ class JSExecutor {
   Future<String> run(String jsCode) async {
     await headlessWebView?.dispose();
     await headlessWebView?.run();
-    String answer = kJSExecErrorMessage;
     try {
       var result =
           await headlessWebView?.webViewController.callAsyncJavaScript(functionBody: jsCode);
       if (result?.error == null && result?.value != null) {
-        answer = result!.value.toString();
+        return result!.value.toString();
       }
     } on Exception catch (e) {
       dlog("Error: HeadlessInAppWebView not running: $e");
     }
-    return answer;
+    return kJSExecErrorMessage;
   }
 }

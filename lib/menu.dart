@@ -29,6 +29,15 @@ import './web.dart' show WebViewRoute;
 import './smart/smarthome.dart' show SmarthomeRoute;
 //import './train.dart' show TrainingRoute;
 
+void _pushWebRoute(BuildContext context, dynamic arg) {
+  Navigator.push(
+    context,
+    CupertinoPageRoute(
+      builder: (context) => WebViewRoute(initialURL: arg),
+    ),
+  );
+}
+
 void _pushSettingsRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
@@ -55,15 +64,6 @@ void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
 //   ),
 // );
 // }
-
-void _pushWebRoute(BuildContext context, dynamic arg) {
-  Navigator.push(
-    context,
-    CupertinoPageRoute(
-      builder: (context) => WebViewRoute(initialURL: arg),
-    ),
-  );
-}
 
 // Generate a menu tile based on args
 ListTile _menuTile(

@@ -23,11 +23,12 @@ import 'dart:typed_data';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart' show kReleaseMode;
-import 'package:filesize/filesize.dart' show filesize;
-import 'package:logger/logger.dart' show Level;
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter/services.dart' show rootBundle;
+
 import 'package:http/http.dart' as http;
+import 'package:logger/logger.dart' show Level;
+import 'package:filesize/filesize.dart' show filesize;
+import 'package:flutter_sound/flutter_sound.dart';
 
 import './common.dart';
 import './prefs.dart' show Prefs;
@@ -68,7 +69,7 @@ class AudioPlayer {
   // Load all asset-bundled audio files into memory
   Future<void> _preloadAudioFiles() async {
     // List of audio file assets in bundle
-    List<String> audioFiles = List.from(sessionSounds);
+    final List<String> audioFiles = List.from(sessionSounds);
 
     List<String> voiceSpecificSounds = [
       "conn",
@@ -88,7 +89,7 @@ class AudioPlayer {
       voiceNames = kSpeechSynthesisDebugVoices;
     }
     for (String voiceName in voiceNames) {
-      String vn = voiceName.asciify().toLowerCase();
+      final String vn = voiceName.asciify().toLowerCase();
       for (String sound in voiceSpecificSounds) {
         audioFiles.add("$sound-$vn");
       }
@@ -97,7 +98,7 @@ class AudioPlayer {
     dlog("Preloading audio assets: ${audioFiles.toString()}");
     audioFileCache = <String, Uint8List>{};
     for (String fn in audioFiles) {
-      ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
+      final ByteData bytes = await rootBundle.load("assets/audio/$fn.wav");
       audioFileCache[fn] = bytes.buffer.asUint8List();
     }
   }
@@ -117,7 +118,7 @@ class AudioPlayer {
     }
     dlog("Playing audio file URL '$displayURL'");
     try {
-      Uint8List data;
+      Uint8List? data;
       Uri uri = Uri.parse(url);
 
       if (uri.scheme == 'data') {
@@ -142,11 +143,11 @@ class AudioPlayer {
 
   /// Play "I don't know" local audio file and return string w. spoken text
   String? playDunno([Function()? completionHandler]) {
-    int rnd = Random().nextInt(7) + 1;
-    String num = rnd.toString().padLeft(2, '0');
-    String fn = "dunno$num";
+    final int rnd = Random().nextInt(7) + 1;
+    final String num = rnd.toString().padLeft(2, '0');
+    final String fn = "dunno$num";
     playSound(fn, completionHandler);
-    Map<String, String> dunnoStrings = {
+    final Map<String, String> dunnoStrings = {
       "dunno01": "Ég get ekki svarað því.",
       "dunno02": "Ég get því miður ekki svarað því.",
       "dunno03": "Ég kann ekki svar við því.",

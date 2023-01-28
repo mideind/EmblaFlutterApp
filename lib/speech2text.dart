@@ -83,7 +83,7 @@ class SpeechRecognizer {
     if (decibels < -60.0 || decibels == 0.0) {
       return 0.0;
     }
-    double exp = 0.05;
+    const double exp = 0.05;
     return pow(
         (pow(10.0, exp * decibels) - pow(10.0, exp * -60.0)) *
             (1.0 / (1.0 - pow(10.0, exp * -60.0))),
@@ -173,7 +173,7 @@ class SpeechRecognizer {
     }
     isRecognizing = false;
     dlog('Stopping speech recognition');
-    double seconds = totalAudioDataSize / (2.0 * kAudioSampleRate);
+    final double seconds = totalAudioDataSize / (2.0 * kAudioSampleRate);
     dlog("Total audio length: $seconds seconds ($totalAudioDataSize bytes)");
     await _micRecorder.stopRecorder();
     await _micRecorder.closeRecorder();

@@ -22,17 +22,18 @@ import 'package:flutter/material.dart';
 
 import './util.dart' show HexColor;
 
-// Session button circle colors, outermost to innermost
-final Color circleColor1 = HexColor.fromHex('#f9f0f0');
-final Color circleColor2 = HexColor.fromHex('#f9e2e1');
-final Color circleColor3 = HexColor.fromHex('#f9dcdb');
-
+// Define default font family and sizes
 const String defaultFontFamily = 'Lato';
 const double defaultFontSize = 18.0;
 const double sessionFontSize = 23.0;
 
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
 final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
+
+// Session button circle colors, outermost to innermost
+final Color circleColor1 = HexColor.fromHex('#f9f0f0');
+final Color circleColor2 = HexColor.fromHex('#f9e2e1');
+final Color circleColor3 = HexColor.fromHex('#f9dcdb');
 
 // Define default (light) app styling and color scheme
 final Color lightMainColor = HexColor.fromHex('#e83939');
@@ -125,7 +126,7 @@ AssetImage img4theme(String imgName, BuildContext context) {
 
 /// Get the main color for the current theme
 Color color4ctx(BuildContext context) {
-  var brightness = MediaQuery.of(context).platformBrightness;
+  final brightness = MediaQuery.of(context).platformBrightness;
   if (brightness == Brightness.dark) {
     return darkMainColor;
   }
@@ -135,14 +136,14 @@ Color color4ctx(BuildContext context) {
 /// Get the circle colors for the current theme
 List<Color> circleColors4Context(var context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
-    Color circleColor1 = HexColor.fromHex('#f0f0f0');
-    Color circleColor2 = HexColor.fromHex('#e4e4e4');
-    Color circleColor3 = HexColor.fromHex('#dcdcdc');
+    final Color circleColor1 = HexColor.fromHex('#f0f0f0');
+    final Color circleColor2 = HexColor.fromHex('#e4e4e4');
+    final Color circleColor3 = HexColor.fromHex('#dcdcdc');
     return [circleColor1, circleColor2, circleColor3];
   } else {
-    Color circleColor1 = HexColor.fromHex('#f9f0f0');
-    Color circleColor2 = HexColor.fromHex('#f9e2e1');
-    Color circleColor3 = HexColor.fromHex('#f9dcdb');
+    final Color circleColor1 = HexColor.fromHex('#f9f0f0');
+    final Color circleColor2 = HexColor.fromHex('#f9e2e1');
+    final Color circleColor3 = HexColor.fromHex('#f9dcdb');
     return [circleColor1, circleColor2, circleColor3];
   }
 }
