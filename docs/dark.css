@@ -15,7 +15,8 @@
   font-weight: 700;
   font-display: block;
   src: local('Lato Bold'),
-       url("Lato-Bold.woff2") format('woff2');
+       url("Lato-Bold.woff2") format('woff2'),
+       url("Lato-Bold.ttf") format('truetype');
 }
 
 @font-face {
@@ -24,14 +25,14 @@
   font-weight: 400;
   font-display: block;
   src: local('Lato Italic'),
-       url("Lato-Italic.woff2") format('woff2');
+       url("Lato-Italic.woff2") format('woff2'),
+       url("Lato-Italic.ttf") format('truetype');
 }
 
 body {
   background-color: #202020;
   font-family: "Lato";
   font-size: 21px;
-/*  text-align: center;*/
   color: #f7f7f7;
 }
 

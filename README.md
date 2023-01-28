@@ -9,8 +9,8 @@
 # Embla Flutter Client
 
 Embla is an Icelandic-language voice assistant app powered by the
-[Greynir](https://greynir.is) query engine. This is the repository for
-the cross-platform Embla mobile client.
+[Greynir](https://greynir.is) query engine. This is the repository
+for the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework. Currently built to run on
@@ -53,13 +53,13 @@ You should now be able to build and run the app:
 flutter run
 ```
 
-This should launch the app in development mode on your device of choice (e.g.
-simulator, attached physical device, etc.).
+This should launch the app in development mode on your device of choice
+(e.g. simulator, attached physical device, etc.).
 
-To build an Android `apk` debug binary for arm64, run the following script:
+To build an unsigned Android `apk` debug binary for arm64, run the following script:
 
 ```bash
-bash build.sh
+bash build_apk.sh
 ```
 
 ## Screenshots
