@@ -28,7 +28,7 @@ import 'package:adaptive_theme/adaptive_theme.dart';
 import './animations.dart' show preloadAnimationFrames;
 import './audio.dart' show AudioPlayer;
 import './common.dart' show dlog, kSoftwareName, kDefaultVoice;
-import './loc.dart' show LocationTracking;
+import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './theme.dart' show lightThemeData, darkThemeData;
@@ -72,6 +72,7 @@ void main() async {
   Wakelock.enable();
 
   // Request permissions
+  // We need microphone (and ideally location) permissions to function
   Map<Permission, PermissionStatus> statuses = await [
     Permission.microphone,
     Permission.location,
@@ -85,7 +86,7 @@ void main() async {
     dlog("Location permission is denied.");
     Prefs().setBoolForKey('share_location', false);
   } else {
-    LocationTracking().start();
+    LocationTracker().start();
   }
 
   // Launch app with session route

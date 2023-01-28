@@ -27,14 +27,14 @@ import 'package:platform_device_id/platform_device_id.dart';
 import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';
-import './loc.dart' show LocationTracking;
+import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './util.dart' show readQueryServerKey;
 
 const kRequestTimeout = Duration(seconds: 10); // Seconds
 
 String _clientType() {
-  return "${Platform.operatingSystem}_flutter";
+  return "${Platform.operatingSystem}_{$kSoftwareImplementation}";
 }
 
 Future<String?> _clientID() async {
@@ -98,7 +98,7 @@ class QueryService {
     } else {
       qargs['client_type'] = _clientType();
       qargs['client_id'] = await _clientID() ?? "";
-      qargs['client_version'] = await _clientVersion() ?? "";
+      qargs['client_version'] = await _clientVersion() ?? kSoftwareVersion;
     }
 
     if (test == true) {
@@ -112,7 +112,7 @@ class QueryService {
 
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation == true) {
-      List<double>? latlon = LocationTracking().location;
+      List<double>? latlon = LocationTracker().location;
       if (latlon != null) {
         qargs['latitude'] = latlon[0].toString();
         qargs['longitude'] = latlon[1].toString();
@@ -131,7 +131,7 @@ class QueryService {
       'api_key': readQueryServerKey(),
       'client_type': _clientType(),
       'client_id': await _clientID() ?? "",
-      'client_version': await _clientVersion() ?? ""
+      'client_version': await _clientVersion() ?? kSoftwareVersion
     };
 
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);

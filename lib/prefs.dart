@@ -16,12 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Prefs singleton object used globally by the app
+// Prefs singleton object that contains all settings
+// variables used globally by the app.
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './common.dart';
-import './loc.dart' show LocationTracking;
+import './loc.dart' show LocationTracker;
 
 /// Global user preferences singleton
 class Prefs {
@@ -48,9 +49,9 @@ class Prefs {
     // TODO: This is hacky and should be solved in some other way
     if (key == 'share_location') {
       if (val == true) {
-        LocationTracking().start();
+        LocationTracker().start();
       } else {
-        LocationTracking().stop();
+        LocationTracker().stop();
       }
     }
   }

@@ -27,11 +27,11 @@ import './common.dart';
 import './prefs.dart';
 
 /// Location tracking singleton
-class LocationTracking {
-  LocationTracking._privateConstructor();
-  static final LocationTracking _instance = LocationTracking._privateConstructor();
+class LocationTracker {
+  LocationTracker._privateConstructor();
+  static final LocationTracker _instance = LocationTracker._privateConstructor();
 
-  factory LocationTracking() {
+  factory LocationTracker() {
     return _instance;
   }
 

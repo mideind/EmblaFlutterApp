@@ -22,6 +22,8 @@ import 'package:flutter/foundation.dart' show kReleaseMode;
 
 // Software info
 const String kSoftwareName = 'Embla';
+const String kSoftwareVersion = '1.3.3';
+const String kSoftwareImplementation = 'flutter';
 const String kSoftwareAuthor = 'Miðeind ehf.';
 
 // Hotword detection
@@ -59,7 +61,7 @@ const String kAboutURL = 'https://embla.is/about.html';
 const String kInstructionsURL = 'https://embla.is/instructions.html';
 const String kPrivacyURL = 'https://embla.is/privacy.html';
 
-// Alternate query server options f. debugging purposes
+// Query server preset options (for debugging purposes)
 const List<List<String>> kQueryServerPresetOptions = [
   ['Greynir.is', kDefaultQueryServer],
   ['Staðarnet', 'http://192.168.1.8:5000']

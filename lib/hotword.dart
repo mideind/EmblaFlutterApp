@@ -125,14 +125,11 @@ class HotwordDetector {
         return finalPath;
       }
     }
-    try {
-      // Copy model file from asset bundle to filesystem
-      final ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
-      final buffer = bytes.buffer;
-      File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
-    } catch (err) {
-      dlog("Error creating writing hotword model to filesystem: $err");
-    }
+    // Copy model file from asset bundle to filesystem
+    final ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
+    final buffer = bytes.buffer;
+    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+
     return finalPath;
   }
 }
