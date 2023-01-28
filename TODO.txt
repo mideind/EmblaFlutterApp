@@ -1,14 +1,15 @@
 TODO for Embla Flutter client
 
-* Analyse audio samples in smaller chunks - find solution
-* Full iOS support (via updated flutter_snowboy plugin)
+DONE * Full iOS support (via updated flutter_snowboy plugin)
+DONE * Fix session button resizing animation
+DONE * Black background on switch buttons in dark mode should be lighter color
+DONE * Request permissions all at once to address issues w. requesting geoloc + mic separately
+DONE * Analyse audio samples in smaller chunks - find solution
+
+* Add widget and integration tests
 * Optimize redraws, or switch over to APNG for animation when Flutter adds support
 * Fix broken playback when session button is hammered repeatedly (only issue on iOS)
 * Performance profiling
-* Fix session button resizing animation
 * Confirmation alert on completion of clear query history calls
 * Add hardcoded timeout for streaming speech
 * Open preferences if microphone/location enabled in settings but not allowed in system settings
-* Add Widget tests
-* Black background on switch buttons in dark mode should be lighter color
-* Request permissions all at once on Android to address issues w. requesting geoloc + mic separately

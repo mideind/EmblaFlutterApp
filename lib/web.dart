@@ -86,12 +86,12 @@ class WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // a progress indicator. Then immediately fetch the actual remote document.
     // Falls back to loading local bundled HTML document on network error.
-    // This means that at least *some* app docs can be viewed if the user is offline.
-    var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
-    var loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
-    var url = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
+    // This means that at least *some* version of app docs can be viewed offline.
+    final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
+    final url = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
 
-    var webViewOpts = InAppWebViewGroupOptions(
+    final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
       useShouldOverrideUrlLoading: true,
       transparentBackground: true,
@@ -105,14 +105,15 @@ class WebViewRouteState extends State<WebViewRoute> {
         dlog("Loading URL ${url.toString()}");
       },
       onLoadStop: (InAppWebViewController controller, Uri? url) async {
-        if (url.toString().endsWith(kLoadingHTMLFilePath) ||
-            url.toString().endsWith(kLoadingDarkHTMLFilePath)) {
+        if (url.toString().endsWith(loadingURL)) {
+          // Loading of initial "loading" document is complete.
+          // Now load the actual remote document.
+          String url = widget.initialURL;
+          if (darkMode) {
+            url = _darkURLForURL(url);
+          }
+          Uri uri = Uri.parse(url);
           setState(() {
-            String url = widget.initialURL;
-            if (darkMode) {
-              url = _darkURLForURL(url);
-            }
-            Uri uri = Uri.parse(url);
             controller.loadUrl(urlRequest: URLRequest(url: uri));
           });
         }

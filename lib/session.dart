@@ -475,7 +475,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
     // Hotword toggle button properties depending on whether hw detection is enabled
     bool hwActive = Prefs().boolForKey('hotword_activation');
-    String hotwordIcon = hwActive ? 'mic.png' : 'mic-slash.png';
+    String hotwordIcon = hwActive ? 'mic' : 'mic-slash';
     String hotwordLabel = hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
     // Present menu route
@@ -540,15 +540,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           leading: Semantics(
               label: hotwordLabel,
               child: IconButton(
-                icon: ImageIcon(AssetImage("assets/images/$hotwordIcon")),
+                icon: ImageIcon(img4theme(hotwordIcon, context)),
                 onPressed: toggleHotwordActivation,
               )),
           // Hamburger menu button
           actions: <Widget>[
             Semantics(
                 label: 'Sýna valblað',
-                child: IconButton(
-                    icon: ImageIcon(AssetImage('assets/images/menu.png')), onPressed: pushMenu))
+                child: IconButton(icon: ImageIcon(img4theme('menu', context)), onPressed: pushMenu))
           ]),
       // Main view contents
       body: Column(
