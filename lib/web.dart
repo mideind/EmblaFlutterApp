@@ -30,7 +30,7 @@ const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
-/// Standard web view route used for displaying documentation
+/// Standard web view route used for displaying HTML documentation
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
@@ -43,6 +43,18 @@ class WebViewRoute extends StatefulWidget {
 class WebViewRouteState extends State<WebViewRoute> {
   InAppWebViewController? webView;
 
+  // Path to local asset with same filename as remote document
+  String _fallbackAssetForURL(String url) {
+    Uri uri = Uri.parse(url);
+    dlog("Local uri: $kDocsDir/${uri.pathSegments.last}");
+    return "$kDocsDir/${uri.pathSegments.last}";
+  }
+
+  // Add dark=1 query parameter to URL
+  String _darkURLForURL(String url) {
+    return "$url?dark=1";
+  }
+
   // Fall back to local HTML document if error comes up when fetching document from remote server
   void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
@@ -51,17 +63,6 @@ class WebViewRouteState extends State<WebViewRoute> {
     setState(() {
       controller.loadFile(assetFilePath: path);
     });
-  }
-
-  // Path to local asset with same filename as remote document
-  String _fallbackAssetForURL(String url) {
-    Uri uri = Uri.parse(url);
-    dlog("Local uri: $kDocsDir/${uri.pathSegments.last}");
-    return "$kDocsDir/${uri.pathSegments.last}";
-  }
-
-  String _darkURLForURL(String url) {
-    return "$url?dark=1";
   }
 
   // Handle clicks on links in HTML documentation.
@@ -83,27 +84,23 @@ class WebViewRouteState extends State<WebViewRoute> {
   @override
   Widget build(BuildContext context) {
     // Create web view that initially presents a "loading" document with
-    // progress indicator. Then immediately fetch the actual remote
-    // document. Falls back to loading local bundled HTML document on network error.
+    // a progress indicator. Then immediately fetch the actual remote document.
+    // Falls back to loading local bundled HTML document on network error.
+    // This means that at least *some* app docs can be viewed if the user is offline.
     var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
-    var loadingURL = kLoadingHTMLFilePath;
-    if (darkMode) {
-      loadingURL = kLoadingDarkHTMLFilePath;
-    }
+    var loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
+    var url = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
 
-    var url = widget.initialURL;
-    if (darkMode) {
-      url = _darkURLForURL(url);
-    }
+    var webViewOpts = InAppWebViewGroupOptions(
+        crossPlatform: InAppWebViewOptions(
+      useShouldOverrideUrlLoading: true,
+      transparentBackground: true,
+    ));
 
     InAppWebView webView = InAppWebView(
       initialFile: loadingURL,
       initialUrlRequest: URLRequest(url: Uri.parse(url)),
-      initialOptions: InAppWebViewGroupOptions(
-          crossPlatform: InAppWebViewOptions(
-        useShouldOverrideUrlLoading: true,
-        transparentBackground: true,
-      )),
+      initialOptions: webViewOpts,
       onLoadStart: (InAppWebViewController controller, Uri? url) {
         dlog("Loading URL ${url.toString()}");
       },
