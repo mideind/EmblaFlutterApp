@@ -43,6 +43,10 @@ const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
 
+Divider divider = const Divider(
+  height: 20,
+);
+
 /// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
@@ -480,8 +484,9 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
   }
 }
 
-// List of settings widgets
+// Generate list of settings widgets
 List<Widget> _settings(BuildContext context) {
+  // Basic settings widgets
   List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
@@ -494,6 +499,21 @@ List<Widget> _settings(BuildContext context) {
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
     SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: VersionRoute()),
+  ];
+
+  // Only include query server selection widget in debug builds
+  if (kReleaseMode == false) {
+    settingsWidgets.addAll([
+      divider,
+      SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
+      QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
+    ]);
+  }
+
+  // Add clear history buttons
+  settingsWidgets.addAll([
+    divider,
     SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
@@ -508,16 +528,9 @@ List<Widget> _settings(BuildContext context) {
         handler: () {
           QueryService.clearUserData(true);
         }),
-  ];
-  // Only include query server selection widget in debug builds
-  if (kReleaseMode == false) {
-    settingsWidgets.addAll([
-      SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-      QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-    ]);
-  }
+    Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
+  ]);
 
-  settingsWidgets.addAll([Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))]);
   return settingsWidgets;
 }
 
