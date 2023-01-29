@@ -98,11 +98,11 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
 
 class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
-    return showDialog<void>(
+    return showCupertinoDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: Text('Virkja einkaham?'),
           content: SingleChildScrollView(
             child: ListBody(
@@ -243,11 +243,11 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
-    return showDialog<void>(
+    return showCupertinoDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: Text("$label?"),
           content: SingleChildScrollView(
             child: ListBody(

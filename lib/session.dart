@@ -445,10 +445,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void showRecognitionErrorAlert(BuildContext context) {
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: Text('Villa í talgreiningu'),
           content: Text(kNoMicPermissionMessage),
           actions: <Widget>[

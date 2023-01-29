@@ -24,14 +24,14 @@ import 'package:flutter/services.dart';
 
 import './common.dart';
 
-const String kFrameFilePath = 'assets/images/anim/logo/';
+const String kFrameFilePath = 'assets/images/anim/logo/light';
 const String kFrameFilePrefix = 'anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
 
 final List<ui.Image> animationFrames = [];
 
-/// Load a PNG image into memory from Flutter assets bundle
+// Load a PNG image into memory from Flutter assets bundle
 Future<ui.Image> _loadImageAsset(String asset) async {
   final ByteData data = await rootBundle.load(asset);
   final ui.Codec codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
@@ -44,7 +44,7 @@ Future<void> preloadAnimationFrames() async {
   for (int i = 0; i < kNumAnimationFrames; i++) {
     final String padnum = i.toString().padLeft(5, '0');
     // Light mode anim frame
-    final String fnl = "${kFrameFilePath}light/$kFrameFilePrefix$padnum$kFrameFileSuffix";
+    final String fnl = "$kFrameFilePath/$kFrameFilePrefix$padnum$kFrameFileSuffix";
     animationFrames.add(await _loadImageAsset(fnl));
   }
   dlog("Preloaded ${animationFrames.length} animation frames");

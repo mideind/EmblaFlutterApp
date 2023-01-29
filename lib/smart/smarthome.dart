@@ -306,10 +306,10 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
       );
     }
 
-    showDialog(
+    showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return AlertDialog(
+        return CupertinoAlertDialog(
           title: Text("Aftengja tæki"),
           content: SingleChildScrollView(
             child: ListBody(
