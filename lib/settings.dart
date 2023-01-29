@@ -424,8 +424,10 @@ class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
 class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
+  final Widget? onTapRoute;
 
-  const SettingsAsyncLabelValueWidget(this.label, this.future, {Key? key}) : super(key: key);
+  const SettingsAsyncLabelValueWidget(this.label, this.future, {this.onTapRoute, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -433,7 +435,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
         future: future,
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return SettingsLabelValueWidget(label, snapshot.data!, onTapRoute: VersionRoute());
+            return SettingsLabelValueWidget(label, snapshot.data!, onTapRoute: onTapRoute);
           }
           return SettingsLabelValueWidget(label, '…');
         });
@@ -489,7 +491,7 @@ List<Widget> _settings(BuildContext context) {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05),
-    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString()),
+    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: VersionRoute()),
     SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
