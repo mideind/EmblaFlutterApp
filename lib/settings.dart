@@ -18,13 +18,10 @@
 
 // Settings route
 
-import 'dart:io' show Platform;
-
+import 'package:embla/version.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/material.dart';
-
-import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';
 import './query.dart' show QueryService;
@@ -364,10 +361,12 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 
 /// Widget that displays a label and a value
 class SettingsLabelValueWidget extends StatelessWidget {
-  const SettingsLabelValueWidget(this.label, this.value, {Key? key}) : super(key: key);
+  const SettingsLabelValueWidget(this.label, this.value, {this.onTapRoute, Key? key})
+      : super(key: key);
 
   final String label;
   final String value;
+  final dynamic onTapRoute;
 
   @override
   Widget build(BuildContext context) {
@@ -375,6 +374,16 @@ class SettingsLabelValueWidget extends StatelessWidget {
         child: ListTile(
       title: Text(label, style: Theme.of(context).textTheme.bodySmall),
       trailing: Text(value, style: Theme.of(context).textTheme.bodySmall),
+      onTap: () {
+        if (onTapRoute != null) {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(builder: (context) {
+              return onTapRoute;
+            }),
+          );
+        }
+      },
     ));
   }
 }
@@ -392,7 +401,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
         future: future,
         builder: (context, AsyncSnapshot<String> snapshot) {
           if (snapshot.hasData) {
-            return SettingsLabelValueWidget(label, snapshot.data!);
+            return SettingsLabelValueWidget(label, snapshot.data!, onTapRoute: VersionRoute());
           }
           return SettingsLabelValueWidget(label, '…');
         });
@@ -400,15 +409,15 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
 }
 
 /// Voice selection widget
-class SettingsVoiceSelectWidget extends StatefulWidget {
+class SettingsVoiceSelectionWidget extends StatefulWidget {
   final String label;
-  const SettingsVoiceSelectWidget({Key? key, required this.label}) : super(key: key);
+  const SettingsVoiceSelectionWidget({Key? key, required this.label}) : super(key: key);
 
   @override
-  SettingsVoiceSelectWidgetState createState() => SettingsVoiceSelectWidgetState();
+  SettingsVoiceSelectionWidgetState createState() => SettingsVoiceSelectionWidgetState();
 }
 
-class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
+class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidget> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
@@ -435,35 +444,13 @@ class SettingsVoiceSelectWidgetState extends State<SettingsVoiceSelectWidget> {
   }
 }
 
-/// Generate version string for app
-Future<String> genVersionString() async {
-  final Map<String, String> osName2Pretty = {
-    "linux": "Linux",
-    "macos": "macOS",
-    "windows": "Windows",
-    "android": "Android",
-    "ios": "iOS",
-  };
-
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  final String version = packageInfo.version;
-  //final String buildNumber = packageInfo.buildNumber;
-
-  final String osName = osName2Pretty[Platform.operatingSystem] ?? "";
-  String swInfoStr = "$version ($osName)";
-  if (kReleaseMode == false) {
-    swInfoStr += " dbg";
-  }
-  return swInfoStr;
-}
-
 // List of settings widgets
 List<Widget> _settings(BuildContext context) {
   List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
     SettingsPrivacySwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-    SettingsVoiceSelectWidget(label: 'Rödd'),
+    SettingsVoiceSelectionWidget(label: 'Rödd'),
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',

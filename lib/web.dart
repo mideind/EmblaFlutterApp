@@ -46,7 +46,6 @@ class WebViewRouteState extends State<WebViewRoute> {
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
     Uri uri = Uri.parse(url);
-    //dlog("Local uri: $kDocsDir/${uri.pathSegments.last}");
     return "$kDocsDir/${uri.pathSegments.last}";
   }
 
@@ -55,7 +54,8 @@ class WebViewRouteState extends State<WebViewRoute> {
     return "$url?dark=1";
   }
 
-  // Fall back to local HTML document if error comes up when fetching document from remote server
+  // Fall back to local HTML document if error comes up
+  // when fetching document from remote server
   void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
     String path = _fallbackAssetForURL(url.toString());
@@ -86,7 +86,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // a progress indicator. Then immediately fetch the actual remote document.
     // Falls back to loading local bundled HTML document on network error.
-    // This means that at least *some* version of app docs can be viewed offline.
+    // This means that at least *some* version of the docs can be viewed offline.
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
     final url = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;

@@ -444,6 +444,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
+  // Show alert dialog for when microphone permission is not available
   void showRecognitionErrorAlert(BuildContext context) {
     showCupertinoDialog(
       context: context,
