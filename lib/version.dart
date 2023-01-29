@@ -114,8 +114,6 @@ Future<String> _genUniqueIdentifier() async {
 
 Divider divider = const Divider(
   height: 20,
-  indent: 20,
-  endIndent: 20,
 );
 
 // List of settings widgets
@@ -136,7 +134,8 @@ List<Widget> _versionInfo(BuildContext context) {
     divider,
     SettingsFullTextLabelWidget("Auðkenni:"),
     SettingsAsyncFullTextLabelWidget(_genUniqueIdentifier()),
-    divider
+    divider,
+    Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
   ];
   return versionInfoWidgets;
 }

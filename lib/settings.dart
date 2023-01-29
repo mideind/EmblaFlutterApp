@@ -279,7 +279,9 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       onPressed: () {
         _showPromptDialog(context);
       },
-      child: Text(label, style: TextStyle(fontSize: defaultFontSize)),
+      child: Padding(
+          padding: EdgeInsets.only(top: 15, bottom: 15),
+          child: Text(label, style: TextStyle(fontSize: defaultFontSize))),
     );
   }
 }
@@ -510,9 +512,12 @@ List<Widget> _settings(BuildContext context) {
   // Only include query server selection widget in debug builds
   if (kReleaseMode == false) {
     settingsWidgets.addAll([
+      SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
       QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
     ]);
   }
+
+  settingsWidgets.addAll([Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))]);
   return settingsWidgets;
 }
 
