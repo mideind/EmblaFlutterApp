@@ -388,6 +388,38 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+class SettingsFullTextLabelWidget extends StatelessWidget {
+  const SettingsFullTextLabelWidget(this.label, {Key? key}) : super(key: key);
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return MergeSemantics(
+        child: ListTile(
+      title: Text(label, style: Theme.of(context).textTheme.bodySmall),
+    ));
+  }
+}
+
+/// Widget that displays a label and a value that is fetched asynchronously
+class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
+  final Future<String> future;
+
+  const SettingsAsyncFullTextLabelWidget(this.future, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<String>(
+        future: future,
+        builder: (context, AsyncSnapshot<String> snapshot) {
+          if (snapshot.hasData) {
+            return SettingsFullTextLabelWidget(snapshot.data!);
+          }
+          return SettingsFullTextLabelWidget('…');
+        });
+  }
+}
+
 /// Widget that displays a label and a value that is fetched asynchronously
 class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;

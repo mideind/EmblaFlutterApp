@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Version route
+// Version route shows all sorts of info about the client
 
 import 'dart:io' show Platform;
 
@@ -28,9 +28,13 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 
 import './common.dart';
-import './settings.dart' show SettingsAsyncLabelValueWidget;
-import './loc.dart' show LocationTracker;
 import './theme.dart';
+import './loc.dart' show LocationTracker;
+import './settings.dart'
+    show
+        SettingsAsyncLabelValueWidget,
+        SettingsFullTextLabelWidget,
+        SettingsAsyncFullTextLabelWidget;
 
 /// Generate canonical version string for app
 Future<String> genVersionString() async {
@@ -100,6 +104,12 @@ Future<String> _genUniqueIdentifier() async {
   return await PlatformDeviceId.getDeviceId ?? "???";
 }
 
+Divider divider = const Divider(
+  height: 20,
+  indent: 20,
+  endIndent: 0,
+);
+
 // List of settings widgets
 List<Widget> _versionInfo(BuildContext context) {
   List<Widget> versionInfoWidgets = [
@@ -110,18 +120,14 @@ List<Widget> _versionInfo(BuildContext context) {
     SettingsAsyncLabelValueWidget('Stýrikerfi', _genPlatform()),
     SettingsAsyncLabelValueWidget('Útfærsla', _genImplementation()),
     SettingsAsyncLabelValueWidget('Höfundur', _genAuthor()),
+    divider,
     SettingsAsyncLabelValueWidget('Hljóðnemi', _genMicAccess()),
     SettingsAsyncLabelValueWidget('Staðsetning', _genLocationAccess()),
-    // SettingsAsyncLabelValueWidget('Auðkenni', _genUniqueIdentifier()),
-    ListTile(
-        title: Text("${_genUniqueIdentifier()}", style: Theme.of(context).textTheme.bodyText2)),
+    divider,
+    SettingsFullTextLabelWidget("Auðkenni:"),
+    SettingsAsyncFullTextLabelWidget(_genUniqueIdentifier()),
+    divider
   ];
-  // Only include query server selection widget in debug builds
-//   if (kReleaseMode == false) {
-//     settingsWidgets.addAll([
-//       QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-//     ]);
-//   }
   return versionInfoWidgets;
 }
 
