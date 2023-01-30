@@ -30,6 +30,7 @@ import 'package:platform_device_id/platform_device_id.dart';
 
 import './common.dart';
 import './theme.dart';
+import './prefs.dart' show Prefs;
 import './loc.dart' show LocationTracker;
 import './settings.dart'
     show
@@ -103,6 +104,9 @@ Future<String> _genMicAccess() async {
 }
 
 Future<String> _genLocationAccess() async {
+  if (Prefs().boolForKey('privacy_mode')) {
+    return "Nei";
+  }
   return LocationTracker().known ? "Já" : "Nei";
 }
 
