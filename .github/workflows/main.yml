@@ -19,10 +19,8 @@ on:
 jobs:
   android_build:
     name: Build and test Android APK
-    # The type of runner that the job will run on
     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v1
@@ -40,6 +38,7 @@ jobs:
           echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
       - name: Install dependencies
         run: |
+          flutter config --no-analytics
           flutter pub get --suppress-analytics
       - name: Run tests
         run: |
@@ -59,11 +58,8 @@ jobs:
 
   ios_build:
     name: Build iOS IPA
-
-    # The type of runner that the job will run on
     runs-on: macos-12
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-java@v1
@@ -78,9 +74,9 @@ jobs:
           touch keys/gaccount.json
           touch keys/query_api.key
           bash keys/gen_keys.sh
-          echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
       - name: Install dependencies
         run: |
+          flutter config --no-analytics
           flutter pub get --suppress-analytics
           gem install xcpretty
       - name: Build iOS IPA
