@@ -16,15 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Prefs singleton object that contains all settings
-// variables used globally by the app.
+// Prefs singleton object that contains all user
+// settings variables used globally by the app.
 
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './common.dart';
 import './loc.dart' show LocationTracker;
 
-/// Global user preferences singleton
 class Prefs {
   Prefs._privateConstructor();
   static final Prefs _instance = Prefs._privateConstructor();
@@ -46,7 +45,7 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '${val.toString()}'");
     _sp?.setBool(key, val);
-    // TODO: This is hacky and should be solved in some other way
+    // TODO: This is hacky and should be solved in some other way. Can we subscribe to changes?
     if (key == 'share_location') {
       if (val == true) {
         LocationTracker().start();
@@ -74,15 +73,8 @@ class Prefs {
     _sp?.setString(key, val);
   }
 
-  String description() {
-    List<dynamic> list = _sp!
-        .getKeys()
-        .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
-        .toList(growable: false);
-    return list.toString();
-  }
-
   void clear() {
+    dlog("Clearing prefs");
     _sp?.clear();
   }
 
@@ -96,5 +88,14 @@ class Prefs {
     Prefs().setFloatForKey('voice_speed', 1.0);
     Prefs().setStringForKey('voice_id', kDefaultVoice);
     Prefs().setStringForKey('query_server', kDefaultQueryServer);
+  }
+
+  // Generate a human-readable string representation of all key value pairs
+  String description() {
+    List<dynamic> list = _sp!
+        .getKeys()
+        .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
+        .toList(growable: false);
+    return list.toString();
   }
 }

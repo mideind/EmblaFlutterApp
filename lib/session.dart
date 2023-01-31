@@ -62,7 +62,7 @@ enum SessionState {
   answering, // Communicating with server or playing back answer
 }
 
-// Current state
+// Current session state
 SessionState state = SessionState.resting;
 
 // Waveform configuration
@@ -82,7 +82,6 @@ int currFrame = kFullLogoFrame;
 
 // Session button size (proportional to width/height)
 const kRestingButtonPropSize = 0.58;
-// const kExpandedButtonPropSize = 0.70;
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';
@@ -130,7 +129,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void initState() {
     super.initState();
 
-    // This is needed to make animations work when hot reloading
+    // This is needed to make animations work when hot reloading during development
     Animate.restartOnHotReload = true;
 
     requestMicPermissionAndStartHotwordDetection();
@@ -483,8 +482,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Present menu route
     void pushMenu() {
       stop(); // Terminate any ongoing session
-      Wakelock.disable();
       HotwordDetector().stop();
+      Wakelock.disable();
 
       Navigator.push(
         context,
@@ -509,7 +508,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Handle tap on microphone icon to toggle hotword activation
     void toggleHotwordActivation() {
-      Prefs().setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
+      bool on = Prefs().boolForKey('hotword_activation');
+      Prefs().setBoolForKey('hotword_activation', !on);
       if (state == SessionState.resting) {
         msg(introMsg());
       }

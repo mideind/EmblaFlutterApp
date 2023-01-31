@@ -38,6 +38,9 @@ import './settings.dart'
         SettingsFullTextLabelWidget,
         SettingsAsyncFullTextLabelWidget;
 
+const kYesLabel = "Já";
+const kNoLabel = "Nei";
+
 // Map the values returned by Platform.operatingSystem to pretty names
 final Map<String, String> kOSNameToPretty = {
   "linux": "Linux",
@@ -91,6 +94,11 @@ Future<String> _genPlatform() async {
   return kOSNameToPretty[Platform.operatingSystem] ?? "";
 }
 
+// Return OS version
+Future<String> _genOSVersion() async {
+  return Platform.operatingSystemVersion;
+}
+
 // Return the implementation name e.g. flutter, native
 Future<String> _genImplementation() async {
   return kSoftwareImplementation.sentenceCapitalized();
@@ -103,7 +111,7 @@ Future<String> _genAuthor() async {
 
 // Is microphone access granted?
 Future<String> _genMicAccess() async {
-  return (await Permission.location.isGranted) ? "Já" : "Nei";
+  return (await Permission.location.isGranted) ? kYesLabel : kNoLabel;
 }
 
 // Is location access granted?
@@ -111,7 +119,7 @@ Future<String> _genLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
     return "Nei";
   }
-  return LocationTracker().known ? "Já" : "Nei";
+  return LocationTracker().known ? kYesLabel : kNoLabel;
 }
 
 // This returns an app-specific unique identifier for the device
@@ -124,7 +132,7 @@ Divider divider = const Divider(
   height: 20,
 );
 
-// List of settings widgets
+// List of version info widgets
 List<Widget> _versionInfo(BuildContext context) {
   List<Widget> versionInfoWidgets = [
     Center(child: Text('Upplýsingar um útgáfu')),
@@ -134,6 +142,7 @@ List<Widget> _versionInfo(BuildContext context) {
     SettingsAsyncLabelValueWidget('Útgáfa', _genVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _genBuildNumber()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _genPlatform()),
+    SettingsAsyncLabelValueWidget('Stýrikerfisútgáfa', _genOSVersion()),
     SettingsAsyncLabelValueWidget('Útfærsla', _genImplementation()),
     SettingsAsyncLabelValueWidget('Höfundur', _genAuthor()),
     divider,
