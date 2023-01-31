@@ -8,6 +8,7 @@ flutter build apk \
 --obfuscate \
 --split-debug-info=/tmp/ \
 --target-platform=android-arm64 \
---no-tree-shake-icons
+--no-tree-shake-icons \
+--suppress-analytics \
 # --release \
 # --split-per-abi
