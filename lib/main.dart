@@ -67,7 +67,7 @@ void main() async {
   AudioPlayer(); // singleton
   HotwordDetector(); // singleton
 
-  // Activate wake lock to prevent device from going to sleep
+  // Activate wakelock to prevent device from going to sleep
   // This wakelock is disabled when leaving main session route
   Wakelock.enable();
 

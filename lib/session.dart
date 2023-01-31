@@ -474,6 +474,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     double prop = kRestingButtonPropSize;
     double buttonSize = MediaQuery.of(context).size.width * prop;
     String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
+
     // Hotword toggle button properties depending on whether hw detection is enabled
     bool hwActive = Prefs().boolForKey('hotword_activation');
     String hotwordIcon = hwActive ? 'mic' : 'mic-slash';
@@ -497,7 +498,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         if (text == '') {
           msg(introMsg());
         }
-        // Re-enable wake lock when returning to main route
+        // Re-enable wakelock when returning to main route
         Wakelock.enable();
         // Re-enable hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
@@ -506,30 +507,53 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       });
     }
 
-    // Enable/disable hotword activation
+    // Handle tap on microphone icon to toggle hotword activation
     void toggleHotwordActivation() {
-      final p = Prefs();
-      p.setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
+      Prefs().setBoolForKey('hotword_activation', !p.boolForKey('hotword_activation'));
       if (state == SessionState.resting) {
         msg(introMsg());
       }
-      if (p.boolForKey('hotword_activation')) {
+      if (Prefs().boolForKey('hotword_activation')) {
         HotwordDetector().start(hotwordHandler);
       } else {
         HotwordDetector().stop();
       }
     }
 
-    Widget scrollableWidgets() {
+    // Generate widget tree for the top scrollable text area
+    Widget scrollableTextAreaWidget() {
       List<Widget> widgets = [
         FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
       ];
       if (imageURL != null) {
         widgets.add(Image.network(imageURL!));
       }
-      return Column(
-        children: widgets,
-      );
+      return SingleChildScrollView(
+          scrollDirection: Axis.vertical,
+          child: Padding(
+              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              child: Column(
+                children: widgets,
+              )));
+    }
+
+    // Generate widget tree for the session button below the text area
+    Widget sessionButtonWidget() {
+      return Padding(
+          padding: EdgeInsets.only(bottom: 30, top: 30),
+          child: Center(
+              child: Semantics(
+                  label: buttonLabel,
+                  child: GestureDetector(
+                      onTap: toggle,
+                      child: SizedBox(
+                        width: buttonSize,
+                        height: buttonSize,
+                        // Session button uses custom painter to draw the button
+                        child: CustomPaint(painter: SessionButtonPainter())
+                            .animate(target: state == SessionState.resting ? 0 : 1)
+                            .scaleXY(end: 1.20, duration: 100.ms),
+                      )))));
     }
 
     return Scaffold(
@@ -555,30 +579,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           // Session text widget
-          Expanded(
-              flex: 6,
-              child: SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Padding(
-                      padding: EdgeInsets.only(left: 20, right: 20, top: 10),
-                      child: scrollableWidgets()))),
+          Expanded(flex: 6, child: scrollableTextAreaWidget()),
           // Session button widget
-          Expanded(
-              flex: 8,
-              child: Padding(
-                  padding: EdgeInsets.only(bottom: 30, top: 30),
-                  child: Center(
-                      child: Semantics(
-                          label: buttonLabel,
-                          child: GestureDetector(
-                              onTap: toggle,
-                              child: SizedBox(
-                                width: buttonSize,
-                                height: buttonSize,
-                                child: CustomPaint(painter: SessionButtonPainter())
-                                    .animate(target: state == SessionState.resting ? 0 : 1)
-                                    .scaleXY(end: 1.20, duration: 100.ms),
-                              )))))),
+          Expanded(flex: 8, child: sessionButtonWidget()),
         ],
       ),
     );
@@ -594,15 +597,15 @@ class SessionButtonPainter extends CustomPainter {
 
     final List<Color> circleColors = circleColors4Context(sessionContext);
 
-    // First, outermost, circle
+    // First, outermost circle
     var paint = Paint()..color = circleColors[0];
     canvas.drawCircle(center, radius, paint);
 
-    // Second circle
+    // Second, middle circle
     paint = Paint()..color = circleColors[1];
     canvas.drawCircle(center, radius / 1.25, paint);
 
-    // Third, innermost, circle
+    // Third, innermost circle
     paint = Paint()..color = circleColors[2];
     canvas.drawCircle(center, radius / 1.75, paint);
   }
@@ -611,6 +614,7 @@ class SessionButtonPainter extends CustomPainter {
   void drawLogoFrame(Canvas canvas, Size size, int fnum) {
     if (animationFrames.isEmpty) {
       dlog('Animation frame drawing failed. No frames loaded.');
+      return;
     }
     final ui.Image img = animationFrames[fnum];
     // Source image rect
