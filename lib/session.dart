@@ -646,11 +646,8 @@ class SessionButtonPainter extends CustomPainter {
     double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
-    // TODO: These colors should be set via theme
-    //var topPaint = Paint()..color = Theme.of(sessionContext).primaryColorDark;
-    final topPaint = Paint()..color = HexColor.fromHex('#e83939');
-    //var bottomPaint = Paint()..color = Theme.of(sessionContext).primaryColorLight;
-    final bottomPaint = Paint()..color = HexColor.fromHex('#f2918f');
+    final topPaint = Paint()..color = topWaveformColor;
+    final bottomPaint = Paint()..color = bottomWaveformColor;
 
     // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {

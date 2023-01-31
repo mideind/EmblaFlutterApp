@@ -30,10 +30,12 @@ const double sessionFontSize = 23.0;
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
 final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
-// Session button circle colors, outermost to innermost
+// Session button colors, outermost to innermost
 final Color circleColor1 = HexColor.fromHex('#f9f0f0');
 final Color circleColor2 = HexColor.fromHex('#f9e2e1');
 final Color circleColor3 = HexColor.fromHex('#f9dcdb');
+final Color topWaveformColor = HexColor.fromHex('#e83939');
+final Color bottomWaveformColor = HexColor.fromHex('#f2918f');
 
 // Define default (light) app styling and color scheme
 final Color lightMainColor = HexColor.fromHex('#e83939');
