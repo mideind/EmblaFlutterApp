@@ -60,6 +60,7 @@ Future<String> genVersionString() async {
   return swInfoStr;
 }
 
+// Return application name
 Future<String> _genName() async {
   return kSoftwareName;
 }
@@ -95,14 +96,17 @@ Future<String> _genImplementation() async {
   return kSoftwareImplementation.sentenceCapitalized();
 }
 
+// Software author name
 Future<String> _genAuthor() async {
   return kSoftwareAuthor;
 }
 
+// Is microphone access granted?
 Future<String> _genMicAccess() async {
   return (await Permission.location.isGranted) ? "Já" : "Nei";
 }
 
+// Is location access granted?
 Future<String> _genLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
     return "Nei";
