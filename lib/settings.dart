@@ -507,6 +507,7 @@ List<Widget> _settings(BuildContext context) {
       divider,
       SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
       QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      // TODO: A silly Flutter equivalent of a break tag
       Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
     ]);
   }

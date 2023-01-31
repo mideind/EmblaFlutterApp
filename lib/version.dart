@@ -133,7 +133,7 @@ Divider divider = const Divider(
 );
 
 // List of version info widgets
-List<Widget> _versionInfo(BuildContext context) {
+List<Widget> _versionInfo() {
   List<Widget> versionInfoWidgets = [
     Center(child: Text('Upplýsingar um útgáfu')),
     divider,
@@ -164,6 +164,6 @@ class VersionRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: standardEdgeInsets, children: _versionInfo(context)));
+        body: ListView(padding: standardEdgeInsets, children: _versionInfo()));
   }
 }

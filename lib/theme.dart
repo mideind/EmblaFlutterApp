@@ -27,6 +27,7 @@ const String defaultFontFamily = 'Lato';
 const double defaultFontSize = 18.0;
 const double sessionFontSize = 23.0;
 
+// Define default text styles for UI elements
 final menuTextStyle = TextStyle(fontSize: defaultFontSize);
 final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
@@ -112,15 +113,17 @@ final darkThemeData = ThemeData(
   ),
 );
 
+// Standard app bar appearance
 final standardAppBar = AppBar(
   bottomOpacity: 0.0,
   elevation: 0.0,
   toolbarOpacity: 1.0,
 );
 
+// Standard padding for routes
 const standardEdgeInsets = EdgeInsets.all(8);
 
-/// Get the image for the current theme
+/// Get image for current theme
 AssetImage img4theme(String imgName, BuildContext context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     imgName = "${imgName}_dark";
@@ -128,16 +131,14 @@ AssetImage img4theme(String imgName, BuildContext context) {
   return AssetImage("assets/images/$imgName.png");
 }
 
-/// Get the main color for the current theme
+/// Get the safe main color for the current theme
 Color color4ctx(BuildContext context) {
-  final brightness = MediaQuery.of(context).platformBrightness;
-  if (brightness == Brightness.dark) {
-    return darkMainColor;
-  }
-  return lightMainColor;
+  return MediaQuery.of(context).platformBrightness == Brightness.dark
+      ? darkMainColor
+      : lightMainColor;
 }
 
-/// Get the circle colors for the current theme
+/// Get circle colors for current theme
 List<Color> circleColors4Context(var context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
     final Color circleColor1 = HexColor.fromHex('#f0f0f0');

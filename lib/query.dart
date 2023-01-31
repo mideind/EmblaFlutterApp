@@ -124,7 +124,7 @@ class QueryService {
 
   /// Send request to query history API
   /// Boolean [allData] param determines whether all device-specific
-  /// data or only query history should be deleted server-side
+  /// data or only query history should be deleted server-side.
   static Future<void> clearUserData(bool allData, [Function? handler]) async {
     final Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',

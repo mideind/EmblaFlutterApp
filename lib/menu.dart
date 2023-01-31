@@ -56,18 +56,9 @@ void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
   );
 }
 
-// void _pushHotwordTrainingRoute(BuildContext context, dynamic arg) {
-// Navigator.push(
-//   context,
-//   CupertinoPageRoute(
-//     builder: (context) => TrainingRoute(),
-//   ),
-// );
-// }
-
 // Generate a menu tile based on args
-ListTile _menuTile(
-    String name, String imageName, Function onTapFunc, BuildContext ctx, dynamic arg) {
+ListTile _menuTile(String name, String imageName,
+    Function(BuildContext context, dynamic arg) onTapFunc, BuildContext ctx, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
     leading: Image(image: img4theme(imageName, ctx)),
@@ -78,7 +69,7 @@ ListTile _menuTile(
   );
 }
 
-// Generate list of menu tiles
+// Generate list view with menu tiles
 ListView _menu(BuildContext context) {
   List<Widget> menuItems = [
     _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),

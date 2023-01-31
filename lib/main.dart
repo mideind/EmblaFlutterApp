@@ -84,6 +84,8 @@ void main() async {
 
   if (statuses[Permission.location]!.isDenied) {
     dlog("Location permission is denied.");
+    // User has probably explicitly denied location permission
+    // so we disable location sharing pref to reflect that action
     Prefs().setBoolForKey('share_location', false);
   } else {
     LocationTracker().start();

@@ -26,12 +26,12 @@ import './keys.dart' show googleServiceAccount, queryAPIKey;
 
 // String extensions
 extension StringExtension on String {
-  // Does string end w. standard punctuation?
+  // Does string end with standard punctuation?
   bool isPunctuationTerminated() {
     if (length == 0) {
       return false;
     }
-    List<String> punctuation = ['.', '?', '!', '."', '.“', ".'"];
+    List<String> punctuation = ['.', '."', '.“', '?', '?"', '?“', '!', '!"', '!“', '…', '…"', '…“'];
     for (String p in punctuation) {
       if (endsWith(p)) {
         return true;

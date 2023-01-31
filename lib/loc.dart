@@ -79,6 +79,7 @@ class LocationTracker {
     return (lat != null && lon != null);
   }
 
+  // private
   set known(bool val) {
     if (val == false) {
       lat = null;
@@ -86,7 +87,8 @@ class LocationTracker {
     }
   }
 
-  /// Returns a list of doubles [lat, lon] or null if location is unknown
+  /// Returns a list of two doubles ([lat, lon]),
+  /// or null if location is unknown
   List<double>? get location {
     if (!known) {
       return null;
