@@ -155,6 +155,6 @@ class VersionRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: const EdgeInsets.all(8), children: _versionInfo(context)));
+        body: ListView(padding: standardEdgeInsets, children: _versionInfo(context)));
   }
 }

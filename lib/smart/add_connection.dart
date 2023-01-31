@@ -259,7 +259,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
     return Scaffold(
       appBar: standardAppBar,
       body: ListView(
-        padding: const EdgeInsets.all(8),
+        padding: standardEdgeInsets,
         children: wlist,
       ),
     );

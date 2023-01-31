@@ -116,6 +116,8 @@ final standardAppBar = AppBar(
   toolbarOpacity: 1.0,
 );
 
+const standardEdgeInsets = EdgeInsets.all(8);
+
 /// Get the image for the current theme
 AssetImage img4theme(String imgName, BuildContext context) {
   if (MediaQuery.of(context).platformBrightness == Brightness.dark) {

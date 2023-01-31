@@ -357,7 +357,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
     text = Prefs().stringForKey(widget.prefKey) ?? '';
     return Column(children: [
       Padding(
-          padding: EdgeInsets.all(8.0),
+          padding: standardEdgeInsets,
           child: TextField(controller: textController, onSubmitted: _onChange)),
       CupertinoSegmentedControl(
           children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _onChange),
@@ -541,6 +541,6 @@ class SettingsRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: const EdgeInsets.all(8), children: _settings(context)));
+        body: ListView(padding: standardEdgeInsets, children: _settings(context)));
   }
 }

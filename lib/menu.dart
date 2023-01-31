@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
 import './common.dart';
-import './theme.dart' show img4theme, menuTextStyle, standardAppBar;
+import './theme.dart' show img4theme, menuTextStyle, standardAppBar, standardEdgeInsets;
 import './settings.dart' show SettingsRoute;
 import './web.dart' show WebViewRoute;
 import './smart/smarthome.dart' show SmarthomeRoute;
@@ -96,7 +96,7 @@ ListView _menu(BuildContext context) {
   }
 
   return ListView(
-    padding: const EdgeInsets.all(8),
+    padding: standardEdgeInsets,
     children: menuItems,
   );
 }

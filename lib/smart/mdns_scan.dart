@@ -308,7 +308,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
     return Scaffold(
       appBar: standardAppBar,
       body: ListView(
-        padding: const EdgeInsets.all(8),
+        padding: standardEdgeInsets,
         children: wlist,
       ),
     );
