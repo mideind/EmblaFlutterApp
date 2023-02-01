@@ -35,7 +35,6 @@ dependencies:
   multicast_dns: "^0.3.2"
   flutter_animate: "^3.0.0"
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,8 +1,6 @@
 TODO for Embla Flutter client
 
-DONE * Add iOS integration tests
-
-* Add widget and integration tests
+* Add widget tests
 * Separate session button painter class from shared state in session.dart. Ugly stuff.
 * Optimize animation redraws, or switch over to APNG for animation when Flutter adds support.
 The client currently manually loads all the PNG animation frames into memory and

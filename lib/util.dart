@@ -31,7 +31,24 @@ extension StringExtension on String {
     if (length == 0) {
       return false;
     }
-    List<String> punctuation = ['.', '."', '.“', '?', '?"', '?“', '!', '!"', '!“', '…', '…"', '…“'];
+    List<String> punctuation = [
+      '.',
+      ".'",
+      '."',
+      '.“',
+      '?',
+      "?'",
+      '?"',
+      '?“',
+      '!',
+      "!'",
+      '!"',
+      '!“',
+      '…',
+      "…'",
+      '…"',
+      '…“'
+    ];
     for (String p in punctuation) {
       if (endsWith(p)) {
         return true;

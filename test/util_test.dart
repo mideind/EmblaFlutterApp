@@ -35,6 +35,7 @@ void testUtil() {
       "'Engilbert Humperdink var maðurinn.'",
       '"Ei skal höggva."',
       "Þetta er setning...",
+      "Og þetta er önnur setning…",
     ];
     for (String s in term) {
       expect(s.isPunctuationTerminated(), true);
