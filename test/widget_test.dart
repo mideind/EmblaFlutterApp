@@ -1,11 +1,78 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility that Flutter provides. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
+// These are the tests for the project's widgets.
 
-// import 'package:flutter/material.dart';
-// import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
 
-void main() {}
+import 'package:embla/menu.dart';
+// import 'package:embla/session.dart';
+import 'package:embla/settings.dart';
+import 'package:embla/version.dart';
+import 'package:embla/voices.dart';
+import 'package:embla/web.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+
+void main() {
+  // menu.dart
+  testWidgets('MenuRoute contains at least 4 ListTiles', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: MenuRoute(),
+      ),
+    );
+    expect(find.byType(ListTile), findsAtLeastNWidgets(4));
+  });
+
+  // session.dart
+//   testWidgets('SessionRoute contains two IconButtons', (tester) async {
+//     await tester.pumpWidget(
+//       MaterialApp(
+//         home: SessionRoute(),
+//       ),
+//     );
+//     expect(find.byType(IconButton), findsNWidgets(2));
+//   });
+
+  // settings.dart
+  testWidgets('SettingsRoute contains ListView', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: SettingsRoute(),
+      ),
+    );
+    expect(find.byType(ListView), findsOneWidget);
+  });
+
+  // version.dart
+  testWidgets('VersionRoute contains ListView with at least 4 items', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: VersionRoute(),
+      ),
+    );
+    expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(SettingsAsyncLabelValueWidget), findsAtLeastNWidgets(4));
+  });
+
+  // voices.dart
+  testWidgets('VoicesRoute contains ListView and at least 2 voices', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: VoiceSelectionRoute(),
+      ),
+    );
+    // Give async builder time to complete
+    await tester.pumpAndSettle(Duration(milliseconds: 100));
+    expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(ListTile), findsAtLeastNWidgets(2));
+  });
+
+  // web.dart
+  testWidgets('WebViewRoute contains InAppWebView', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: WebViewRoute(initialURL: "https://mideind.is"),
+      ),
+    );
+    expect(find.byType(InAppWebView), findsOneWidget);
+  });
+}

@@ -154,6 +154,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void dispose() {
     appStateSubscription?.cancel();
+    appStateSubscription = null;
+    animationTimer?.cancel();
+    animationTimer = null;
     super.dispose();
   }
 

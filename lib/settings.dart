@@ -314,6 +314,8 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
   }
 
   @override
+  @protected
+  @mustCallSuper
   void dispose() {
     textController?.dispose();
     super.dispose();

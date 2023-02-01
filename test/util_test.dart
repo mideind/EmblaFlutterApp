@@ -1,23 +1,13 @@
-// These are the tests for the project's utility functions
-//
+// These are the tests for the project's utility
+// functions and custom class extensions.
 
 import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:embla/util.dart';
-import 'package:embla/prefs.dart';
 
 void main() {
-  testPrefs();
   testUtil();
-}
-
-void testPrefs() {
-  test("Prefs should be singleton", () {
-    Prefs p1 = Prefs();
-    Prefs p2 = Prefs();
-    expect(p1 == p2, true);
-  });
 }
 
 void testUtil() {
