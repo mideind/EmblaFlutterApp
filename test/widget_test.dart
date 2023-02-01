@@ -3,8 +3,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import 'package:embla/main.dart';
 import 'package:embla/menu.dart';
-// import 'package:embla/session.dart';
+import 'package:embla/session.dart';
 import 'package:embla/settings.dart';
 import 'package:embla/version.dart';
 import 'package:embla/voices.dart';
@@ -12,6 +13,14 @@ import 'package:embla/web.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
 void main() {
+  // main.dart
+//   testWidgets('EmblaApp contains SessionRoute', (tester) async {
+//     await tester.pumpWidget(
+//       EmblaApp(),
+//     );
+//     expect(find.byType(SessionRoute), findsOneWidget);
+//   });
+
   // menu.dart
   testWidgets('MenuRoute contains at least 4 ListTiles', (tester) async {
     await tester.pumpWidget(
@@ -33,13 +42,14 @@ void main() {
 //   });
 
   // settings.dart
-  testWidgets('SettingsRoute contains ListView', (tester) async {
+  testWidgets('SettingsRoute contains ListView and at least 2 Switches', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: SettingsRoute(),
       ),
     );
     expect(find.byType(ListView), findsOneWidget);
+    expect(find.byType(SettingsSwitchWidget), findsAtLeastNWidgets(2));
   });
 
   // version.dart
@@ -54,7 +64,7 @@ void main() {
   });
 
   // voices.dart
-  testWidgets('VoicesRoute contains ListView and at least 2 voices', (tester) async {
+  testWidgets('VoicesRoute contains ListView and at least 2 items', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
         home: VoiceSelectionRoute(),
