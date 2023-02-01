@@ -62,6 +62,12 @@ To build an unsigned Android `apk` debug binary for arm64, run the following scr
 bash build_apk.sh
 ```
 
+To build an unsigned iOS `ipa` debug bundle, run the following script:
+
+```bash
+bash build_ipa.sh
+```
+
 ## Screenshots
 
 <p float="left">
