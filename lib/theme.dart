@@ -46,7 +46,7 @@ final Color lightCardColor = HexColor.fromHex('#ffffff');
 final Color lightSplashColor = HexColor.fromHex('#f6b0b0');
 
 final lightThemeData = ThemeData(
-  useMaterial3: true,
+  // useMaterial3: true,
   brightness: Brightness.light,
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red, brightness: Brightness.light)
       .copyWith(background: lightBgColor),
@@ -84,7 +84,7 @@ final darkCardColor = HexColor.fromHex('#505050');
 final darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 final darkThemeData = ThemeData(
-  useMaterial3: true,
+  // useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey, brightness: Brightness.dark)
       .copyWith(background: darkBgColor),

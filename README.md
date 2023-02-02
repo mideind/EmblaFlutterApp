@@ -56,6 +56,8 @@ flutter run
 This should launch the app in development mode on your device of choice
 (e.g. simulator, attached physical device, etc.).
 
+## Debug build scripts
+
 To build an unsigned Android `apk` debug binary for arm64, run the following script:
 
 ```bash
@@ -67,6 +69,9 @@ To build an unsigned iOS `ipa` debug bundle, run the following script:
 ```bash
 bash build_ipa.sh
 ```
+
+To create a signed iOS build that will run on an actual device, you need to set
+up an Apple Developer account and enable signing in the Xcode project.
 
 ## Screenshots
 
@@ -86,7 +91,8 @@ speech recognition.
 
 Embla is Copyright (C) 2019-2023 [Miðeind ehf.](https://mideind.is)
 
-<a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf." width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
+<a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf."
+width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
 
 This program and its source code is free software: you can redistribute it and/or modify it
 under the terms of the GNU General Public License as published by the Free

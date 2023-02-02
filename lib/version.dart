@@ -128,21 +128,25 @@ Future<String> _genUniqueIdentifier() async {
   return await PlatformDeviceId.getDeviceId ?? "???";
 }
 
-Divider divider = const Divider(
-  height: 20,
-);
-
 // List of version info widgets
-List<Widget> _versionInfo() {
+List<Widget> _versionInfo(BuildContext context) {
+  final divider = Divider(height: 40, color: color4ctx(context));
+  final infoIcon = Icon(IconData(0xe33d, fontFamily: 'MaterialIcons'), color: color4ctx(context));
+  final header = Center(
+      child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
+    infoIcon,
+    Text(' Upplýsingar'),
+  ]));
+
   List<Widget> versionInfoWidgets = [
-    Center(child: Text('Upplýsingar um útgáfu')),
+    header,
     divider,
     SettingsAsyncLabelValueWidget('Nafn', _genName()),
     SettingsAsyncLabelValueWidget('ID', _genAppIdentifier()),
     SettingsAsyncLabelValueWidget('Útgáfa', _genVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _genBuildNumber()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _genPlatform()),
-    SettingsAsyncLabelValueWidget('Stýrikerfisútgáfa', _genOSVersion()),
+    SettingsAsyncFullTextLabelWidget(_genOSVersion()),
     SettingsAsyncLabelValueWidget('Útfærsla', _genImplementation()),
     SettingsAsyncLabelValueWidget('Höfundur', _genAuthor()),
     divider,
@@ -164,6 +168,6 @@ class VersionRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: standardEdgeInsets, children: _versionInfo()));
+        body: ListView(padding: standardEdgeInsets, children: _versionInfo(context)));
   }
 }

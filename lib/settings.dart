@@ -43,10 +43,6 @@ const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
 
-Divider divider = const Divider(
-  height: 20,
-);
-
 /// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
@@ -360,7 +356,11 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
     return Column(children: [
       Padding(
           padding: standardEdgeInsets,
-          child: TextField(controller: textController, onSubmitted: _onChange)),
+          child: TextField(
+            controller: textController,
+            onSubmitted:
+                _onChange, /*style: TextStyle(color: lightTextColor, fontSize: defaultFontSize)*/
+          )),
       CupertinoSegmentedControl(
           children: _genChildren(), groupValue: selectedSegment(), onValueChanged: _onChange),
     ]);
@@ -488,6 +488,8 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
 
 // Generate list of settings widgets
 List<Widget> _settings(BuildContext context) {
+  final divider = Divider(height: 40, color: color4ctx(context));
+
   // Basic settings widgets
   List<Widget> settingsWidgets = [
     SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
