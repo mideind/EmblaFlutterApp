@@ -60,6 +60,7 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
       return Response("Request timed out", 408);
     });
   } catch (e) {
+    dlog("Error while making POST request: $e");
     response = null;
   }
 
@@ -139,9 +140,10 @@ class QueryService {
 
   /// Send request to speech synthesis API
   static Future<void> requestSpeechSynthesis(String text, [Function? handler]) async {
-    final Map<String, String> qargs = {
+    Map<String, String> qargs = {
       'text': text,
       'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
+      'voice_speed': Prefs().floatForKey('voice_speed').toString(),
       'format': 'text', // No SSML for now...
       'api_key': readQueryServerKey(),
     };

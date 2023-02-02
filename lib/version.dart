@@ -131,7 +131,7 @@ Future<String> _genUniqueIdentifier() async {
 // List of version info widgets
 List<Widget> _versionInfo(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
-  final infoIcon = Icon(IconData(0xe33d, fontFamily: 'MaterialIcons'), color: color4ctx(context));
+  final infoIcon = Icon(Icons.info_outline, color: color4ctx(context));
   final header = Center(
       child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
     infoIcon,

@@ -18,6 +18,8 @@
 
 // Settings route
 
+import 'dart:async';
+
 import 'package:embla/version.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart' show kReleaseMode;
@@ -26,6 +28,7 @@ import 'package:flutter/material.dart';
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
+import './audio.dart' show AudioPlayer;
 import './voices.dart' show VoiceSelectionRoute;
 import './theme.dart';
 
@@ -170,6 +173,7 @@ class SettingsSliderWidget extends StatefulWidget {
   final double minValue;
   final double maxValue;
   final double stepSize;
+  final Function? onChange;
 
   const SettingsSliderWidget(
       {Key? key,
@@ -177,7 +181,8 @@ class SettingsSliderWidget extends StatefulWidget {
       required this.prefKey,
       required this.minValue,
       required this.maxValue,
-      required this.stepSize})
+      required this.stepSize,
+      this.onChange})
       : super(key: key);
 
   @override
@@ -217,6 +222,9 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
                 currVal = _constrainValue(value);
                 Prefs().setFloatForKey(widget.prefKey, currVal);
               });
+              if (widget.onChange != null) {
+                widget.onChange!(currVal);
+              }
             },
             value: currVal,
             min: widget.minValue,
@@ -486,6 +494,21 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
   }
 }
 
+Timer? voiceSpeedTimer;
+
+Future<void> playVoiceSpeed() async {
+  if (voiceSpeedTimer != null) {
+    voiceSpeedTimer!.cancel();
+  }
+  AudioPlayer().stop();
+  voiceSpeedTimer = Timer(const Duration(milliseconds: 500), () {
+    QueryService.requestSpeechSynthesis("Svona hljómar þessi talhraði", (Map val) {
+      print(val);
+      AudioPlayer().playURL(val['audio_url'], (p0) => null);
+    });
+  });
+}
+
 // Generate list of settings widgets
 List<Widget> _settings(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
@@ -501,7 +524,10 @@ List<Widget> _settings(BuildContext context) {
         prefKey: 'voice_speed',
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
-        stepSize: 0.05),
+        stepSize: 0.05,
+        onChange: (dynamic val) {
+          playVoiceSpeed();
+        }),
     SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: VersionRoute()),
   ];
 
