@@ -147,7 +147,7 @@ class QueryService {
       'text': text,
       'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
       'voice_speed': Prefs().floatForKey('voice_speed').toString(),
-      'format': 'text', // No SSML for now...
+      //'format': 'text',
       'api_key': readQueryServerKey(),
     };
 

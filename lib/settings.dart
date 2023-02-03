@@ -46,6 +46,8 @@ const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
     'til þess að bæta svör.';
 
+const String kVoiceSpeedDemoText = 'Svona hljómar þessi hraði';
+
 /// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
@@ -502,7 +504,7 @@ Future<void> playVoiceSpeed() async {
   }
   AudioPlayer().stop();
   voiceSpeedTimer = Timer(const Duration(milliseconds: 500), () {
-    QueryService.requestSpeechSynthesis("Svona hljómar þessi talhraði", (Map val) {
+    QueryService.requestSpeechSynthesis(kVoiceSpeedDemoText, (Map val) {
       print(val);
       AudioPlayer().playURL(val['audio_url'], (p0) => null);
     });
