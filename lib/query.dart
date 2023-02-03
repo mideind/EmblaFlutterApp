@@ -86,6 +86,7 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
 
 /// Wrapper class around communication with query server
 class QueryService {
+  //
   /// Send request to query server API
   static Future<void> sendQuery(List<String> queries, [Function? handler, bool? test]) async {
     // Query args
@@ -106,11 +107,13 @@ class QueryService {
       qargs['test'] = '1';
     }
 
+    // Set voice speed if set
     double? speed = Prefs().floatForKey('voice_speed');
     if (speed != null) {
       qargs['voice_speed'] = speed.toString();
     }
 
+    // Set location params if available and sharing is enabled
     bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
     if (shareLocation == true) {
       List<double>? latlon = LocationTracker().location;
@@ -152,12 +155,12 @@ class QueryService {
   }
 
   /// Send request to voices API
-  static Future<Map<String, dynamic>?> requestSupportedVoices() async {
-    final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
-    if (r == null) {
-      return null;
-    } else {
-      return json.decode(r.body);
-    }
-  }
+  // static Future<Map<String, dynamic>?> requestSupportedVoices() async {
+  //   final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
+  //   if (r == null) {
+  //     return null;
+  //   } else {
+  //     return json.decode(r.body);
+  //   }
+  // }
 }
