@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Animations
+// Animation frames
 
 import 'dart:ui' as ui;
 
@@ -40,6 +40,7 @@ Future<ui.Image> _loadImageAsset(String asset) async {
 }
 
 /// Preload all logo animation frames
+/// This should be called in main() before app initialization
 Future<void> preloadAnimationFrames() async {
   for (int i = 0; i < kNumAnimationFrames; i++) {
     final String padnum = i.toString().padLeft(5, '0');

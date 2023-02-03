@@ -155,12 +155,8 @@ class QueryService {
   }
 
   /// Send request to voices API
-  // static Future<Map<String, dynamic>?> requestSupportedVoices() async {
-  //   final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
-  //   if (r == null) {
-  //     return null;
-  //   } else {
-  //     return json.decode(r.body);
-  //   }
-  // }
+  static Future<Map<String, dynamic>?> requestSupportedVoices() async {
+    final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
+    return (r == null) ? null : json.decode(r.body);
+  }
 }
