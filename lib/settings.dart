@@ -175,7 +175,7 @@ class SettingsSliderWidget extends StatefulWidget {
   final double minValue;
   final double maxValue;
   final double stepSize;
-  final Function? onChange;
+  final Function(double)? onChangeEnd;
 
   const SettingsSliderWidget(
       {Key? key,
@@ -184,7 +184,7 @@ class SettingsSliderWidget extends StatefulWidget {
       required this.minValue,
       required this.maxValue,
       required this.stepSize,
-      this.onChange})
+      this.onChangeEnd})
       : super(key: key);
 
   @override
@@ -219,14 +219,12 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
     return ListTile(
         title: Text(genSliderLabel()),
         trailing: CupertinoSlider(
+            onChangeEnd: widget.onChangeEnd ?? (double value) {},
             onChanged: (double value) {
               setState(() {
                 currVal = _constrainValue(value);
                 Prefs().setFloatForKey(widget.prefKey, currVal);
               });
-              if (widget.onChange != null) {
-                widget.onChange!(currVal);
-              }
             },
             value: currVal,
             min: widget.minValue,
@@ -503,11 +501,8 @@ Future<void> playVoiceSpeed() async {
     voiceSpeedTimer!.cancel();
   }
   AudioPlayer().stop();
-  voiceSpeedTimer = Timer(const Duration(milliseconds: 500), () {
-    QueryService.requestSpeechSynthesis(kVoiceSpeedDemoText, (Map val) {
-      print(val);
-      AudioPlayer().playURL(val['audio_url'], (p0) => null);
-    });
+  voiceSpeedTimer = Timer(const Duration(milliseconds: 300), () {
+    AudioPlayer().playSound('voicespeed');
   });
 }
 
@@ -527,7 +522,7 @@ List<Widget> _settings(BuildContext context) {
         minValue: kVoiceSpeedMin,
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05,
-        onChange: (dynamic val) {
+        onChangeEnd: (double val) {
           playVoiceSpeed();
         }),
     SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: VersionRoute()),

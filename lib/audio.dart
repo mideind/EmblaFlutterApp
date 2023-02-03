@@ -74,6 +74,7 @@ class AudioPlayer {
     List<String> voiceSpecificSounds = [
       "conn",
       "err",
+      "voicespeed",
       "mynameis",
       "dunno01",
       "dunno02",
@@ -131,6 +132,7 @@ class AudioPlayer {
       }
       dlog("Audio file is ${filesize(data.lengthInBytes, 1)} (${data.lengthInBytes} bytes)");
 
+      player.setSpeed(1.0);
       player.startPlayer(
           fromDataBuffer: data,
           codec: Codec.mp3,
@@ -183,6 +185,7 @@ class AudioPlayer {
     }
 
     dlog("Playing audio file '$fileName.wav'");
+    player.setSpeed(Prefs().floatForKey("voice_speed") ?? 1.0);
     player.startPlayer(
         fromDataBuffer: audioFileCache[fileName],
         sampleRate: kAudioSampleRate,
