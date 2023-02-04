@@ -204,7 +204,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
   }
 
   String genSliderLabel() {
-    double val = Prefs().floatForKey(widget.prefKey) ?? 1.0;
+    double val = Prefs().doubleForKey(widget.prefKey) ?? 1.0;
     String valStr = val.toStringAsFixed(2);
     if (valStr.endsWith("0")) {
       valStr = valStr.substring(0, valStr.length - 1);
@@ -215,7 +215,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
 
   @override
   Widget build(BuildContext context) {
-    currVal = _constrainValue(Prefs().floatForKey(widget.prefKey) ?? 1.0);
+    currVal = _constrainValue(Prefs().doubleForKey(widget.prefKey) ?? 1.0);
     return ListTile(
         title: Text(genSliderLabel()),
         trailing: CupertinoSlider(
@@ -223,7 +223,7 @@ class SettingsSliderWidgetState extends State<SettingsSliderWidget> {
             onChanged: (double value) {
               setState(() {
                 currVal = _constrainValue(value);
-                Prefs().setFloatForKey(widget.prefKey, currVal);
+                Prefs().setDoubleForKey(widget.prefKey, currVal);
               });
             },
             value: currVal,

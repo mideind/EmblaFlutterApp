@@ -73,7 +73,7 @@ void testPrefs() async {
   test("Prefs should return null for unset non-bool-value keys", () {
     var p = Prefs();
     expect(p.stringForKey("test"), null);
-    expect(p.floatForKey("test2"), null);
+    expect(p.doubleForKey("test2"), null);
   });
 
 //   test("Prefs should return same value for key as previously set", () {

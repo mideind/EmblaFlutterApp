@@ -108,7 +108,7 @@ class QueryService {
     }
 
     // Set voice speed if set
-    double? speed = Prefs().floatForKey('voice_speed');
+    double? speed = Prefs().doubleForKey('voice_speed');
     if (speed != null) {
       qargs['voice_speed'] = speed.toString();
     }
@@ -146,7 +146,7 @@ class QueryService {
     Map<String, String> qargs = {
       'text': text,
       'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
-      'voice_speed': Prefs().floatForKey('voice_speed').toString(),
+      'voice_speed': Prefs().doubleForKey('voice_speed').toString(),
       //'format': 'text',
       'api_key': readQueryServerKey(),
     };

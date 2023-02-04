@@ -35,6 +35,7 @@ class Prefs {
   }
 
   Future<void> load() async {
+    dlog("Loading prefs...");
     _sp = await SharedPreferences.getInstance();
   }
 
@@ -55,11 +56,11 @@ class Prefs {
     }
   }
 
-  double? floatForKey(String key) {
+  double? doubleForKey(String key) {
     return _sp?.getDouble(key);
   }
 
-  void setFloatForKey(String key, double val) {
+  void setDoubleForKey(String key, double val) {
     dlog("Setting pref key '$key' to float '${val.toString()}'");
     _sp?.setDouble(key, val);
   }
@@ -85,12 +86,13 @@ class Prefs {
     Prefs().setBoolForKey('hotword_activation', true);
     Prefs().setBoolForKey('share_location', true);
     Prefs().setBoolForKey('privacy_mode', false);
-    Prefs().setFloatForKey('voice_speed', 1.0);
+    Prefs().setDoubleForKey('voice_speed', 1.0);
     Prefs().setStringForKey('voice_id', kDefaultVoice);
     Prefs().setStringForKey('query_server', kDefaultQueryServer);
   }
 
-  // Generate a human-readable string representation of all key value pairs
+  /// Generate a human-readable string representation of
+  /// all key/value pairs in global Prefs object
   String description() {
     List<dynamic> list = _sp!
         .getKeys()

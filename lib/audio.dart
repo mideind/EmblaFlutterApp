@@ -185,7 +185,7 @@ class AudioPlayer {
     }
 
     dlog("Playing audio file '$fileName.wav'");
-    player.setSpeed(Prefs().floatForKey("voice_speed") ?? 1.0);
+    player.setSpeed(Prefs().doubleForKey("voice_speed") ?? 1.0);
     player.startPlayer(
         fromDataBuffer: audioFileCache[fileName],
         sampleRate: kAudioSampleRate,
