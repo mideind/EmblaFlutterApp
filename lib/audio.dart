@@ -22,7 +22,7 @@ import 'dart:async';
 import 'dart:typed_data';
 import 'dart:math';
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:http/http.dart' as http;
@@ -86,7 +86,7 @@ class AudioPlayer {
     ];
 
     List<String> voiceNames = kSpeechSynthesisVoices;
-    if (kReleaseMode == false) {
+    if (kDebugMode) {
       voiceNames = kSpeechSynthesisDebugVoices;
     }
     for (String voiceName in voiceNames) {

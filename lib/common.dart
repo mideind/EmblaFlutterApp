@@ -18,7 +18,7 @@
 
 // Global constants and debug logging
 
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show kDebugMode;
 
 // Software info
 const String kSoftwareName = 'Embla';
@@ -68,7 +68,7 @@ const List<List<String>> kQueryServerPresetOptions = [
 
 // Debug logging
 void dlog(dynamic msg) {
-  if (kReleaseMode == false) {
+  if (kDebugMode) {
     // ignore: avoid_print
     print(msg.toString());
   }

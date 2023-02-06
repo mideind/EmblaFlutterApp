@@ -21,7 +21,7 @@
 import 'dart:io' show Platform;
 
 import 'package:embla/util.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
@@ -57,7 +57,7 @@ Future<String> genVersionString() async {
   final String osName = kOSNameToPretty[Platform.operatingSystem] ?? "";
 
   String swInfoStr = "$version ($osName)";
-  if (kReleaseMode == false) {
+  if (kDebugMode) {
     swInfoStr += " dbg";
   }
   return swInfoStr;
@@ -77,7 +77,7 @@ Future<String> _genAppIdentifier() async {
 // Return marketing version e.g. 1.3.3
 Future<String> _genVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  if (kReleaseMode == false) {
+  if (kDebugMode == true) {
     return "${packageInfo.version} (debug)";
   }
   return packageInfo.version;

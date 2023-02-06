@@ -18,8 +18,8 @@
 
 // Voice selection route
 
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
 
 import './prefs.dart' show Prefs;
 // import './query.dart' show QueryService;
@@ -34,14 +34,11 @@ List<String> voices = kSpeechSynthesisVoices;
 
 // Fetch list of voice IDs (strings) from server
 Future<List<String>> fetchVoiceList() async {
-  if (kReleaseMode) {
-    voices = kSpeechSynthesisVoices;
-  } else {
-    voices = kSpeechSynthesisDebugVoices;
-  }
+  voices = kDebugMode ? kSpeechSynthesisDebugVoices : kSpeechSynthesisVoices;
   return voices;
 
   // This is disabled for now.
+  //
   // try {
   //   Map<String, dynamic> res = await QueryService.requestSupportedVoices();
   //   List<dynamic> voiceList = kSpeechSynthesisVoices;

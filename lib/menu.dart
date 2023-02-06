@@ -80,7 +80,7 @@ ListView _menu(BuildContext context) {
   ];
 
   // Only show Smart Home menu item in debug mode
-  if (kReleaseMode == false) {
+  if (kDebugMode) {
     ListTile smarthomeTile =
         _menuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
     menuItems.insert(1, smarthomeTile);

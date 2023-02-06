@@ -20,16 +20,16 @@
 
 import 'dart:async';
 
-import 'package:embla/version.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart' show kReleaseMode;
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './audio.dart' show AudioPlayer;
 import './voices.dart' show VoiceSelectionRoute;
+import './version.dart';
 import './theme.dart';
 
 // UI string constants
@@ -529,7 +529,7 @@ List<Widget> _settings(BuildContext context) {
   ];
 
   // Only include query server selection widget in debug builds
-  if (kReleaseMode == false) {
+  if (kDebugMode) {
     settingsWidgets.addAll([
       divider,
       SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),

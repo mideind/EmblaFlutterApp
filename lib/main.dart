@@ -50,7 +50,7 @@ void main() async {
   // Previous versions of the app used "Kona" as the default voice with
   // the option of "Karl" as an alternative. As of 1.3.0, we use
   // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
-  if (launched == true && kReleaseMode == true) {
+  if (launched == true && kDebugMode == false) {
     String? voiceID = Prefs().stringForKey("voice_id");
     if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
       Prefs().setStringForKey("voice_id", kDefaultVoice);
