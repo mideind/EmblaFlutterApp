@@ -31,7 +31,7 @@ import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './util.dart' show readQueryServerKey;
 
-const kRequestTimeout = Duration(seconds: 10); // Seconds
+const kRequestTimeout = Duration(seconds: 25); // Seconds
 
 String _clientType() {
   return "${Platform.operatingSystem}_{$kSoftwareImplementation}";
