@@ -117,6 +117,7 @@ class SessionRoute extends StatefulWidget {
 }
 
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
+  EmblaSession session = EmblaSession(EmblaSessionConfig());
   Timer? animationTimer;
   String text = introMsg();
   String? imageURL;
@@ -287,23 +288,21 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   // Start session
   void start() async {
-    if (state != SessionState.resting) {
+    if (session.isActive()) {
       dlog('Session start called during pre-existing session!');
       return;
     }
 
-    dlog('Starting session');
-
     if (await Permission.microphone.isGranted == false) {
       AudioPlayer().playSound('rec_cancel');
-      showRecognitionErrorAlert(context);
+      showMicPermissionErrorAlert(context);
       return;
     }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
       msg(kNoInternetMessage);
-      AudioPlayer().playSound('conn');
+      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
       return;
     }
 
@@ -321,11 +320,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
     });
 
+    // Create session config
+
     try {
-      // Start session
+      session.start();
     } catch (e) {
       stop();
-      AudioPlayer().playSound('conn');
+      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
     }
   }
 
@@ -336,6 +337,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     dlog('Stopping session');
     animationTimer?.cancel();
+    session.stop();
 
     setState(() {
       state = SessionState.resting;
@@ -355,19 +357,17 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     msg(introMsg());
   }
 
-  // Button pressed
+  // Session button pressed
   void toggle() async {
-    if (state == SessionState.resting) {
+    if (session.isActive() == false) {
       start();
-    }
-    // We are in an active session state
-    else {
+    } else {
       cancel();
     }
   }
 
   // Show alert dialog for when microphone permission is not available
-  void showRecognitionErrorAlert(BuildContext context) {
+  void showMicPermissionErrorAlert(BuildContext context) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
