@@ -257,7 +257,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
 
   Future<bool> isConnectedToInternet() async {
     // TODO: Is this needed? Doc says to not use it for wifi status
-    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
+    final ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
   }
 

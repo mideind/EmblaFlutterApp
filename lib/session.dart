@@ -152,9 +152,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   @override
   void dispose() {
     appStateSubscription?.cancel();
-    appStateSubscription = null;
     animationTimer?.cancel();
-    animationTimer = null;
     super.dispose();
   }
 
@@ -169,7 +167,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   Future<bool> isConnectedToInternet() async {
-    ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
+    final ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
   }
 
@@ -392,15 +390,16 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   Widget build(BuildContext context) {
     // Session button properties depending on whether session is active
     sessionContext = context;
-    bool active = (state == SessionState.resting);
-    double prop = kRestingButtonPropSize;
-    double buttonSize = MediaQuery.of(context).size.width * prop;
-    String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
+    final bool active = (state == SessionState.resting);
+    const double prop = kRestingButtonPropSize;
+    final double buttonSize = MediaQuery.of(context).size.width * prop;
+    final String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
 
     // Hotword toggle button properties depending on whether hw detection is enabled
-    bool hwActive = Prefs().boolForKey('hotword_activation');
-    String hotwordIcon = hwActive ? 'mic' : 'mic-slash';
-    String hotwordLabel = hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
+    final bool hwActive = Prefs().boolForKey('hotword_activation');
+    final String hotwordIcon = hwActive ? 'mic' : 'mic-slash';
+    final String hotwordLabel =
+        hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
     // Present menu route
     void pushMenu() {
@@ -431,7 +430,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Handle tap on microphone icon to toggle hotword activation
     void toggleHotwordActivation() {
-      bool on = Prefs().boolForKey('hotword_activation');
+      final bool on = Prefs().boolForKey('hotword_activation');
       Prefs().setBoolForKey('hotword_activation', !on);
       if (state == SessionState.resting) {
         msg(introMsg());
@@ -541,15 +540,15 @@ class SessionButtonPainter extends CustomPainter {
     }
     final ui.Image img = animationFrames[fnum];
     // Source image rect
-    Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
+    final Rect srcRect = Rect.fromLTWH(0, 0, img.width.toDouble(), img.height.toDouble());
 
     // Destination rect centered in canvas
-    double sw = size.width.toDouble();
-    double sh = size.height.toDouble();
-    double prop = 2.4;
-    double w = sw / prop;
-    double h = sh / prop;
-    Rect dstRect = Rect.fromLTWH(
+    final double sw = size.width.toDouble();
+    final double sh = size.height.toDouble();
+    const double prop = 2.4;
+    final double w = sw / prop;
+    final double h = sh / prop;
+    final Rect dstRect = Rect.fromLTWH(
         (sw / 2) - (w / 2), // x
         (sh / 2) - (h / 2), // y
         w, // width
@@ -560,17 +559,17 @@ class SessionButtonPainter extends CustomPainter {
   // Draw audio waveform
   void drawWaveform(Canvas canvas, Size size) {
     // Generate square frame to contain waveform
-    double w = size.width / 2.0;
-    double xOffset = (size.width - w) / 2;
-    double yOffset = (size.height - w) / 2;
-    Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
+    final double w = size.width / 2.0;
+    final double xOffset = (size.width - w) / 2;
+    final double yOffset = (size.height - w) / 2;
+    final Rect frame = Rect.fromLTWH(xOffset, yOffset, w, w);
 
-    double margin = (size.width * kWaveformBarMarginRatio) / (kWaveformNumBars - 1);
-    double totalMarginWidth = (kWaveformNumBars * margin) - margin;
+    final double margin = (size.width * kWaveformBarMarginRatio) / (kWaveformNumBars - 1);
+    final double totalMarginWidth = (kWaveformNumBars * margin) - margin;
 
-    double barWidth = (frame.width - totalMarginWidth) / kWaveformNumBars;
-    double barHeight = frame.height / 2;
-    double centerY = (frame.height / 2);
+    final double barWidth = (frame.width - totalMarginWidth) / kWaveformNumBars;
+    final double barHeight = frame.height / 2;
+    final double centerY = (frame.height / 2);
 
     // Colors for the top and bottom waveform bars
     final topPaint = Paint()..color = topWaveformColor;
@@ -579,10 +578,11 @@ class SessionButtonPainter extends CustomPainter {
     // Draw audio waveform bars based on audio sample levels
     for (int i = 0; i < audioSamples.length; i++) {
       // Clamp signal level
-      double level = min(max(kWaveformMinSampleLevel, audioSamples[i]), kWaveformMaxSampleLevel);
+      final double level =
+          min(max(kWaveformMinSampleLevel, audioSamples[i]), kWaveformMaxSampleLevel);
 
       // Draw top bar
-      Rect topRect = Rect.fromLTWH(
+      final Rect topRect = Rect.fromLTWH(
           i * (barWidth + margin) + (margin / 2) + xOffset, // x
           barHeight - (level * barHeight) + yOffset, // y
           barWidth, // width
@@ -597,7 +597,7 @@ class SessionButtonPainter extends CustomPainter {
           topPaint);
 
       // Draw bottom bar
-      Rect bottomRect = Rect.fromLTWH(
+      final Rect bottomRect = Rect.fromLTWH(
           i * (barWidth + margin) + (margin / 2) + xOffset, // x
           centerY + yOffset, // y
           barWidth, // width

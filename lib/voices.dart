@@ -84,7 +84,7 @@ Widget _buildVoiceList(BuildContext context, List voices) {
               img4theme('waveform', context),
               color: color4ctx(context),
             )),
-        trailing: voices[index] == Prefs().stringForKey("voice_id")
+        trailing: (voices[index] == Prefs().stringForKey("voice_id"))
             ? Icon(
                 Icons.done,
                 color: color4ctx(context),

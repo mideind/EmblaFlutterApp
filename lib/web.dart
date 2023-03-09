@@ -45,7 +45,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
-    Uri uri = Uri.parse(url);
+    final Uri uri = Uri.parse(url);
     return "$kDocsDir/${uri.pathSegments.last}";
   }
 
@@ -59,7 +59,7 @@ class WebViewRouteState extends State<WebViewRoute> {
   // up when fetching document from remote server
   void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
     dlog("Page load error for $url: $errCode, $desc");
-    String path = _fallbackAssetForURL(url.toString());
+    final String path = _fallbackAssetForURL(url.toString());
     dlog("Falling back to local asset $path");
     setState(() {
       controller.loadFile(assetFilePath: path);
@@ -71,9 +71,9 @@ class WebViewRouteState extends State<WebViewRoute> {
   // avoid screwing with the navigation stack of the app.
   Future<NavigationActionPolicy> urlClickHandler(
       InAppWebViewController controller, NavigationAction action) async {
-    URLRequest req = action.request;
-    String urlStr = req.url.toString();
-    String fallbackFilename = _fallbackAssetForURL(urlStr);
+    final URLRequest req = action.request;
+    final String urlStr = req.url.toString();
+    final String fallbackFilename = _fallbackAssetForURL(urlStr);
     if (urlStr.startsWith(widget.initialURL) == false &&
         urlStr.endsWith(fallbackFilename) == false) {
       dlog("Opening external URL: ${req.url}");
@@ -101,7 +101,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     ));
 
     // Create and configure web view
-    InAppWebView webView = InAppWebView(
+    final InAppWebView webView = InAppWebView(
       initialFile: loadingURL,
       initialUrlRequest: URLRequest(url: Uri.parse(url)),
       initialOptions: webViewOpts,
@@ -116,7 +116,7 @@ class WebViewRouteState extends State<WebViewRoute> {
           if (darkMode) {
             url = _darkURLForURL(url);
           }
-          Uri uri = Uri.parse(url);
+          final Uri uri = Uri.parse(url);
           setState(() {
             controller.loadUrl(urlRequest: URLRequest(url: uri));
           });
