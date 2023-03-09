@@ -27,7 +27,7 @@ const kJSExecDefaultWebViewURL = "about:blank";
 
 /// Wrapper class to execute JavaScript code in a headless web view
 class JSExecutor {
-  static final JSExecutor _instance = JSExecutor._internal();
+  static final JSExecutor _instance = JSExecutor._constructor();
   HeadlessInAppWebView? headlessWebView;
 
   // Singleton pattern
@@ -36,7 +36,7 @@ class JSExecutor {
   }
 
   // Constructor
-  JSExecutor._internal() {
+  JSExecutor._constructor() {
     // Only called once, when singleton is instantiated
     headlessWebView = HeadlessInAppWebView(
       initialUrlRequest: URLRequest(url: Uri.parse(kJSExecDefaultWebViewURL)),

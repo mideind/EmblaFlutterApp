@@ -73,7 +73,7 @@ void main() async {
   Wakelock.enable();
 
   // Request permissions
-  // We need microphone (and ideally location) permissions to function
+  // We need microphone (and, ideally, location) permissions to function
   final Map<Permission, PermissionStatus> statuses = await [
     Permission.microphone,
     Permission.location,

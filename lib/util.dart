@@ -26,45 +26,6 @@ import './keys.dart' show queryAPIKey;
 
 // String extensions
 extension StringExtension on String {
-  // Does string end with standard punctuation?
-  bool isPunctuationTerminated() {
-    if (length == 0) {
-      return false;
-    }
-    List<String> punctuation = [
-      '.',
-      ".'",
-      '."',
-      '.“',
-      '?',
-      "?'",
-      '?"',
-      '?“',
-      '!',
-      "!'",
-      '!"',
-      '!“',
-      '…',
-      "…'",
-      '…"',
-      '…“'
-    ];
-    for (String p in punctuation) {
-      if (endsWith(p)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  // Return period-terminated string if not already ending w. punctuation
-  String periodTerminated() {
-    if (isPunctuationTerminated() == false) {
-      return "$this.";
-    }
-    return this;
-  }
-
   // Return string with first character capitalized.
   // Why isn't this part of of the standard library?
   String sentenceCapitalized() {

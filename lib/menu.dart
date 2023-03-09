@@ -27,7 +27,6 @@ import './theme.dart' show img4theme, menuTextStyle, standardAppBar, standardEdg
 import './settings.dart' show SettingsRoute;
 import './web.dart' show WebViewRoute;
 import './smart/smarthome.dart' show SmarthomeRoute;
-//import './train.dart' show TrainingRoute;
 
 void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(

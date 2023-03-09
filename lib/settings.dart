@@ -378,12 +378,12 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
 
 /// Widget that displays a label and a value
 class SettingsLabelValueWidget extends StatelessWidget {
-  const SettingsLabelValueWidget(this.label, this.value, {this.onTapRoute, Key? key})
-      : super(key: key);
-
   final String label;
   final String value;
   final dynamic onTapRoute;
+
+  const SettingsLabelValueWidget(this.label, this.value, {this.onTapRoute, Key? key})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -406,8 +406,9 @@ class SettingsLabelValueWidget extends StatelessWidget {
 }
 
 class SettingsFullTextLabelWidget extends StatelessWidget {
-  const SettingsFullTextLabelWidget(this.label, {Key? key}) : super(key: key);
   final String label;
+
+  const SettingsFullTextLabelWidget(this.label, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -462,6 +463,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
 /// Voice selection widget
 class SettingsVoiceSelectionWidget extends StatefulWidget {
   final String label;
+
   const SettingsVoiceSelectionWidget({Key? key, required this.label}) : super(key: key);
 
   @override

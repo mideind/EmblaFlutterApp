@@ -39,7 +39,7 @@ Future<ui.Image> _loadImageAsset(String asset) async {
   return fi.image;
 }
 
-/// Preload all logo animation frames
+/// Preload all Embla logo animation frames
 /// This should be called in main() before app initialization
 Future<void> preloadAnimationFrames() async {
   for (int i = 0; i < kNumAnimationFrames; i++) {

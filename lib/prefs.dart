@@ -25,11 +25,11 @@ import './common.dart';
 import './loc.dart' show LocationTracker;
 
 class Prefs {
-  Prefs._privateConstructor();
-  static final Prefs _instance = Prefs._privateConstructor();
+  static final Prefs _instance = Prefs._constructor();
   static SharedPreferences? _sp;
 
   // Singleton pattern
+  Prefs._constructor();
   factory Prefs() {
     return _instance;
   }
@@ -74,27 +74,27 @@ class Prefs {
     _sp?.setString(key, val);
   }
 
-  void clear() {
-    dlog("Clearing prefs");
-    _sp?.clear();
-  }
+  // void clear() {
+  //   dlog("Clearing prefs");
+  //   _sp?.clear();
+  // }
 
   /// Set default starting values for prefs
   void setDefaults() {
     dlog('Setting prefs to default values');
-    Prefs().setBoolForKey('launched', true);
-    Prefs().setBoolForKey('hotword_activation', true);
-    Prefs().setBoolForKey('share_location', true);
-    Prefs().setBoolForKey('privacy_mode', false);
-    Prefs().setDoubleForKey('voice_speed', 1.0);
-    Prefs().setStringForKey('voice_id', kDefaultVoice);
-    Prefs().setStringForKey('query_server', kDefaultQueryServer);
+    setBoolForKey('launched', true);
+    setBoolForKey('hotword_activation', true);
+    setBoolForKey('share_location', true);
+    setBoolForKey('privacy_mode', false);
+    setDoubleForKey('voice_speed', 1.0);
+    setStringForKey('voice_id', kDefaultVoice);
+    setStringForKey('query_server', kDefaultQueryServer);
   }
 
   /// Generate a human-readable string representation of
   /// all key/value pairs in global Prefs object
   String description() {
-    List<dynamic> list = _sp!
+    final List<dynamic> list = _sp!
         .getKeys()
         .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
         .toList(growable: false);

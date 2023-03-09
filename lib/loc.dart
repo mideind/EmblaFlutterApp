@@ -28,8 +28,8 @@ import './prefs.dart';
 
 /// Location tracking singleton
 class LocationTracker {
-  LocationTracker._privateConstructor();
-  static final LocationTracker _instance = LocationTracker._privateConstructor();
+  LocationTracker._constructor();
+  static final LocationTracker _instance = LocationTracker._constructor();
 
   factory LocationTracker() {
     return _instance;
@@ -87,8 +87,8 @@ class LocationTracker {
     }
   }
 
-  /// Returns a list of two doubles ([lat, lon]),
-  /// or null if location is unknown
+  /// Returns a list of two doubles ([lat, lon]) representing
+  /// WGS84 coordinates or null if location is unknown
   List<double>? get location {
     if (!known) {
       return null;

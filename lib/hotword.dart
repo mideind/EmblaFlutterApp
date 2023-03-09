@@ -104,12 +104,6 @@ class HotwordDetector {
     await _recordingDataController.close();
   }
 
-  /// Release any assets loaded by hotword detector
-  // void purge() {
-  //   dlog('Purging hotword detector');
-  //   detector.purge();
-  // }
-
   // Copy model file from asset bundle to temp directory on the filesystem.
   // Does not overwrite the file by default.
   static Future<String> _copyModelToFilesystem(String filename, [bool overwrite = false]) async {
