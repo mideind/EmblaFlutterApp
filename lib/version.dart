@@ -74,7 +74,7 @@ Future<String> _genAppIdentifier() async {
   return packageInfo.packageName;
 }
 
-// Return marketing version e.g. 1.3.3
+// Return marketing version e.g. 1.4.0
 Future<String> _genVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   if (kDebugMode == true) {
@@ -135,7 +135,7 @@ List<Widget> _versionInfo(BuildContext context) {
   final header = Center(
       child: Wrap(crossAxisAlignment: WrapCrossAlignment.center, children: [
     infoIcon,
-    Text(' Upplýsingar'),
+    const Text(' Upplýsingar'),
   ]));
 
   List<Widget> versionInfoWidgets = [
@@ -153,10 +153,10 @@ List<Widget> _versionInfo(BuildContext context) {
     SettingsAsyncLabelValueWidget('Hljóðnemi', _genMicAccess()),
     SettingsAsyncLabelValueWidget('Staðsetning', _genLocationAccess()),
     divider,
-    SettingsFullTextLabelWidget("Auðkenni:"),
+    const SettingsFullTextLabelWidget("Auðkenni:"),
     SettingsAsyncFullTextLabelWidget(_genUniqueIdentifier()),
     divider,
-    Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
+    const Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
   ];
   return versionInfoWidgets;
 }

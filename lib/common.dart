@@ -22,7 +22,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 
 // Software info
 const String kSoftwareName = 'Embla';
-const String kSoftwareVersion = '1.3.3';
+const String kSoftwareVersion = '1.4.0';
 const String kSoftwareImplementation = 'flutter';
 const String kSoftwareAuthor = 'Miðeind ehf.';
 
