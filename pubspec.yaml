@@ -16,13 +16,10 @@ dependencies:
   package_info_plus: '^1.4.2'
   platform_device_id: '^1.0.1'
   url_launcher: '^6.1.2'
-  google_speech: '^2.1.1'
   connectivity_plus: '^2.3.0'
   flutter_inappwebview: '^5.7.1'
   path_provider: '^2.0.10'
-  rxdart: '^0.27.3'
   wakelock: '^0.6.1'
-  audio_session: '^0.1.10'
   permission_handler: '^10.2.0'
   flutter_fgbg: '^0.2.0'
   logger: '^1.1.0'
@@ -35,6 +32,8 @@ dependencies:
   flutter_spinkit: ^5.1.0
   multicast_dns: '^0.3.2'
   flutter_animate: '^3.0.0'
+  embla_core:
+    path: '../embla_core'
 
 dev_dependencies:
   flutter_test:

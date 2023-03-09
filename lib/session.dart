@@ -30,19 +30,17 @@ import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:flutter_fgbg/flutter_fgbg.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:google_speech/generated/google/cloud/speech/v1/cloud_speech.pbenum.dart'
-    show StreamingRecognizeResponse_SpeechEventType;
 import 'package:open_settings/open_settings.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
+import 'package:embla_core/embla_core.dart' show EmblaSession, EmblaSessionConfig, AudioPlayer;
+
 import './animations.dart' show animationFrames;
-import './audio.dart' show AudioPlayer;
 import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
-import './speech2text.dart' show SpeechRecognizer;
 import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './util.dart';
@@ -185,78 +183,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   void startSpeechRecognition() {
     List<String> transcripts = [];
-
-    SpeechRecognizer().start(
-        // Data handler
-        (data) {
-      if (state != SessionState.listening) {
-        dlog('Received speech recognition results after session was terminated.');
-        return;
-      }
-
-      // End of utterance event handling
-      if (data.hasSpeechEventType()) {
-        if (data.speechEventType ==
-            StreamingRecognizeResponse_SpeechEventType.END_OF_SINGLE_UTTERANCE) {
-          dlog('Received END_OF_SINGLE_UTTERANCE speech event.');
-          stopSpeechRecognition();
-        }
-      }
-
-      // Bail on empty result list
-      if (data == null || data.results.length < 1) {
-        dlog('Empty result from speech recognition');
-        return;
-      }
-
-      setState(() {
-        text = data.results.map((e) => e.alternatives.first.transcript).join('');
-        text = text.sentenceCapitalized();
-        dlog('RESULTS--------------');
-        dlog(data.results);
-        var first = data.results[0];
-        if (first.isFinal) {
-          dlog('Final result received');
-          stopSpeechRecognition();
-          for (var a in first.alternatives) {
-            transcripts.add(a.transcript.toString());
-          }
-        }
-      });
-    },
-        // Completion handler
-        () {
-      dlog('Stream done');
-      stopSpeechRecognition();
-      dlog("Transcripts: ${transcripts.toString()}");
-      if (transcripts.isNotEmpty) {
-        AudioPlayer().playSound('rec_confirm');
-        answerQuery(transcripts);
-      } else {
-        dlog('Stream ended without answer');
-        stop();
-        AudioPlayer().playSound('rec_cancel');
-        msg(introMsg());
-      }
-    },
-        // Error handler
-        (var err) {
-      dlog("Streaming recognition error: ${err.toString()}");
-      msg(kServerErrorMessage);
-      stop();
-      AudioPlayer().playSound('err');
-    });
   }
 
-  void stopSpeechRecognition() {
-    SpeechRecognizer().stop();
-  }
+  void stopSpeechRecognition() {}
 
   // Ticker to animate session button
   void ticker() {
     setState(() {
       if (state == SessionState.listening) {
-        addSample(SpeechRecognizer().lastSignal);
+        // addSample(SpeechRecognizer().lastSignal);
       } else if (state == SessionState.answering) {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
@@ -337,7 +272,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
     // Don't know
     else if (resp != null && resp['error'] != null) {
-      String dunnoMsg = AudioPlayer().playDunno(() {
+      final String dunnoMsg = AudioPlayer().playDunno(Prefs().stringForKey("voice_id")!, () {
             dlog('Playback finished');
             stop();
           }) ??

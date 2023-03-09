@@ -25,8 +25,9 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart';
 
+import 'package:embla_core/embla_core.dart' show AudioPlayer;
+
 import './animations.dart' show preloadAnimationFrames;
-import './audio.dart' show AudioPlayer;
 import './common.dart' show dlog, kSoftwareName, kDefaultVoice;
 import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;

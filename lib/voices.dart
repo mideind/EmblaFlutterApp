@@ -21,12 +21,13 @@
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
+import 'package:embla_core/embla_core.dart' show AudioPlayer;
+
 import './prefs.dart' show Prefs;
 // import './query.dart' show QueryService;
 import './common.dart'
     show dlog, kSpeechSynthesisVoices, kSpeechSynthesisDebugVoices /*, kDefaultVoice*/;
 import './theme.dart';
-import './audio.dart';
 
 const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
 

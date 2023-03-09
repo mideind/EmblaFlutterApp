@@ -24,10 +24,11 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:embla_core/embla_core.dart' show AudioPlayer;
+
 import './common.dart';
 import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
-import './audio.dart' show AudioPlayer;
 import './voices.dart' show VoiceSelectionRoute;
 import './version.dart';
 import './theme.dart';

@@ -4,7 +4,6 @@ import 'package:test/test.dart';
 import 'package:flutter/material.dart';
 
 import 'package:embla/animations.dart';
-import 'package:embla/audio.dart';
 import 'package:embla/hotword.dart';
 import 'package:embla/jsexec.dart';
 import 'package:embla/loc.dart';
@@ -26,16 +25,6 @@ void testAnimations() async {
   test("Should have 100 animation frames", () async {
     await preloadAnimationFrames();
     expect(animationFrames.length, 100);
-  });
-}
-
-// audio.dart
-void testAudio() async {
-  test("AudioPlayer should be singleton", () async {
-    expect(AudioPlayer() == AudioPlayer(), true);
-  });
-  test("AudioPlayer should preload sound files on instantiation", () async {
-    expect(AudioPlayer().audioFileCache, isNotEmpty);
   });
 }
 
