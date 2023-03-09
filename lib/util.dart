@@ -22,7 +22,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show googleServiceAccount, queryAPIKey;
+import './keys.dart' show queryAPIKey;
 
 // String extensions
 extension StringExtension on String {
@@ -120,16 +120,6 @@ extension HexColor on Color {
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
   }
-}
-
-String _cachedGoogleServiceAccount = '';
-
-// Read and cache Google API service account config JSON
-String readGoogleServiceAccount() {
-  if (_cachedGoogleServiceAccount == '') {
-    _cachedGoogleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
-  }
-  return _cachedGoogleServiceAccount;
 }
 
 String _cachedQueryAPIKey = '';

@@ -28,8 +28,8 @@ const double defaultFontSize = 18.0;
 const double sessionFontSize = 23.0;
 
 // Define default text styles for UI elements
-final menuTextStyle = TextStyle(fontSize: defaultFontSize);
-final sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
+const menuTextStyle = TextStyle(fontSize: defaultFontSize);
+const sessionTextStyle = TextStyle(fontSize: sessionFontSize, fontStyle: FontStyle.italic);
 
 // Session button colors, outermost to innermost
 final Color circleColor1 = HexColor.fromHex('#f9f0f0');
@@ -81,7 +81,7 @@ final lightThemeData = ThemeData(
 final darkMainColor = HexColor.fromHex('#f7f7f7');
 final darkBgColor = HexColor.fromHex('#202020');
 final darkCardColor = HexColor.fromHex('#505050');
-final darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
+const darkSplashColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 final darkThemeData = ThemeData(
   // useMaterial3: true,

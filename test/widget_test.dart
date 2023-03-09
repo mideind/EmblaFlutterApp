@@ -24,7 +24,7 @@ void main() {
   // menu.dart
   testWidgets('MenuRoute contains at least 4 ListTiles', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: MenuRoute(),
       ),
     );
@@ -44,7 +44,7 @@ void main() {
   // settings.dart
   testWidgets('SettingsRoute contains ListView and at least 2 Switches', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: SettingsRoute(),
       ),
     );
@@ -55,7 +55,7 @@ void main() {
   // version.dart
   testWidgets('VersionRoute contains ListView with at least 4 items', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: VersionRoute(),
       ),
     );
@@ -66,12 +66,12 @@ void main() {
   // voices.dart
   testWidgets('VoicesRoute contains ListView and at least 2 items', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: VoiceSelectionRoute(),
       ),
     );
     // Give async builder time to complete
-    await tester.pumpAndSettle(Duration(milliseconds: 100));
+    await tester.pumpAndSettle(const Duration(milliseconds: 100));
     expect(find.byType(ListView), findsOneWidget);
     expect(find.byType(ListTile), findsAtLeastNWidgets(2));
   });
@@ -79,7 +79,7 @@ void main() {
   // web.dart
   testWidgets('WebViewRoute contains InAppWebView', (tester) async {
     await tester.pumpWidget(
-      MaterialApp(
+      const MaterialApp(
         home: WebViewRoute(initialURL: "https://mideind.is"),
       ),
     );

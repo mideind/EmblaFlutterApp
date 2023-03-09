@@ -33,14 +33,6 @@ const double kHotwordAudioGain = 1.15;
 const bool kHotwordApplyFrontend = false;
 const String kHotwordAssetsDirectory = 'assets/hotword';
 
-// Speech recognition settings
-const String kSpeechToTextLanguage = 'is-IS';
-const int kSpeechToTextMaxAlternatives = 10;
-
-// Audio recording settings
-const int kAudioSampleRate = 16000;
-const int kAudioNumChannels = 1;
-
 // Server communication
 const String kDefaultQueryServer = 'https://greynir.is';
 const String kQueryAPIPath = '/query.api/v1';
@@ -62,7 +54,7 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Query server preset options (for debugging purposes)
 const List<List<String>> kQueryServerPresetOptions = [
-  ['Greynir.is', kDefaultQueryServer],
+  ['Greynir', kDefaultQueryServer],
   ['Brandur', 'http://brandur.mideind.is:5000'],
   ['Staðarnet', 'http://192.168.1.8:5000']
 ];

@@ -42,7 +42,7 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => SettingsRoute(),
+      builder: (context) => const SettingsRoute(),
     ),
   );
 }
@@ -51,7 +51,7 @@ void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => SmarthomeRoute(),
+      builder: (context) => const SmarthomeRoute(),
     ),
   );
 }
@@ -62,7 +62,7 @@ ListTile _menuTile(String name, String imageName,
   return ListTile(
     title: Text(name, style: menuTextStyle),
     leading: Image(image: img4theme(imageName, ctx)),
-    trailing: Icon(Icons.arrow_right),
+    trailing: const Icon(Icons.arrow_right),
     onTap: () {
       onTapFunc(ctx, arg);
     },
@@ -73,7 +73,6 @@ ListTile _menuTile(String name, String imageName,
 ListView _menu(BuildContext context) {
   List<Widget> menuItems = [
     _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-    // _menuTile('Þjálfa raddvirkjun', 'cog', _pushHotwordTrainingRoute, context, null),
     _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
     _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
     _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),

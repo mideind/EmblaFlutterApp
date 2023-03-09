@@ -181,12 +181,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     dlog("Error starting hotword detection: ${err.toString()}");
   }
 
-  void startSpeechRecognition() {
-    List<String> transcripts = [];
-  }
-
-  void stopSpeechRecognition() {}
-
   // Ticker to animate session button
   void ticker() {
     setState(() {
@@ -206,9 +200,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Transition to answering state
     state = SessionState.answering;
     currFrame = kFullLogoFrame;
-
-    // Send text to query server
-    QueryService.sendQuery(alternatives, handleQueryResponse);
   }
 
   // Process response from query server
@@ -331,11 +322,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
     });
 
-    // Start recognizing speech from microphone input
     try {
-      // await Future.delayed(Duration(milliseconds: 350), () {
-      startSpeechRecognition();
-      // });
+      // Start session
     } catch (e) {
       stop();
       AudioPlayer().playSound('conn');
@@ -348,8 +336,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       return;
     }
     dlog('Stopping session');
-    stopSpeechRecognition();
-    AudioPlayer().stop();
     animationTimer?.cancel();
 
     setState(() {
@@ -387,11 +373,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('Villa í talgreiningu'),
-          content: Text(kNoMicPermissionMessage),
+          title: const Text('Villa í talgreiningu'),
+          content: const Text(kNoMicPermissionMessage),
           actions: <Widget>[
             TextButton(
-              child: Text('Allt í lagi'),
+              child: const Text('Allt í lagi'),
               onPressed: () {
                 Navigator.of(context).pop();
                 OpenSettings.openPrivacySetting();
@@ -426,7 +412,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => MenuRoute(), // Push menu route
+          builder: (context) => const MenuRoute(), // Push menu route
         ),
       ).then((val) {
         // Make sure we rebuild main route when menu route is popped in navigation
@@ -469,7 +455,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       return SingleChildScrollView(
           scrollDirection: Axis.vertical,
           child: Padding(
-              padding: EdgeInsets.only(left: 20, right: 20, top: 10),
+              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
               child: Column(
                 children: widgets,
               )));
@@ -478,7 +464,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     // Generate widget tree for the session button below the text area
     Widget sessionButtonWidget() {
       return Padding(
-          padding: EdgeInsets.only(bottom: 30, top: 30),
+          padding: const EdgeInsets.only(bottom: 30, top: 30),
           child: Center(
               child: Semantics(
                   label: buttonLabel,

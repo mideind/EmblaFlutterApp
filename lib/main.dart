@@ -41,7 +41,7 @@ void main() async {
 
   // Load prefs, populate with default values if required
   await Prefs().load();
-  bool launched = Prefs().boolForKey('launched');
+  final bool launched = Prefs().boolForKey('launched');
   if (launched == false) {
     // This is the first launch of the app
     Prefs().setDefaults();
@@ -52,7 +52,7 @@ void main() async {
   // the option of "Karl" as an alternative. As of 1.3.0, we use
   // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
   if (launched == true && kDebugMode == false) {
-    String? voiceID = Prefs().stringForKey("voice_id");
+    final String? voiceID = Prefs().stringForKey("voice_id");
     if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
       Prefs().setStringForKey("voice_id", kDefaultVoice);
     }
@@ -74,7 +74,7 @@ void main() async {
 
   // Request permissions
   // We need microphone (and ideally location) permissions to function
-  Map<Permission, PermissionStatus> statuses = await [
+  final Map<Permission, PermissionStatus> statuses = await [
     Permission.microphone,
     Permission.location,
   ].request();
@@ -92,8 +92,8 @@ void main() async {
     LocationTracker().start();
   }
 
-  // Launch app with session route
-  runApp(EmblaApp());
+  // Launch app
+  runApp(const EmblaApp());
 }
 
 class EmblaApp extends StatelessWidget {
@@ -110,7 +110,7 @@ class EmblaApp extends StatelessWidget {
         title: kSoftwareName,
         theme: theme,
         darkTheme: darkTheme,
-        home: SessionRoute(),
+        home: const SessionRoute(),
       ),
     );
   }

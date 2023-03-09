@@ -88,7 +88,7 @@ List<Widget> _smarthome(
                 top: 9.0,
                 bottom: 9.0,
               ),
-              child: Text(
+              child: const Text(
                 "Embla snjallheimili",
                 style: sessionTextStyle,
               ),
@@ -146,7 +146,7 @@ List<Widget> _smarthome(
                 ),
                 child: Column(
                   children: [
-                    Text(
+                    const Text(
                       'Engar tengingar til staðar.',
                       style: TextStyle(
                         fontSize: 16.0,
@@ -154,7 +154,7 @@ List<Widget> _smarthome(
                       ),
                     ),
                     Container(
-                      margin: EdgeInsets.only(bottom: 40.0, top: 40.0),
+                      margin: const EdgeInsets.only(bottom: 40.0, top: 40.0),
                       child: Center(
                         child: ElevatedButton.icon(
                           onPressed: () async {
@@ -165,12 +165,13 @@ List<Widget> _smarthome(
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(50.0),
                               ),
-                              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
-                          label: Text(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+                          label: const Text(
                             'Bæta við tengingu',
                             style: TextStyle(color: Colors.white),
                           ),
-                          icon: Icon(
+                          icon: const Icon(
                             Icons.add,
                             color: Colors.white,
                           ),
@@ -192,7 +193,7 @@ List<Widget> _smarthome(
                   bottom: 30.0,
                   right: 25.0,
                 ),
-                child: Text(
+                child: const Text(
                   kNoInternetMessage,
                   style: TextStyle(
                     fontSize: 16.0,
@@ -212,7 +213,7 @@ List<Widget> _smarthome(
                   bottom: 30.0,
                   right: 25.0,
                 ),
-                child: Text(
+                child: const Text(
                   kServerErrorMessage,
                   style: TextStyle(
                     fontSize: 16.0,
@@ -284,12 +285,12 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
               (isSuccess) ? Icons.check : Icons.error_outline_rounded,
               color: Colors.white,
             ),
-            SizedBox(
+            const SizedBox(
               width: 12.0,
             ),
             Text(
               (isSuccess) ? "Aftenging tókst" : "Villa kom upp, reyndu aftur.",
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
               ),
             ),
@@ -302,7 +303,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
       fToastSmarthome!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 3),
+        toastDuration: const Duration(seconds: 3),
       );
     }
 
@@ -310,7 +311,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text("Aftengja tæki"),
+          title: const Text("Aftengja tæki"),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -322,13 +323,13 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Hætta við'),
+              child: const Text('Hætta við'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text("Aftengja"),
+              child: const Text("Aftengja"),
               onPressed: () {
                 http
                     .delete(Uri.parse(
@@ -406,7 +407,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
           scanForDevices();
         });
       }),
-      Future.delayed(Duration(seconds: 5)).then(
+      Future.delayed(const Duration(seconds: 5)).then(
         (value) {
           dlog("Timeout");
           if (isSearching == true) {
@@ -477,7 +478,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
           isNetworkConnection = true;
         });
       }),
-      Future.delayed(Duration(seconds: 5)).then(
+      Future.delayed(const Duration(seconds: 5)).then(
         (value) {
           dlog("Timeout");
           if (isSearching == true) {

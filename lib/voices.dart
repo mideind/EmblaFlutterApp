@@ -106,7 +106,7 @@ FutureBuilder<List> _genVoiceList() {
       builder: (context, AsyncSnapshot<List> snapshot) {
         if (snapshot.hasData == false) {
           // No data yet
-          return Center(
+          return const Center(
             child: CircularProgressIndicator(
               semanticsLabel: kVoicesLoadingMsg,
             ),

@@ -59,12 +59,12 @@ List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
-          Text(
+          const Text(
             "Bæta við tengingu",
             style: sessionTextStyle,
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 40.0, top: 40.0),
+            margin: const EdgeInsets.only(bottom: 40.0, top: 40.0),
             child: Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
@@ -76,12 +76,12 @@ List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(50.0),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
-                label: Text(
+                    padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0)),
+                label: const Text(
                   'Finna tæki',
                   style: TextStyle(color: Colors.white),
                 ),
-                icon: Icon(
+                icon: const Icon(
                   Icons.wifi,
                   color: Colors.white,
                 ),
@@ -89,13 +89,13 @@ List<Widget> _options(BuildContext context, Map<String, dynamic>? connectionInfo
             ),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 40.0),
+            margin: const EdgeInsets.only(bottom: 40.0),
             child: Text('Studdar tengingar', style: Theme.of(context).textTheme.displayLarge),
           ),
           Column(
             children: <Widget>[
               ListView.builder(
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemCount: connectionList.length,
                 itemBuilder: (context, index) {
@@ -144,16 +144,16 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline_rounded,
               color: Colors.white,
             ),
-            SizedBox(
+            const SizedBox(
               width: 12.0,
             ),
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
               ),
             ),
@@ -165,7 +165,7 @@ class _ConnectionRouteState extends State<ConnectionRoute> {
       fToastAdd!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(
+        toastDuration: const Duration(
           seconds: 4,
         ),
       );

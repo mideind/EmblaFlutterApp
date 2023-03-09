@@ -100,21 +100,21 @@ List<Widget> _mdns(BuildContext context, Function scanForDevices,
               ),
               child: Column(
                 children: [
-                  Text(
+                  const Text(
                     'Engin tæki fundust.\n',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'Vinsamlegast reyndu aftur',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey,
                     ),
                   ),
-                  Text(
+                  const Text(
                     'eða veldu tæki handvirkt.',
                     style: TextStyle(
                       fontSize: 16.0,
@@ -180,16 +180,16 @@ class _MDNSRouteState extends State<MDNSRoute> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Icon(
+            const Icon(
               Icons.error_outline_rounded,
               color: Colors.white,
             ),
-            SizedBox(
+            const SizedBox(
               width: 12.0,
             ),
             Text(
               message,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
               ),
             ),
@@ -201,7 +201,7 @@ class _MDNSRouteState extends State<MDNSRoute> {
       fToastMdns!.showToast(
         child: toast,
         gravity: ToastGravity.BOTTOM,
-        toastDuration: Duration(seconds: 4),
+        toastDuration: const Duration(seconds: 4),
       );
     }
 

@@ -27,7 +27,6 @@ import 'package:platform_device_id/platform_device_id.dart';
 import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';
-import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './util.dart' show readQueryServerKey;
 
@@ -86,47 +85,7 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
 
 /// Wrapper class around communication with query server
 class QueryService {
-  //
-  /// Send request to query server API
-  static Future<void> sendQuery(List<String> queries, [Function? handler, bool? test]) async {
-    // Query args
-    final String voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoice;
-    final Map<String, String> qargs = {'q': queries.join('|'), 'voice': '1', 'voice_id': voiceID};
-
-    // Never send client information in privacy mode
-    bool privacyMode = Prefs().boolForKey('privacy_mode');
-    if (privacyMode) {
-      qargs['private'] = '1';
-    } else {
-      qargs['client_type'] = _clientType();
-      qargs['client_id'] = await _clientID() ?? "";
-      qargs['client_version'] = await _clientVersion() ?? kSoftwareVersion;
-    }
-
-    if (test == true) {
-      qargs['test'] = '1';
-    }
-
-    // Set voice speed if set
-    double? speed = Prefs().doubleForKey('voice_speed');
-    if (speed != null) {
-      qargs['voice_speed'] = speed.toString();
-    }
-
-    // Set location params if available and sharing is enabled
-    bool shareLocation = privacyMode ? false : Prefs().boolForKey('share_location');
-    if (shareLocation == true) {
-      List<double>? latlon = LocationTracker().location;
-      if (latlon != null) {
-        qargs['latitude'] = latlon[0].toString();
-        qargs['longitude'] = latlon[1].toString();
-      }
-    }
-
-    await _makeRequest(kQueryAPIPath, qargs, handler);
-  }
-
-  /// Send request to query history API
+  /// Clear user data
   /// Boolean [allData] param determines whether all device-specific
   /// data or only query history should be deleted server-side.
   static Future<void> clearUserData(bool allData, [Function? handler]) async {

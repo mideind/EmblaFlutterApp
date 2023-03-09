@@ -117,7 +117,7 @@ Future<String> _genMicAccess() async {
 // Is location access granted?
 Future<String> _genLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
-    return "Nei";
+    return kNoLabel;
   }
   return LocationTracker().known ? kYesLabel : kNoLabel;
 }

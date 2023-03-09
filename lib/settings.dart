@@ -106,23 +106,23 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text('Virkja einkaham?'),
+          title: const Text('Virkja einkaham?'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text(kPrivacyModeMessage),
+                const Text(kPrivacyModeMessage),
               ],
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Hætta við'),
+              child: const Text('Hætta við'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Virkja'),
+              child: const Text('Virkja'),
               onPressed: () {
                 setState(() {
                   Prefs().setBoolForKey(widget.prefKey, true);
@@ -264,7 +264,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Hætta við'),
+              child: const Text('Hætta við'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -289,8 +289,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
         _showPromptDialog(context);
       },
       child: Padding(
-          padding: EdgeInsets.only(top: 15, bottom: 15),
-          child: Text(label, style: TextStyle(fontSize: defaultFontSize))),
+          padding: const EdgeInsets.only(top: 15, bottom: 15),
+          child: Text(label, style: const TextStyle(fontSize: defaultFontSize))),
     );
   }
 }
@@ -329,7 +329,7 @@ class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> 
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
     for (int i = 0; i < widget.items.length; i++) {
-      wlist[i] = Padding(padding: EdgeInsets.all(10.0), child: Text(widget.items[i][0]));
+      wlist[i] = Padding(padding: const EdgeInsets.all(10.0), child: Text(widget.items[i][0]));
     }
     return wlist;
   }
@@ -432,7 +432,7 @@ class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
           if (snapshot.hasData) {
             return SettingsFullTextLabelWidget(snapshot.data!);
           }
-          return SettingsFullTextLabelWidget('…');
+          return const SettingsFullTextLabelWidget('…');
         });
   }
 }
@@ -478,14 +478,14 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
           children: [
             Text(Prefs().stringForKey('voice_id') ?? "(engin rödd valin)",
                 style: Theme.of(context).textTheme.bodySmall),
-            Icon(Icons.arrow_right),
+            const Icon(Icons.arrow_right),
           ],
         ),
         onTap: () {
           Navigator.push(
             context,
             CupertinoPageRoute(
-              builder: (context) => VoiceSelectionRoute(),
+              builder: (context) => const VoiceSelectionRoute(),
             ),
           ).then((val) {
             // Trigger re-render since voice selection may have changed
@@ -512,11 +512,11 @@ List<Widget> _settings(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
 
   // Basic settings widgets
-  List<Widget> settingsWidgets = [
-    SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
-    SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
-    SettingsPrivacySwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
-    SettingsVoiceSelectionWidget(label: 'Rödd'),
+  final List<Widget> settingsWidgets = [
+    const SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
+    const SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
+    const SettingsPrivacySwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
+    const SettingsVoiceSelectionWidget(label: 'Rödd'),
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',
@@ -526,16 +526,16 @@ List<Widget> _settings(BuildContext context) {
         onChangeEnd: (double val) {
           playVoiceSpeed();
         }),
-    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: VersionRoute()),
+    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: const VersionRoute()),
   ];
 
   // Only include query server selection widget in debug builds
   if (kDebugMode) {
     settingsWidgets.addAll([
       divider,
-      SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-      QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-      Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
+      const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
+      const QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
     ]);
   }
 
@@ -556,7 +556,7 @@ List<Widget> _settings(BuildContext context) {
         handler: () {
           QueryService.clearUserData(true);
         }),
-    Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
+    const Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
   ]);
 
   return settingsWidgets;
