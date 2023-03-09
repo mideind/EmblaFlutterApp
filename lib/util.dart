@@ -73,40 +73,6 @@ extension StringExtension on String {
     }
     return "${this[0].toUpperCase()}${substring(1)}";
   }
-
-  // Convert Icelandic characters to their ASCII equivalent.
-  String asciify() {
-    Map<String, String> icechar2ascii = {
-      "ð": "d",
-      "Ð": "D",
-      "á": "a",
-      "Á": "A",
-      "ú": "u",
-      "Ú": "U",
-      "í": "i",
-      "Í": "I",
-      "é": "e",
-      "É": "E",
-      "þ": "th",
-      "Þ": "TH",
-      "ó": "o",
-      "Ó": "O",
-      "ý": "y",
-      "Ý": "Y",
-      "ö": "o",
-      "Ö": "O",
-      "æ": "ae",
-      "Æ": "AE",
-    };
-
-    String s = this;
-
-    // Substitute all Icelandic chars for their ASCII equivalents
-    icechar2ascii.forEach((k, v) {
-      s = s.replaceAll(k, v);
-    });
-    return s;
-  }
 }
 
 extension HexColor on Color {

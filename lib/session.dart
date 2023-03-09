@@ -43,7 +43,6 @@ import './prefs.dart' show Prefs;
 import './query.dart' show QueryService;
 import './jsexec.dart' show JSExecutor;
 import './theme.dart';
-import './util.dart';
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -213,7 +212,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     if (resp != null && resp['valid'] == true && resp['error'] == null && resp['answer'] != null) {
       dlog('Received valid response to query');
       // Update text
-      String t = "${resp["q"]}\n\n${resp["answer"]}".periodTerminated();
+      String t = "${resp["q"]}\n\n${resp["answer"]}";
       if (resp['source'] != null) {
         t = "$t (${resp['source']})";
       }
