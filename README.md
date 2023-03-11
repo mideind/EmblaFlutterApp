@@ -84,8 +84,7 @@ up an Apple Developer account and enable signing in the Xcode project.
 ## Acknowledgements
 
 The Embla client uses [Snowboy](https://github.com/seasalt-ai/snowboy) for hotword
-detection and Google's [Speech-to-Text API](https://cloud.google.com/speech-to-text) for
-speech recognition.
+detection.
 
 ## License
 
