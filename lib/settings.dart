@@ -505,7 +505,7 @@ Future<void> playVoiceSpeed() async {
   }
   AudioPlayer().stop();
   voiceSpeedTimer = Timer(const Duration(milliseconds: 300), () {
-    AudioPlayer().playSound('voicespeed');
+    AudioPlayer().playSound('voicespeed', Prefs().stringForKey('voice_id') ?? kDefaultVoice);
   });
 }
 

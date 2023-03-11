@@ -23,7 +23,7 @@ import 'package:flutter/material.dart';
 
 import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
-import 'package:adaptive_theme/adaptive_theme.dart';
+import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 

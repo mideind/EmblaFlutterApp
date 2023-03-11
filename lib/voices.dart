@@ -25,8 +25,7 @@ import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './prefs.dart' show Prefs;
 // import './query.dart' show QueryService;
-import './common.dart'
-    show dlog, kSpeechSynthesisVoices, kSpeechSynthesisDebugVoices /*, kDefaultVoice*/;
+import './common.dart';
 import './theme.dart';
 
 const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
@@ -92,7 +91,7 @@ Widget _buildVoiceList(BuildContext context, List voices) {
             : null,
         onTap: () {
           Prefs().setStringForKey("voice_id", voices[index]);
-          AudioPlayer().playSound("mynameis");
+          AudioPlayer().playSound("mynameis", Prefs().stringForKey('voice_id') ?? kDefaultVoice);
           Navigator.pop(context);
         },
       );
