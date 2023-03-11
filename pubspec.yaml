@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  # Third-party
   http: '>=0.13.4'
   shared_preferences: '^2.0.15'
   geolocator: '^9.0.2'
@@ -26,12 +27,13 @@ dependencies:
   filesize: '^2.0.1'
   adaptive_theme: '^3.0.0'
   open_settings: '^2.0.2'
-  flutter_snowboy: '>=0.1.1'
   flutter_sound: '>9.0.0'
   fluttertoast: '^8.1.2'
   flutter_spinkit: ^5.1.0
   multicast_dns: '^0.3.2'
   flutter_animate: '^3.0.0'
+  # Ours
+  flutter_snowboy: '>=0.1.1'
   embla_core:
     path: '../embla_core'
 
