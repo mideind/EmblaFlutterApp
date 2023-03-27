@@ -35,11 +35,11 @@ Clone the repository:
 git clone https://github.com/mideind/Embla_Flutter
 ```
 
-In order to work as intended, the app requires a Service Account JSON configuration
-file containing a key for Google's Speech-to-Text API. Get this document from
+In order to work as intended, the app requires an API for the Ratatoskur
+server endpoint. Get this document from
 Google's API console and save it at the following path within the repository:
 
-```keys/gaccount.json```
+```keys/server_key.txt```
 
 Then run the following script:
 
