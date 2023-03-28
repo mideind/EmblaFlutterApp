@@ -183,7 +183,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   /// Configure session
   EmblaSessionConfig configureSession() {
-    EmblaSessionConfig config = EmblaSessionConfig();
+    EmblaSessionConfig config = EmblaSessionConfig(server: "http://brandur.mideind.is:8080");
     config.apiKey = readServerAPIKey();
     config.onStartListening;
     config.onSpeechTextReceived;

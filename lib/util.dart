@@ -54,7 +54,7 @@ String _cachedServerAPIKey = '';
 // Read and cache query server key
 String readServerAPIKey() {
   if (_cachedServerAPIKey == '') {
-    _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey));
+    _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey)).trim();
   }
   return _cachedServerAPIKey;
 }
@@ -64,7 +64,7 @@ String _cachedQueryAPIKey = '';
 // Read and cache query server key
 String readQueryServerKey() {
   if (_cachedQueryAPIKey == '') {
-    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey));
+    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey)).trim();
   }
   return _cachedQueryAPIKey;
 }
