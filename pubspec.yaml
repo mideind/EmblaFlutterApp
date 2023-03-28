@@ -2,6 +2,8 @@ name: embla
 description: Cross-platform mobile Icelandic-language voice assistant.
 publish_to: 'none'
 version: 1.4.0+1
+homepage: https://embla.is
+repository: https://github.com/mideind/EmblaFlutterApp
 
 environment:
   sdk: '>=2.12.0 <3.0.0'

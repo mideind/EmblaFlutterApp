@@ -26,7 +26,7 @@ import './common.dart';
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar, standardEdgeInsets;
 import './settings.dart' show SettingsRoute;
 import './web.dart' show WebViewRoute;
-import './smart/smarthome.dart' show SmarthomeRoute;
+import './smart/smarthome.dart' show SmarthomeRoute if (kDebugMode) "";
 
 void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(

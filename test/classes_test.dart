@@ -13,7 +13,6 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   testAnimations();
-//   testAudio();
   testHotword();
   testJSExec();
   testLocationTracker();
@@ -23,8 +22,9 @@ void main() {
 // animations.dart
 void testAnimations() async {
   test("Should have 100 animation frames", () async {
-    await preloadAnimationFrames();
-    expect(animationFrames.length, 100);
+    await preloadAnimationFrames().then((e) {
+      expect(animationFrames.length, 100);
+    });
   });
 }
 

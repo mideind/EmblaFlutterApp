@@ -100,19 +100,6 @@ class QueryService {
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
   }
 
-  /// Send request to speech synthesis API
-  static Future<void> requestSpeechSynthesis(String text, [Function? handler]) async {
-    Map<String, String> qargs = {
-      'text': text,
-      'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
-      'voice_speed': Prefs().doubleForKey('voice_speed').toString(),
-      //'format': 'text',
-      'api_key': readQueryServerKey(),
-    };
-
-    await _makeRequest(kSpeechSynthesisAPIPath, qargs, handler);
-  }
-
   /// Send request to voices API
   static Future<Map<String, dynamic>?> requestSupportedVoices() async {
     final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);

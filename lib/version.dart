@@ -96,7 +96,7 @@ Future<String> _genPlatform() async {
 
 // Return OS version
 Future<String> _genOSVersion() async {
-  return Platform.operatingSystemVersion;
+  return "OS ${Platform.operatingSystemVersion}";
 }
 
 // Return the implementation name e.g. flutter, native

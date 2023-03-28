@@ -34,10 +34,9 @@ const bool kHotwordApplyFrontend = false;
 const String kHotwordAssetsDirectory = 'assets/hotword';
 
 // Server communication
+const String kDefaultRatatoskurServer = 'http://brandur.mideind:8080';
 const String kDefaultQueryServer = 'https://greynir.is';
-const String kQueryAPIPath = '/query.api/v1';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
-const String kSpeechSynthesisAPIPath = '/speech.api/v1';
 const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Speech synthesis
@@ -52,6 +51,13 @@ const double kVoiceSpeedMax = 2.0;
 const String kAboutURL = 'https://embla.is/about.html';
 const String kInstructionsURL = 'https://embla.is/instructions.html';
 const String kPrivacyURL = 'https://embla.is/privacy.html';
+
+// Ratatoskur server preset options (for debugging purposes)
+const List<List<String>> kRatatoskurServerPresetOptions = [
+  ['API', kDefaultRatatoskurServer],
+  ['Brandur', 'http://brandur.mideind.is:5000'],
+  ['Lókal', 'http://192.168.1.8:5000']
+];
 
 // Query server preset options (for debugging purposes)
 const List<List<String>> kQueryServerPresetOptions = [

@@ -41,8 +41,6 @@ class WebViewRoute extends StatefulWidget {
 }
 
 class WebViewRouteState extends State<WebViewRoute> {
-  InAppWebViewController? webView;
-
   // Path to local asset with same filename as remote document
   String _fallbackAssetForURL(String url) {
     final Uri uri = Uri.parse(url);
@@ -83,12 +81,11 @@ class WebViewRouteState extends State<WebViewRoute> {
     return NavigationActionPolicy.ALLOW;
   }
 
-  @override
-  Widget build(BuildContext context) {
+  InAppWebView _buildWebView(BuildContext context) {
     // Create web view that initially presents a "loading" document with
     // a progress indicator. Then immediately fetch the actual remote document.
     // Falls back to loading local bundled HTML document on network error.
-    // This means that at least *some* version of the docs can be viewed
+    // This means that at least *some* version of the document can be viewed
     // when the device is offline.
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
@@ -101,7 +98,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     ));
 
     // Create and configure web view
-    final InAppWebView webView = InAppWebView(
+    return InAppWebView(
       initialFile: loadingURL,
       initialUrlRequest: URLRequest(url: Uri.parse(url)),
       initialOptions: webViewOpts,
@@ -126,10 +123,13 @@ class WebViewRouteState extends State<WebViewRoute> {
       onLoadHttpError: errHandler,
       shouldOverrideUrlLoading: urlClickHandler,
     );
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
       appBar: standardAppBar,
-      body: webView,
+      body: _buildWebView(context),
     );
   }
 }

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Singleton wrapper for location tracking
+/// Singleton wrapper for location tracking
 
 import 'dart:async';
 
@@ -35,9 +35,9 @@ class LocationTracker {
     return _instance;
   }
 
-  double? lat;
-  double? lon;
-  StreamSubscription<Position>? positionStream;
+  double? _lat;
+  double? _lon;
+  StreamSubscription<Position>? _positionStream;
 
   /// Start location tracking
   void start() async {
@@ -47,43 +47,43 @@ class LocationTracker {
       dlog("Could not start location tracking, permission not granted");
       return;
     }
-    if (positionStream != null) {
+    if (_positionStream != null) {
       // Location tracking already ongoing
       return;
     }
 
     dlog('Starting location tracking');
-    positionStream = Geolocator.getPositionStream().listen((Position? position) {
+    _positionStream = Geolocator.getPositionStream().listen((Position? position) {
       if (position == null) {
         known = false;
         return;
       }
-      lat = position.latitude;
-      lon = position.longitude;
+      _lat = position.latitude;
+      _lon = position.longitude;
       //dlog("Location: ${lat.toString()}, ${lon.toString()}");
     });
   }
 
   /// Stop location tracking
   void stop() {
-    if (positionStream != null) {
+    if (_positionStream != null) {
       dlog('Stopping location tracking');
-      positionStream?.cancel();
-      positionStream = null;
+      _positionStream?.cancel();
+      _positionStream = null;
       known = false;
     }
   }
 
   /// Is the current location known?
   bool get known {
-    return (lat != null && lon != null);
+    return (_lat != null && _lon != null);
   }
 
   // private
   set known(bool val) {
     if (val == false) {
-      lat = null;
-      lon = null;
+      _lat = null;
+      _lon = null;
     }
   }
 
@@ -93,6 +93,6 @@ class LocationTracker {
     if (!known) {
       return null;
     }
-    return [lat!, lon!];
+    return [_lat!, _lon!];
   }
 }
