@@ -1,8 +1,8 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Language](https://img.shields.io/badge/language-dart-lightblue)]()
-![Release](https://shields.io/github/v/release/mideind/Embla_Flutter?display_name=tag)
+![Release](https://shields.io/github/v/release/mideind/EmblaFlutterApp?display_name=tag)
 ![Play Store](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dis.mideind.embla%26l%3DPlay%2520Store%26m%3D%24version)
-[![Build](https://github.com/mideind/Embla_Flutter/actions/workflows/main.yml/badge.svg)]()
+[![Build](https://github.com/mideind/EmblaFlutterApp/actions/workflows/main.yml/badge.svg)]()
 
 <img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
@@ -32,12 +32,11 @@ requires a recent version of Xcode.
 Clone the repository:
 
 ```bash
-git clone https://github.com/mideind/Embla_Flutter
+git clone https://github.com/mideind/EmblaFlutterApp.git
 ```
 
-In order to work as intended, the app requires an API for the Ratatoskur
-server endpoint. Get this document from
-Google's API console and save it at the following path within the repository:
+In order to work as intended, the app requires an API key for the Ratatoskur server
+endpoint. Save this key in a text file at the following path within the repository:
 
 ```keys/server_key.txt```
 
@@ -50,11 +49,10 @@ bash keys/gen_keysfile.sh
 You should now be able to build and run the app:
 
 ```bash
-flutter run
+flutter run -d [device_id]
 ```
 
-This should launch the app in development mode on your device of choice
-(e.g. simulator, attached physical device, etc.).
+This should launch the app in development mode on your device.
 
 ## Debug build scripts
 
@@ -71,7 +69,7 @@ bash build_ipa.sh
 ```
 
 To create a signed iOS build that will run on an actual device, you need to set
-up an Apple Developer account and enable signing in the Xcode project.
+up an Apple Developer Account and enable signing in the Xcode project.
 
 ## Screenshots
 
