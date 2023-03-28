@@ -22,7 +22,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show queryAPIKey;
+import './keys.dart' show serverAPIKey, queryAPIKey;
 
 // String extensions
 extension StringExtension on String {
@@ -47,6 +47,16 @@ extension HexColor on Color {
     buffer.write(hexString.replaceFirst('#', ''));
     return Color(int.parse(buffer.toString(), radix: 16));
   }
+}
+
+String _cachedServerAPIKey = '';
+
+// Read and cache query server key
+String readServerAPIKey() {
+  if (_cachedServerAPIKey == '') {
+    _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey));
+  }
+  return _cachedServerAPIKey;
 }
 
 String _cachedQueryAPIKey = '';

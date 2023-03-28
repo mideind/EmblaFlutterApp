@@ -23,6 +23,7 @@ import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
@@ -33,16 +34,16 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:embla_core/embla_core.dart' show EmblaSession, EmblaSessionConfig, AudioPlayer;
+import 'package:embla_core/embla_core.dart';
 
 import './animations.dart' show animationFrames;
 import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
-import './query.dart' show QueryService;
 import './jsexec.dart' show JSExecutor;
 import './theme.dart';
+import './util.dart' show readServerAPIKey;
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -118,6 +119,7 @@ class SessionRoute extends StatefulWidget {
 
 class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
   EmblaSession session = EmblaSession(EmblaSessionConfig());
+  EmblaSessionConfig config = EmblaSessionConfig();
   Timer? animationTimer;
   String text = introMsg();
   String? imageURL;
@@ -128,7 +130,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     super.initState();
 
     // This is needed to make animations work when hot reloading during development
-    Animate.restartOnHotReload = true;
+    if (kDebugMode) {
+      Animate.restartOnHotReload = true;
+    }
 
     requestMicPermissionAndStartHotwordDetection();
 
@@ -181,16 +185,14 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   // Ticker to animate session button
   void ticker() {
-    setState(() {
-      if (state == SessionState.listening) {
-        // addSample(SpeechRecognizer().lastSignal);
-      } else if (state == SessionState.answering) {
+    if (state == SessionState.answering) {
+      setState(() {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
-          currFrame = 0; // Reset animation
+          currFrame = 0; // Reset animation to first frame
         }
-      }
-    });
+      });
+    }
   }
 
   void answerQuery(List<String> alternatives) {
@@ -229,7 +231,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         String s = await JSExecutor().run(resp['command']);
         msg(s);
         // Request speech synthesis of result, play audio and terminate session
-        await QueryService.requestSpeechSynthesis(s, (dynamic m) {
+        await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
           if (m == null || (m is Map) == false || m['audio_url'] == null) {
             dlog("Error synthesizing audio. Response from server: $m");
             AudioPlayer().playSound('err');
@@ -304,9 +306,11 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       return;
     }
 
-    AudioPlayer().playSound('rec_begin');
-
     HotwordDetector().stop();
+
+    config = EmblaSessionConfig();
+    config.apiKey = readServerAPIKey();
+    session = EmblaSession(config);
 
     // Clear text and set off animation timer
     setState(() {
@@ -351,7 +355,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void cancel() {
     dlog('User initiated cancellation of session');
     stop();
-    //AudioPlayer().playSound('rec_cancel');
+    session.cancel();
     msg(introMsg());
   }
 
@@ -473,7 +477,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                         height: buttonSize,
                         // Session button uses custom painter to draw the button
                         child: CustomPaint(painter: SessionButtonPainter())
-                            .animate(target: state == SessionState.resting ? 0 : 1)
+                            .animate(target: session.isActive() ? 1 : 0)
                             .scaleXY(end: 1.20, duration: 100.ms),
                       )))));
     }

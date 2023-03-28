@@ -38,7 +38,7 @@ git clone https://github.com/mideind/EmblaFlutterApp.git
 In order to work as intended, the app requires an API key for the Ratatoskur server
 endpoint. Save this key in a text file at the following path within the repository:
 
-```keys/server_key.txt```
+```keys/server.key```
 
 Then run the following script:
 
@@ -69,7 +69,8 @@ bash build_ipa.sh
 ```
 
 To create a signed iOS build that will run on an actual device, you need to set
-up an Apple Developer Account and enable signing in the Xcode project.
+up an [Apple Developer Account](https://developer.apple.com) and enable signing
+in the Xcode project.
 
 ## Screenshots
 
