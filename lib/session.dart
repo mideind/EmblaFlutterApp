@@ -60,9 +60,6 @@ enum SessionState {
   answering, // Communicating with server or playing back answer
 }
 
-// Current session state
-SessionState state = SessionState.resting;
-
 // Waveform configuration
 const int kWaveformNumBars = 12; // Number of waveform bars drawn
 const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars as proportion of width
@@ -175,6 +172,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     return (connectivityResult != ConnectivityResult.none);
   }
 
+  /// Hotword detection handling
   void hotwordHandler() {
     start();
   }
@@ -183,9 +181,100 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     dlog("Error starting hotword detection: ${err.toString()}");
   }
 
+  /// Configure session
+  EmblaSessionConfig configureSession() {
+    EmblaSessionConfig config = EmblaSessionConfig();
+    config.apiKey = readServerAPIKey();
+    config.onStartListening;
+    config.onSpeechTextReceived;
+    config.onQueryAnswerReceived = handleQueryResponse;
+    config.onStartAnswering;
+    config.onDone;
+    config.onError;
+    return config;
+  }
+
+  /// Start session
+  void start() async {
+    if (session.isActive()) {
+      dlog('Session start called during pre-existing session!');
+      return;
+    }
+
+    // Make sure we have microphone permission
+    if (await Permission.microphone.isGranted == false) {
+      AudioPlayer().playSound('rec_cancel');
+      showMicPermissionErrorAlert(context);
+      return;
+    }
+
+    // Check for internet connectivity
+    if (await isConnectedToInternet() == false) {
+      msg(kNoInternetMessage);
+      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
+      return;
+    }
+
+    HotwordDetector().stop();
+
+    config = configureSession();
+    session = EmblaSession(config);
+
+    try {
+      session.start();
+
+      // Clear text and set off animation timer
+      setState(() {
+        text = '';
+        imageURL = null;
+        audioSamples = populateSamples();
+        animationTimer?.cancel();
+        animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
+      });
+    } catch (e) {
+      stop();
+      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
+    }
+  }
+
+  // End session, reset state
+  void stop() {
+    if (session.isActive() == false) {
+      return;
+    }
+    dlog('Stopping session');
+    animationTimer?.cancel();
+    session.stop();
+
+    setState(() {
+      currFrame = kFullLogoFrame;
+    });
+
+    if (Prefs().boolForKey('hotword_activation') == true) {
+      HotwordDetector().start(hotwordHandler);
+    }
+  }
+
+  // User cancelled ongoing session by pressing button
+  void cancel() {
+    dlog('User initiated cancellation of session');
+    stop();
+    session.cancel();
+    msg(introMsg());
+  }
+
+  // Session button pressed
+  void toggle() async {
+    if (session.isActive() == false) {
+      start();
+    } else {
+      cancel();
+    }
+  }
+
   // Ticker to animate session button
   void ticker() {
-    if (state == SessionState.answering) {
+    if (session.state == EmblaSessionState.answering) {
       setState(() {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
@@ -198,13 +287,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void answerQuery(List<String> alternatives) {
     dlog("Answering query: ${alternatives.toString()}");
     // Transition to answering state
-    state = SessionState.answering;
     currFrame = kFullLogoFrame;
   }
 
   // Process response from query server
   void handleQueryResponse(Map<String, dynamic>? resp) async {
-    if (state != SessionState.answering) {
+    if (session.state != SessionState.answering) {
       dlog("Received query answer after session terminated: ${resp.toString()}");
       return;
     }
@@ -286,88 +374,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     });
   }
 
-  // Start session
-  void start() async {
-    if (session.isActive()) {
-      dlog('Session start called during pre-existing session!');
-      return;
-    }
-
-    if (await Permission.microphone.isGranted == false) {
-      AudioPlayer().playSound('rec_cancel');
-      showMicPermissionErrorAlert(context);
-      return;
-    }
-
-    // Check for internet connectivity
-    if (await isConnectedToInternet() == false) {
-      msg(kNoInternetMessage);
-      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
-      return;
-    }
-
-    HotwordDetector().stop();
-
-    config = EmblaSessionConfig();
-    config.apiKey = readServerAPIKey();
-    session = EmblaSession(config);
-
-    // Clear text and set off animation timer
-    setState(() {
-      state = SessionState.listening;
-      text = '';
-      imageURL = null;
-      audioSamples = populateSamples();
-      animationTimer?.cancel();
-      animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
-    });
-
-    // Create session config
-
-    try {
-      session.start();
-    } catch (e) {
-      stop();
-      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
-    }
-  }
-
-  // End session, reset state
-  void stop() {
-    if (state == SessionState.resting) {
-      return;
-    }
-    dlog('Stopping session');
-    animationTimer?.cancel();
-    session.stop();
-
-    setState(() {
-      state = SessionState.resting;
-      currFrame = kFullLogoFrame;
-    });
-
-    if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().start(hotwordHandler);
-    }
-  }
-
-  // User cancelled ongoing session by pressing button
-  void cancel() {
-    dlog('User initiated cancellation of session');
-    stop();
-    session.cancel();
-    msg(introMsg());
-  }
-
-  // Session button pressed
-  void toggle() async {
-    if (session.isActive() == false) {
-      start();
-    } else {
-      cancel();
-    }
-  }
-
   // Show alert dialog for when microphone permission is not available
   void showMicPermissionErrorAlert(BuildContext context) {
     showCupertinoDialog(
@@ -394,7 +400,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   Widget build(BuildContext context) {
     // Session button properties depending on whether session is active
     sessionContext = context;
-    final bool active = (state == SessionState.resting);
+    final bool active = session.isActive();
     const double prop = kRestingButtonPropSize;
     final double buttonSize = MediaQuery.of(context).size.width * prop;
     final String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
@@ -436,7 +442,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     void toggleHotwordActivation() {
       final bool on = Prefs().boolForKey('hotword_activation');
       Prefs().setBoolForKey('hotword_activation', !on);
-      if (state == SessionState.resting) {
+      if (session.state == EmblaSessionState.idle) {
         msg(introMsg());
       }
       if (Prefs().boolForKey('hotword_activation')) {
@@ -476,7 +482,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                         width: buttonSize,
                         height: buttonSize,
                         // Session button uses custom painter to draw the button
-                        child: CustomPaint(painter: SessionButtonPainter())
+                        child: CustomPaint(painter: SessionButtonPainter(session))
                             .animate(target: session.isActive() ? 1 : 0)
                             .scaleXY(end: 1.20, duration: 100.ms),
                       )))));
@@ -516,6 +522,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
 // This is the drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
+  late final EmblaSession session;
+  SessionButtonPainter(this.session);
+
   // Draw the three circles that make up the button
   void drawCircles(Canvas canvas, Size size) {
     final radius = min(size.width, size.height) / 2;
@@ -623,11 +632,11 @@ class SessionButtonPainter extends CustomPainter {
     drawCircles(canvas, size);
 
     // Draw waveform bars during microphone input
-    if (state == SessionState.listening) {
+    if (session.state == SessionState.listening) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during answering phase
-    else if (state == SessionState.answering) {
+    else if (session.state == SessionState.answering) {
       drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo
