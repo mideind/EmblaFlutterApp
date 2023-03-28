@@ -51,7 +51,7 @@ final Map<String, String> kOSNameToPretty = {
 };
 
 // Generate canonical version string for app
-Future<String> genVersionString() async {
+Future<String> getVersionString() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   final String version = packageInfo.version;
   final String osName = kOSNameToPretty[Platform.operatingSystem] ?? "";
@@ -64,18 +64,18 @@ Future<String> genVersionString() async {
 }
 
 // Return application name
-Future<String> _genName() async {
+Future<String> _getName() async {
   return kSoftwareName;
 }
 
 // Return the unique application identifier e.g. is.mideind.embla
-Future<String> _genAppIdentifier() async {
+Future<String> _getAppIdentifier() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.packageName;
 }
 
 // Return marketing version e.g. 1.4.0
-Future<String> _genVersion() async {
+Future<String> getVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   if (kDebugMode == true) {
     return "${packageInfo.version} (debug)";
@@ -84,38 +84,42 @@ Future<String> _genVersion() async {
 }
 
 // Return internal build number
-Future<String> _genBuildNumber() async {
+Future<String> _getBuildNumber() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.buildNumber;
 }
 
 // Return the name of the operating system
-Future<String> _genPlatform() async {
+Future<String> _getPlatform() async {
   return kOSNameToPretty[Platform.operatingSystem] ?? "";
 }
 
+Future<String> getClientType() async {
+  return "${Platform.operatingSystem}_${_getImplementation()}";
+}
+
 // Return OS version
-Future<String> _genOSVersion() async {
+Future<String> _getOSVersion() async {
   return "OS ${Platform.operatingSystemVersion}";
 }
 
 // Return the implementation name e.g. flutter, native
-Future<String> _genImplementation() async {
+Future<String> _getImplementation() async {
   return kSoftwareImplementation.sentenceCapitalized();
 }
 
 // Software author name
-Future<String> _genAuthor() async {
+Future<String> _getAuthor() async {
   return kSoftwareAuthor;
 }
 
 // Is microphone access granted?
-Future<String> _genMicAccess() async {
+Future<String> _getMicAccess() async {
   return (await Permission.location.isGranted) ? kYesLabel : kNoLabel;
 }
 
 // Is location access granted?
-Future<String> _genLocationAccess() async {
+Future<String> _getLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
     return kNoLabel;
   }
@@ -124,12 +128,12 @@ Future<String> _genLocationAccess() async {
 
 // This returns an app-specific unique identifier for the device
 // This is the ID used to identify the user in the backend
-Future<String> _genUniqueIdentifier() async {
-  return await PlatformDeviceId.getDeviceId ?? "???";
+Future<String> getUniqueIdentifier() async {
+  return await PlatformDeviceId.getDeviceId ?? "";
 }
 
 // List of version info widgets
-List<Widget> _versionInfo(BuildContext context) {
+List<Widget> _buildVersionInfoWidgets(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
   final infoIcon = Icon(Icons.info_outline, color: color4ctx(context));
   final header = Center(
@@ -141,20 +145,20 @@ List<Widget> _versionInfo(BuildContext context) {
   List<Widget> versionInfoWidgets = [
     header,
     divider,
-    SettingsAsyncLabelValueWidget('Nafn', _genName()),
-    SettingsAsyncLabelValueWidget('ID', _genAppIdentifier()),
-    SettingsAsyncLabelValueWidget('Útgáfa', _genVersion()),
-    SettingsAsyncLabelValueWidget('Útgáfunúmer', _genBuildNumber()),
-    SettingsAsyncLabelValueWidget('Stýrikerfi', _genPlatform()),
-    SettingsAsyncFullTextLabelWidget(_genOSVersion()),
-    SettingsAsyncLabelValueWidget('Útfærsla', _genImplementation()),
-    SettingsAsyncLabelValueWidget('Höfundur', _genAuthor()),
+    SettingsAsyncLabelValueWidget('Nafn', _getName()),
+    SettingsAsyncLabelValueWidget('ID', _getAppIdentifier()),
+    SettingsAsyncLabelValueWidget('Útgáfa', getVersion()),
+    SettingsAsyncLabelValueWidget('Útgáfunúmer', _getBuildNumber()),
+    SettingsAsyncLabelValueWidget('Stýrikerfi', _getPlatform()),
+    SettingsAsyncFullTextLabelWidget(_getOSVersion()),
+    SettingsAsyncLabelValueWidget('Útfærsla', _getImplementation()),
+    SettingsAsyncLabelValueWidget('Höfundur', _getAuthor()),
     divider,
-    SettingsAsyncLabelValueWidget('Hljóðnemi', _genMicAccess()),
-    SettingsAsyncLabelValueWidget('Staðsetning', _genLocationAccess()),
+    SettingsAsyncLabelValueWidget('Hljóðnemi', _getMicAccess()),
+    SettingsAsyncLabelValueWidget('Staðsetning', _getLocationAccess()),
     divider,
     const SettingsFullTextLabelWidget("Auðkenni:"),
-    SettingsAsyncFullTextLabelWidget(_genUniqueIdentifier()),
+    SettingsAsyncFullTextLabelWidget(getUniqueIdentifier()),
     divider,
     const Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
   ];
@@ -168,6 +172,6 @@ class VersionRoute extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: standardEdgeInsets, children: _versionInfo(context)));
+        body: ListView(padding: standardEdgeInsets, children: _buildVersionInfoWidgets(context)));
   }
 }

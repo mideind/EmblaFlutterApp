@@ -22,6 +22,7 @@ import 'dart:async';
 import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
+import 'package:embla/loc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -44,6 +45,7 @@ import './prefs.dart' show Prefs;
 import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './util.dart' show readServerAPIKey;
+import './version.dart' show getClientType, getVersion, getUniqueIdentifier;
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -122,7 +124,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   String? imageURL;
   StreamSubscription<FGBGType>? appStateSubscription;
 
+  @protected
   @override
+  @mustCallSuper
   void initState() {
     super.initState();
 
@@ -167,9 +171,39 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
+  // Show alert dialog for when microphone permission is not available
+  void showMicPermissionErrorAlert(BuildContext context) {
+    showCupertinoDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return CupertinoAlertDialog(
+          title: const Text('Villa í talgreiningu'),
+          content: const Text(kNoMicPermissionMessage),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Allt í lagi'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                OpenSettings.openPrivacySetting();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<bool> isConnectedToInternet() async {
     final ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
     return (connectivityResult != ConnectivityResult.none);
+  }
+
+  // Set text field string (and optionally, an associated image)
+  void msg(String s, {String? imgURL}) {
+    setState(() {
+      text = s;
+      imageURL = imgURL;
+    });
   }
 
   /// Hotword detection handling
@@ -182,15 +216,30 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   /// Configure session
-  EmblaSessionConfig configureSession() {
+  Future<EmblaSessionConfig> configureSession() async {
     EmblaSessionConfig config = EmblaSessionConfig(server: "http://brandur.mideind.is:8080");
+
+    // Settings
     config.apiKey = readServerAPIKey();
+    config.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
+    config.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
+    config.private = Prefs().boolForKey("private");
+    config.clientID = await getUniqueIdentifier();
+    config.clientType = await getClientType();
+    config.clientVersion = await getVersion();
+
+    // Handlers
     config.onStartListening;
-    config.onSpeechTextReceived;
+    config.onSpeechTextReceived = handleTextReceived;
     config.onQueryAnswerReceived = handleQueryResponse;
     config.onStartAnswering;
     config.onDone;
-    config.onError;
+    config.onError = handleError;
+
+    config.getLocation = () {
+      return LocationTracker().location;
+    };
+
     return config;
   }
 
@@ -217,24 +266,25 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     HotwordDetector().stop();
 
-    config = configureSession();
-    session = EmblaSession(config);
+    config = await configureSession().then((value) {
+      session = EmblaSession(config);
+      try {
+        session.start();
 
-    try {
-      session.start();
-
-      // Clear text and set off animation timer
-      setState(() {
-        text = '';
-        imageURL = null;
-        audioSamples = populateSamples();
-        animationTimer?.cancel();
-        animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
-      });
-    } catch (e) {
-      stop();
-      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
-    }
+        // Clear text and set off animation timer
+        setState(() {
+          text = '';
+          imageURL = null;
+          audioSamples = populateSamples();
+          animationTimer?.cancel();
+          animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
+        });
+      } catch (e) {
+        dlog('Error starting session: ${e.toString()}');
+        stop();
+      }
+      return value;
+    });
   }
 
   // End session, reset state
@@ -284,10 +334,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
-  void answerQuery(List<String> alternatives) {
-    dlog("Answering query: ${alternatives.toString()}");
-    // Transition to answering state
-    currFrame = kFullLogoFrame;
+  void handleTextReceived(String transcript, bool isFinal) {
+    if (isFinal) {
+      msg(transcript);
+      currFrame = kFullLogoFrame;
+    } else {
+      msg(transcript);
+    }
   }
 
   // Process response from query server
@@ -366,34 +419,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
-  // Set text field string (and optionally, an associated image)
-  void msg(String s, {String? imgURL}) {
-    setState(() {
-      text = s;
-      imageURL = imgURL;
-    });
-  }
-
-  // Show alert dialog for when microphone permission is not available
-  void showMicPermissionErrorAlert(BuildContext context) {
-    showCupertinoDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          title: const Text('Villa í talgreiningu'),
-          content: const Text(kNoMicPermissionMessage),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Allt í lagi'),
-              onPressed: () {
-                Navigator.of(context).pop();
-                OpenSettings.openPrivacySetting();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  void handleError(String errMsg) {
+    stop();
+    msg(kServerErrorMessage);
+    AudioPlayer().playSound('err');
   }
 
   @override

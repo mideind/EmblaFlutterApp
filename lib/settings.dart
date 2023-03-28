@@ -505,7 +505,7 @@ Future<void> playVoiceSpeed() async {
   }
   AudioPlayer().stop();
   voiceSpeedTimer = Timer(const Duration(milliseconds: 300), () {
-    AudioPlayer().playSound('voicespeed', Prefs().stringForKey('voice_id') ?? kDefaultVoice, null,
+    AudioPlayer().playSound('voicespeed', Prefs().stringForKey('voice_id') ?? kDefaultVoiceID, null,
         Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
   });
 }
@@ -529,7 +529,7 @@ List<Widget> _settings(BuildContext context) {
         onChangeEnd: (double val) {
           playVoiceSpeed();
         }),
-    SettingsAsyncLabelValueWidget('Útgáfa', genVersionString(), onTapRoute: const VersionRoute()),
+    SettingsAsyncLabelValueWidget('Útgáfa', getVersionString(), onTapRoute: const VersionRoute()),
   ];
 
   // Only include query server selection widget in debug builds

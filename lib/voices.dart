@@ -91,7 +91,7 @@ Widget _buildVoiceList(BuildContext context, List voices) {
             : null,
         onTap: () {
           Prefs().setStringForKey("voice_id", voices[index]);
-          AudioPlayer().playSound("mynameis", Prefs().stringForKey('voice_id') ?? kDefaultVoice);
+          AudioPlayer().playSound("mynameis", Prefs().stringForKey('voice_id') ?? kDefaultVoiceID);
           Navigator.pop(context);
         },
       );

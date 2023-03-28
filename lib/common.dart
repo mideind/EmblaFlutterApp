@@ -42,7 +42,7 @@ const String kVoiceListAPIPath = '/voices.api/v1';
 // Speech synthesis
 const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];
 const List<String> kSpeechSynthesisDebugVoices = ["Guðrún", "Gunnar", "Dóra", "Karl"];
-const String kDefaultVoice = "Guðrún";
+const String kDefaultVoiceID = "Guðrún";
 const double kDefaultVoiceSpeed = 1.0;
 const double kVoiceSpeedMin = 0.7;
 const double kVoiceSpeedMax = 2.0;

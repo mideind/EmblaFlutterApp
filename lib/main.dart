@@ -28,7 +28,7 @@ import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, Adaptive
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './animations.dart' show preloadAnimationFrames;
-import './common.dart' show dlog, kSoftwareName, kDefaultVoice;
+import './common.dart' show dlog, kSoftwareName, kDefaultVoiceID;
 import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
@@ -54,14 +54,14 @@ void main() async {
   if (launched == true && kDebugMode == false) {
     final String? voiceID = Prefs().stringForKey("voice_id");
     if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
-      Prefs().setStringForKey("voice_id", kDefaultVoice);
+      Prefs().setStringForKey("voice_id", kDefaultVoiceID);
     }
     // If user had selected "Karl" as the voice, change it to "Gunnar"
     if (voiceID == "Karl") {
       Prefs().setStringForKey("voice_id", "Gunnar");
     }
   }
-  dlog("Shared prefs: ${Prefs().description()}");
+  dlog("Shared prefs: ${Prefs()}");
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();

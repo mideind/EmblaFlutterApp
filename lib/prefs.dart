@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Prefs singleton object that contains all user
-// settings variables used globally by the app.
+/// Prefs singleton object that contains all
+/// user settings used globally by the app.
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -39,12 +39,13 @@ class Prefs {
     _sp = await SharedPreferences.getInstance();
   }
 
+  // Booleans
   bool boolForKey(String key) {
     return _sp?.getBool(key) ?? false;
   }
 
   void setBoolForKey(String key, bool val) {
-    dlog("Setting pref key '$key' to bool '${val.toString()}'");
+    dlog("Setting pref key '$key' to bool '$val'");
     _sp?.setBool(key, val);
     // TODO: This is hacky and should be solved in some other way. Can we subscribe to changes?
     if (key == 'share_location') {
@@ -56,15 +57,17 @@ class Prefs {
     }
   }
 
+  // Doubles
   double? doubleForKey(String key) {
     return _sp?.getDouble(key);
   }
 
   void setDoubleForKey(String key, double val) {
-    dlog("Setting pref key '$key' to float '${val.toString()}'");
+    dlog("Setting pref key '$key' to double '$val'");
     _sp?.setDouble(key, val);
   }
 
+  // Strings
   String? stringForKey(String key) {
     return _sp?.getString(key);
   }
@@ -74,26 +77,23 @@ class Prefs {
     _sp?.setString(key, val);
   }
 
-  // void clear() {
-  //   dlog("Clearing prefs");
-  //   _sp?.clear();
-  // }
-
-  /// Set default starting values for prefs
+  /// Set default starting values for prefs.
   void setDefaults() {
     dlog('Setting prefs to default values');
     setBoolForKey('launched', true);
     setBoolForKey('hotword_activation', true);
     setBoolForKey('share_location', true);
     setBoolForKey('privacy_mode', false);
-    setDoubleForKey('voice_speed', 1.0);
-    setStringForKey('voice_id', kDefaultVoice);
+    setDoubleForKey('voice_speed', kDefaultVoiceSpeed);
+    setStringForKey('voice_id', kDefaultVoiceID);
     setStringForKey('query_server', kDefaultQueryServer);
+    setStringForKey('ratatoskur_server', kDefaultRatatoskurServer);
   }
 
-  /// Generate a human-readable string representation of
-  /// all key/value pairs in global Prefs object
-  String description() {
+  /// Generate a human-readable string representation
+  /// of all key/value pairs in global Prefs object.
+  @override
+  String toString() {
     final List<dynamic> list = _sp!
         .getKeys()
         .map<String>((key) => "$key: ${_sp?.get(key).toString()}")
