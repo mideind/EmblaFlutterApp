@@ -23,6 +23,7 @@ import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
 import 'package:embla/loc.dart';
+import 'package:embla/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -146,9 +147,9 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       } else {
         // App went into background - FGBGType.background
-        session.stop();
         HotwordDetector().stop();
         AudioPlayer().stop();
+        session.stop();
       }
     });
   }
@@ -218,7 +219,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   /// Configure session
   Future<EmblaSessionConfig> configureSession() async {
-    EmblaSessionConfig config = EmblaSessionConfig(server: "http://brandur.mideind.is:8080");
+    EmblaSessionConfig config = EmblaSessionConfig(server: kDefaultRatatoskurServer);
 
     // Settings
     config.apiKey = readServerAPIKey();
@@ -234,7 +235,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     config.onSpeechTextReceived = handleTextReceived;
     config.onQueryAnswerReceived = handleQueryResponse;
     config.onStartAnswering;
-    config.onDone;
+    config.onDone = handleDone;
     config.onError = handleError;
 
     config.getLocation = () {
@@ -267,25 +268,23 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     HotwordDetector().stop();
 
-    config = await configureSession().then((value) {
-      session = EmblaSession(config);
-      try {
-        session.start();
+    config = await configureSession();
+    session = EmblaSession(config);
+    try {
+      session.start();
 
-        // Clear text and set off animation timer
-        setState(() {
-          text = '';
-          imageURL = null;
-          audioSamples = populateSamples();
-          animationTimer?.cancel();
-          animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
-        });
-      } catch (e) {
-        dlog('Error starting session: ${e.toString()}');
-        session.stop();
-      }
-      return value;
-    });
+      // Clear text and set off animation timer
+      setState(() {
+        text = '';
+        imageURL = null;
+        audioSamples = populateSamples();
+        animationTimer?.cancel();
+        animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
+      });
+    } catch (e) {
+      dlog('Error starting session: ${e.toString()}');
+      session.stop();
+    }
   }
 
   // User cancelled ongoing session by pressing button
@@ -317,81 +316,46 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   }
 
   void handleTextReceived(String transcript, bool isFinal) {
-    if (isFinal) {
-      msg(transcript);
-    } else {
-      msg(transcript);
-    }
+    msg(transcript);
   }
 
   // Process response from query server
   void handleQueryResponse(Map<String, dynamic>? resp) async {
-    // Received valid response to query
-    if (resp != null && resp['valid'] == true && resp['error'] == null && resp['answer'] != null) {
-      dlog('Received valid response to query');
-      // Update text
-      String t = "${resp["q"]}\n\n${resp["answer"]}";
-      if (resp['source'] != null) {
-        t = "$t (${resp['source']})";
-      }
-      msg(t, imgURL: resp['image']);
+    if (resp == null) {
+      return;
+    }
 
-      // Open URL, if provided in query answer
-      if (resp['open_url'] != null) {
-        session.stop();
-        dlog("Opening URL ${resp['open_url']}");
-        launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
-      }
-      // Javascript payload
-      else if (resp['command'] != null) {
-        // Evaluate JS
-        String s = await JSExecutor().run(resp['command']);
-        msg(s);
-        // Request speech synthesis of result, play audio and terminate session
-        await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
-          if (m == null || (m is Map) == false || m['audio_url'] == null) {
-            dlog("Error synthesizing audio. Response from server: $m");
-            session.stop();
-            AudioPlayer().playSound('err');
-            msg(kServerErrorMessage);
-          } else {
-            AudioPlayer().playURL(m['audio_url'], (bool err) {
-              session.stop();
-            });
-          }
-        });
-      }
-      // Play audio answer and then terminate session
-      else if (resp['audio'] != null) {
-        await AudioPlayer().playURL(resp['audio'], (bool err) {
-          if (err == true) {
-            dlog('Error during audio playback');
-            AudioPlayer().playSound('err');
-            msg(kServerErrorMessage);
-          } else {
-            dlog('Playback finished');
-          }
-          session.stop();
-        });
-      } else {
-        // If no audio to play, terminate session
-        session.stop();
-      }
+    // Update text field with response
+    String t = "${resp["q"]}\n\n${resp["answer"]}";
+    if (resp['source'] != null) {
+      t = "$t (${resp['source']})";
     }
-    // Don't know
-    else if (resp != null && resp['error'] != null) {
-      final String dunnoMsg = AudioPlayer().playDunno(Prefs().stringForKey("voice_id")!, () {
-            dlog('Playback finished');
-            session.stop();
-          }) ??
-          "";
-      msg("${resp["q"]}\n\n$dunnoMsg");
-    }
-    // Error in server response
-    else {
+    msg(t, imgURL: resp['image']);
+
+    // Open URL, if provided with query answer
+    if (resp['open_url'] != null) {
       session.stop();
-      msg(kServerErrorMessage);
-      AudioPlayer().playSound('err');
+      dlog("Opening URL ${resp['open_url']}");
+      launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
+    }
+    // Javascript payload
+    else if (resp['command'] != null) {
+      // Evaluate JS
+      String s = await JSExecutor().run(resp['command']);
+      msg(s);
+      // Request speech synthesis of result, play audio and terminate session
+      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
+        if (m == null || (m is Map) == false || m['audio_url'] == null) {
+          dlog("Error synthesizing audio. Response from server: $m");
+          session.stop();
+          AudioPlayer().playSound('err');
+          msg(kServerErrorMessage);
+        } else {
+          AudioPlayer().playURL(m['audio_url'], (bool err) {
+            session.stop();
+          });
+        }
+      });
     }
   }
 
@@ -401,7 +365,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     AudioPlayer().playSound('err');
   }
 
-  void handleSessionDone() {
+  void handleDone() {
     setState(() {
       animationTimer?.cancel();
       currFrame = kFullLogoFrame;
