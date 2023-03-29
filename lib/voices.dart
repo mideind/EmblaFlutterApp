@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Voice selection route
+/// Voice selection route. Subroute of SettingsRoute.
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
@@ -27,16 +27,10 @@ import './prefs.dart' show Prefs;
 import './common.dart';
 import './theme.dart';
 
-const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
+/// Build a list view of available voices
+Widget _buildVoiceList(BuildContext context) {
+  const List<String> voices = kDebugMode ? kSpeechSynthesisDebugVoices : kSpeechSynthesisVoices;
 
-/// Fetch list of voice IDs (strings) from server
-Future<List<String>> _fetchVoiceList() async {
-  return kDebugMode ? kSpeechSynthesisDebugVoices : kSpeechSynthesisVoices;
-}
-
-/// Build a list view of voices
-Widget _buildVoiceList(BuildContext context, List voices) {
-  dlog("Building voice list view from $voices");
   return ListView.builder(
     itemCount: voices.length,
     itemBuilder: (BuildContext context, int index) {
@@ -64,29 +58,11 @@ Widget _buildVoiceList(BuildContext context, List voices) {
   );
 }
 
-/// Generate a FutureBuilder for the voice list
-FutureBuilder<List> _genVoiceList() {
-  return FutureBuilder<List>(
-      future: _fetchVoiceList(),
-      builder: (context, AsyncSnapshot<List> snapshot) {
-        if (snapshot.hasData == false) {
-          // No data yet, show progress indicator
-          return const Center(
-            child: CircularProgressIndicator(
-              semanticsLabel: kVoicesLoadingMsg,
-            ),
-          );
-        } else {
-          return _buildVoiceList(context, snapshot.data!);
-        }
-      });
-}
-
 class VoiceSelectionRoute extends StatelessWidget {
   const VoiceSelectionRoute({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: standardAppBar, body: _genVoiceList());
+    return Scaffold(appBar: standardAppBar, body: _buildVoiceList(context));
   }
 }

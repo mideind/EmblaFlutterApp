@@ -55,7 +55,7 @@ String _cachedServerAPIKey = '';
 /// Read and cache Ratatoskur server key
 String readServerAPIKey() {
   if (_cachedServerAPIKey == '') {
-    _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey)).trim();
+    _cachedServerAPIKey += utf8.decode(base64.decode(serverAPIKey)).trim();
   }
   return _cachedServerAPIKey;
 }

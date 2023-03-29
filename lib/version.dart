@@ -16,7 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Version route shows all sorts of info about the client
+/// Version route that shows detailed info about the client.
+/// Subroute of SettingsRoute.
 
 import 'dart:io' show Platform;
 
@@ -55,11 +56,11 @@ Future<String> getVersionString() async {
   final String version = packageInfo.version;
   final String osName = kOSNameToPretty[Platform.operatingSystem] ?? "";
 
-  String swInfoStr = "$version ($osName)";
+  String versionStr = "$version ($osName)";
   if (kDebugMode) {
-    swInfoStr += " dbg";
+    versionStr += " dbg";
   }
-  return swInfoStr;
+  return versionStr;
 }
 
 /// Return marketing version string, e.g. 1.4.0
@@ -135,7 +136,7 @@ Future<String> _getLocationAccess() async {
 }
 
 /// Generate list of version info widgets
-List<Widget> _buildVersionInfoWidgets(BuildContext context) {
+ListView _buildVersionInfoWidgetList(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
   final infoIcon = Icon(Icons.info_outline, color: color4ctx(context));
   final header = Center(
@@ -144,7 +145,7 @@ List<Widget> _buildVersionInfoWidgets(BuildContext context) {
     const Text(' Upplýsingar'),
   ]));
 
-  final List<Widget> versionInfoWidgets = [
+  return ListView(padding: standardEdgeInsets, children: [
     header,
     divider,
     SettingsAsyncLabelValueWidget('Nafn', _getName()),
@@ -163,8 +164,7 @@ List<Widget> _buildVersionInfoWidgets(BuildContext context) {
     SettingsAsyncFullTextLabelWidget(getUniqueIdentifier()),
     divider,
     const Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
-  ];
-  return versionInfoWidgets;
+  ]);
 }
 
 class VersionRoute extends StatelessWidget {
@@ -172,8 +172,6 @@ class VersionRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        appBar: standardAppBar,
-        body: ListView(padding: standardEdgeInsets, children: _buildVersionInfoWidgets(context)));
+    return Scaffold(appBar: standardAppBar, body: _buildVersionInfoWidgetList(context));
   }
 }
