@@ -66,7 +66,7 @@ Future<String> getVersionString() async {
 Future<String> getVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   if (kDebugMode == true) {
-    return "${packageInfo.version} (debug)";
+    return "${packageInfo.version} dbg";
   }
   return packageInfo.version;
 }

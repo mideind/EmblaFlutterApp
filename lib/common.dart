@@ -54,8 +54,8 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 // Ratatoskur server preset options (for debugging purposes)
 const List<List<String>> kRatatoskurServerPresetOptions = [
   ['GSAPI', kDefaultRatatoskurServer],
-  ['Brandur', 'http://brandur.mideind.is:5000'],
-  ['Lókal', 'http://192.168.1.8:5000']
+  ['Brandur', 'http://brandur.mideind.is:8080'],
+  ['Lókal', 'http://192.168.1.8:8080']
 ];
 
 // Query server preset options (for debugging purposes)
