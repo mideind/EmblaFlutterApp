@@ -30,7 +30,7 @@ const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
-/// Standard web view route used for displaying HTML documentation.
+/// Standard web view route used for displaying documentation HTML files.
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
@@ -48,7 +48,7 @@ class WebViewRouteState extends State<WebViewRoute> {
   }
 
   /// Add dark=1 query parameter to URL.
-  /// This param is used to style the HTML document for dark mode.
+  /// This param is used to style the HTML document for dark mode via JS.
   String _darkURLForURL(String url) {
     return "$url?dark=1";
   }

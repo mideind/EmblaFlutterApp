@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// App initialization and presentation of main (session) view
+/// App initialization and presentation of main (session) view.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -59,18 +59,13 @@ void main() async {
     "Karl": "Gunnar",
   };
 
-  // TODO: Refactor to use mapping above
   if (launched == true && kDebugMode == false) {
     final String? voiceID = Prefs().stringForKey("voice_id");
-    if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {
-      Prefs().setStringForKey("voice_id", kDefaultVoiceID);
-    }
-    // If user had selected "Karl" as the voice, change it to "Gunnar"
-    if (voiceID == "Karl") {
-      Prefs().setStringForKey("voice_id", "Gunnar");
+    if (oldVoicesToNew.containsKey(voiceID)) {
+      Prefs().setStringForKey("voice_id", oldVoicesToNew[voiceID]!);
     }
   }
-  // If user upgraded from pre-Ratatoskur version, set default server
+  // If user upgraded from pre-Ratatoskur client version, set default server
   if (Prefs().stringForKey("ratatoskur_server") == null) {
     Prefs().setStringForKey("ratatoskur_server", kDefaultRatatoskurServer);
   }
@@ -78,8 +73,8 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  AudioPlayer(); // singleton
-  HotwordDetector(); // singleton
+  AudioPlayer(); // Singleton
+  HotwordDetector(); // Singleton
 
   // Activate wakelock to prevent device from going to sleep
   // This wakelock is disabled when leaving main session route
@@ -99,7 +94,7 @@ void main() async {
   if (statuses[Permission.location]!.isDenied) {
     dlog("Location permission is denied.");
     // User has probably explicitly denied location permission
-    // so we disable location sharing pref to reflect that action
+    // so we disable location sharing pref to reflect that action.
     Prefs().setBoolForKey('share_location', false);
   } else {
     LocationTracker().start();

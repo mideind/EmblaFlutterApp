@@ -58,8 +58,8 @@ const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 class Waveform {
   List<double> samples = [];
 
-  // Constructor, only called once, when singleton is instantiated
   static final Waveform _instance = Waveform._constructor();
+  // Constructor, only called when singleton is instantiated
   Waveform._constructor() {
     setDefaultSamples();
   }

@@ -99,22 +99,22 @@ List<Widget> _mdns(BuildContext context, Function scanForDevices,
                 right: 25.0,
               ),
               child: Column(
-                children: [
-                  const Text(
+                children: const [
+                  Text(
                     'Engin tæki fundust.\n',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'Vinsamlegast reyndu aftur',
                     style: TextStyle(
                       fontSize: 16.0,
                       color: Colors.grey,
                     ),
                   ),
-                  const Text(
+                  Text(
                     'eða veldu tæki handvirkt.',
                     style: TextStyle(
                       fontSize: 16.0,

@@ -109,8 +109,8 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
           title: const Text('Virkja einkaham?'),
           content: SingleChildScrollView(
             child: ListBody(
-              children: <Widget>[
-                const Text(kPrivacyModeMessage),
+              children: const <Widget>[
+                Text(kPrivacyModeMessage),
               ],
             ),
           ),

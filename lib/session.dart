@@ -72,7 +72,7 @@ class SessionRoute extends StatefulWidget {
   State<StatefulWidget> createState() => SessionRouteState();
 }
 
-class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixin {
+class SessionRouteState extends State<SessionRoute> with SingleTickerProviderStateMixin {
   EmblaSession session = EmblaSession(EmblaSessionConfig());
   EmblaSessionConfig config = EmblaSessionConfig();
   Timer? animationTimer;
@@ -396,7 +396,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Generate widget tree for the top scrollable text area
     Widget scrollableTextAreaWidget() {
-      List<Widget> widgets = [
+      final List<Widget> widgets = [
         FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
       ];
       if (imageURL != null) {

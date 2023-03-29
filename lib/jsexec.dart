@@ -17,7 +17,7 @@
  */
 
 /// Singleton wrapper class around a headless web view
-/// used to execute JS code payload from server.
+/// used to execute JS code payload from the server.
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
