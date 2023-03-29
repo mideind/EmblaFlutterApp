@@ -32,12 +32,12 @@ jobs:
           channel: 'stable'
       - name: Create dummy API keys
         run: |
-          touch keys/gaccount.json
-          touch keys/query_api.key
+          touch keys/server.key
           bash keys/gen_keys.sh
           echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
       - name: Install dependencies
         run: |
+          cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
       - name: Run tests

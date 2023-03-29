@@ -22,7 +22,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show serverAPIKey, queryAPIKey;
+import './keys.dart' show serverAPIKey;
 
 /// String extensions
 extension StringExtension on String {
@@ -58,14 +58,4 @@ String readServerAPIKey() {
     _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey)).trim();
   }
   return _cachedServerAPIKey;
-}
-
-String _cachedQueryAPIKey = '';
-
-/// Read and cache query server key
-String readQueryServerKey() {
-  if (_cachedQueryAPIKey == '') {
-    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey)).trim();
-  }
-  return _cachedQueryAPIKey;
 }
