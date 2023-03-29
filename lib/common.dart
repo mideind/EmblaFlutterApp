@@ -36,7 +36,6 @@ const String kHotwordAssetsDirectory = 'assets/hotword';
 // Server communication
 const String kDefaultRatatoskurServer = 'https://staging.api.greynir.is';
 const String kDefaultQueryServer = 'https://greynir.is';
-const String kQueryHistoryAPIPath = '/query_history.api/v1';
 
 // Speech synthesis
 const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];

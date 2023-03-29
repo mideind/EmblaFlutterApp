@@ -27,7 +27,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './common.dart';
-import './query.dart' show QueryService;
+// import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
 import './version.dart';
@@ -550,14 +550,16 @@ List<Widget> _settings(BuildContext context) {
         alertText: kClearHistoryAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
-          QueryService.clearUserData(false);
+          // TODO: Do this via EmblaCore
+          //QueryService.clearUserData(false);
         }),
     SettingsButtonPromptWidget(
         label: 'Hreinsa öll gögn',
         alertText: kClearAllAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
-          QueryService.clearUserData(true);
+          // TODO: Do this via EmblaCore
+          //QueryService.clearUserData(true);
         }),
     const Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
   ]);

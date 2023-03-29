@@ -210,33 +210,34 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     dlog("Error starting hotword detection: ${err.toString()}");
   }
 
-  /// Configure session
+  /// Create session configuration
   Future<EmblaSessionConfig> configureSession() async {
     final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
-    EmblaSessionConfig config = EmblaSessionConfig(server: server);
+    final EmblaSessionConfig cfg = EmblaSessionConfig(server: server);
 
     // Settings
-    config.apiKey = readServerAPIKey();
-    config.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
-    config.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
-    config.private = Prefs().boolForKey("private");
-    config.clientID = await getUniqueIdentifier();
-    config.clientType = await getClientType();
-    config.clientVersion = await getVersion();
+    cfg.apiKey = readServerAPIKey();
+    cfg.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
+    cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
+    cfg.private = Prefs().boolForKey("private");
+    cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
+    cfg.clientID = await getUniqueIdentifier();
+    cfg.clientType = await getClientType();
+    cfg.clientVersion = await getVersion();
 
     // Handlers
-    config.onStartListening = handleStartListening;
-    config.onSpeechTextReceived = handleTextReceived;
-    config.onQueryAnswerReceived = handleQueryResponse;
-    config.onStartAnswering = () {};
-    config.onDone = handleDone;
-    config.onError = handleError;
+    cfg.onStartListening = handleStartListening;
+    cfg.onSpeechTextReceived = handleTextReceived;
+    cfg.onQueryAnswerReceived = handleQueryResponse;
+    cfg.onStartAnswering = () {};
+    cfg.onDone = handleDone;
+    cfg.onError = handleError;
 
-    config.getLocation = () {
+    cfg.getLocation = () {
       return LocationTracker().location;
     };
 
-    return config;
+    return cfg;
   }
 
   /// Start session
