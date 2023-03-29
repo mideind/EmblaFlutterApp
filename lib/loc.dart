@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Singleton wrapper for location tracking
+/// Singleton wrapper for location tracking.
 
 import 'dart:async';
 
@@ -26,7 +26,7 @@ import 'package:permission_handler/permission_handler.dart';
 import './common.dart';
 import './prefs.dart';
 
-/// Location tracking singleton
+/// Location tracking singleton.
 class LocationTracker {
   LocationTracker._constructor();
   static final LocationTracker _instance = LocationTracker._constructor();
@@ -39,7 +39,7 @@ class LocationTracker {
   double? _lon;
   StreamSubscription<Position>? _positionStream;
 
-  /// Start location tracking
+  /// Start location tracking.
   void start() async {
     // We never start location tracking if it's disabled in prefs or if we don't have permission
     if (Prefs().boolForKey('share_location') == false ||
@@ -64,7 +64,7 @@ class LocationTracker {
     });
   }
 
-  /// Stop location tracking
+  /// Stop location tracking.
   void stop() {
     if (_positionStream != null) {
       dlog('Stopping location tracking');

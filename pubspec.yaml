@@ -26,7 +26,6 @@ dependencies:
   permission_handler: '^10.2.0'
   flutter_fgbg: '^0.2.0'
   logger: '^1.1.0'
-  filesize: '^2.0.1'
   adaptive_theme: '^3.0.0'
   open_settings: '^2.0.2'
   flutter_sound: '>9.0.0'

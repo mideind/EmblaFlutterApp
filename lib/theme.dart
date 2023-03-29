@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Configure app theme: colors, fonts and other styling
+/// Configure app theme i.e. colors, fonts and other styling
 
 import 'package:flutter/material.dart';
 

@@ -16,14 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Global constants and debug logging
+/// Global constants and debug logging
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 
 // Software info
+// Version number is set in pubspec.yaml
 const String kSoftwareName = 'Embla';
-const String kSoftwareVersion = '1.4.0';
-const String kSoftwareImplementation = 'flutter';
+const String kSoftwareImplementation = 'Flutter';
 const String kSoftwareAuthor = 'Miðeind ehf.';
 
 // Hotword detection
@@ -37,7 +37,6 @@ const String kHotwordAssetsDirectory = 'assets/hotword';
 const String kDefaultRatatoskurServer = 'http://brandur.mideind:8080';
 const String kDefaultQueryServer = 'https://greynir.is';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
-const String kVoiceListAPIPath = '/voices.api/v1';
 
 // Speech synthesis
 const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];
@@ -54,7 +53,7 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Ratatoskur server preset options (for debugging purposes)
 const List<List<String>> kRatatoskurServerPresetOptions = [
-  ['API', kDefaultRatatoskurServer],
+  ['GSAPI', kDefaultRatatoskurServer],
   ['Brandur', 'http://brandur.mideind.is:5000'],
   ['Lókal', 'http://192.168.1.8:5000']
 ];
@@ -66,7 +65,7 @@ const List<List<String>> kQueryServerPresetOptions = [
   ['Lókal', 'http://192.168.1.8:5000']
 ];
 
-// Debug logging
+/// Debug logging
 void dlog(dynamic msg) {
   if (kDebugMode) {
     // ignore: avoid_print

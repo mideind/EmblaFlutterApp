@@ -16,11 +16,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Menu route
+/// Menu route
 
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 
 import './common.dart';
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar, standardEdgeInsets;
@@ -70,7 +70,7 @@ ListTile _menuTile(String name, String imageName,
 
 // Generate list view with menu tiles
 ListView _menu(BuildContext context) {
-  List<Widget> menuItems = [
+  final List<Widget> menuItems = [
     _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
     _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
     _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
@@ -79,7 +79,7 @@ ListView _menu(BuildContext context) {
 
   // Only show Smart Home menu item in debug mode
   if (kDebugMode) {
-    ListTile smarthomeTile =
+    final ListTile smarthomeTile =
         _menuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
     menuItems.insert(1, smarthomeTile);
   }

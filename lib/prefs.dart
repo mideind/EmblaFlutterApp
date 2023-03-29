@@ -39,7 +39,7 @@ class Prefs {
     _sp = await SharedPreferences.getInstance();
   }
 
-  // Booleans
+  // Boolean values
   bool boolForKey(String key) {
     return _sp?.getBool(key) ?? false;
   }
@@ -47,7 +47,8 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '$val'");
     _sp?.setBool(key, val);
-    // TODO: This is hacky and should be solved in some other way. Can we subscribe to changes?
+    // TODO: This is hacky and should be solved in some
+    // other way. Can we subscribe to changes?
     if (key == 'share_location') {
       if (val == true) {
         LocationTracker().start();
@@ -57,7 +58,7 @@ class Prefs {
     }
   }
 
-  // Doubles
+  // Double values
   double? doubleForKey(String key) {
     return _sp?.getDouble(key);
   }
@@ -67,7 +68,7 @@ class Prefs {
     _sp?.setDouble(key, val);
   }
 
-  // Strings
+  // String values
   String? stringForKey(String key) {
     return _sp?.getString(key);
   }

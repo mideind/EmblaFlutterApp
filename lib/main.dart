@@ -47,10 +47,19 @@ void main() async {
     Prefs().setDefaults();
   }
 
-  // Make sure we change voice "Kona" or "Dora" to new "Gudrun" voice.
-  // Previous versions of the app used "Kona" as the default voice with
-  // the option of "Karl" as an alternative. As of 1.3.0, we use
-  // voice names, and as of 1.3.2 "Gudrun" is the default voice, replacing "Dora"
+  // Make sure we change voice "Kona" or "Dóra" to new "Gudrun" voice.
+  // Previous versions of the app used "Kona" as the default voice with the
+  // option of "Karl" as an alternative. As of 1.3.0, we use proper voice
+  // names, and as of 1.3.2 "Guðrún" is the default voice, replacing "Dóra".
+  const Map<dynamic, String> oldVoicesToNew = {
+    null: kDefaultVoiceID,
+    "Kona": kDefaultVoiceID,
+    "Dóra": kDefaultVoiceID,
+    "Dora": kDefaultVoiceID,
+    "Karl": "Gunnar",
+  };
+
+  // TODO: Refactor to use mapping above
   if (launched == true && kDebugMode == false) {
     final String? voiceID = Prefs().stringForKey("voice_id");
     if (voiceID == "Kona" || voiceID == "Dóra" || voiceID == "Dora" || voiceID == null) {

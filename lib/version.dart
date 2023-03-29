@@ -16,11 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Version route shows all sorts of info about the client
+/// Version route shows all sorts of info about the client
 
 import 'dart:io' show Platform;
 
-import 'package:embla/util.dart';
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 
@@ -42,7 +41,7 @@ const kYesLabel = "Já";
 const kNoLabel = "Nei";
 
 // Map the values returned by Platform.operatingSystem to pretty names
-final Map<String, String> kOSNameToPretty = {
+const Map<String, String> kOSNameToPretty = {
   "linux": "Linux",
   "macos": "macOS",
   "windows": "Windows",
@@ -50,9 +49,9 @@ final Map<String, String> kOSNameToPretty = {
   "ios": "iOS",
 };
 
-// Generate canonical version string for app
+/// Generate human-friendly version string for app
 Future<String> getVersionString() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
   final String version = packageInfo.version;
   final String osName = kOSNameToPretty[Platform.operatingSystem] ?? "";
 
@@ -63,18 +62,7 @@ Future<String> getVersionString() async {
   return swInfoStr;
 }
 
-// Return application name
-Future<String> _getName() async {
-  return kSoftwareName;
-}
-
-// Return the unique application identifier e.g. is.mideind.embla
-Future<String> _getAppIdentifier() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  return packageInfo.packageName;
-}
-
-// Return marketing version e.g. 1.4.0
+/// Return marketing version string, e.g. 1.4.0
 Future<String> getVersion() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   if (kDebugMode == true) {
@@ -83,42 +71,62 @@ Future<String> getVersion() async {
   return packageInfo.version;
 }
 
-// Return internal build number
+/// Returns an app-specific unique identifier for the device.
+/// This is the ID used to identify the user in the backend.
+Future<String> getUniqueIdentifier() async {
+  return await PlatformDeviceId.getDeviceId ?? "";
+}
+
+/// Return canonical client type string (e.g. ios, android, etc.)
+// TODO: Rethink! Do we need the implementation name? Should be obvious from version.
+Future<String> getClientType() async {
+  final String impl = await _getImplementation();
+  return "${Platform.operatingSystem.toLowerCase()}_${impl.toLowerCase()}";
+}
+
+/// Return application name
+Future<String> _getName() async {
+  return kSoftwareName;
+}
+
+/// Return the unique application identifier e.g. is.mideind.embla
+Future<String> _getAppIdentifier() async {
+  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  return packageInfo.packageName;
+}
+
+/// Return internal build number
 Future<String> _getBuildNumber() async {
   PackageInfo packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.buildNumber;
 }
 
-// Return the name of the operating system
+/// Return the name of the operating system
 Future<String> _getPlatform() async {
   return kOSNameToPretty[Platform.operatingSystem] ?? "";
 }
 
-Future<String> getClientType() async {
-  return "${Platform.operatingSystem}_${_getImplementation()}";
-}
-
-// Return OS version
+/// Return OS version
 Future<String> _getOSVersion() async {
-  return "OS ${Platform.operatingSystemVersion}";
+  return Platform.operatingSystemVersion;
 }
 
-// Return the implementation name e.g. flutter, native
+/// Return the implementation name e.g. flutter, native
 Future<String> _getImplementation() async {
-  return kSoftwareImplementation.sentenceCapitalized();
+  return kSoftwareImplementation;
 }
 
-// Software author name
+/// Software author name
 Future<String> _getAuthor() async {
   return kSoftwareAuthor;
 }
 
-// Is microphone access granted?
+/// Is microphone access granted?
 Future<String> _getMicAccess() async {
   return (await Permission.location.isGranted) ? kYesLabel : kNoLabel;
 }
 
-// Is location access granted?
+/// Is location data available?
 Future<String> _getLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
     return kNoLabel;
@@ -126,13 +134,7 @@ Future<String> _getLocationAccess() async {
   return LocationTracker().known ? kYesLabel : kNoLabel;
 }
 
-// This returns an app-specific unique identifier for the device
-// This is the ID used to identify the user in the backend
-Future<String> getUniqueIdentifier() async {
-  return await PlatformDeviceId.getDeviceId ?? "";
-}
-
-// List of version info widgets
+/// Generate list of version info widgets
 List<Widget> _buildVersionInfoWidgets(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
   final infoIcon = Icon(Icons.info_outline, color: color4ctx(context));
@@ -142,7 +144,7 @@ List<Widget> _buildVersionInfoWidgets(BuildContext context) {
     const Text(' Upplýsingar'),
   ]));
 
-  List<Widget> versionInfoWidgets = [
+  final List<Widget> versionInfoWidgets = [
     header,
     divider,
     SettingsAsyncLabelValueWidget('Nafn', _getName()),

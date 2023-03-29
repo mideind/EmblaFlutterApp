@@ -19,31 +19,16 @@
 // Network communication with query server
 
 import 'dart:convert' show json;
-import 'dart:io' show Platform;
 
 import 'package:http/http.dart' show Response;
 import 'package:http/http.dart' as http;
-import 'package:platform_device_id/platform_device_id.dart';
-import 'package:package_info_plus/package_info_plus.dart' show PackageInfo;
 
 import './common.dart';
 import './prefs.dart' show Prefs;
 import './util.dart' show readQueryServerKey;
+import './version.dart' show getVersion, getUniqueIdentifier, getClientType;
 
 const kRequestTimeout = Duration(seconds: 25); // Seconds
-
-String _clientType() {
-  return "${Platform.operatingSystem}_{$kSoftwareImplementation}";
-}
-
-Future<String?> _clientID() async {
-  return await PlatformDeviceId.getDeviceId;
-}
-
-Future<String?> _clientVersion() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  return packageInfo.version;
-}
 
 // Send a request to query server
 Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Function? handler]) async {
@@ -92,17 +77,11 @@ class QueryService {
     final Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
       'api_key': readQueryServerKey(),
-      'client_type': _clientType(),
-      'client_id': await _clientID() ?? "",
-      'client_version': await _clientVersion() ?? kSoftwareVersion
+      'client_type': await getClientType(),
+      'client_id': await getUniqueIdentifier(),
+      'client_version': await getVersion(),
     };
 
     await _makeRequest(kQueryHistoryAPIPath, qargs, handler);
-  }
-
-  /// Send request to voices API
-  static Future<Map<String, dynamic>?> requestSupportedVoices() async {
-    final Response? r = await _makeRequest(kVoiceListAPIPath, {}, null);
-    return (r == null) ? null : json.decode(r.body);
   }
 }

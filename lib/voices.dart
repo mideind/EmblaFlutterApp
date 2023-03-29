@@ -24,54 +24,19 @@ import 'package:flutter/material.dart';
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './prefs.dart' show Prefs;
-// import './query.dart' show QueryService;
 import './common.dart';
 import './theme.dart';
 
 const String kVoicesLoadingMsg = 'Raddir eru að hlaðast…';
 
-List<String> voices = kSpeechSynthesisVoices;
-
-// Fetch list of voice IDs (strings) from server
-Future<List<String>> fetchVoiceList() async {
-  voices = kDebugMode ? kSpeechSynthesisDebugVoices : kSpeechSynthesisVoices;
-  return voices;
-
-  // This is disabled for now.
-  //
-  // try {
-  //   Map<String, dynamic> res = await QueryService.requestSupportedVoices();
-  //   List<dynamic> voiceList = kSpeechSynthesisVoices;
-  //   String defaultVoice = kDefaultVoice;
-
-  //   if (res != null && res.containsKey("valid") == true && res["valid"] == true) {
-  //     // We have a valid response from the server
-
-  //     if (res.containsKey("default") == true && res["default"] != null) {
-  //       defaultVoice = res["default"];
-  //     }
-
-  //     // Debug mode
-  //     if (res.containsKey("supported") == true) {
-  //       voiceList = res["supported"] as List<dynamic>;
-  //     }
-  //   }
-  //   // Make sure current voice is sane
-  //   if (voiceList.contains(Prefs().stringForKey("voice_id")) == false) {
-  //     Prefs().setStringForKey("voice_id", defaultVoice);
-  //   }
-
-  //   // Store voices list once fetched
-  //   voices = voiceList;
-  // } catch (e) {
-  //   dlog("Error fetching voice list: $e");
-  //   voices = kSpeechSynthesisVoices;
-  // }
-
-  // return voices;
+/// Fetch list of voice IDs (strings) from server
+Future<List<String>> _fetchVoiceList() async {
+  return kDebugMode ? kSpeechSynthesisDebugVoices : kSpeechSynthesisVoices;
 }
 
+/// Build a list view of voices
 Widget _buildVoiceList(BuildContext context, List voices) {
+  dlog("Building voice list view from $voices");
   return ListView.builder(
     itemCount: voices.length,
     itemBuilder: (BuildContext context, int index) {
@@ -99,20 +64,19 @@ Widget _buildVoiceList(BuildContext context, List voices) {
   );
 }
 
+/// Generate a FutureBuilder for the voice list
 FutureBuilder<List> _genVoiceList() {
   return FutureBuilder<List>(
-      future: fetchVoiceList(),
+      future: _fetchVoiceList(),
       builder: (context, AsyncSnapshot<List> snapshot) {
         if (snapshot.hasData == false) {
-          // No data yet
+          // No data yet, show progress indicator
           return const Center(
             child: CircularProgressIndicator(
               semanticsLabel: kVoicesLoadingMsg,
             ),
           );
         } else {
-          // We have received voice list from server
-          dlog("Building voice list from ${snapshot.data}");
           return _buildVoiceList(context, snapshot.data!);
         }
       });

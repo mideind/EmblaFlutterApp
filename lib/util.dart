@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Various utility functions and custom class extensions
+/// Various utility functions and custom class extensions
 
 import 'dart:convert';
 
@@ -24,7 +24,7 @@ import 'package:flutter/material.dart' show Color;
 
 import './keys.dart' show serverAPIKey, queryAPIKey;
 
-// String extensions
+/// String extensions
 extension StringExtension on String {
   // Return string with first character capitalized.
   // Why isn't this part of of the standard library?
@@ -36,6 +36,7 @@ extension StringExtension on String {
   }
 }
 
+/// Color extensions
 extension HexColor on Color {
   // Get standard Flutter Color object from hex string in the
   // format "aabbcc", with an optional leading "#".
@@ -51,7 +52,7 @@ extension HexColor on Color {
 
 String _cachedServerAPIKey = '';
 
-// Read and cache query server key
+/// Read and cache Ratatoskur server key
 String readServerAPIKey() {
   if (_cachedServerAPIKey == '') {
     _cachedServerAPIKey = utf8.decode(base64.decode(serverAPIKey)).trim();
@@ -61,7 +62,7 @@ String readServerAPIKey() {
 
 String _cachedQueryAPIKey = '';
 
-// Read and cache query server key
+/// Read and cache query server key
 String readQueryServerKey() {
   if (_cachedQueryAPIKey == '') {
     _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey)).trim();

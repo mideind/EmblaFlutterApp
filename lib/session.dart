@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Main session view
+/// Main session view
 
 import 'dart:async';
 import 'dart:math' show min, max;
@@ -146,6 +146,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         }
       } else {
         // App went into background - FGBGType.background
+        session.stop();
         HotwordDetector().stop();
         AudioPlayer().stop();
       }
@@ -246,7 +247,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   /// Start session
   void start() async {
     if (session.isActive()) {
-      dlog('Session start called during pre-existing session!');
+      dlog('Session start called during active pre-existing session!');
       return;
     }
 
@@ -281,34 +282,15 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         });
       } catch (e) {
         dlog('Error starting session: ${e.toString()}');
-        stop();
+        session.stop();
       }
       return value;
     });
   }
 
-  // End session, reset state
-  void stop() {
-    if (session.isActive() == false) {
-      return;
-    }
-    dlog('Stopping session');
-    animationTimer?.cancel();
-    session.stop();
-
-    setState(() {
-      currFrame = kFullLogoFrame;
-    });
-
-    if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().start(hotwordHandler);
-    }
-  }
-
   // User cancelled ongoing session by pressing button
   void cancel() {
     dlog('User initiated cancellation of session');
-    stop();
     session.cancel();
     msg(introMsg());
   }
@@ -337,7 +319,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   void handleTextReceived(String transcript, bool isFinal) {
     if (isFinal) {
       msg(transcript);
-      currFrame = kFullLogoFrame;
     } else {
       msg(transcript);
     }
@@ -345,11 +326,6 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   // Process response from query server
   void handleQueryResponse(Map<String, dynamic>? resp) async {
-    if (session.state != SessionState.answering) {
-      dlog("Received query answer after session terminated: ${resp.toString()}");
-      return;
-    }
-
     // Received valid response to query
     if (resp != null && resp['valid'] == true && resp['error'] == null && resp['answer'] != null) {
       dlog('Received valid response to query');
@@ -362,7 +338,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
       // Open URL, if provided in query answer
       if (resp['open_url'] != null) {
-        stop();
+        session.stop();
         dlog("Opening URL ${resp['open_url']}");
         launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
       }
@@ -375,12 +351,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
         await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
           if (m == null || (m is Map) == false || m['audio_url'] == null) {
             dlog("Error synthesizing audio. Response from server: $m");
+            session.stop();
             AudioPlayer().playSound('err');
             msg(kServerErrorMessage);
-            stop();
           } else {
             AudioPlayer().playURL(m['audio_url'], (bool err) {
-              stop();
+              session.stop();
             });
           }
         });
@@ -395,34 +371,45 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
           } else {
             dlog('Playback finished');
           }
-          stop();
+          session.stop();
         });
       } else {
         // If no audio to play, terminate session
-        stop();
+        session.stop();
       }
     }
     // Don't know
     else if (resp != null && resp['error'] != null) {
       final String dunnoMsg = AudioPlayer().playDunno(Prefs().stringForKey("voice_id")!, () {
             dlog('Playback finished');
-            stop();
+            session.stop();
           }) ??
           "";
       msg("${resp["q"]}\n\n$dunnoMsg");
     }
     // Error in server response
     else {
-      stop();
+      session.stop();
       msg(kServerErrorMessage);
       AudioPlayer().playSound('err');
     }
   }
 
   void handleError(String errMsg) {
-    stop();
-    msg(kServerErrorMessage);
+    var errStr = kDebugMode ? errMsg : kServerErrorMessage;
+    msg(errStr);
     AudioPlayer().playSound('err');
+  }
+
+  void handleSessionDone() {
+    setState(() {
+      animationTimer?.cancel();
+      currFrame = kFullLogoFrame;
+    });
+
+    if (Prefs().boolForKey('hotword_activation') == true) {
+      HotwordDetector().start(hotwordHandler);
+    }
   }
 
   @override
@@ -442,7 +429,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Present menu route
     void pushMenu() {
-      stop(); // Terminate any ongoing session
+      session.stop();
       HotwordDetector().stop();
       Wakelock.disable();
 
@@ -511,7 +498,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
                         width: buttonSize,
                         height: buttonSize,
                         // Session button uses custom painter to draw the button
-                        child: CustomPaint(painter: SessionButtonPainter(session))
+                        child: CustomPaint(painter: SessionButtonPainter(context, session))
                             .animate(target: session.isActive() ? 1 : 0)
                             .scaleXY(end: 1.20, duration: 100.ms),
                       )))));
@@ -552,7 +539,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 // This is the drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
   late final EmblaSession session;
-  SessionButtonPainter(this.session);
+  late final BuildContext context;
+  SessionButtonPainter(this.context, this.session);
 
   // Draw the three circles that make up the button
   void drawCircles(Canvas canvas, Size size) {

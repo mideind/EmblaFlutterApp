@@ -12,7 +12,7 @@ void main() {
 
 void testUtil() {
   test('Strings should have first character capitalized', () {
-    final List<String> ts = [
+    const List<String> ts = [
       "mikið er þetta gaman",
       "HVAÐ ER EIGINLEGA Í GANGI?",
       "The rain in Spain stays mainly in the plain",
@@ -25,7 +25,7 @@ void testUtil() {
 
   // Color extensions
   test('Color should be correctly generated from hex string', () {
-    final Map<String, Color> colors = {
+    const Map<String, Color> colors = {
       "#ffffff": Colors.white,
       "#000000": Colors.black,
       //"#ff0000": Colors.red,
