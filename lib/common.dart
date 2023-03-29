@@ -34,7 +34,7 @@ const bool kHotwordApplyFrontend = false;
 const String kHotwordAssetsDirectory = 'assets/hotword';
 
 // Server communication
-const String kDefaultRatatoskurServer = 'http://brandur.mideind.is:8080';
+const String kDefaultRatatoskurServer = 'https://staging.api.greynir.is';
 const String kDefaultQueryServer = 'https://greynir.is';
 const String kQueryHistoryAPIPath = '/query_history.api/v1';
 

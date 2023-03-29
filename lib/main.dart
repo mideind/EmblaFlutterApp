@@ -28,7 +28,7 @@ import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, Adaptive
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './animations.dart' show preloadAnimationFrames;
-import './common.dart' show dlog, kSoftwareName, kDefaultVoiceID;
+import './common.dart';
 import './loc.dart' show LocationTracker;
 import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
@@ -69,6 +69,10 @@ void main() async {
     if (voiceID == "Karl") {
       Prefs().setStringForKey("voice_id", "Gunnar");
     }
+  }
+  // If user upgraded from pre-Ratatoskur version, set default server
+  if (Prefs().stringForKey("ratatoskur_server") == null) {
+    Prefs().setStringForKey("ratatoskur_server", kDefaultRatatoskurServer);
   }
   dlog("Shared prefs: ${Prefs()}");
 

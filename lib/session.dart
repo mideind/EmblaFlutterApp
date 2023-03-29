@@ -56,13 +56,6 @@ const kNoInternetMessage = 'Ekki næst samband við netið.';
 const kNoMicPermissionMessage =
     'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.';
 
-// Global session state enums
-enum SessionState {
-  resting, // Session not active
-  listening, // Receiving microphone input
-  answering, // Communicating with server or playing back answer
-}
-
 // Waveform configuration
 const int kWaveformNumBars = 12; // Number of waveform bars drawn
 const double kWaveformBarMarginRatio = 0.22; // Spacing between waveform bars as proportion of width
@@ -219,7 +212,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
   /// Configure session
   Future<EmblaSessionConfig> configureSession() async {
-    EmblaSessionConfig config = EmblaSessionConfig(server: kDefaultRatatoskurServer);
+    final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
+    EmblaSessionConfig config = EmblaSessionConfig(server: server);
 
     // Settings
     config.apiKey = readServerAPIKey();
@@ -231,10 +225,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     config.clientVersion = await getVersion();
 
     // Handlers
-    config.onStartListening;
+    config.onStartListening = handleStartListening;
     config.onSpeechTextReceived = handleTextReceived;
     config.onQueryAnswerReceived = handleQueryResponse;
-    config.onStartAnswering;
+    config.onStartAnswering = () {};
     config.onDone = handleDone;
     config.onError = handleError;
 
@@ -315,19 +309,20 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     }
   }
 
+  void handleStartListening() {
+    // Trigger redraw
+    msg("Hlustandi...");
+  }
+
   void handleTextReceived(String transcript, bool isFinal) {
     msg(transcript);
   }
 
   // Process response from query server
-  void handleQueryResponse(Map<String, dynamic>? resp) async {
-    if (resp == null) {
-      return;
-    }
-
+  void handleQueryResponse(dynamic resp) async {
     // Update text field with response
     String t = "${resp["q"]}\n\n${resp["answer"]}";
-    if (resp['source'] != null) {
+    if (resp['source'] != null && resp['source'] != '') {
       t = "$t (${resp['source']})";
     }
     msg(t, imgURL: resp['image']);
@@ -346,11 +341,12 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
       // Request speech synthesis of result, play audio and terminate session
       await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
         if (m == null || (m is Map) == false || m['audio_url'] == null) {
-          dlog("Error synthesizing audio. Response from server: $m");
+          dlog("Error synthesizing audio. Response from server was: $m");
           session.stop();
           AudioPlayer().playSound('err');
           msg(kServerErrorMessage);
         } else {
+          AudioPlayer().stop();
           AudioPlayer().playURL(m['audio_url'], (bool err) {
             session.stop();
           });
@@ -420,11 +416,13 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
 
     // Handle tap on microphone icon to toggle hotword activation
     void toggleHotwordActivation() {
-      final bool on = Prefs().boolForKey('hotword_activation');
-      Prefs().setBoolForKey('hotword_activation', !on);
-      if (session.state == EmblaSessionState.idle) {
-        msg(introMsg());
-      }
+      setState(() {
+        final bool on = Prefs().boolForKey('hotword_activation');
+        Prefs().setBoolForKey('hotword_activation', !on);
+        if (session.state == EmblaSessionState.idle) {
+          msg(introMsg());
+        }
+      });
       if (Prefs().boolForKey('hotword_activation')) {
         HotwordDetector().start(hotwordHandler);
       } else {
@@ -613,11 +611,14 @@ class SessionButtonPainter extends CustomPainter {
     drawCircles(canvas, size);
 
     // Draw waveform bars during microphone input
-    if (session.state == SessionState.listening) {
+    if (session.state ==
+            EmblaSessionState.listening /*||
+        session.state == EmblaSessionState.starting*/
+        ) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during answering phase
-    else if (session.state == SessionState.answering) {
+    else if (session.state == EmblaSessionState.answering) {
       drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo
