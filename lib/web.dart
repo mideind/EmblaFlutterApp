@@ -87,11 +87,11 @@ class WebViewRouteState extends State<WebViewRoute> {
   /// a progress indicator. Then immediately fetch the actual remote document.
   /// Falls back to loading local bundled HTML document on network error.
   /// This means that at least *some* version of the document can be viewed
-  /// when the device is offline.
+  /// even when the device is offline.
   InAppWebView _buildWebView(BuildContext context) {
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
-    final url = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
+    final finalURL = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
 
     final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
@@ -102,22 +102,17 @@ class WebViewRouteState extends State<WebViewRoute> {
     // Create and configure web view
     return InAppWebView(
       initialFile: loadingURL,
-      initialUrlRequest: URLRequest(url: Uri.parse(url)),
+      initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
       initialOptions: webViewOpts,
-      onLoadStart: (InAppWebViewController controller, Uri? url) {
-        dlog("Loading URL ${url.toString()}");
+      onLoadStart: (InAppWebViewController controller, Uri? uri) {
+        dlog("Loading URL ${uri.toString()}");
       },
-      onLoadStop: (InAppWebViewController controller, Uri? url) async {
-        if (url.toString().endsWith(loadingURL)) {
+      onLoadStop: (InAppWebViewController controller, Uri? uri) async {
+        if (uri.toString().endsWith(loadingURL)) {
           // Loading of initial "loading" document is complete.
           // Now load the actual remote document.
-          String url = widget.initialURL;
-          if (darkMode) {
-            url = _darkURLForURL(url);
-          }
-          // TODO: Is this setState() call necessary?
           setState(() {
-            controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(url)));
+            controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(finalURL)));
           });
         }
       },

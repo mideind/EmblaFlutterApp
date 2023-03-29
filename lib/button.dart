@@ -113,10 +113,11 @@ class SessionButtonWidget extends StatelessWidget {
   }
 }
 
-// This is the drawing code for the session button
+/// Drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
   late final EmblaSession session;
   late final BuildContext context;
+
   SessionButtonPainter(this.context, this.session);
 
   // Draw the three circles that make up the button
