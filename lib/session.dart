@@ -23,7 +23,6 @@ import 'dart:math' show min, max;
 import 'dart:ui' as ui;
 
 import 'package:embla/loc.dart';
-import 'package:embla/settings.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +97,6 @@ void addSample(double level) {
   audioSamples.add(level < kWaveformDefaultSampleLevel ? kWaveformDefaultSampleLevel : level);
 }
 
-String introMsg() {
-  return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
-}
-
 // Main widget for session view
 class SessionRoute extends StatefulWidget {
   const SessionRoute({Key? key}) : super(key: key);
@@ -114,7 +109,7 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
   EmblaSession session = EmblaSession(EmblaSessionConfig());
   EmblaSessionConfig config = EmblaSessionConfig();
   Timer? animationTimer;
-  String text = introMsg();
+  String text = '';
   String? imageURL;
   StreamSubscription<FGBGType>? appStateSubscription;
 
@@ -128,6 +123,8 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     if (kDebugMode) {
       Animate.restartOnHotReload = true;
     }
+
+    text = introMsg();
 
     requestMicPermissionAndStartHotwordDetection();
 
@@ -154,6 +151,10 @@ class SessionRouteState extends State<SessionRoute> with TickerProviderStateMixi
     appStateSubscription?.cancel();
     animationTimer?.cancel();
     super.dispose();
+  }
+
+  String introMsg() {
+    return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
   }
 
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
