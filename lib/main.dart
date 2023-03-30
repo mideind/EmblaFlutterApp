@@ -36,7 +36,7 @@ import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
 
 void main() async {
-  // Initialize bindings before calling runApp()
+  // Initialize Flutter bindings before calling runApp()
   WidgetsFlutterBinding.ensureInitialized();
 
   // Load prefs, populate with default values if required
@@ -50,7 +50,8 @@ void main() async {
   // Make sure we change voice "Kona" or "Dóra" to new "Gudrun" voice.
   // Previous versions of the app used "Kona" as the default voice with the
   // option of "Karl" as an alternative. As of 1.3.0, we use proper voice
-  // names, and as of 1.3.2 "Guðrún" is the default voice, replacing "Dóra".
+  // names, and as of 1.3.2 "Guðrún" is the default voice, replacing "Dóra",
+  // and "Gunnar" is the alternative male voice, replacing "Karl".
   const Map<dynamic, String> oldVoicesToNew = {
     null: kDefaultVoiceID,
     "Kona": kDefaultVoiceID,
@@ -60,6 +61,7 @@ void main() async {
   };
 
   if (launched == true && kDebugMode == false) {
+    // We're not running for the first time
     final String? voiceID = Prefs().stringForKey("voice_id");
     if (oldVoicesToNew.containsKey(voiceID)) {
       Prefs().setStringForKey("voice_id", oldVoicesToNew[voiceID]!);
@@ -76,12 +78,12 @@ void main() async {
   AudioPlayer(); // Singleton
   HotwordDetector(); // Singleton
 
-  // Activate wakelock to prevent device from going to sleep
-  // This wakelock is disabled when leaving main session route
+  // Activate wakelock to prevent device from going to sleep.
+  // This wakelock is disabled when leaving main session route.
   Wakelock.enable();
 
-  // Request permissions
-  // We need microphone (and, ideally, location) permissions to function
+  // Request permissions.
+  // We need microphone (and, ideally, location) permissions to function.
   final Map<Permission, PermissionStatus> statuses = await [
     Permission.microphone,
     Permission.location,
@@ -93,8 +95,8 @@ void main() async {
 
   if (statuses[Permission.location]!.isDenied) {
     dlog("Location permission is denied.");
-    // User has probably explicitly denied location permission
-    // so we disable location sharing pref to reflect that action.
+    // User has probably explicitly denied location permission so
+    // we disable location sharing pref to reflect that choice.
     Prefs().setBoolForKey('share_location', false);
   } else {
     LocationTracker().start();

@@ -75,6 +75,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     if (urlStr.startsWith(widget.initialURL) == false &&
         urlStr.endsWith(fallbackFilename) == false) {
+      // It's not a local URL, so open it in an external browser
       dlog("Opening external URL: ${req.url}");
       await launchUrl(req.url!, mode: LaunchMode.externalApplication);
       return NavigationActionPolicy.CANCEL;
@@ -85,8 +86,8 @@ class WebViewRouteState extends State<WebViewRoute> {
 
   /// Create web view that initially presents a "loading" document with
   /// a progress indicator. Then immediately fetch the actual remote document.
-  /// Falls back to loading local bundled HTML document on network error.
-  /// This means that at least *some* version of the document can be viewed
+  /// Falls back to loading a local bundled HTML document on network error.
+  /// This ensures that at least *some* version of the document can be viewed
   /// even when the device is offline.
   InAppWebView _buildWebView(BuildContext context) {
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);

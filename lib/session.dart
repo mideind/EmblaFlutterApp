@@ -81,19 +81,15 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   StreamSubscription<FGBGType>? appStateSubscription;
 
   @protected
-  @override
   @mustCallSuper
+  @override
   void initState() {
     super.initState();
 
     // This is needed to make animations work when hot reloading during development
-    if (kDebugMode) {
-      Animate.restartOnHotReload = true;
-    }
+    Animate.restartOnHotReload = kDebugMode;
 
     text = introMsg();
-
-    requestMicPermissionAndStartHotwordDetection();
 
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) {
@@ -109,6 +105,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         session.stop();
       }
     });
+
+    requestMicPermissionAndStartHotwordDetection();
   }
 
   @protected
@@ -120,10 +118,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     super.dispose();
   }
 
+  // Intro message varies depending on whether hotword detection is enabled
   String introMsg() {
     return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
   }
 
+  // Start hotword detection
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
     if (await Permission.microphone.isGranted) {
       if (Prefs().boolForKey('hotword_activation') == true) {
@@ -131,6 +131,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       }
     } else {
       dlog("Cannot start hotword detection, microphone permission refused");
+      showMicPermissionErrorAlert(sessionContext!);
     }
   }
 
@@ -218,7 +219,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Make sure we have microphone permission
     if (await Permission.microphone.isGranted == false) {
       AudioPlayer().playSound('rec_cancel');
-      showMicPermissionErrorAlert(context);
+      showMicPermissionErrorAlert(sessionContext!);
       return;
     }
 
@@ -229,6 +230,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       return;
     }
 
+    // OK, the conditions are right, let's start the session.
     HotwordDetector().stop();
 
     config = await configureSession();
@@ -238,7 +240,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
       // Clear text and set off animation timer
       setState(() {
-        text = '';
+        text = '...';
         imageURL = null;
         Waveform().setDefaultSamples();
         animationTimer?.cancel();
@@ -250,7 +252,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
   }
 
-  // User cancelled ongoing session by pressing button
+  // User cancelled ongoing session by pressing the button
   void cancel() {
     dlog('User initiated cancellation of session');
     session.cancel();
@@ -277,6 +279,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       });
     }
   }
+
+  /// Embla session handlers ///
 
   void handleStartListening() {
     // Trigger redraw
@@ -351,7 +355,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     final String hotwordLabel =
         hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
-    // Present menu route
+    // Show menu route
     void pushMenu() {
       session.stop();
       HotwordDetector().stop();
@@ -365,13 +369,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       ).then((val) {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
-        // updated to reflect potential changes in Settings and more.
+        // updated to reflect potential changes in Settings etc.
         if (text == '') {
           msg(introMsg());
         }
         // Re-enable wakelock when returning to main route
         Wakelock.enable();
-        // Re-enable hotword detection (if enabled)
+        // Resume hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
           HotwordDetector().start(hotwordHandler);
         }
@@ -392,23 +396,6 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       } else {
         HotwordDetector().stop();
       }
-    }
-
-    // Generate widget tree for the top scrollable text area
-    Widget scrollableTextAreaWidget() {
-      final List<Widget> widgets = [
-        FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
-      ];
-      if (imageURL != null) {
-        widgets.add(Image.network(imageURL!));
-      }
-      return SingleChildScrollView(
-          scrollDirection: Axis.vertical,
-          child: Padding(
-              padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-              child: Column(
-                children: widgets,
-              )));
     }
 
     return Scaffold(
@@ -434,11 +421,38 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
           // Session text widget
-          Expanded(flex: 6, child: scrollableTextAreaWidget()),
+          Expanded(flex: 6, child: SessionTextAreaWidget(text, imageURL)),
           // Session button widget
           Expanded(flex: 8, child: SessionButtonWidget(context, session, toggle)),
         ],
       ),
     );
+  }
+}
+
+/// Widget for the top scrollable text area, which
+/// can also (optionally) display an image.
+class SessionTextAreaWidget extends StatelessWidget {
+  final String text;
+  final String? imageURL;
+
+  const SessionTextAreaWidget(this.text, this.imageURL, {Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Widget> subWidgets = [
+      FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
+    ];
+    if (imageURL != null) {
+      // TODO: Surely there's image caching somewhere?
+      subWidgets.add(Image.network(imageURL!));
+    }
+    return SingleChildScrollView(
+        scrollDirection: Axis.vertical,
+        child: Padding(
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
+            child: Column(
+              children: subWidgets,
+            )));
   }
 }

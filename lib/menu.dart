@@ -32,7 +32,7 @@ void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(
     context,
     CupertinoPageRoute(
-      builder: (context) => WebViewRoute(initialURL: arg),
+      builder: (context) => WebViewRoute(initialURL: arg as String),
     ),
   );
 }
@@ -56,7 +56,7 @@ void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
 }
 
 // Generate a menu tile based on args
-ListTile _menuTile(String name, String imageName,
+ListTile _buildMenuTile(String name, String imageName,
     Function(BuildContext context, dynamic arg) onTapFunc, BuildContext ctx, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
@@ -69,19 +69,19 @@ ListTile _menuTile(String name, String imageName,
 }
 
 // Generate list view with menu tiles
-ListView _menu(BuildContext context) {
-  final List<Widget> menuItems = [
-    _menuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
-    _menuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
-    _menuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
-    _menuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
+ListView _buildMenu(BuildContext context) {
+  final List<ListTile> menuItems = [
+    _buildMenuTile('Stillingar', 'cog', _pushSettingsRoute, context, null),
+    _buildMenuTile('Um Emblu', 'cube', _pushWebRoute, context, kAboutURL),
+    _buildMenuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
+    _buildMenuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
   ];
 
-  // Only show Smart Home menu item in debug mode
+  // Only show Smart Home menu tile in debug mode
   if (kDebugMode) {
     final ListTile smarthomeTile =
-        _menuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
-    menuItems.insert(1, smarthomeTile);
+        _buildMenuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
+    menuItems.insert(1, smarthomeTile); // Insert below Settings menu item
   }
 
   return ListView(
@@ -95,6 +95,6 @@ class MenuRoute extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: standardAppBar, body: _menu(context));
+    return Scaffold(appBar: standardAppBar, body: _buildMenu(context));
   }
 }
