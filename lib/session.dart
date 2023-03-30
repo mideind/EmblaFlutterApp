@@ -99,9 +99,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         }
       } else {
         // App went into background - FGBGType.background
+        session.stop();
         HotwordDetector().stop();
         AudioPlayer().stop();
-        session.stop();
       }
     });
 
@@ -278,6 +278,10 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         if (currFrame >= animationFrames.length) {
           currFrame = 0; // Reset animation to first frame
         }
+      });
+    } else if (session.state == EmblaSessionState.listening) {
+      setState(() {
+        Waveform().addSample(AudioRecorder().signalStrength());
       });
     }
   }
