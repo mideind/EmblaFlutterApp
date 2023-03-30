@@ -176,7 +176,7 @@ class SettingsSliderWidget extends StatefulWidget {
   final double minValue;
   final double maxValue;
   final double stepSize;
-  final Function(double)? onChangeEnd;
+  final void Function(double)? onChangeEnd;
 
   const SettingsSliderWidget(
       {Key? key,
@@ -238,7 +238,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   final String label;
   final String alertText;
   final String buttonTitle;
-  final Function handler;
+  final void Function() handler;
 
   const SettingsButtonPromptWidget(
       {Key? key,

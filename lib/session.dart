@@ -307,13 +307,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     msg(t, imgURL: resp['image']);
 
     // Open URL handling
-    if (resp['open_url'] != null) {
+    if (resp['open_url'] != null && resp['open_url'] != '') {
       session.stop();
       dlog("Opening URL ${resp['open_url']}");
       launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
     }
     // Execute Javascript payload
-    else if (resp['command'] != null) {
+    else if (resp['command'] != null && resp['command'] != '') {
       // Evaluate JS
       String s = await JSExecutor().run(resp['command']);
       msg(s);

@@ -18,28 +18,21 @@
 
 /// Singleton wrapper class for hotword detection ("Hæ Embla" activation)
 
-import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:embla_core/embla_core.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:logger/logger.dart' show Level;
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
-import 'package:flutter_sound/flutter_sound.dart';
 
 import './common.dart';
 
 /// Hotword detection singleton class.
 class HotwordDetector {
   static final HotwordDetector _instance = HotwordDetector._constructor();
-
   static late Snowboy detector;
-// TODO: This should use EmblaCore's AudioRecorder class instead of FlutterSound
-  final FlutterSoundRecorder _micRecorder = FlutterSoundRecorder(logLevel: Level.error);
-  StreamController _recordingDataController = StreamController<Food>();
-  StreamSubscription? _recordingDataSubscription;
 
   // Singleton pattern
   factory HotwordDetector() {
@@ -69,39 +62,22 @@ class HotwordDetector {
   }
 
   /// Start hotword detection.
-  Future<void> start(Function hwHandler) async {
+  Future<void> start(void Function() hwHandler) async {
     dlog('Starting hotword detection');
     detector.hotwordHandler = hwHandler;
 
-    // Prepare for recording session
-    await _micRecorder.openRecorder();
-
-    // Create recording stream
-    _recordingDataController = StreamController<Food>();
-    _recordingDataSubscription = _recordingDataController.stream.listen((buffer) {
-      if ((buffer is FoodData) == false || buffer.data == null) {
-        dlog('Hotword detector received null data: $buffer');
-        return;
-      }
-      // When we get valid data, feed it into Snowboy detector
-      detector.detect(buffer.data as Uint8List);
+    AudioRecorder().start((Uint8List data) {
+      // Feed data into Snowboy detector
+      detector.detect(data);
+    }, (String err) {
+      dlog("Error during hotword detection: $err");
     });
-
-    // Start recording
-    await _micRecorder.startRecorder(
-        toStream: _recordingDataController.sink as StreamSink<Food>,
-        codec: Codec.pcm16,
-        numChannels: 1,
-        sampleRate: 16000);
   }
 
   /// Stop hotword detection
   Future<void> stop() async {
     dlog('Stopping hotword detection');
-    await _micRecorder.stopRecorder();
-    await _micRecorder.closeRecorder();
-    await _recordingDataSubscription?.cancel();
-    await _recordingDataController.close();
+    AudioRecorder().stop();
   }
 
   /// Copy model file from asset bundle to temp directory on
