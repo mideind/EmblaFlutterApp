@@ -297,25 +297,25 @@ class SettingsButtonPromptWidget extends StatelessWidget {
 
 /// Widget that controls query server prefs i.e. text field
 /// and the presets presented in a segmented control.
-class QueryServerSegmentedWidget extends StatefulWidget {
+class ServerSelectionWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
 
-  const QueryServerSegmentedWidget({Key? key, required this.items, required this.prefKey})
+  const ServerSelectionWidget({Key? key, required this.items, required this.prefKey})
       : super(key: key);
 
   @override
-  QueryServerSegmentedWidgetState createState() => QueryServerSegmentedWidgetState();
+  ServerSelectionWidgetState createState() => ServerSelectionWidgetState();
 }
 
-class QueryServerSegmentedWidgetState extends State<QueryServerSegmentedWidget> {
+class ServerSelectionWidgetState extends State<ServerSelectionWidget> {
   String text = "";
   TextEditingController? textController;
 
   @override
   void initState() {
     super.initState();
-    textController = TextEditingController(text: Prefs().stringForKey("query_server"));
+    textController = TextEditingController(text: Prefs().stringForKey(widget.prefKey));
   }
 
   @override
@@ -536,8 +536,12 @@ List<Widget> _settings(BuildContext context) {
   if (kDebugMode) {
     settingsWidgets.addAll([
       divider,
+      const SettingsFullTextLabelWidget('Ratatoskur:'),
+      const ServerSelectionWidget(
+          items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
+      divider,
       const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-      const QueryServerSegmentedWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      const ServerSelectionWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
       const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
     ]);
   }
