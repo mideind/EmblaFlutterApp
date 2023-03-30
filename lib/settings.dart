@@ -27,7 +27,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:embla_core/embla_core.dart' show AudioPlayer;
 
 import './common.dart';
-// import './query.dart' show QueryService;
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
 import './version.dart';
@@ -297,18 +296,18 @@ class SettingsButtonPromptWidget extends StatelessWidget {
 
 /// Widget that controls query server prefs i.e. text field
 /// and the presets presented in a segmented control.
-class ServerSelectionWidget extends StatefulWidget {
+class SettingsServerSelectionWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
 
-  const ServerSelectionWidget({Key? key, required this.items, required this.prefKey})
+  const SettingsServerSelectionWidget({Key? key, required this.items, required this.prefKey})
       : super(key: key);
 
   @override
-  ServerSelectionWidgetState createState() => ServerSelectionWidgetState();
+  SettingsServerSelectionWidgetState createState() => SettingsServerSelectionWidgetState();
 }
 
-class ServerSelectionWidgetState extends State<ServerSelectionWidget> {
+class SettingsServerSelectionWidgetState extends State<SettingsServerSelectionWidget> {
   String text = "";
   TextEditingController? textController;
 
@@ -537,11 +536,12 @@ List<Widget> _settings(BuildContext context) {
     settingsWidgets.addAll([
       divider,
       const SettingsFullTextLabelWidget('Ratatoskur:'),
-      const ServerSelectionWidget(
+      const SettingsServerSelectionWidget(
           items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
       divider,
       const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-      const ServerSelectionWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      const SettingsServerSelectionWidget(
+          items: kQueryServerPresetOptions, prefKey: 'query_server'),
       const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
     ]);
   }
