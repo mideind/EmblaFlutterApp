@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Version route that shows detailed info about the client.
+/// Info route that shows detailed information about the client.
 /// Subroute of SettingsRoute.
 
 import 'dart:io' show Platform;
@@ -150,6 +150,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
     divider,
     SettingsAsyncLabelValueWidget('Nafn', _getName()),
     SettingsAsyncLabelValueWidget('ID', _getAppIdentifier()),
+    SettingsAsyncLabelValueWidget('Tegund', getClientType()),
     SettingsAsyncLabelValueWidget('Útgáfa', getVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _getBuildNumber()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _getPlatform()),

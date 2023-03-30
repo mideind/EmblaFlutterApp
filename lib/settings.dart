@@ -29,7 +29,7 @@ import 'package:embla_core/embla_core.dart' show AudioPlayer;
 import './common.dart';
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
-import './version.dart';
+import './info.dart';
 import './theme.dart';
 
 // UI string constants

@@ -44,7 +44,7 @@ import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
 import './util.dart' show readServerAPIKey;
-import './version.dart' show getClientType, getVersion, getUniqueIdentifier;
+import './info.dart' show getClientType, getVersion, getUniqueIdentifier;
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -53,13 +53,13 @@ const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
 const kNoInternetMessage = 'Ekki næst samband við netið.';
 const kNoMicPermissionMessage = 'Mig vantar heimild til að nota hljóðnema.';
 
+// Hotword detection button accessibility labels
+const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
+const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
+
 // Animation framerate
 const int msecPerFrame = (1000 ~/ 24);
 const Duration durationPerFrame = Duration(milliseconds: msecPerFrame);
-
-// Hotword detection accesibility labels
-const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
-const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
 
 BuildContext? sessionContext;
 
@@ -77,7 +77,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   Timer? animationTimer;
   String text = '';
   String? imageURL;
-  StreamSubscription<FGBGType>? appStateSubscription;
+  late StreamSubscription<FGBGType> appStateSubscription;
 
   @protected
   @mustCallSuper
@@ -86,7 +86,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     super.initState();
 
     // This is needed to make animations work when hot reloading during development
-    Animate.restartOnHotReload = kDebugMode;
+    Animate.restartOnHotReload = (kDebugMode == true);
 
     text = introMsg();
 
@@ -94,9 +94,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     appStateSubscription = FGBGEvents.stream.listen((event) {
       if (event == FGBGType.foreground) {
         // App went into foreground
-        if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler);
-        }
+        requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
         session.stop();
@@ -112,7 +110,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   @mustCallSuper
   @override
   void dispose() {
-    appStateSubscription?.cancel();
+    appStateSubscription.cancel();
     animationTimer?.cancel();
     super.dispose();
   }
@@ -129,9 +127,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         dlog("Cannot start hotword detection, microphone permission refused");
         AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
         showMicPermissionErrorAlert(sessionContext!);
-        return;
-      }
-      if (Prefs().boolForKey('hotword_activation') == true) {
+      } else if (Prefs().boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler);
       }
     });
@@ -174,17 +170,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   /// Hotword detection handling
   void hotwordHandler() {
+    dlog("Hotword detected");
     start();
-  }
-
-  void hotwordErrHandler(dynamic err) {
-    dlog("Error starting hotword detection: ${err.toString()}");
   }
 
   /// Create session configuration
   Future<EmblaSessionConfig> configureSession() async {
     final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
-    final EmblaSessionConfig cfg = EmblaSessionConfig(server: server);
+    final cfg = EmblaSessionConfig(server: server);
 
     // Settings
     cfg.apiKey = readServerAPIKey();
@@ -200,7 +193,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.onStartListening = handleStartListening;
     cfg.onSpeechTextReceived = handleTextReceived;
     cfg.onQueryAnswerReceived = handleQueryResponse;
-    cfg.onStartAnswering = () {};
+    // cfg.onStartAnswering;
     cfg.onDone = handleDone;
     cfg.onError = handleError;
 
@@ -220,7 +213,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     // Make sure we have microphone permission
     if (await Permission.microphone.isGranted == false) {
-      AudioPlayer().playSound('rec_cancel');
+      AudioPlayer().playNoMic(Prefs().stringForKey('voice_id') ?? kDefaultVoiceID);
       showMicPermissionErrorAlert(sessionContext!);
       return;
     }
@@ -234,15 +227,15 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     // OK, the conditions are right, let's start the session.
     HotwordDetector().stop();
-
     config = await configureSession();
     session = EmblaSession(config);
+
     try {
       session.start();
 
       // Clear text and set off animation timer
       setState(() {
-        text = '…';
+        text = '';
         imageURL = null;
         Waveform().setDefaultSamples();
         animationTimer?.cancel();
@@ -290,7 +283,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   void handleStartListening() {
     // Trigger redraw
-    msg("…");
+    msg("");
   }
 
   void handleTextReceived(String transcript, bool isFinal) {
@@ -299,6 +292,11 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Process response from query server
   void handleQueryResponse(dynamic resp) async {
+    // if (resp == null || (resp['error'] != null)) {
+    //   dlog("Received bad query response: $resp");
+    //   return;
+    // }
+
     // Update text field with response
     String t = "${resp["q"]}\n\n${resp["answer"]}";
     if (resp['source'] != null && resp['source'] != '') {
@@ -344,6 +342,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     setState(() {
       animationTimer?.cancel();
       currFrame = kFullLogoFrame;
+      if (text == '') {
+        text = introMsg();
+      }
     });
 
     if (Prefs().boolForKey('hotword_activation') == true) {

@@ -39,7 +39,7 @@ class HotwordDetector {
     return _instance;
   }
 
-  // Constructor, only called once, when singleton is instantiated
+  // Constructor, only called when singleton is instantiated
   HotwordDetector._constructor() {
     initialize();
   }
@@ -63,6 +63,10 @@ class HotwordDetector {
 
   /// Start hotword detection.
   Future<void> start(void Function() hwHandler) async {
+    if (isActive() == true) {
+      return;
+    }
+
     dlog('Starting hotword detection');
     detector.hotwordHandler = hwHandler;
 
@@ -76,8 +80,15 @@ class HotwordDetector {
 
   /// Stop hotword detection
   Future<void> stop() async {
+    if (isActive() == false) {
+      return;
+    }
     dlog('Stopping hotword detection');
     AudioRecorder().stop();
+  }
+
+  bool isActive() {
+    return AudioRecorder().isRecording();
   }
 
   /// Copy model file from asset bundle to temp directory on
