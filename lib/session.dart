@@ -51,8 +51,7 @@ const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þes
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
 const kNoInternetMessage = 'Ekki næst samband við netið.';
-const kNoMicPermissionMessage =
-    'Ekki tókst að hefja talgreiningu. Emblu vantar heimild til að nota hljóðnema.';
+const kNoMicPermissionMessage = 'Mig vantar heimild til að nota hljóðnema.';
 
 // Animation framerate
 const int msecPerFrame = (1000 ~/ 24);
@@ -125,17 +124,20 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Start hotword detection
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
-    if (await Permission.microphone.isGranted) {
+    await Permission.microphone.isGranted.then((bool isGranted) {
+      if (isGranted == false) {
+        dlog("Cannot start hotword detection, microphone permission refused");
+        AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
+        showMicPermissionErrorAlert(sessionContext!);
+        return;
+      }
       if (Prefs().boolForKey('hotword_activation') == true) {
         HotwordDetector().start(hotwordHandler);
       }
-    } else {
-      dlog("Cannot start hotword detection, microphone permission refused");
-      showMicPermissionErrorAlert(sessionContext!);
-    }
+    });
   }
 
-  // Show alert dialog for when microphone permission is not available
+  // Show alert dialog explaining that microphone permission has not been granted
   void showMicPermissionErrorAlert(BuildContext context) {
     showCupertinoDialog(
       context: context,
@@ -300,13 +302,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
     msg(t, imgURL: resp['image']);
 
-    // Open URL, if provided with query answer
+    // Open URL handling
     if (resp['open_url'] != null) {
       session.stop();
       dlog("Opening URL ${resp['open_url']}");
       launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
     }
-    // Javascript payload
+    // Execute Javascript payload
     else if (resp['command'] != null) {
       // Evaluate JS
       String s = await JSExecutor().run(resp['command']);
@@ -364,12 +366,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       Navigator.push(
         context,
         CupertinoPageRoute(
-          builder: (context) => const MenuRoute(), // Push menu route
+          builder: (context) => const MenuRoute(),
         ),
       ).then((val) {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
-        // updated to reflect potential changes in Settings etc.
+        // updated to reflect potential changes in Settings, etc.
         if (text == '') {
           msg(introMsg());
         }
