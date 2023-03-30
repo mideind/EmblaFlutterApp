@@ -33,7 +33,7 @@ import './animations.dart' show animationFrames;
 // Waveform configuration
 const int kWaveformNumBars = 12; // Number of waveform bars drawn
 const double kWaveformBarMarginRatio = 0.22; // Spacing between bars as proportion of width
-const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better
+const double kWaveformDefaultSampleLevel = 0.05; // Slightly above 0 looks better visually
 const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
@@ -47,14 +47,14 @@ const kRestingButtonPropSize = 0.58;
 // Expanded size (proportional to original size)
 const kExpandedButtonPropSize = 1.20;
 
-// Animation durations
-const Duration kButtonZoomAnimationDuration = Duration(milliseconds: 100);
+// Animation settings
+const Duration kButtonZoomAnimationDuration = Duration(milliseconds: 90);
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';
 const kExpandedButtonLabel = 'Hætta að tala við Emblu';
 
-/// Singleton class for storing waveform samples.
+/// Singleton class for storing waveform samples. Global state (yes, I know).
 class Waveform {
   List<double> samples = [];
 
@@ -97,6 +97,7 @@ class SessionButtonWidget extends StatelessWidget {
     return Padding(
         padding: const EdgeInsets.only(bottom: 30, top: 30),
         child: Center(
+            // Semantics makes this accessibility-friendly
             child: Semantics(
                 label: buttonLabel,
                 child: GestureDetector(
@@ -198,7 +199,7 @@ class SessionButtonPainter extends CustomPainter {
           level * barHeight); // height
       canvas.drawRect(topRect, topPaint);
 
-      // Draw circle at end of bar
+      // Draw circle at end of top bar
       canvas.drawCircle(
           Offset(i * (barWidth + margin) + barWidth / 2 + (margin / 2) + xOffset,
               barHeight - (level * barHeight) + yOffset), // offset

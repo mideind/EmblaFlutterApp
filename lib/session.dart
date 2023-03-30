@@ -242,7 +242,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
       // Clear text and set off animation timer
       setState(() {
-        text = '...';
+        text = '…';
         imageURL = null;
         Waveform().setDefaultSamples();
         animationTimer?.cancel();
@@ -286,7 +286,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   void handleStartListening() {
     // Trigger redraw
-    msg("Hlustandi...");
+    msg("…");
   }
 
   void handleTextReceived(String transcript, bool isFinal) {
