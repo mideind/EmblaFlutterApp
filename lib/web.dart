@@ -31,11 +31,17 @@ const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
+late InAppWebViewInitialData loadingHTMLData;
+late InAppWebViewInitialData loadingDarkHTMLData;
+
 /// Preloads "loading" HTML documents to prevent any initial lag when
 /// showing loading indicator documentation pages.
 Future<void> preloadHTMLDocuments() async {
-  await rootBundle.loadString(kLoadingHTMLFilePath);
-  await rootBundle.loadString(kLoadingDarkHTMLFilePath);
+  dlog("Preloading HTML loading documents");
+  loadingHTMLData =
+      InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingHTMLFilePath));
+  loadingDarkHTMLData =
+      InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingDarkHTMLFilePath));
 }
 
 /// Standard web view route used for displaying documentation HTML files.
@@ -101,6 +107,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
     final finalURL = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
+    final initialData = darkMode ? loadingDarkHTMLData : loadingHTMLData;
 
     final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
@@ -110,14 +117,16 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     // Create and configure web view
     return InAppWebView(
-      initialFile: loadingURL,
+      // initialFile: loadingURL,
+      initialData: initialData,
       initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
       initialOptions: webViewOpts,
       onLoadStart: (InAppWebViewController controller, Uri? uri) {
         dlog("Loading URL ${uri.toString()}");
       },
       onLoadStop: (InAppWebViewController controller, Uri? uri) async {
-        if (uri.toString().endsWith(loadingURL)) {
+        print(uri.toString());
+        if (uri.toString().endsWith(loadingURL) || uri.toString() == 'about:blank') {
           // Loading of initial "loading" document is complete.
           // Now load the actual remote document.
           setState(() {
