@@ -40,8 +40,10 @@ Future<void> preloadHTMLDocuments() async {
   dlog("Preloading HTML loading documents");
   loadingHTMLData =
       InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingHTMLFilePath));
+  loadingHTMLData.baseUrl = Uri.parse("file:///");
   loadingDarkHTMLData =
       InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingDarkHTMLFilePath));
+  loadingDarkHTMLData.baseUrl = Uri.parse("file:///");
 }
 
 /// Standard web view route used for displaying documentation HTML files.
@@ -125,8 +127,8 @@ class WebViewRouteState extends State<WebViewRoute> {
         dlog("Loading URL ${uri.toString()}");
       },
       onLoadStop: (InAppWebViewController controller, Uri? uri) async {
-        print(uri.toString());
-        if (uri.toString().endsWith(loadingURL) || uri.toString() == 'about:blank') {
+        final String urlStr = uri.toString();
+        if (urlStr.endsWith(loadingURL) || urlStr == 'about:blank' || urlStr == 'file:///') {
           // Loading of initial "loading" document is complete.
           // Now load the actual remote document.
           setState(() {
