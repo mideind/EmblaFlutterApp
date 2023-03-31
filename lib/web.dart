@@ -19,6 +19,7 @@
 /// Documentation web views.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
@@ -29,6 +30,13 @@ import './common.dart' show dlog;
 const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
+
+/// Preloads "loading" HTML documents to prevent any initial lag when
+/// showing loading indicator documentation pages.
+Future<void> preloadHTMLDocuments() async {
+  await rootBundle.loadString(kLoadingHTMLFilePath);
+  await rootBundle.loadString(kLoadingDarkHTMLFilePath);
+}
 
 /// Standard web view route used for displaying documentation HTML files.
 class WebViewRoute extends StatefulWidget {

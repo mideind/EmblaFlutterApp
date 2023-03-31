@@ -25,7 +25,7 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 
-import 'package:embla_core/embla_core.dart' show AudioPlayer;
+import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder;
 
 import './animations.dart' show preloadAnimationFrames;
 import './common.dart';
@@ -34,6 +34,7 @@ import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
+import './web.dart' show preloadHTMLDocuments;
 
 void main() async {
   // Initialize Flutter bindings before calling runApp()
@@ -75,7 +76,9 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
+  await preloadHTMLDocuments();
   AudioPlayer(); // Singleton
+  AudioRecorder(); // Singleton
   HotwordDetector(); // Singleton
 
   // Activate wakelock to prevent device from going to sleep.
