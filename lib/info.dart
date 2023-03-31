@@ -27,6 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_device_id/platform_device_id.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import './common.dart';
 import './theme.dart';
@@ -112,6 +113,18 @@ Future<String> _getOSVersion() async {
   return Platform.operatingSystemVersion;
 }
 
+Future<String> _getDeviceType() async {
+  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  if (Platform.isAndroid) {
+    AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+    return androidInfo.model;
+  } else if (Platform.isIOS) {
+    IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+    return iosInfo.utsname.machine ?? "???";
+  }
+  return "???";
+}
+
 /// Return the implementation name e.g. flutter, native
 Future<String> _getImplementation() async {
   return kSoftwareImplementation;
@@ -153,6 +166,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
     SettingsAsyncLabelValueWidget('Tegund', getClientType()),
     SettingsAsyncLabelValueWidget('Útgáfa', getVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _getBuildNumber()),
+    SettingsAsyncLabelValueWidget('Tæki', _getDeviceType()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _getPlatform()),
     SettingsAsyncFullTextLabelWidget(_getOSVersion()),
     SettingsAsyncLabelValueWidget('Útfærsla', _getImplementation()),
