@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:embla/menu.dart';
 // import 'package:embla/session.dart';
 import 'package:embla/settings.dart';
-import 'package:embla/version.dart';
+import 'package:embla/info.dart';
 import 'package:embla/voices.dart';
 import 'package:embla/web.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';

@@ -190,7 +190,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.clientVersion = await getVersion();
 
     // Handlers
-    cfg.onStartListening = handleStartListening;
+    cfg.onStartStreaming = handleStartStreaming;
     cfg.onSpeechTextReceived = handleTextReceived;
     cfg.onQueryAnswerReceived = handleQueryResponse;
     // cfg.onStartAnswering;
@@ -272,7 +272,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
           currFrame = 0; // Reset animation to first frame
         }
       });
-    } else if (session.state == EmblaSessionState.listening) {
+    } else if (session.state == EmblaSessionState.streaming) {
       setState(() {
         Waveform().addSample(AudioRecorder().signalStrength());
       });
@@ -281,7 +281,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   /// Embla session handlers ///
 
-  void handleStartListening() {
+  void handleStartStreaming() {
     // Trigger redraw
     msg("");
   }

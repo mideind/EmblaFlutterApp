@@ -44,7 +44,7 @@ class HotwordDetector {
     initialize();
   }
 
-  /// Load and prepare hotword-related resources.
+  /// Load and prepare hotword-detection-related resources.
   void initialize() async {
     late String modelPath;
     try {
@@ -64,6 +64,7 @@ class HotwordDetector {
   /// Start hotword detection.
   Future<void> start(void Function() hwHandler) async {
     if (isActive() == true) {
+      dlog("HotwordDetector(): Recording already in progress, ignoring start request");
       return;
     }
 
