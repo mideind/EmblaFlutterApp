@@ -25,7 +25,7 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 
-import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder;
+import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder, EmblaSessionConfig;
 
 import './animations.dart' show preloadAnimationFrames;
 import './common.dart';
@@ -35,6 +35,7 @@ import './session.dart' show SessionRoute;
 import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
 import './web.dart' show preloadHTMLDocuments;
+import './util.dart' show readServerAPIKey;
 
 void main() async {
   // Initialize Flutter bindings before calling runApp()
@@ -80,6 +81,9 @@ void main() async {
   AudioPlayer(); // Singleton
   AudioRecorder(); // Singleton
   HotwordDetector(); // Singleton
+  var cfg = EmblaSessionConfig();
+  cfg.apiKey = readServerAPIKey();
+  await EmblaSessionConfig().fetchToken();
 
   // Activate wakelock to prevent device from going to sleep.
   // This wakelock is disabled when leaving main session route.
