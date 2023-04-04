@@ -91,7 +91,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     text = introMsg();
 
     // Start observing app state (foreground, background, active, inactive)
-    appStateSubscription = FGBGEvents.stream.listen((event) {
+    appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
         config.apiKey = readServerAPIKey();
         config.fetchToken();
@@ -99,7 +99,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
-        session.stop();
+        await session.stop();
         HotwordDetector().stop();
         AudioPlayer().stop();
       }

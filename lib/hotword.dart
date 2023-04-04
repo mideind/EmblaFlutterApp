@@ -71,7 +71,7 @@ class HotwordDetector {
     dlog('Starting hotword detection');
     detector.hotwordHandler = hwHandler;
 
-    AudioRecorder().start((Uint8List data) {
+    await AudioRecorder().start((Uint8List data) {
       // Feed data into Snowboy detector
       detector.detect(data);
     }, (String err) {
@@ -85,7 +85,7 @@ class HotwordDetector {
       return;
     }
     dlog('Stopping hotword detection');
-    AudioRecorder().stop();
+    await AudioRecorder().stop();
   }
 
   bool isActive() {

@@ -18,7 +18,7 @@
 
 /// Menu route
 
-import 'package:flutter/foundation.dart' show kDebugMode;
+// import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart' show CupertinoPageRoute;
 
@@ -57,7 +57,7 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
 
 // Generate a menu tile based on args
 ListTile _buildMenuTile(String name, String imageName,
-    Function(BuildContext context, dynamic arg) onTapFunc, BuildContext ctx, dynamic arg) {
+    void Function(BuildContext context, dynamic arg) onTapFunc, BuildContext ctx, dynamic arg) {
   return ListTile(
     title: Text(name, style: menuTextStyle),
     leading: Image(image: img4theme(imageName, ctx)),
