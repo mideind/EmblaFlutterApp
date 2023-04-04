@@ -99,9 +99,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
-        await session.stop();
-        HotwordDetector().stop();
-        AudioPlayer().stop();
+        if (session.isActive()) {
+          await session.stop();
+        } else {
+          HotwordDetector().stop();
+          AudioPlayer().stop();
+        }
       }
     });
 
