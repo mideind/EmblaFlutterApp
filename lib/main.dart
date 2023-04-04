@@ -25,7 +25,7 @@ import 'package:wakelock/wakelock.dart' show Wakelock;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 
-import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder, EmblaSessionConfig;
+import 'package:embla_core/embla_core.dart';
 
 import './animations.dart' show preloadAnimationFrames;
 import './common.dart';
@@ -78,9 +78,11 @@ void main() async {
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
   await preloadHTMLDocuments();
-  AudioPlayer(); // Singleton
-  AudioRecorder(); // Singleton
+  await EmblaSession.prepare();
+
   HotwordDetector(); // Singleton
+
+  // Immediately fetch token from server to prevent delay when session starts
   var cfg = EmblaSessionConfig();
   cfg.apiKey = readServerAPIKey();
   await EmblaSessionConfig().fetchToken();
