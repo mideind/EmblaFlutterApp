@@ -41,6 +41,8 @@
 	</dict>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>This app uses your current location to deliver better responses to location-related queries.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>This app uses your current location to deliver better responses to location-related queries.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>This app uses the microphone to record your speech queries and convert them to text.</string>
 	<key>UIApplicationSceneManifest</key>
