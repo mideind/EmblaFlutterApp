@@ -54,8 +54,10 @@ Future<Response?> _makeRequest(String path, Map<String, dynamic> qargs, [Functio
   dlog("Sending query POST request to $apiURL: ${qargs.toString()}");
   Response? response;
   try {
-    response =
-        await http.post(Uri.parse(apiURL), body: qargs).timeout(kRequestTimeout, onTimeout: () {
+    final Map<String, String> headers = {"Authorization": readQueryServerKey()};
+    response = await http
+        .post(Uri.parse(apiURL), body: qargs, headers: headers)
+        .timeout(kRequestTimeout, onTimeout: () {
       handler!(null);
       return Response("Request timed out", 408);
     });
@@ -132,7 +134,6 @@ class QueryService {
   static Future<void> clearUserData(bool allData, [Function? handler]) async {
     final Map<String, String> qargs = {
       'action': allData ? 'clear_all' : 'clear',
-      'api_key': readQueryServerKey(),
       'client_type': _clientType(),
       'client_id': await _clientID() ?? "",
       'client_version': await _clientVersion() ?? kSoftwareVersion
@@ -148,7 +149,6 @@ class QueryService {
       'voice_id': Prefs().stringForKey('voice_id') ?? kDefaultVoice,
       'voice_speed': Prefs().doubleForKey('voice_speed').toString(),
       //'format': 'text',
-      'api_key': readQueryServerKey(),
     };
 
     await _makeRequest(kSpeechSynthesisAPIPath, qargs, handler);

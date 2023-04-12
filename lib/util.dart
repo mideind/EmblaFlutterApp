@@ -127,7 +127,7 @@ String _cachedGoogleServiceAccount = '';
 // Read and cache Google API service account config JSON
 String readGoogleServiceAccount() {
   if (_cachedGoogleServiceAccount == '') {
-    _cachedGoogleServiceAccount = utf8.decode(base64.decode(googleServiceAccount));
+    _cachedGoogleServiceAccount = utf8.decode(base64.decode(googleServiceAccount)).trim();
   }
   return _cachedGoogleServiceAccount;
 }
@@ -137,7 +137,7 @@ String _cachedQueryAPIKey = '';
 // Read and cache query server key
 String readQueryServerKey() {
   if (_cachedQueryAPIKey == '') {
-    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey));
+    _cachedQueryAPIKey = utf8.decode(base64.decode(queryAPIKey)).trim();
   }
   return _cachedQueryAPIKey;
 }
