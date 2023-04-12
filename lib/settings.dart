@@ -528,7 +528,8 @@ List<Widget> _settings(BuildContext context) {
         onChangeEnd: (double val) {
           playVoiceSpeed();
         }),
-    SettingsAsyncLabelValueWidget('Útgáfa', getVersionString(), onTapRoute: const VersionRoute()),
+    SettingsAsyncLabelValueWidget('Útgáfa', getHumanFriendlyVersionString(),
+        onTapRoute: const VersionRoute()),
   ];
 
   // Only include query server selection widget in debug builds

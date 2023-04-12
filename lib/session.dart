@@ -35,7 +35,7 @@ import 'package:flutter_animate/flutter_animate.dart';
 
 import 'package:embla_core/embla_core.dart';
 
-import './animations.dart' show animationFrames;
+import './animations.dart';
 import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
@@ -44,7 +44,7 @@ import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
 import './util.dart' show readServerAPIKey;
-import './info.dart' show getClientType, getVersion, getUniqueIdentifier;
+import './info.dart' show getClientType, getMarketingVersion, getUniqueDeviceIdentifier;
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -190,9 +190,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
     cfg.private = Prefs().boolForKey("private");
     cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
-    cfg.clientID = await getUniqueIdentifier();
+    cfg.clientID = await getUniqueDeviceIdentifier();
     cfg.clientType = await getClientType();
-    cfg.clientVersion = await getVersion();
+    cfg.clientVersion = await getMarketingVersion();
 
     // Handlers
     cfg.onStartStreaming = handleStartStreaming;
@@ -217,14 +217,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
 
     // Make sure we have microphone permission
-    if (await Permission.microphone.isGranted == false) {
+    if (await Permission.microphone.isGranted) {
       AudioPlayer().playNoMic(Prefs().stringForKey('voice_id') ?? kDefaultVoiceID);
       showMicPermissionErrorAlert(sessionContext!);
       return;
     }
 
     // Check for internet connectivity
-    if (await isConnectedToInternet() == false) {
+    if (await isConnectedToInternet()) {
       msg(kNoInternetMessage);
       AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
       return;
@@ -286,16 +286,18 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   /// Embla session handlers ///
 
+  /// Session handshake completed and audio streaming has begun
   void handleStartStreaming() {
     // Trigger redraw
     msg("");
   }
 
+  // ASR text received
   void handleTextReceived(String transcript, bool isFinal) {
     msg(transcript);
   }
 
-  // Process response from query server
+  // Process query response from query server
   void handleQueryResponse(dynamic resp) async {
     // if (resp == null || (resp['error'] != null)) {
     //   dlog("Received bad query response: $resp");
@@ -337,16 +339,18 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
   }
 
+  // Session error handler
   void handleError(String errMsg) {
     var errStr = kDebugMode ? errMsg : kServerErrorMessage;
     msg(errStr);
     AudioPlayer().playSound('err');
   }
 
+  // Session completion handler
   void handleDone() {
     setState(() {
       animationTimer?.cancel();
-      currFrame = kFullLogoFrame;
+      currFrame = kFullLogoAnimationFrame;
       if (text == '') {
         text = introMsg();
       }

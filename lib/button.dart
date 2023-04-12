@@ -28,7 +28,7 @@ import 'package:embla_core/embla_core.dart';
 
 import './common.dart';
 import './theme.dart';
-import './animations.dart' show animationFrames;
+import './animations.dart';
 
 // Waveform configuration
 const int kWaveformNumBars = 12; // Number of waveform bars drawn
@@ -38,8 +38,7 @@ const double kWaveformMinSampleLevel = 0.025; // Hard limit on lowest level
 const double kWaveformMaxSampleLevel = 0.95; // Hard limit on highest level
 
 // Logo animation status
-const kFullLogoFrame = 99;
-int currFrame = kFullLogoFrame;
+int currFrame = kFullLogoAnimationFrame;
 
 // Session button size (proportional to width/height)
 const kRestingButtonPropSize = 0.58;
@@ -241,7 +240,7 @@ class SessionButtonPainter extends CustomPainter {
     }
     // Otherwise, draw non-animated Embla logo
     else {
-      drawLogoFrame(canvas, size, kFullLogoFrame); // Always same frame
+      drawLogoFrame(canvas, size, kFullLogoAnimationFrame); // Always same frame
     }
   }
 

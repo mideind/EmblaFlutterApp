@@ -42,7 +42,7 @@ import './settings.dart'
 const kYesLabel = "Já";
 const kNoLabel = "Nei";
 
-// Map the values returned by Platform.operatingSystem to pretty names
+// Map the values returned by Platform.operatingSystem to prettified names
 const Map<String, String> kOSNameToPretty = {
   "linux": "Linux",
   "macos": "macOS",
@@ -52,21 +52,15 @@ const Map<String, String> kOSNameToPretty = {
 };
 
 /// Generate human-friendly version string for app
-Future<String> getVersionString() async {
-  final PackageInfo packageInfo = await PackageInfo.fromPlatform();
-  final String version = packageInfo.version;
-  final String osName = kOSNameToPretty[Platform.operatingSystem] ?? "";
-
-  String versionStr = "$version ($osName)";
-  if (kDebugMode) {
-    versionStr += " dbg";
-  }
-  return versionStr;
+Future<String> getHumanFriendlyVersionString() async {
+  final String version = await getMarketingVersion();
+  final String osName = await _getPlatform();
+  return "$version ($osName)";
 }
 
-/// Return marketing version string, e.g. 1.4.0
-Future<String> getVersion() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+/// Return marketing version string, e.g. "1.4.0", "1.3.3 dbg"
+Future<String> getMarketingVersion() async {
+  final packageInfo = await PackageInfo.fromPlatform();
   if (kDebugMode == true) {
     return "${packageInfo.version} dbg";
   }
@@ -75,11 +69,12 @@ Future<String> getVersion() async {
 
 /// Returns an app-specific unique identifier for the device.
 /// This is the ID used to identify the user in the backend.
-Future<String> getUniqueIdentifier() async {
+Future<String> getUniqueDeviceIdentifier() async {
   return await PlatformDeviceId.getDeviceId ?? "";
 }
 
-/// Return canonical client type string (e.g. ios, android, etc.)
+/// Return canonical client type string (e.g. 'ios_native', 'android_flutter', etc.)
+/// that consists of the OS name and the implementation name.
 // TODO: Rethink! Do we need the implementation name? Should be obvious from version.
 Future<String> getClientType() async {
   final String impl = await _getImplementation();
@@ -91,15 +86,15 @@ Future<String> _getName() async {
   return kSoftwareName;
 }
 
-/// Return the unique application identifier e.g. is.mideind.embla
+/// Return the unique application identifier e.g. is.mideind.Embla
 Future<String> _getAppIdentifier() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.packageName;
 }
 
 /// Return internal build number
 Future<String> _getBuildNumber() async {
-  PackageInfo packageInfo = await PackageInfo.fromPlatform();
+  final packageInfo = await PackageInfo.fromPlatform();
   return packageInfo.buildNumber;
 }
 
@@ -143,7 +138,7 @@ Future<String> _getMicAccess() async {
 /// Is location data available?
 Future<String> _getLocationAccess() async {
   if (Prefs().boolForKey('privacy_mode')) {
-    return kNoLabel;
+    return "$kNoLabel (stillingar)";
   }
   return LocationTracker().known ? kYesLabel : kNoLabel;
 }
@@ -164,7 +159,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
     SettingsAsyncLabelValueWidget('Nafn', _getName()),
     SettingsAsyncLabelValueWidget('ID', _getAppIdentifier()),
     SettingsAsyncLabelValueWidget('Tegund', getClientType()),
-    SettingsAsyncLabelValueWidget('Útgáfa', getVersion()),
+    SettingsAsyncLabelValueWidget('Útgáfa', getMarketingVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _getBuildNumber()),
     SettingsAsyncLabelValueWidget('Tæki', _getDeviceType()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _getPlatform()),
@@ -175,9 +170,10 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
     SettingsAsyncLabelValueWidget('Hljóðnemi', _getMicAccess()),
     SettingsAsyncLabelValueWidget('Staðsetning', _getLocationAccess()),
     divider,
-    const SettingsFullTextLabelWidget("Auðkenni:"),
-    SettingsAsyncFullTextLabelWidget(getUniqueIdentifier()),
+    const SettingsFullTextLabelWidget("Auðkenni tækis:"),
+    SettingsAsyncFullTextLabelWidget(getUniqueDeviceIdentifier()),
     divider,
+    // Padding at the bottom to improve scrollability
     const Padding(padding: EdgeInsets.only(top: 50, bottom: 50), child: Text(''))
   ]);
 }

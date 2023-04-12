@@ -28,6 +28,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter_snowboy/flutter_snowboy.dart' show Snowboy;
 
 import './common.dart';
+import './prefs.dart';
 
 /// Hotword detection singleton class.
 class HotwordDetector {
@@ -65,6 +66,12 @@ class HotwordDetector {
   Future<void> start(void Function() hwHandler) async {
     if (isActive() == true) {
       dlog("HotwordDetector(): Recording already in progress, ignoring start request");
+      return;
+    }
+    // This is unnecessary and unpleasant coupling, but just in case.
+    // We should never be here if hotword detection is not enabled.
+    if (Prefs().boolForKey('hotword_activation') == false) {
+      dlog("HotwordDetector(): Hotword activation is disabled, ignoring start request.");
       return;
     }
 

@@ -28,6 +28,7 @@ const String kFrameFilePath = 'assets/images/anim/logo/light';
 const String kFrameFilePrefix = 'anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
+const int kFullLogoAnimationFrame = kNumAnimationFrames - 1;
 
 final List<ui.Image> animationFrames = [];
 
