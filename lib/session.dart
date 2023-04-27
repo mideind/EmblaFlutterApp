@@ -188,7 +188,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.apiKey = readServerAPIKey();
     cfg.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
     cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
-    cfg.private = Prefs().boolForKey("private");
+    cfg.privateMode = Prefs().boolForKey("private");
     cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
     cfg.clientID = await getUniqueDeviceIdentifier();
     cfg.clientType = await getClientType();
@@ -217,14 +217,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
 
     // Make sure we have microphone permission
-    if (await Permission.microphone.isGranted) {
+    if (await Permission.microphone.isGranted == false) {
       AudioPlayer().playNoMic(Prefs().stringForKey('voice_id') ?? kDefaultVoiceID);
       showMicPermissionErrorAlert(sessionContext!);
       return;
     }
 
     // Check for internet connectivity
-    if (await isConnectedToInternet()) {
+    if (await isConnectedToInternet() == false) {
       msg(kNoInternetMessage);
       AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
       return;
@@ -295,6 +295,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   // ASR text received
   void handleTextReceived(String transcript, bool isFinal) {
     msg(transcript);
+    if (isFinal) {
+      AudioPlayer().playSessionConfirm();
+    }
   }
 
   // Process query response from query server
