@@ -20,7 +20,6 @@
 
 import 'dart:async';
 
-import 'package:embla/loc.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -43,6 +42,7 @@ import './prefs.dart' show Prefs;
 import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
+import './loc.dart' show LocationTracker;
 import './util.dart' show readServerAPIKey;
 import './info.dart' show getClientType, getMarketingVersion, getUniqueDeviceIdentifier;
 
@@ -294,15 +294,15 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // ASR text received
   void handleTextReceived(String transcript, bool isFinal) {
-    msg(transcript);
     if (isFinal) {
       AudioPlayer().playSessionConfirm();
     }
+    msg(transcript);
   }
 
   // Process query response from query server
   void handleQueryResponse(dynamic resp) async {
-    // if (resp == null || (resp['error'] != null)) {
+    // if (resp == null || resp['error'] != null) {
     //   dlog("Received bad query response: $resp");
     //   return;
     // }
@@ -310,15 +310,21 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Update text field with response
     String t = "${resp["q"]}\n\n${resp["answer"]}";
     if (resp['source'] != null && resp['source'] != '') {
-      t = "$t (${resp['source']})";
+      t += " (${resp['source']})";
     }
     msg(t, imgURL: resp['image']);
 
     // Open URL handling
-    if (resp['open_url'] != null && resp['open_url'] != '') {
-      session.stop();
-      dlog("Opening URL ${resp['open_url']}");
-      launchUrl(Uri.parse(resp['open_url']), mode: LaunchMode.externalApplication);
+    if (resp['open_url'] != null) {
+      final String url = resp['open_url'];
+      bool validURL = Uri.tryParse(url)?.hasAbsolutePath ?? false;
+      if (validURL) {
+        session.stop();
+        dlog("Opening URL $url");
+        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+      } else {
+        dlog("Invalid open_url '$url' received from server.");
+      }
     }
     // Execute Javascript payload
     else if (resp['command'] != null && resp['command'] != '') {
