@@ -28,8 +28,8 @@ const String kSoftwareAuthor = 'Miðeind ehf.';
 
 // Hotword detection
 const String kHotwordModelName = 'hae_embla.pmdl';
-const double kHotwordSensitivity = 0.5;
-const double kHotwordAudioGain = 1.15;
+const double kHotwordSensitivity = 0.45;
+const double kHotwordAudioGain = 1.10;
 const bool kHotwordApplyFrontend = false;
 const String kHotwordAssetsDirectory = 'assets/hotword';
 
