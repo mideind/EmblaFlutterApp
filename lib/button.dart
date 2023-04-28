@@ -228,10 +228,8 @@ class SessionButtonPainter extends CustomPainter {
     drawCircles(canvas, size);
 
     // Draw waveform bars during microphone input
-    if (session.state ==
-            EmblaSessionState.streaming /*||
-        session.state == EmblaSessionState.starting*/
-        ) {
+    if (session.state == EmblaSessionState.streaming ||
+        session.state == EmblaSessionState.starting) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during answering phase

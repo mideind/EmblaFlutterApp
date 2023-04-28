@@ -248,7 +248,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       });
     } catch (e) {
       dlog('Error starting session: ${e.toString()}');
-      session.stop();
+      await session.stop();
     }
   }
 
@@ -289,11 +289,11 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   /// Session handshake completed and audio streaming has begun
   void handleStartStreaming() {
     // Trigger redraw
-    msg("");
+    msg("…");
   }
 
   // ASR text received
-  void handleTextReceived(String transcript, bool isFinal) {
+  void handleTextReceived(String transcript, bool isFinal, Map<String, dynamic> data) {
     if (isFinal) {
       AudioPlayer().playSessionConfirm();
     }
@@ -319,7 +319,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       final String url = resp['open_url'];
       bool validURL = Uri.tryParse(url)?.hasAbsolutePath ?? false;
       if (validURL) {
-        session.stop();
+        await session.stop();
         dlog("Opening URL $url");
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
       } else {
@@ -332,16 +332,16 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       String s = await JSExecutor().run(resp['command']);
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
-      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) {
+      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) async {
         if (m == null || (m is Map) == false || m['audio_url'] == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
-          session.stop();
+          await session.stop();
           AudioPlayer().playSound('err');
           msg(kServerErrorMessage);
         } else {
           AudioPlayer().stop();
-          AudioPlayer().playURL(m['audio_url'], (bool err) {
-            session.stop();
+          AudioPlayer().playURL(m['audio_url'], (bool err) async {
+            await session.stop();
           });
         }
       });
@@ -381,17 +381,17 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
     // Show menu route
-    void pushMenu() {
-      session.stop();
-      HotwordDetector().stop();
-      Wakelock.disable();
+    void pushMenu() async {
+      await session.stop();
+      await HotwordDetector().stop();
+      await Wakelock.disable();
 
       Navigator.push(
         context,
         CupertinoPageRoute(
           builder: (context) => const MenuRoute(),
         ),
-      ).then((val) {
+      ).then((val) async {
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings, etc.
@@ -399,10 +399,10 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
           msg(introMsg());
         }
         // Re-enable wakelock when returning to main route
-        Wakelock.enable();
+        await Wakelock.enable();
         // Resume hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler);
+          await HotwordDetector().start(hotwordHandler);
         }
       });
     }
