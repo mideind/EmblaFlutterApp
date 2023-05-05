@@ -190,6 +190,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
     cfg.privateMode = Prefs().boolForKey("private");
     cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
+    cfg.engine = (Prefs().stringForKey("asr_engine") ?? kDefaultASREngine).toLowerCase();
     cfg.clientID = await getUniqueDeviceIdentifier();
     cfg.clientType = await getClientType();
     cfg.clientVersion = await getMarketingVersion();
