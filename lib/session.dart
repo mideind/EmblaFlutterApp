@@ -466,11 +466,10 @@ class SessionTextAreaWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final List<Widget> subWidgets = [
-      FractionallySizedBox(widthFactor: 1.0, child: Text(text, style: sessionTextStyle))
+      FractionallySizedBox(widthFactor: 1.0, child: SelectableText(text, style: sessionTextStyle))
     ];
     if (imageURL != null) {
-      // TODO: Surely there's image caching somewhere?
-      subWidgets.add(Image.network(imageURL!));
+      subWidgets.add(Image.network(imageURL!)); // This is automatically cached for us
     }
     return SingleChildScrollView(
         scrollDirection: Axis.vertical,

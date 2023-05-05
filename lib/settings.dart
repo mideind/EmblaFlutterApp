@@ -423,7 +423,7 @@ class SettingsFullTextLabelWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return MergeSemantics(
         child: ListTile(
-      title: Text(label, style: Theme.of(context).textTheme.bodySmall),
+      title: SelectableText(label, style: Theme.of(context).textTheme.bodySmall),
     ));
   }
 }
