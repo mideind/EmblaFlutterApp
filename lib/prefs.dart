@@ -89,6 +89,7 @@ class Prefs {
     setStringForKey('voice_id', kDefaultVoiceID);
     setStringForKey('query_server', kDefaultQueryServer);
     setStringForKey('ratatoskur_server', kDefaultRatatoskurServer);
+    setStringForKey('asr_engine', kDefaultASREngine);
   }
 
   /// Generate a human-readable string representation

@@ -29,6 +29,7 @@ import 'package:embla_core/embla_core.dart' show AudioPlayer;
 import './common.dart';
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
+import './asr.dart' show ASRSelectionRoute;
 import './info.dart';
 import './theme.dart';
 
@@ -506,6 +507,43 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
   }
 }
 
+/// Voice selection widget
+class SettingsASRSelectionWidget extends StatefulWidget {
+  final String label;
+
+  const SettingsASRSelectionWidget({Key? key, required this.label}) : super(key: key);
+
+  @override
+  SettingsASRSelectionWidgetState createState() => SettingsASRSelectionWidgetState();
+}
+
+class SettingsASRSelectionWidgetState extends State<SettingsASRSelectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+        title: Text(widget.label, style: menuTextStyle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(Prefs().stringForKey('asr_engine') ?? "(ekkert valið)",
+                style: Theme.of(context).textTheme.bodySmall),
+            const Icon(Icons.arrow_right),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => const ASRSelectionRoute(),
+            ),
+          ).then((val) {
+            // Trigger re-render since ASR engine selection may have changed
+            setState(() {});
+          });
+        });
+  }
+}
+
 Timer? voiceSpeedTimer;
 
 Future<void> playVoiceSpeed() async {
@@ -545,6 +583,7 @@ List<Widget> _settings(BuildContext context) {
   // Only include query server selection widget in debug builds
   if (kDebugMode) {
     settingsWidgets.addAll([
+      const SettingsASRSelectionWidget(label: 'Talgreining'),
       divider,
       const SettingsFullTextLabelWidget('Ratatoskur:'),
       const SettingsServerSelectionWidget(

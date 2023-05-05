@@ -61,7 +61,6 @@ void main() async {
     "Dora": kDefaultVoiceID,
     "Karl": "Gunnar",
   };
-
   if (launched == true && kDebugMode == false) {
     // We're not running for the first time
     final String? voiceID = Prefs().stringForKey("voice_id");
@@ -73,6 +72,11 @@ void main() async {
   if (Prefs().stringForKey("ratatoskur_server") == null) {
     Prefs().setStringForKey("ratatoskur_server", kDefaultRatatoskurServer);
   }
+  // If user upgraded from pre-Ratatoskur client version, set default ASR engine
+  if (Prefs().stringForKey("asr_engine") == null) {
+    Prefs().setStringForKey("asr_engine", kDefaultASREngine);
+  }
+
   dlog("Shared prefs: ${Prefs()}");
 
   // Init/preload these to prevent any lag after launching app

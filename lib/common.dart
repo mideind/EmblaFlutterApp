@@ -37,6 +37,10 @@ const String kHotwordAssetsDirectory = 'assets/hotword';
 const String kDefaultRatatoskurServer = 'https://staging.api.greynir.is';
 const String kDefaultQueryServer = 'https://greynir.is';
 
+// ASR
+const String kDefaultASREngine = 'Azure';
+const List<String> kASREngines = ['Azure', 'Google'];
+
 // Speech synthesis
 const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];
 const List<String> kSpeechSynthesisDebugVoices = ["Guðrún", "Gunnar", "Dóra", "Karl"];
