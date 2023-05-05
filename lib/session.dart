@@ -385,7 +385,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       await session.stop();
       await HotwordDetector().stop();
       await Wakelock.disable();
-
+      // ignore: use_build_context_synchronously
       Navigator.push(
         context,
         CupertinoPageRoute(

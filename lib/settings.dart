@@ -34,19 +34,17 @@ import './theme.dart';
 
 // UI string constants
 const String kPrivacyModeMessage =
-    'Í einkaham sendir forritið engar upplýsingar frá sér að fyrirspurnatexta undanskildum. '
-    'Þetta kemur í veg fyrir að fyrirspurnaþjónn geti nýtt staðsetningu, fyrri spurningar, '
+    'Í einkaham sendir forritið engar upplýsingar frá sér nema fyrirspurnarupptöku. '
+    'Þetta kemur í veg fyrir að svarþjónn geti nýtt staðsetningu, eldri fyrirspurnir, '
     'gerð tækis o.fl. til þess að bæta svör.';
 
 const String kClearHistoryAlertText =
-    'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru aðeins vistaðar '
-    'í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
+    'Þessi aðgerð hreinsar alla fyrirspurnasögu þessa tækis. Fyrirspurnir eru '
+    'aðeins vistaðar í 30 daga og gögnin einungis nýtt til þess að bæta svör.';
 
 const String kClearAllAlertText =
-    'Þessi aðgerð hreinsar öll gögn Emblu sem tengjast þessu tæki. Gögnin eru einungis nýtt '
-    'til þess að bæta svör.';
-
-const String kVoiceSpeedDemoText = 'Svona hljómar þessi hraði';
+    'Þessi aðgerð hreinsar öll vistuð gögn sem tengjast þessu tæki. Gögnin eru '
+    'einungis nýtt til þess að bæta svör.';
 
 /// Switch control widget associated with a boolean value pref
 class SettingsSwitchWidget extends StatefulWidget {
@@ -386,10 +384,22 @@ class SettingsLabelValueWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Widget trailing = Text(value, style: Theme.of(context).textTheme.bodySmall);
+    if (onTapRoute != null) {
+      // Add arrow if tapping label performs an action
+      trailing = Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          trailing,
+          const Icon(Icons.arrow_right),
+        ],
+      );
+    }
+
     return MergeSemantics(
         child: ListTile(
       title: Text(label, style: Theme.of(context).textTheme.bodySmall),
-      trailing: Text(value, style: Theme.of(context).textTheme.bodySmall),
+      trailing: trailing,
       onTap: () {
         if (onTapRoute != null) {
           Navigator.push(
