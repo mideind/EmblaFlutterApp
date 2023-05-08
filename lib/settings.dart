@@ -116,7 +116,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
             TextButton(
               child: const Text('Hætta við'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(false);
               },
             ),
             TextButton(
@@ -124,8 +124,9 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
               onPressed: () {
                 setState(() {
                   Prefs().setBoolForKey(widget.prefKey, true);
+                  Prefs().setBoolForKey("share_location", false);
                 });
-                Navigator.of(context).pop();
+                Navigator.of(context).pop(true);
               },
             ),
           ],
@@ -581,20 +582,19 @@ List<Widget> _settings(BuildContext context) {
   ];
 
   // Only include query server selection widget in debug builds
-  if (kDebugMode) {
-    settingsWidgets.addAll([
-      const SettingsASRSelectionWidget(label: 'Talgreining'),
-      divider,
-      const SettingsFullTextLabelWidget('Ratatoskur:'),
-      const SettingsServerSelectionWidget(
-          items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
-      divider,
-      const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-      const SettingsServerSelectionWidget(
-          items: kQueryServerPresetOptions, prefKey: 'query_server'),
-      const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
-    ]);
-  }
+  // if (kDebugMode) {
+  settingsWidgets.addAll([
+    const SettingsASRSelectionWidget(label: 'Talgreining'),
+    divider,
+    const SettingsFullTextLabelWidget('Ratatoskur:'),
+    const SettingsServerSelectionWidget(
+        items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
+    divider,
+    const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
+    const SettingsServerSelectionWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
+    const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
+  ]);
+  // }
 
   // Add clear history buttons
   settingsWidgets.addAll([

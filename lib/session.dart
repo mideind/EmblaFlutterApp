@@ -188,7 +188,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     cfg.apiKey = readServerAPIKey();
     cfg.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
     cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
-    cfg.privateMode = Prefs().boolForKey("private");
+    cfg.privateMode = Prefs().boolForKey("privacy_mode");
     cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
     cfg.engine = (Prefs().stringForKey("asr_engine") ?? kDefaultASREngine).toLowerCase();
     cfg.clientID = await getUniqueDeviceIdentifier();
@@ -333,7 +333,11 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       String s = await JSExecutor().run(resp['command']);
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
-      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!, (dynamic m) async {
+      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!,
+              voiceID: config.voiceID,
+              voiceSpeed: config.voiceSpeed,
+              apiURL: config.ratatoskurServer)
+          .then((dynamic m) async {
         if (m == null || (m is Map) == false || m['audio_url'] == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
           await session.stop();
