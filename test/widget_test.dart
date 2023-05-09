@@ -78,6 +78,7 @@ void main() {
 
   // web.dart
   testWidgets('WebViewRoute contains InAppWebView', (tester) async {
+    preloadHTMLDocuments();
     await tester.pumpWidget(
       const MaterialApp(
         home: WebViewRoute(initialURL: "https://mideind.is"),

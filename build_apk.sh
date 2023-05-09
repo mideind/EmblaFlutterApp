@@ -7,9 +7,10 @@
 flutter build apk \
 --obfuscate \
 --split-debug-info=/tmp/ \
---target-platform=android-arm64 \
 --no-tree-shake-icons \
 --suppress-analytics \
+--release
+# --target-platform=android-arm64 \
 # --split-per-abi
 # Release build is configured to require signing key
 # --release \
