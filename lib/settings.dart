@@ -99,7 +99,7 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
 
 class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
-    return showCupertinoDialog<void>(
+    return await showCupertinoDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
@@ -144,9 +144,9 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
           activeColor: Theme.of(context).primaryColor,
-          onChanged: (bool value) {
+          onChanged: (bool value) async {
             if (value == true) {
-              _showPromptDialog(context);
+              await _showPromptDialog(context);
             } else {
               setState(() {
                 Prefs().setBoolForKey(prefKey, false);
@@ -154,9 +154,9 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
             }
           },
         ),
-        onTap: () {
+        onTap: () async {
           if (Prefs().boolForKey(prefKey) == false) {
-            _showPromptDialog(context);
+            await _showPromptDialog(context);
           } else {
             setState(() {
               Prefs().setBoolForKey(prefKey, true);

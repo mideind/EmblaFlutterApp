@@ -96,7 +96,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         config.apiKey = readServerAPIKey();
         config.fetchToken();
         // App went into foreground
-        requestMicPermissionAndStartHotwordDetection();
+        await requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
         if (session.isActive()) {
@@ -127,7 +127,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Start hotword detection
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
-    await Permission.microphone.isGranted.then((bool isGranted) {
+    await Permission.microphone.isGranted.then((bool isGranted) async {
       if (isGranted == false) {
         dlog("Cannot start hotword detection, microphone permission refused");
         AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
@@ -361,7 +361,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   }
 
   // Session completion handler
-  void handleDone() {
+  void handleDone() async {
     setState(() {
       animationTimer?.cancel();
       currFrame = kFullLogoAnimationFrame;
@@ -371,7 +371,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     });
 
     if (Prefs().boolForKey('hotword_activation') == true) {
-      HotwordDetector().start(hotwordHandler);
+      await HotwordDetector().start(hotwordHandler);
     }
   }
 
@@ -388,7 +388,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Show menu route
     void pushMenu() async {
       await session.stop();
-      await HotwordDetector().stop();
+      HotwordDetector().stop();
       await Wakelock.disable();
       // ignore: use_build_context_synchronously
       Navigator.push(
@@ -407,13 +407,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         await Wakelock.enable();
         // Resume hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
-          await HotwordDetector().start(hotwordHandler);
+          HotwordDetector().start(hotwordHandler);
         }
       });
     }
 
     // Handle tap on microphone icon to toggle hotword activation
-    void toggleHotwordActivation() {
+    void toggleHotwordActivation() async {
       setState(() {
         final bool on = Prefs().boolForKey('hotword_activation');
         Prefs().setBoolForKey('hotword_activation', !on);
