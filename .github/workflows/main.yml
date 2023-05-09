@@ -76,6 +76,7 @@ jobs:
           bash keys/gen_keys.sh
       - name: Install dependencies
         run: |
+          cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
           gem install xcpretty
