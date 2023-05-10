@@ -114,7 +114,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
-      clearCache: true,
+      clearCache: false,
       useShouldOverrideUrlLoading: true,
       transparentBackground: true,
     ));

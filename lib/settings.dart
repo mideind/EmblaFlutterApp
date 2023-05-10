@@ -51,8 +51,9 @@ const String kClearAllAlertText =
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
+  final void Function()? onChanged; // Callback
 
-  const SettingsSwitchWidget({Key? key, required this.label, required this.prefKey})
+  const SettingsSwitchWidget({Key? key, required this.label, required this.prefKey, this.onChanged})
       : super(key: key);
 
   @override
@@ -73,12 +74,14 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
             setState(() {
               Prefs().setBoolForKey(prefKey, value);
             });
+            widget.onChanged?.call();
           },
         ),
         onTap: () {
           setState(() {
             Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
           });
+          widget.onChanged?.call();
         },
       ),
     );
@@ -89,8 +92,10 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
 class SettingsPrivacySwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
+  final void Function()? onChanged; // Callback
 
-  const SettingsPrivacySwitchWidget({Key? key, required this.label, required this.prefKey})
+  const SettingsPrivacySwitchWidget(
+      {Key? key, required this.label, required this.prefKey, this.onChanged})
       : super(key: key);
 
   @override
@@ -126,6 +131,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
                   Prefs().setBoolForKey(widget.prefKey, true);
                   Prefs().setBoolForKey("share_location", false);
                 });
+                widget.onChanged?.call();
                 Navigator.of(context).pop(true);
               },
             ),
@@ -559,14 +565,16 @@ Future<void> playVoiceSpeed() async {
 }
 
 // Generate list of settings widgets
-List<Widget> _settings(BuildContext context) {
+List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   final divider = Divider(height: 40, color: color4ctx(context));
 
   // Basic settings widgets
   final List<Widget> settingsWidgets = [
     const SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
-    const SettingsSwitchWidget(label: 'Deila staðsetningu', prefKey: 'share_location'),
-    const SettingsPrivacySwitchWidget(label: 'Einkahamur', prefKey: 'privacy_mode'),
+    SettingsSwitchWidget(
+        label: 'Deila staðsetningu', prefKey: 'share_location', onChanged: refreshCallback),
+    SettingsPrivacySwitchWidget(
+        label: 'Einkahamur', prefKey: 'privacy_mode', onChanged: refreshCallback),
     const SettingsVoiceSelectionWidget(label: 'Rödd'),
     SettingsSliderWidget(
         label: 'Talhraði',
@@ -621,13 +629,23 @@ List<Widget> _settings(BuildContext context) {
   return settingsWidgets;
 }
 
-class SettingsRoute extends StatelessWidget {
+// Main widget for session view
+class SettingsRoute extends StatefulWidget {
   const SettingsRoute({Key? key}) : super(key: key);
 
+  @override
+  State<StatefulWidget> createState() => SettingsRouteState();
+}
+
+class SettingsRouteState extends State<SettingsRoute> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: standardAppBar,
-        body: ListView(padding: standardEdgeInsets, children: _settings(context)));
+        body: ListView(
+            padding: standardEdgeInsets,
+            children: _settings(context, () {
+              setState(() {});
+            })));
   }
 }
