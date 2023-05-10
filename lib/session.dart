@@ -102,7 +102,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         if (session.isActive()) {
           await session.stop();
         } else {
-          HotwordDetector().stop();
+          if (HotwordDetector().isActive()) {
+            HotwordDetector().stop();
+          }
           AudioPlayer().stop();
         }
       }
@@ -290,7 +292,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   /// Session handshake completed and audio streaming has begun
   void handleStartStreaming() {
     // Trigger redraw
-    msg("…");
+    msg("");
   }
 
   // ASR text received
@@ -387,8 +389,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     // Show menu route
     void pushMenu() async {
-      await session.stop();
-      HotwordDetector().stop();
+      if (session.isActive()) {
+        await session.stop();
+      }
+      if (HotwordDetector().isActive()) {
+        await HotwordDetector().stop();
+      }
       await Wakelock.disable();
       // ignore: use_build_context_synchronously
       Navigator.push(
@@ -403,6 +409,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         if (text == '') {
           msg(introMsg());
         }
+        setState(() {});
         // Re-enable wakelock when returning to main route
         await Wakelock.enable();
         // Resume hotword detection (if enabled)
