@@ -47,7 +47,7 @@ const kRestingButtonPropSize = 0.58;
 const kExpandedButtonPropSize = 1.20;
 
 // Animation settings
-const Duration kButtonZoomAnimationDuration = Duration(milliseconds: 90);
+const Duration kButtonZoomAnimationDuration = Duration(milliseconds: 100);
 
 // Session button accessibility labels
 const kRestingButtonLabel = 'Tala við Emblu';

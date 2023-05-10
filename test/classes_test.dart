@@ -65,6 +65,7 @@ void testPrefs() async {
     expect(p.doubleForKey("test2"), null);
   });
 
+// TODO: Fix this test
 //   test("Prefs should return same value for key as previously set", () {
 //     var p = Prefs();
 //     p.setStringForKey("test", "test");

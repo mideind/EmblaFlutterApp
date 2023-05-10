@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Prefs singleton object that contains all
-/// user settings used globally by the app.
+/// Prefs singleton object that contains all user settings
+/// used globally by the app.
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -47,8 +47,8 @@ class Prefs {
   void setBoolForKey(String key, bool val) {
     dlog("Setting pref key '$key' to bool '$val'");
     _sp?.setBool(key, val);
-    // TODO: This is hacky and should be solved in some
-    // other way. Can we subscribe to changes?
+    // TODO: This is hacky and should be solved in some other way.
+    // Can we subscribe to changes?
     if (key == 'share_location') {
       if (val == true) {
         LocationTracker().start();

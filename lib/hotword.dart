@@ -65,9 +65,10 @@ class HotwordDetector {
   /// Start hotword detection.
   Future<void> start(void Function() hwHandler) async {
     if (isActive() == true) {
-      dlog("HotwordDetector(): Recording already in progress, ignoring start request");
+      dlog("HotwordDetector(): Detection already in progress, ignoring start request");
       return;
     }
+
     // This is unnecessary and unpleasant coupling, but just in case.
     // We should never be here if hotword detection is not enabled.
     if (Prefs().boolForKey('hotword_activation') == false) {

@@ -27,7 +27,7 @@ import 'package:flutter/material.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 import 'package:wakelock/wakelock.dart' show Wakelock;
-import 'package:flutter_fgbg/flutter_fgbg.dart';
+import 'package:flutter_fgbg/flutter_fgbg.dart' show FGBGEvents, FGBGType;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:flutter_animate/flutter_animate.dart';
@@ -43,7 +43,7 @@ import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
 import './loc.dart' show LocationTracker;
-import './util.dart' show readServerAPIKey;
+import './util.dart';
 import './info.dart' show getClientType, getMarketingVersion, getUniqueDeviceIdentifier;
 
 // UI String constants
@@ -131,7 +131,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
   }
 
-  // Start hotword detection
+  // Start hotword detection after gaining microphone permission
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
     await Permission.microphone.isGranted.then((bool isGranted) async {
       if (isGranted == false) {
@@ -169,14 +169,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   }
 
   Future<bool> isConnectedToInternet() async {
-    final ConnectivityResult connectivityResult = await Connectivity().checkConnectivity();
-    return (connectivityResult != ConnectivityResult.none);
+    return (await Connectivity().checkConnectivity() != ConnectivityResult.none);
   }
 
   // Set text field string (and optionally, an associated image)
   void msg(String s, {String? imgURL}) {
     setState(() {
-      text = s;
+      // TODO: Capitalization really should be handled server-side
+      text = s.sentenceCapitalized();
       imageURL = imgURL;
     });
   }

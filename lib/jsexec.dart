@@ -50,7 +50,7 @@ class JSExecutor {
     );
   }
 
-  /// Run JavaScript code in a headless web view. Return eval result as string.
+  /// Run JavaScript code in a headless web view. Return async eval result as string.
   Future<String> run(String jsCode) async {
     await headlessWebView.dispose();
     await headlessWebView.run();
@@ -59,6 +59,8 @@ class JSExecutor {
           await headlessWebView.webViewController.callAsyncJavaScript(functionBody: jsCode);
       if (result != null && result.error == null && result.value != null) {
         return result.value.toString();
+      } else {
+        dlog("Error running JavaScript in HeadlessInAppWebView: ${result?.error}");
       }
     } on Exception catch (e) {
       dlog("Error running JavaScript in HeadlessInAppWebView: $e");

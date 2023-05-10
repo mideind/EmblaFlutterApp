@@ -84,7 +84,8 @@ void main() async {
   await preloadHTMLDocuments();
   await EmblaSession.prepare();
 
-  HotwordDetector(); // Singleton
+  // Initialize singleton, loading hotword-related assets
+  HotwordDetector();
 
   // Immediately fetch token from server to prevent delay when session starts
   var cfg = EmblaSessionConfig();
@@ -96,7 +97,7 @@ void main() async {
   Wakelock.enable();
 
   // Request permissions.
-  // We need microphone (and, ideally, location) permissions to function.
+  // We need microphone (and, ideally, location) permissions to function as expected.
   final Map<Permission, PermissionStatus> statuses = await [
     Permission.microphone,
     Permission.location,
@@ -109,7 +110,7 @@ void main() async {
   if (statuses[Permission.location]!.isDenied) {
     dlog("Location permission is denied.");
     // User has probably explicitly denied location permission so
-    // we disable location sharing pref to reflect that choice.
+    // we disable location sharing in Prefs to reflect that choice.
     Prefs().setBoolForKey('share_location', false);
   } else {
     LocationTracker().start();

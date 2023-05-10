@@ -17,7 +17,7 @@
  */
 
 /// Info route that shows detailed information about the client.
-/// Subroute of SettingsRoute.
+/// Subroute of SettingsRoute, shown when the program version is tapped.
 
 import 'dart:io' show Platform;
 
@@ -69,6 +69,8 @@ Future<String> getMarketingVersion() async {
 
 /// Returns an app-specific unique identifier for the device.
 /// This is the ID used to identify the user in the backend.
+/// On both iOS and Android, this is unique for all apps from
+/// a single vendor.
 Future<String> getUniqueDeviceIdentifier() async {
   return await PlatformDeviceId.getDeviceId ?? "";
 }
@@ -100,7 +102,7 @@ Future<String> _getBuildNumber() async {
 
 /// Return the name of the operating system
 Future<String> _getPlatform() async {
-  return kOSNameToPretty[Platform.operatingSystem] ?? "";
+  return kOSNameToPretty[Platform.operatingSystem] ?? "???";
 }
 
 /// Return OS version
@@ -108,6 +110,7 @@ Future<String> _getOSVersion() async {
   return Platform.operatingSystemVersion;
 }
 
+/// Returns the device type e.g. iPhone 11 Pro Max (iPhone12,5)
 Future<String> _getDeviceType() async {
   DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
   if (Platform.isAndroid) {
@@ -120,7 +123,7 @@ Future<String> _getDeviceType() async {
   return "???";
 }
 
-/// Return the implementation name e.g. flutter, native
+/// Return the implementation name e.g. "flutter", "native"
 Future<String> _getImplementation() async {
   return kSoftwareImplementation;
 }
@@ -143,7 +146,7 @@ Future<String> _getLocationAccess() async {
   return LocationTracker().known ? kYesLabel : kNoLabel;
 }
 
-/// Generate list of version info widgets
+/// Generate list of info widgets
 ListView _buildVersionInfoWidgetList(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
   final infoIcon = Icon(Icons.info_outline, color: color4ctx(context));
@@ -178,6 +181,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
   ]);
 }
 
+/// Route for displaying app and device information
 class VersionRoute extends StatelessWidget {
   const VersionRoute({Key? key}) : super(key: key);
 

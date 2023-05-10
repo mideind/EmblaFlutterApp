@@ -25,28 +25,27 @@ import './common.dart';
 import './theme.dart';
 
 /// Build a list view of available ASR engines
+/// TODO: This is a copy of the voice selection route. Refactor.
 Widget _buildASREngineList(BuildContext context) {
-  const List<String> asrEngines = kASREngines;
-
   return ListView.builder(
-    itemCount: asrEngines.length,
+    itemCount: kASREngines.length,
     itemBuilder: (BuildContext context, int index) {
       return ListTile(
-        title: Text(asrEngines[index]),
+        title: Text(kASREngines[index]),
         leading: IconButton(
             onPressed: null,
             icon: ImageIcon(
               img4theme('waveform', context),
               color: color4ctx(context),
             )),
-        trailing: (asrEngines[index] == Prefs().stringForKey("asr_engine"))
+        trailing: (kASREngines[index] == Prefs().stringForKey("asr_engine"))
             ? Icon(
                 Icons.done,
                 color: color4ctx(context),
               ) // Checkmark
             : null,
         onTap: () {
-          Prefs().setStringForKey("asr_engine", asrEngines[index]);
+          Prefs().setStringForKey("asr_engine", kASREngines[index]);
           Navigator.pop(context);
         },
       );

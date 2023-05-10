@@ -18,7 +18,6 @@
 
 /// Documentation web views.
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -35,8 +34,8 @@ const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 late InAppWebViewInitialData loadingHTMLData;
 late InAppWebViewInitialData loadingDarkHTMLData;
 
-/// Preloads "loading" HTML documents to prevent any initial lag when
-/// showing loading indicator documentation pages.
+/// Preloads the "loading" HTML documents to prevent any initial
+/// lag when showing loading indicator for documentation pages.
 Future<void> preloadHTMLDocuments() async {
   dlog("Preloading HTML loading documents");
   loadingHTMLData =
@@ -47,7 +46,7 @@ Future<void> preloadHTMLDocuments() async {
   loadingDarkHTMLData.baseUrl = Uri.parse("file:///");
 }
 
-/// Standard web view route used for displaying documentation HTML files.
+/// Standard web view route used for displaying HTML documentation files.
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
@@ -103,9 +102,9 @@ class WebViewRouteState extends State<WebViewRoute> {
 
   /// Create web view that initially presents a "loading" document with
   /// a progress indicator. Then immediately fetch the actual remote document.
-  /// Falls back to loading a local bundled HTML document on network error.
-  /// This ensures that at least *some* version of the document can be viewed
-  /// even when the device is offline.
+  /// Falls back to loading a local bundled HTML document with the same name
+  /// on network error. This ensures that at least *some* version of the
+  /// document can be viewed even when the device is offline.
   InAppWebView _buildWebView(BuildContext context) {
     final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
@@ -121,7 +120,6 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     // Create and configure web view
     return InAppWebView(
-        // initialFile: loadingURL,
         initialData: initialData,
         initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
         initialOptions: webViewOpts,
@@ -142,7 +140,7 @@ class WebViewRouteState extends State<WebViewRoute> {
         onLoadHttpError: errHandler,
         shouldOverrideUrlLoading: urlClickHandler,
         onConsoleMessage: (InAppWebViewController controller, ConsoleMessage msg) {
-          dlog("Console message: ${msg.message}");
+          dlog("Web View Console message: ${msg.message}");
         });
   }
 
