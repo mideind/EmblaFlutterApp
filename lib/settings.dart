@@ -47,7 +47,7 @@ const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll vistuð gögn sem tengjast þessu tæki. Gögnin eru '
     'einungis nýtt til þess að bæta svör.';
 
-/// Switch control widget associated with a boolean value pref
+/// Switch control widget associated with a boolean value in Prefs
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
@@ -185,7 +185,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
   }
 }
 
-/// Slider widget associated with a pref float value
+/// Slider widget associated with a float value in Prefs
 class SettingsSliderWidget extends StatefulWidget {
   final String label;
   final String prefKey;
@@ -311,8 +311,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   }
 }
 
-/// Widget that controls query server prefs i.e. text field
-/// and the presets presented in a segmented control.
+/// Widget that controls a server URL in Prefs, i.e. a text field
+/// and presets presented below in a segmented control.
 class SettingsServerSelectionWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
@@ -392,7 +392,8 @@ class SettingsServerSelectionWidgetState extends State<SettingsServerSelectionWi
   }
 }
 
-/// Widget that displays a label and a value
+/// Widget that displays a label and a value. If onTapRoute is set,
+/// tapping the label (or value) will navigate to the route.
 class SettingsLabelValueWidget extends StatelessWidget {
   final String label;
   final String value;
@@ -433,6 +434,7 @@ class SettingsLabelValueWidget extends StatelessWidget {
   }
 }
 
+/// Widget that displays text
 class SettingsFullTextLabelWidget extends StatelessWidget {
   final String label;
 
@@ -447,7 +449,7 @@ class SettingsFullTextLabelWidget extends StatelessWidget {
   }
 }
 
-/// Widget that displays a label and a value that is fetched asynchronously
+/// Widget that displays text that is fetched asynchronously
 class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
   final Future<String> future;
 
@@ -466,7 +468,8 @@ class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
   }
 }
 
-/// Widget that displays a label and a value that is fetched asynchronously
+/// Widget that displays a label and a value that is fetched asynchronously.
+/// If onTapRoute is set, tapping the label (or value) will navigate to the route.
 class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final String label;
   final Future<String> future;
@@ -525,7 +528,7 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
   }
 }
 
-/// Voice selection widget
+/// ASR engine selection widget
 class SettingsASRSelectionWidget extends StatefulWidget {
   final String label;
 
@@ -562,14 +565,14 @@ class SettingsASRSelectionWidgetState extends State<SettingsASRSelectionWidget> 
   }
 }
 
+/// Play voice at the selected speed
 Timer? voiceSpeedTimer;
-
-Future<void> playVoiceSpeed() async {
+void _playVoiceSpeed() {
   if (voiceSpeedTimer != null) {
     voiceSpeedTimer!.cancel();
   }
   AudioPlayer().stop();
-  voiceSpeedTimer = Timer(const Duration(milliseconds: 300), () {
+  voiceSpeedTimer = Timer(const Duration(milliseconds: 250), () {
     AudioPlayer().playSound('voicespeed', Prefs().stringForKey('voice_id') ?? kDefaultVoiceID, null,
         Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
   });
@@ -581,15 +584,20 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
 
   // Basic settings widgets
   final List<Widget> settingsWidgets = [
+    // Hotword activation
     const SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
+    // Share location
     SettingsSwitchWidget(
         label: 'Deila staðsetningu',
         prefKey: 'share_location',
         enabled: Prefs().boolForKey('privacy_mode') == false,
         onChanged: refreshCallback),
+    // Privacy mode
     SettingsPrivacySwitchWidget(
         label: 'Einkahamur', prefKey: 'privacy_mode', onChanged: refreshCallback),
+    // Voice selection
     const SettingsVoiceSelectionWidget(label: 'Rödd'),
+    // Voice speed slider
     SettingsSliderWidget(
         label: 'Talhraði',
         prefKey: 'voice_speed',
@@ -597,8 +605,9 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
         maxValue: kVoiceSpeedMax,
         stepSize: 0.05,
         onChangeEnd: (double val) {
-          playVoiceSpeed();
+          _playVoiceSpeed();
         }),
+    // Version
     SettingsAsyncLabelValueWidget('Útgáfa', getHumanFriendlyVersionString(),
         onTapRoute: const VersionRoute()),
   ];
@@ -606,21 +615,25 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   // Only include query server selection widget in debug builds
   // if (kDebugMode) {
   settingsWidgets.addAll([
+    // ASR engine selection
     const SettingsASRSelectionWidget(label: 'Talgreining'),
     divider,
+    // Ratastokkur server selection
     const SettingsFullTextLabelWidget('Ratatoskur:'),
     const SettingsServerSelectionWidget(
         items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
     divider,
+    // Query server selection
     const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
     const SettingsServerSelectionWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
     const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
   ]);
   // }
 
-  // Add clear history buttons
+  // Add clear data buttons at the bottom
   settingsWidgets.addAll([
     divider,
+    // Clear the device's query history
     SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
@@ -629,6 +642,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
           // TODO: Do this via EmblaCore
           //QueryService.clearUserData(false);
         }),
+    // Clear all server-side data associated with this device
     SettingsButtonPromptWidget(
         label: 'Hreinsa öll gögn',
         alertText: kClearAllAlertText,
@@ -637,13 +651,14 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
           // TODO: Do this via EmblaCore
           //QueryService.clearUserData(true);
         }),
+    // Spacing at the bottom for a better scrolling experience
     const Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
   ]);
 
   return settingsWidgets;
 }
 
-// Main widget for session view
+/// The main Settings route
 class SettingsRoute extends StatefulWidget {
   const SettingsRoute({Key? key}) : super(key: key);
 
@@ -659,6 +674,7 @@ class SettingsRouteState extends State<SettingsRoute> {
         body: ListView(
             padding: standardEdgeInsets,
             children: _settings(context, () {
+              // Pass refresh callback to settings widgets
               setState(() {});
             })));
   }
