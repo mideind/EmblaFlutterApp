@@ -51,9 +51,11 @@ const String kClearAllAlertText =
 class SettingsSwitchWidget extends StatefulWidget {
   final String label;
   final String prefKey;
+  final bool enabled;
   final void Function()? onChanged; // Callback
 
-  const SettingsSwitchWidget({Key? key, required this.label, required this.prefKey, this.onChanged})
+  const SettingsSwitchWidget(
+      {Key? key, required this.label, required this.prefKey, this.enabled = true, this.onChanged})
       : super(key: key);
 
   @override
@@ -65,12 +67,17 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
   Widget build(BuildContext context) {
     String prefKey = widget.prefKey;
     return MergeSemantics(
+        child: Opacity(
+      opacity: widget.enabled ? 1.0 : 0.5,
       child: ListTile(
         title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
           activeColor: Theme.of(context).primaryColor,
           onChanged: (bool value) {
+            if (!widget.enabled) {
+              return;
+            }
             setState(() {
               Prefs().setBoolForKey(prefKey, value);
             });
@@ -78,13 +85,16 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
           },
         ),
         onTap: () {
+          if (!widget.enabled) {
+            return;
+          }
           setState(() {
             Prefs().setBoolForKey(prefKey, !Prefs().boolForKey(prefKey));
           });
           widget.onChanged?.call();
         },
       ),
-    );
+    ));
   }
 }
 
@@ -157,6 +167,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
               setState(() {
                 Prefs().setBoolForKey(prefKey, false);
               });
+              widget.onChanged?.call();
             }
           },
         ),
@@ -572,7 +583,10 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   final List<Widget> settingsWidgets = [
     const SettingsSwitchWidget(label: 'Raddvirkjun', prefKey: 'hotword_activation'),
     SettingsSwitchWidget(
-        label: 'Deila staðsetningu', prefKey: 'share_location', onChanged: refreshCallback),
+        label: 'Deila staðsetningu',
+        prefKey: 'share_location',
+        enabled: Prefs().boolForKey('privacy_mode') == false,
+        onChanged: refreshCallback),
     SettingsPrivacySwitchWidget(
         label: 'Einkahamur', prefKey: 'privacy_mode', onChanged: refreshCallback),
     const SettingsVoiceSelectionWidget(label: 'Rödd'),
