@@ -363,10 +363,15 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   }
 
   // Session error handler
-  void handleError(String errMsg) {
+  void handleError(String errMsg) async {
     var errStr = kDebugMode ? errMsg : kServerErrorMessage;
     msg(errStr);
-    AudioPlayer().playSound('err');
+
+    if (Prefs().boolForKey('hotword_activation') == true &&
+        inBackground == false &&
+        inMenu == false) {
+      await HotwordDetector().start(hotwordHandler);
+    }
   }
 
   // Session completion handler
@@ -391,10 +396,10 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     sessionContext = context;
 
     // Hotword toggle button properties depend on whether hotword detection is enabled
-    final bool hwActive = Prefs().boolForKey('hotword_activation');
-    final String hotwordIcon = hwActive ? 'mic' : 'mic-slash';
+    final bool hwdEnabled = Prefs().boolForKey('hotword_activation');
+    final String hotwordIcon = hwdEnabled ? 'mic' : 'mic-slash';
     final String hotwordLabel =
-        hwActive ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
+        hwdEnabled ? kDisableHotwordDetectionLabel : kEnableHotwordDetectionLabel;
 
     // Show menu route
     void pushMenu() async {
@@ -415,7 +420,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       ).then((val) async {
         inMenu = false;
         // Make sure we rebuild main route when menu route is popped in navigation
-        // stack. This ensures that the state of the voice activation button is
+        // stack. This ensures that the state of the hotword activation button is
         // updated to reflect potential changes in Settings, etc.
         if (text == '') {
           msg(introMsg());
@@ -440,7 +445,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         }
       });
       if (Prefs().boolForKey('hotword_activation')) {
-        await HotwordDetector().start(hotwordHandler);
+        if (session.isActive() == false) {
+          await HotwordDetector().start(hotwordHandler);
+        }
       } else {
         await HotwordDetector().stop();
       }
