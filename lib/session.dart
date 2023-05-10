@@ -139,7 +139,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         dlog("Cannot start hotword detection, microphone permission refused");
         AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
         showMicPermissionErrorAlert(sessionContext!);
-      } else if (Prefs().boolForKey('hotword_activation') == true) {
+      } else if (Prefs().boolForKey('hotword_activation') == true &&
+          inBackground == false &&
+          inMenu == false) {
         await HotwordDetector().start(hotwordHandler);
       }
     });
@@ -147,7 +149,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Show alert dialog explaining that microphone permission has not been granted
   void showMicPermissionErrorAlert(BuildContext context) {
-    showCupertinoDialog(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(

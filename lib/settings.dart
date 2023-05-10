@@ -99,7 +99,7 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
 
 class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
-    return await showCupertinoDialog<void>(
+    return await showDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
@@ -248,7 +248,7 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
-    return showCupertinoDialog<void>(
+    return showDialog<void>(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {

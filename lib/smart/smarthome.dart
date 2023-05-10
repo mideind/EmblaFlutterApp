@@ -307,7 +307,7 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
       );
     }
 
-    showCupertinoDialog(
+    showDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
