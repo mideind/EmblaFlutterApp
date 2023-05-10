@@ -19,7 +19,7 @@ dependencies:
   package_info_plus: '^1.4.2'
   platform_device_id: '^1.0.1'
   device_info_plus: '^8.1.0'
-  url_launcher: '^6.1.2'
+  url_launcher: '^6.1.11'
   connectivity_plus: '^2.3.0'
   flutter_inappwebview: '^5.7.1'
   path_provider: '^2.0.10'

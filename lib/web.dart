@@ -18,6 +18,7 @@
 
 /// Documentation web views.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -113,33 +114,36 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
+      clearCache: true,
       useShouldOverrideUrlLoading: true,
       transparentBackground: true,
     ));
 
     // Create and configure web view
     return InAppWebView(
-      // initialFile: loadingURL,
-      initialData: initialData,
-      initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
-      initialOptions: webViewOpts,
-      onLoadStart: (InAppWebViewController controller, Uri? uri) {
-        dlog("Loading URL ${uri.toString()}");
-      },
-      onLoadStop: (InAppWebViewController controller, Uri? uri) async {
-        final String urlStr = uri.toString();
-        if (urlStr.endsWith(loadingURL) || urlStr == 'about:blank' || urlStr == 'file:///') {
-          // Loading of initial "loading" document is complete.
-          // Now load the actual remote document.
-          setState(() {
-            controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(finalURL)));
-          });
-        }
-      },
-      onLoadError: errHandler,
-      onLoadHttpError: errHandler,
-      shouldOverrideUrlLoading: urlClickHandler,
-    );
+        // initialFile: loadingURL,
+        initialData: initialData,
+        initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
+        initialOptions: webViewOpts,
+        onLoadStart: (InAppWebViewController controller, Uri? uri) {
+          dlog("Loading URL ${uri.toString()}");
+        },
+        onLoadStop: (InAppWebViewController controller, Uri? uri) async {
+          final String urlStr = uri.toString();
+          if (urlStr.endsWith(loadingURL) || urlStr == 'about:blank' || urlStr == 'file:///') {
+            // Loading of initial "loading" document is complete.
+            // Now load the actual remote document.
+            setState(() {
+              controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(finalURL)));
+            });
+          }
+        },
+        onLoadError: errHandler,
+        onLoadHttpError: errHandler,
+        shouldOverrideUrlLoading: urlClickHandler,
+        onConsoleMessage: (InAppWebViewController controller, ConsoleMessage msg) {
+          dlog("Console message: ${msg.message}");
+        });
   }
 
   @override
