@@ -28,7 +28,7 @@ const String kFrameFilePath = 'assets/images/anim/logo/light';
 const String kFrameFilePrefix = 'anim_';
 const String kFrameFileSuffix = '.png';
 const int kNumAnimationFrames = 100;
-const int kFullLogoAnimationFrame = kNumAnimationFrames - 1;
+const int kFullLogoAnimationFrame = kNumAnimationFrames - 1; // Last frame is the full logo
 
 final List<ui.Image> animationFrames = [];
 
@@ -42,10 +42,10 @@ Future<ui.Image> _loadImageAsset(String asset) async {
 
 /// Preload all Embla logo animation frames.
 /// This should be called in main() before app initialization
-/// to avoid inital lag when the animation is first played.
+/// to avoid any inital lag when the animation is first played.
 Future<void> preloadAnimationFrames() async {
   if (animationFrames.isNotEmpty) {
-    dlog("Animation frames already loaded!");
+    dlog("Logo animation frames already loaded!");
     return;
   }
   for (int i = 0; i < kNumAnimationFrames; i++) {
@@ -53,5 +53,5 @@ Future<void> preloadAnimationFrames() async {
     final String fnl = "$kFrameFilePath/$kFrameFilePrefix$padnum$kFrameFileSuffix";
     animationFrames.add(await _loadImageAsset(fnl));
   }
-  dlog("Preloaded ${animationFrames.length} animation frames");
+  dlog("Preloaded ${animationFrames.length} logo animation frames");
 }

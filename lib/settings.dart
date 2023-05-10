@@ -633,7 +633,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   // Add clear data buttons at the bottom
   settingsWidgets.addAll([
     divider,
-    // Clear the device's query history
+    // Clear the query history associated with this device
     SettingsButtonPromptWidget(
         label: 'Hreinsa fyrirspurnasögu',
         alertText: kClearHistoryAlertText,
@@ -658,7 +658,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   return settingsWidgets;
 }
 
-/// The main Settings route
+/// The main settings route
 class SettingsRoute extends StatefulWidget {
   const SettingsRoute({Key? key}) : super(key: key);
 
@@ -674,7 +674,9 @@ class SettingsRouteState extends State<SettingsRoute> {
         body: ListView(
             padding: standardEdgeInsets,
             children: _settings(context, () {
-              // Pass refresh callback to settings widgets
+              // Pass refresh callback to settings widgets.
+              // This is needed to re-render the widget tree when
+              // options that affect other options are changed.
               setState(() {});
             })));
   }
