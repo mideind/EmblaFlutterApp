@@ -23,6 +23,7 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
@@ -78,6 +79,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   String text = '';
   String? imageURL;
   late StreamSubscription<FGBGType> appStateSubscription;
+  bool inBackground = false;
+  bool inMenu = false;
 
   @protected
   @mustCallSuper
@@ -93,17 +96,19 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
+        inBackground = false;
         config.apiKey = readServerAPIKey();
         config.fetchToken();
         // App went into foreground
         await requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
+        inBackground = true;
         if (session.isActive()) {
           await session.stop();
         } else {
           if (HotwordDetector().isActive()) {
-            HotwordDetector().stop();
+            await HotwordDetector().stop();
           }
           AudioPlayer().stop();
         }
@@ -135,7 +140,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
         showMicPermissionErrorAlert(sessionContext!);
       } else if (Prefs().boolForKey('hotword_activation') == true) {
-        HotwordDetector().start(hotwordHandler);
+        await HotwordDetector().start(hotwordHandler);
       }
     });
   }
@@ -234,7 +239,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     }
 
     // OK, the conditions are right, let's start the session.
-    HotwordDetector().stop();
+    await HotwordDetector().stop();
     config = await configureSession();
     session = EmblaSession(config);
 
@@ -372,7 +377,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       }
     });
 
-    if (Prefs().boolForKey('hotword_activation') == true) {
+    if (Prefs().boolForKey('hotword_activation') == true &&
+        inBackground == false &&
+        inMenu == false) {
       await HotwordDetector().start(hotwordHandler);
     }
   }
@@ -389,6 +396,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     // Show menu route
     void pushMenu() async {
+      inMenu = true;
       if (session.isActive()) {
         await session.stop();
       }
@@ -403,6 +411,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
           builder: (context) => const MenuRoute(),
         ),
       ).then((val) async {
+        inMenu = false;
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the voice activation button is
         // updated to reflect potential changes in Settings, etc.
@@ -414,7 +423,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         await Wakelock.enable();
         // Resume hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
-          HotwordDetector().start(hotwordHandler);
+          await HotwordDetector().start(hotwordHandler);
         }
       });
     }
@@ -429,9 +438,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         }
       });
       if (Prefs().boolForKey('hotword_activation')) {
-        HotwordDetector().start(hotwordHandler);
+        await HotwordDetector().start(hotwordHandler);
       } else {
-        HotwordDetector().stop();
+        await HotwordDetector().stop();
       }
     }
 
