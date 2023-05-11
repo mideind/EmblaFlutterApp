@@ -95,6 +95,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Start observing app state (foreground, background, active, inactive)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
+        dlog("App went into foreground");
         inBackground = false;
         config.apiKey = readServerAPIKey();
         config.fetchToken();
@@ -102,6 +103,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         await requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
+        dlog("App went into background");
         inBackground = true;
         if (session.isActive()) {
           await session.stop();
