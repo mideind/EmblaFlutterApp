@@ -118,7 +118,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       dlog("Connectivity changed: $event");
       if (event == ConnectivityResult.none && session.isActive()) {
         await session.stop();
-        AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
+        AudioPlayer().playSound(
+            'conn', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
         setState(() {
           msg(kNoInternetMessage);
         });
@@ -246,7 +247,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
       msg(kNoInternetMessage);
-      AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
+      AudioPlayer().playSound(
+          'conn', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
       return;
     }
 
@@ -360,7 +362,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         if (m == null || (m is Map) == false || m['audio_url'] == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
           await session.stop();
-          AudioPlayer().playSound('err');
+          AudioPlayer().playSound(
+              'err', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
           msg(kServerErrorMessage);
         } else {
           AudioPlayer().stop();

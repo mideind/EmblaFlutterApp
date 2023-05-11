@@ -574,7 +574,7 @@ void _playVoiceSpeed() {
   AudioPlayer().stop();
   voiceSpeedTimer = Timer(const Duration(milliseconds: 250), () {
     AudioPlayer().playSound('voicespeed', Prefs().stringForKey('voice_id') ?? kDefaultVoiceID, null,
-        Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
+        Prefs().doubleForKey("voice_speed")!);
   });
 }
 
