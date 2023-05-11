@@ -16,14 +16,13 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Prefs singleton object that contains all user settings
-/// used globally by the app.
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import './common.dart';
 import './loc.dart' show LocationTracker;
 
+/// Prefs singleton object that contains all user settings
+/// used globally by the app.
 class Prefs {
   static final Prefs _instance = Prefs._constructor();
   static SharedPreferences? _sp;
@@ -34,6 +33,7 @@ class Prefs {
     return _instance;
   }
 
+  /// Load prefs from persistent storage
   Future<void> load() async {
     dlog("Loading prefs...");
     _sp = await SharedPreferences.getInstance();

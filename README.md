@@ -13,7 +13,7 @@ Embla is an Icelandic-language voice assistant app powered by the
 for the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
-[Flutter](https://flutter.dev) framework. Currently built to run on
+[Flutter](https://flutter.dev) framework, currently built to run on
 Android 8.1+ (SDK >= 27) and iOS 12+.
 
 <a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
@@ -36,7 +36,7 @@ git clone https://github.com/mideind/EmblaFlutterApp.git
 ```
 
 In order to work as intended, the app requires an API key for the Ratatoskur server
-endpoint. Save this key in a text file at the following path within the repository:
+backend. Save this key in a text file at the following path within the repository:
 
 ```keys/server.key```
 

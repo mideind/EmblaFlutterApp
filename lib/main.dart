@@ -84,16 +84,16 @@ void main() async {
   await preloadHTMLDocuments();
   await EmblaSession.prepare();
 
-  // Initialize singleton, loading hotword-related assets
+  // Initialize singleton, loading hotword-related assets into memory
   HotwordDetector();
 
-  // Immediately fetch token from server to prevent delay when session starts
+  // Immediately fetch token from server to prevent any delay when session starts
   var cfg = EmblaSessionConfig();
   cfg.apiKey = readServerAPIKey();
   await EmblaSessionConfig().fetchToken();
 
   // Activate wakelock to prevent device from going to sleep.
-  // This wakelock is disabled when leaving main session route.
+  // This wakelock is disabled when leaving the main session route.
   Wakelock.enable();
 
   // Request permissions.
@@ -125,7 +125,7 @@ class EmblaApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Wrap app in AdaptiveTheme to support light/dark mode
+    // Wrap app in AdaptiveTheme to support light/dark mode dynamic switching
     return AdaptiveTheme(
       light: lightThemeData,
       dark: darkThemeData,
