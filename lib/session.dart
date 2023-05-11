@@ -51,7 +51,7 @@ const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þes
 const kIntroNoHotwordMessage = 'Smelltu á hnappinn til þess að tala við Emblu.';
 const kServerErrorMessage = 'Villa kom upp í samskiptum við netþjón.';
 const kNoInternetMessage = 'Ekki næst samband við netið.';
-const kNoMicPermissionMessage = 'Mig vantar heimild til að nota hljóðnema.';
+const kNoMicPermissionMessage = 'Emblu vantar heimild til að nota hljóðnema.';
 
 // Hotword detection button accessibility labels
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
@@ -92,7 +92,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     text = introMsg();
 
-    // Start observing app state (foreground, background, active, inactive)
+    // Start observing app state (foreground, background)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
         dlog("App went into foreground");
@@ -116,6 +116,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       }
     });
 
+    // Start observing connectivity changes. If we lose connectivity while
+    // a session is active, stop the session and let the user know that
+    // the device has gone offline.
     Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
       dlog("Connectivity changed: $event");
       if (event == ConnectivityResult.none && session.isActive()) {
@@ -162,24 +165,26 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Show alert dialog explaining that microphone permission has not been granted
   void showMicPermissionErrorAlert(BuildContext context) {
+    AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: const Text('Villa í talgreiningu'),
+          title: const Text('Heimild vantar'),
           content: const Text(kNoMicPermissionMessage),
           actions: <Widget>[
             TextButton(
               child: const Text('Allt í lagi'),
               onPressed: () {
                 Navigator.of(context).pop();
-                OpenSettings.openPrivacySetting();
               },
             ),
           ],
         );
       },
-    );
+    ).then((val) async {
+      await OpenSettings.openPrivacySetting();
+    });
   }
 
   Future<bool> isConnectedToInternet() async {
