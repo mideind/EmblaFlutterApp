@@ -114,6 +114,17 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       }
     });
 
+    Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
+      dlog("Connectivity changed: $event");
+      if (event == ConnectivityResult.none && session.isActive()) {
+        await session.stop();
+        AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id")!);
+        setState(() {
+          msg(kNoInternetMessage);
+        });
+      }
+    });
+
     requestMicPermissionAndStartHotwordDetection();
   }
 
