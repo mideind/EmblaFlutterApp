@@ -24,7 +24,7 @@ import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'package:embla_core/embla_core.dart' show AudioPlayer;
+import 'package:embla_core/embla_core.dart' show AudioPlayer, EmblaRESTAPI;
 
 import './common.dart';
 import './prefs.dart' show Prefs;
@@ -32,6 +32,7 @@ import './voices.dart' show VoiceSelectionRoute;
 import './asr.dart' show ASRSelectionRoute;
 import './info.dart';
 import './theme.dart';
+import './util.dart' show readServerAPIKey;
 
 // UI string constants
 const String kPrivacyModeMessage =
@@ -620,7 +621,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
     // ASR engine selection
     const SettingsASRSelectionWidget(label: 'Talgreining'),
     divider,
-    // Ratastokkur server selection
+    // Ratatoskur server selection
     const SettingsFullTextLabelWidget('Ratatoskur:'),
     const SettingsServerSelectionWidget(
         items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
@@ -632,6 +633,16 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   ]);
   // }
 
+  /// Make API call to clear user data
+  void clearData({bool all = false}) async {
+    await EmblaRESTAPI.clearUserData(
+      await getUniqueDeviceIdentifier(),
+      readServerAPIKey(),
+      allData: all,
+      serverURL: Prefs().stringForKey('ratatoskur_server') ?? kDefaultRatatoskurServer,
+    );
+  }
+
   // Add clear data buttons at the bottom
   settingsWidgets.addAll([
     divider,
@@ -641,8 +652,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
         alertText: kClearHistoryAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
-          // TODO: Do this via EmblaCore
-          //QueryService.clearUserData(false);
+          clearData();
         }),
     // Clear all server-side data associated with this device
     SettingsButtonPromptWidget(
@@ -650,8 +660,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
         alertText: kClearAllAlertText,
         buttonTitle: 'Hreinsa',
         handler: () {
-          // TODO: Do this via EmblaCore
-          //QueryService.clearUserData(true);
+          clearData(all: true);
         }),
     // Spacing at the bottom for a better scrolling experience
     const Padding(padding: EdgeInsets.only(top: 30, bottom: 30), child: Text(''))
