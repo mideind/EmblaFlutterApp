@@ -521,6 +521,7 @@ class SessionTextAreaWidget extends StatelessWidget {
     if (imageURL != null) {
       subWidgets.add(Image.network(imageURL!)); // This is automatically cached for us
     }
+    // Wrap the scroll view in a ShaderMask to create a linear gradient fade effect
     return ShaderMask(
         shaderCallback: (Rect rect) {
           return const LinearGradient(

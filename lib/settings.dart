@@ -20,7 +20,7 @@
 
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kDebugMode;
+// import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -121,9 +121,9 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('Virkja einkaham?'),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: ListBody(
-              children: const <Widget>[
+              children: <Widget>[
                 Text(kPrivacyModeMessage),
               ],
             ),
