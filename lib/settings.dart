@@ -121,7 +121,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
           title: const Text('Virkja einkaham?'),
-          content: const SingleChildScrollView(
+          content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text(kPrivacyModeMessage),
