@@ -81,11 +81,11 @@ class Waveform {
 
 /// Widget for the session button
 class SessionButtonWidget extends StatelessWidget {
-  late final BuildContext context;
-  late final EmblaSession session;
-  late final void Function() onTap;
+  final BuildContext context;
+  final EmblaSession session;
+  final void Function() onTap;
 
-  SessionButtonWidget(this.context, this.session, this.onTap, {Key? key}) : super(key: key);
+  const SessionButtonWidget(this.context, this.session, this.onTap, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
