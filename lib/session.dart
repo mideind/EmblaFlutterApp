@@ -521,12 +521,25 @@ class SessionTextAreaWidget extends StatelessWidget {
     if (imageURL != null) {
       subWidgets.add(Image.network(imageURL!)); // This is automatically cached for us
     }
-    return SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Padding(
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 10),
-            child: Column(
-              children: subWidgets,
-            )));
+    return ShaderMask(
+        shaderCallback: (Rect rect) {
+          return const LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            // Purple color is not used concretely, only for the fractions of the vector
+            colors: [Colors.purple, Colors.transparent, Colors.transparent, Colors.purple],
+            stops: [0.0, 0.05, 0.95, 1.0],
+          ).createShader(rect);
+        },
+        blendMode: BlendMode.dstOut,
+        child: SingleChildScrollView(
+            scrollDirection: Axis.vertical,
+            clipBehavior: Clip.antiAlias,
+            padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 0),
+            child: Padding(
+                padding: const EdgeInsets.only(bottom: 20),
+                child: Column(
+                  children: subWidgets,
+                ))));
   }
 }
