@@ -345,7 +345,9 @@ class SettingsServerSelectionWidgetState extends State<SettingsServerSelectionWi
   Map<int, Widget> _genChildren() {
     Map<int, Widget> wlist = {};
     for (int i = 0; i < widget.items.length; i++) {
-      wlist[i] = Padding(padding: const EdgeInsets.all(10.0), child: Text(widget.items[i][0]));
+      wlist[i] = Padding(
+          padding: const EdgeInsets.all(7.0),
+          child: Text(widget.items[i][0], style: const TextStyle(fontSize: 16)));
     }
     return wlist;
   }

@@ -34,7 +34,7 @@ const bool kHotwordApplyFrontend = false;
 const String kHotwordAssetsDirectory = 'assets/hotword';
 
 // Server communication
-const String kDefaultRatatoskurServer = 'https://staging.api.greynir.is';
+const String kDefaultRatatoskurServer = 'https://api.greynir.is';
 const String kDefaultQueryServer = 'https://greynir.is';
 
 // ASR
@@ -56,15 +56,17 @@ const String kPrivacyURL = 'https://embla.is/privacy.html';
 
 // Ratatoskur server preset options (for debugging purposes)
 const List<List<String>> kRatatoskurServerPresetOptions = [
-  ['GSAPI', kDefaultRatatoskurServer],
-  ['Brandur', 'http://brandur.mideind.is:8080'],
+  ['API', kDefaultRatatoskurServer],
+  ['Staging', "https://staging.api.greynir.is"],
+  ['Brand', 'http://brandur.mideind.is:8080'],
   ['Lókal', 'http://192.168.1.8:8080']
 ];
 
 // Query server preset options (for debugging purposes)
 const List<List<String>> kQueryServerPresetOptions = [
   ['Greynir', kDefaultQueryServer],
-  ['Brandur', 'http://brandur.mideind.is:5000'],
+  ['Stag', "https://staging.greynir.is"],
+  ['Brand', 'http://brandur.mideind.is:5000'],
   ['Lókal', 'http://192.168.1.8:5000']
 ];
 
