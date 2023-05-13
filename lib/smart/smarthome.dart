@@ -25,6 +25,7 @@ import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 
 import '../session.dart';
 import '../util.dart';
@@ -310,7 +311,8 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
+        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return dialog(
           title: const Text("Aftengja tæki"),
           content: SingleChildScrollView(
             child: ListBody(

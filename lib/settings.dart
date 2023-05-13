@@ -19,6 +19,7 @@
 /// Settings route
 
 import 'dart:async';
+import 'dart:io';
 
 // import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';
@@ -115,13 +116,14 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
 
 class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
   Future<void> _showPromptDialog(BuildContext context) async {
-    return await showDialog<void>(
+    return await showDialog(
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
+        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return dialog(
           title: const Text('Virkja einkaham?'),
-          content: SingleChildScrollView(
+          content: const SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
                 Text(kPrivacyModeMessage),
@@ -270,7 +272,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
+        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return dialog(
           title: Text("$label?"),
           content: SingleChildScrollView(
             child: ListBody(

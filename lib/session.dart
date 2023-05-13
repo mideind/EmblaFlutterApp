@@ -19,6 +19,7 @@
 /// Main session view
 
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -169,7 +170,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
+        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return dialog(
           title: const Text('Heimild vantar'),
           content: const Text(kNoMicPermissionMessage),
           actions: <Widget>[
