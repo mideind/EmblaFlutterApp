@@ -120,8 +120,8 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return dialog(
+        // var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return AlertDialog(
           title: const Text('Virkja einkaham?'),
           content: const SingleChildScrollView(
             child: ListBody(
@@ -272,8 +272,8 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       context: context,
       barrierDismissible: false, // User must tap button
       builder: (BuildContext context) {
-        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return dialog(
+        // AlertDialog dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as AlertDialog;
+        return AlertDialog(
           title: Text("$label?"),
           content: SingleChildScrollView(
             child: ListBody(

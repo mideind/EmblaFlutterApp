@@ -311,8 +311,8 @@ class _SmarthomeRouteState extends State<SmarthomeRoute> {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return dialog(
+        // var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return AlertDialog(
           title: const Text("Aftengja tæki"),
           content: SingleChildScrollView(
             child: ListBody(

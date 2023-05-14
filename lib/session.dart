@@ -170,8 +170,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return dialog(
+        // var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
+        return AlertDialog(
           title: const Text('Heimild vantar'),
           content: const Text(kNoMicPermissionMessage),
           actions: <Widget>[
