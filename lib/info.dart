@@ -28,6 +28,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:platform_device_id/platform_device_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:embla_core/embla_core.dart' show kEmblaCoreVersion;
 
 import './common.dart';
 import './theme.dart';
@@ -146,6 +147,10 @@ Future<String> _getLocationAccess() async {
   return LocationTracker().known ? kYesLabel : kNoLabel;
 }
 
+Future<String> _getEmblaCoreVersion() async {
+  return kEmblaCoreVersion;
+}
+
 /// Generate list of info widgets
 ListView _buildVersionInfoWidgetList(BuildContext context) {
   final divider = Divider(height: 40, color: color4ctx(context));
@@ -164,6 +169,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
     SettingsAsyncLabelValueWidget('Tegund', getClientType()),
     SettingsAsyncLabelValueWidget('Útgáfa', getMarketingVersion()),
     SettingsAsyncLabelValueWidget('Útgáfunúmer', _getBuildNumber()),
+    SettingsAsyncLabelValueWidget('EmblaCore', _getEmblaCoreVersion()),
     SettingsAsyncLabelValueWidget('Tæki', _getDeviceType()),
     SettingsAsyncLabelValueWidget('Stýrikerfi', _getPlatform()),
     SettingsAsyncFullTextLabelWidget(_getOSVersion()),
