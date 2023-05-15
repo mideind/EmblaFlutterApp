@@ -18,6 +18,7 @@
 
 /// Documentation web views.
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
@@ -113,7 +114,7 @@ class WebViewRouteState extends State<WebViewRoute> {
 
     final webViewOpts = InAppWebViewGroupOptions(
         crossPlatform: InAppWebViewOptions(
-      clearCache: false,
+      clearCache: kDebugMode,
       useShouldOverrideUrlLoading: true,
       transparentBackground: true,
     ));
