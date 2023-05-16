@@ -38,9 +38,10 @@ jobs:
       - name: Install dependencies
         run: |
           cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
+          cd ..; git clone https://github.com/mideind/flutter_snowboy; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
-        # Android build runs the tests. No need to run same tests again for iOS.
+        # Android build runs the tests. No need to run the same tests again on iOS.
       - name: Run tests
         run: |
           flutter test
@@ -75,6 +76,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
+          cd ..; git clone https://github.com/mideind/flutter_snowboy; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
           gem install xcpretty
