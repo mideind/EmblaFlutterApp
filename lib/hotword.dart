@@ -55,6 +55,11 @@ class HotwordDetector {
       return;
     }
 
+    if (await File(modelPath).exists() == false) {
+      dlog("WARNING! Hotword model file does not exist at $modelPath");
+      return;
+    }
+
     detector = Snowboy();
     detector.prepare(modelPath,
         sensitivity: kHotwordSensitivity,
@@ -114,14 +119,16 @@ class HotwordDetector {
         dlog("Overwriting existing hotword model file: $finalPath");
         await file.delete();
       } else {
-        // File already exists, return path
+        dlog("Hotword model file already exists at $finalPath");
         return finalPath;
       }
     }
     // Copy model file from asset bundle to filesystem
+    dlog("Copying hotword model file to filesystem: $finalPath");
     final ByteData bytes = await rootBundle.load("$kHotwordAssetsDirectory/$filename");
     final buffer = bytes.buffer;
-    File(finalPath).writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
+    await File(finalPath)
+        .writeAsBytes(buffer.asUint8List(bytes.offsetInBytes, bytes.lengthInBytes));
 
     return finalPath;
   }

@@ -20,7 +20,7 @@ dependencies:
   platform_device_id: '^1.0.1'
   device_info_plus: '^8.2.2'
   url_launcher: '^6.1.11'
-  connectivity_plus: '^2.3.0'
+  connectivity_plus: ^4.0.0
   flutter_inappwebview: '^5.7.2+3'
   path_provider: '^2.0.15'
   wakelock: '^0.6.2'
@@ -34,8 +34,12 @@ dependencies:
   # multicast_dns: '^0.3.2'
   flutter_animate: '^4.1.1'
   # Ours
-  flutter_snowboy: '>=0.1.1'
-  embla_core:
+  flutter_snowboy: #'>=0.1.1'
+    path: '../flutter_snowboy'
+    # git:
+    #   url: git://github.com/mideind/flutter_snowboy.git
+    #   ref: master
+  embla_core: # '>=1.0.1'
     path: '../embla_core'
     # git:
     #   url: git://github.com/mideind/EmblaCoreFlutter.git
