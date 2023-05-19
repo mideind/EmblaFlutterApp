@@ -25,6 +25,8 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
+import 'package:adaptive_dialog/adaptive_dialog.dart';
+
 import 'package:embla_core/embla_core.dart' show AudioPlayer, EmblaRESTAPI;
 
 import './common.dart';
@@ -115,43 +117,26 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
 }
 
 class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget> {
+  // Show a confirmation dialog before enabling privacy mode
   Future<void> _showPromptDialog(BuildContext context) async {
-    return await showDialog(
+    String? r = await showAlertDialog(
       context: context,
-      barrierDismissible: false, // User must tap button
-      builder: (BuildContext context) {
-        // var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return AlertDialog(
-          title: const Text('Virkja einkaham?'),
-          content: const SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(kPrivacyModeMessage),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Hætta við'),
-              onPressed: () {
-                Navigator.of(context).pop(false);
-              },
-            ),
-            TextButton(
-              child: const Text('Virkja'),
-              onPressed: () {
-                setState(() {
-                  Prefs().setBoolForKey(widget.prefKey, true);
-                  Prefs().setBoolForKey("share_location", false);
-                });
-                widget.onChanged?.call();
-                Navigator.of(context).pop(true);
-              },
-            ),
-          ],
-        );
-      },
+      barrierDismissible: false,
+      title: 'Virkja einkaham?',
+      message: kPrivacyModeMessage,
+      actions: [
+        const AlertDialogAction(key: 'cancel', label: 'Hætta við'),
+        const AlertDialogAction(key: 'enable', label: 'Virkja'),
+      ],
     );
+    if (r == 'enable') {
+      setState(() {
+        Prefs().setBoolForKey(widget.prefKey, true);
+        Prefs().setBoolForKey("share_location", false);
+      });
+      widget.onChanged?.call();
+    }
+    return;
   }
 
   @override
@@ -268,38 +253,19 @@ class SettingsButtonPromptWidget extends StatelessWidget {
       : super(key: key);
 
   Future<void> _showPromptDialog(BuildContext context) async {
-    return showDialog<void>(
+    String? r = await showAlertDialog(
       context: context,
-      barrierDismissible: false, // User must tap button
-      builder: (BuildContext context) {
-        // AlertDialog dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as AlertDialog;
-        return AlertDialog(
-          title: Text("$label?"),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text(alertText),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Hætta við'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
-              child: Text(buttonTitle),
-              onPressed: () {
-                handler();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
+      barrierDismissible: false,
+      title: "$label?",
+      message: alertText,
+      actions: [
+        const AlertDialogAction(key: 'cancel', label: 'Hætta við'),
+        AlertDialogAction(key: 'action', label: buttonTitle),
+      ],
     );
+    if (r == 'action') {
+      handler();
+    }
   }
 
   @override

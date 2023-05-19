@@ -32,6 +32,7 @@ import 'package:flutter_fgbg/flutter_fgbg.dart' show FGBGEvents, FGBGType;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_settings/open_settings.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:adaptive_dialog/adaptive_dialog.dart';
 
 import 'package:embla_core/embla_core.dart';
 
@@ -165,28 +166,21 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   }
 
   // Show alert dialog explaining that microphone permission has not been granted
-  void showMicPermissionErrorAlert(BuildContext context) {
+  void showMicPermissionErrorAlert(BuildContext context) async {
     AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
-    showDialog(
+    showAlertDialog(
       context: context,
-      builder: (BuildContext context) {
-        // var dialog = (Platform.isIOS ? CupertinoAlertDialog : AlertDialog) as Function;
-        return AlertDialog(
-          title: const Text('Heimild vantar'),
-          content: const Text(kNoMicPermissionMessage),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Allt í lagi'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
+      barrierDismissible: false,
+      title: 'Heimild vantar',
+      message: kNoMicPermissionMessage,
+      actions: [
+        const AlertDialogAction(key: 'ok', label: 'Allt í lagi'),
+      ],
+    ).then(
+      (value) {
+        OpenSettings.openPrivacySetting();
       },
-    ).then((val) async {
-      await OpenSettings.openPrivacySetting();
-    });
+    );
   }
 
   Future<bool> isConnectedToInternet() async {

@@ -1,5 +1,6 @@
 # TODO for Embla Flutter client
 
+* Fix audio level sampling rate issue in flutter_sound on iOS (fork flutter_sound)
 * Add more widget tests
 * Optimize animation redraws, or switch over to APNG for animation when Flutter adds support.
 The client currently manually loads all the PNG animation frames into memory and
