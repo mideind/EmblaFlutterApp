@@ -40,6 +40,7 @@ jobs:
           cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
           cd ..; git clone https://github.com/mideind/flutter_snowboy; cd EmblaFlutterApp
           flutter config --no-analytics
+          flutter --disable-telemetry
           flutter pub get --suppress-analytics
         # Android build runs the tests. No need to run the same tests again on iOS.
       - name: Run tests
@@ -84,7 +85,7 @@ jobs:
         run: |
           bash build_ipa.sh
       - name: Slack notification
-        uses: 8398a7/action-slack@v2
+        uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
           author_name: Integration Testing
