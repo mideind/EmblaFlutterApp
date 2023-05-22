@@ -113,7 +113,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         // App went into background - FGBGType.background
         dlog("App went into background");
         inBackground = true;
-        if (session!.isActive()) {
+        if (session != null && session!.isActive()) {
           await session!.stop();
         } else {
           if (HotwordDetector().isActive()) {
@@ -338,7 +338,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // }
 
     // Update text field with response
-    String t = "${resp["q"].sentenceCapitalized()}\n\n${resp["answer"].sentenceCapitalized()}";
+    final String q = "${resp['q']}".sentenceCapitalized();
+    final String a = "${resp['answer']}".sentenceCapitalized();
+    String t = "$q\n\n$a";
     if (resp['source'] != null && resp['source'] != '') {
       t += " (${resp['source']})";
     }
