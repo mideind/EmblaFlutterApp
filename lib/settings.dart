@@ -27,7 +27,7 @@ import 'package:flutter/cupertino.dart';
 
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 
-import 'package:embla_core/embla_core.dart' show AudioPlayer, EmblaRESTAPI;
+import 'package:embla_core/embla_core.dart' show AudioPlayer, EmblaAPI;
 
 import './common.dart';
 import './prefs.dart' show Prefs;
@@ -604,7 +604,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
 
   /// Make API call to clear user data
   void clearData({bool all = false}) async {
-    await EmblaRESTAPI.clearUserData(
+    await EmblaAPI.clearUserData(
       await getUniqueDeviceIdentifier(),
       readServerAPIKey(),
       allData: all,

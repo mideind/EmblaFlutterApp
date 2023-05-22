@@ -357,12 +357,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       String s = await JSExecutor().run(resp['command']);
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
-      await EmblaSpeechSynthesizer.synthesize(s, config.apiKey!,
+      await EmblaAPI.synthesizeSpeech(s, config.apiKey!,
               voiceID: config.voiceID,
               voiceSpeed: config.voiceSpeed,
-              apiURL: config.ratatoskurServer)
+              apiURL: "${config.ratatoskurServer}/rat/v1/tts")
           .then((dynamic m) async {
-        if (m == null || (m is Map) == false || m['audio_url'] == null) {
+        if (m == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
           await session.stop();
           AudioPlayer().playSound(
@@ -370,7 +370,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
           msg(kServerErrorMessage);
         } else {
           AudioPlayer().stop();
-          AudioPlayer().playURL(m['audio_url'], (bool err) async {
+          AudioPlayer().playURL(m, (bool err) async {
             await session.stop();
           });
         }
