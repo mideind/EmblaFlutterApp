@@ -82,14 +82,14 @@ class Waveform {
 /// Widget for the session button
 class SessionButtonWidget extends StatelessWidget {
   final BuildContext context;
-  final EmblaSession session;
+  final EmblaSession? session;
   final void Function() onTap;
 
   const SessionButtonWidget(this.context, this.session, this.onTap, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    final bool active = session.isActive();
+    final bool active = session != null && session!.isActive();
     final double buttonSize = MediaQuery.of(context).size.width * kRestingButtonPropSize;
     final String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
 
@@ -115,7 +115,7 @@ class SessionButtonWidget extends StatelessWidget {
 
 /// Drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
-  late final EmblaSession session;
+  final EmblaSession? session;
   late final BuildContext context;
 
   SessionButtonPainter(this.context, this.session);
@@ -227,13 +227,14 @@ class SessionButtonPainter extends CustomPainter {
     // We always draw the circles
     drawCircles(canvas, size);
 
+    var state = session?.state;
+
     // Draw waveform bars during microphone input
-    if (session.state == EmblaSessionState.streaming ||
-        session.state == EmblaSessionState.starting) {
+    if (state == EmblaSessionState.streaming || state == EmblaSessionState.starting) {
       drawWaveform(canvas, size);
     }
     // Draw logo animation during answering phase
-    else if (session.state == EmblaSessionState.answering) {
+    else if (state == EmblaSessionState.answering) {
       drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo

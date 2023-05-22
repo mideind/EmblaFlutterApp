@@ -74,8 +74,8 @@ class SessionRoute extends StatefulWidget {
 }
 
 class SessionRouteState extends State<SessionRoute> with SingleTickerProviderStateMixin {
-  EmblaSession session = EmblaSession(EmblaSessionConfig());
-  EmblaSessionConfig config = EmblaSessionConfig();
+  EmblaSession? session;
+  late EmblaSessionConfig config;
   Timer? animationTimer;
   String text = '';
   String? imageURL;
@@ -92,6 +92,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // This is needed to make animations work when hot reloading during development
     Animate.restartOnHotReload = (kDebugMode == true);
 
+    configureSession().then((c) {
+      config = c;
+      config.fetchToken();
+      session = EmblaSession(config);
+    });
+
     text = introMsg();
 
     // Start observing app state (foreground, background)
@@ -107,8 +113,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         // App went into background - FGBGType.background
         dlog("App went into background");
         inBackground = true;
-        if (session.isActive()) {
-          await session.stop();
+        if (session!.isActive()) {
+          await session!.stop();
         } else {
           if (HotwordDetector().isActive()) {
             await HotwordDetector().stop();
@@ -123,8 +129,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // the device has gone offline.
     Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
       dlog("Connectivity changed: $event");
-      if (event == ConnectivityResult.none && session.isActive()) {
-        await session.stop();
+      if (event == ConnectivityResult.none && session != null && session!.isActive()) {
+        await session!.stop();
         AudioPlayer().playSound(
             'conn', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
         setState(() {
@@ -235,7 +241,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   /// Start session
   void start() async {
-    if (session.isActive()) {
+    if (session!.isActive()) {
       dlog('Session start called during active pre-existing session!');
       return;
     }
@@ -261,7 +267,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     session = EmblaSession(config);
 
     try {
-      session.start();
+      session!.start();
 
       // Clear text and set off animation timer
       setState(() {
@@ -273,20 +279,20 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       });
     } catch (e) {
       dlog('Error starting session: ${e.toString()}');
-      await session.stop();
+      await session!.stop();
     }
   }
 
   // User cancelled ongoing session by pressing the button
   void cancel() {
     dlog('User initiated cancellation of session');
-    session.cancel();
+    session!.cancel();
     msg(introMsg());
   }
 
   // Session button pressed
   void toggle() async {
-    if (session.isActive() == false) {
+    if (session!.isActive() == false) {
       start();
     } else {
       cancel();
@@ -295,14 +301,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Ticker to animate session button
   void ticker() {
-    if (session.state == EmblaSessionState.answering) {
+    if (session!.state == EmblaSessionState.answering) {
       setState(() {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
           currFrame = 0; // Reset animation to first frame
         }
       });
-    } else if (session.state == EmblaSessionState.streaming) {
+    } else if (session!.state == EmblaSessionState.streaming) {
       setState(() {
         Waveform().addSample(AudioRecorder().signalStrength());
       });
@@ -344,7 +350,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       final String url = resp['open_url'];
       bool validURL = Uri.tryParse(url)?.hasAbsolutePath ?? false;
       if (validURL) {
-        await session.stop();
+        await session!.stop();
         dlog("Opening URL $url");
         launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
       } else {
@@ -364,14 +370,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
           .then((dynamic m) async {
         if (m == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
-          await session.stop();
+          await session!.stop();
           AudioPlayer().playSound(
               'err', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
           msg(kServerErrorMessage);
         } else {
           AudioPlayer().stop();
           AudioPlayer().playURL(m, (bool err) async {
-            await session.stop();
+            await session!.stop();
           });
         }
       });
@@ -420,8 +426,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Show menu route
     void pushMenu() async {
       inMenu = true;
-      if (session.isActive()) {
-        await session.stop();
+      if (session!.isActive()) {
+        await session!.stop();
       }
       if (HotwordDetector().isActive()) {
         await HotwordDetector().stop();
@@ -456,12 +462,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       setState(() {
         final bool on = Prefs().boolForKey('hotword_activation');
         Prefs().setBoolForKey('hotword_activation', !on);
-        if (session.state == EmblaSessionState.idle) {
+        if (session!.state == EmblaSessionState.idle) {
           msg(introMsg());
         }
       });
       if (Prefs().boolForKey('hotword_activation')) {
-        if (session.isActive() == false) {
+        if (session!.isActive() == false) {
           await HotwordDetector().start(hotwordHandler);
         }
       } else {

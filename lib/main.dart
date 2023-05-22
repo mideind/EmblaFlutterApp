@@ -35,7 +35,7 @@ import './session.dart' show SessionRoute;
 import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
 import './web.dart' show preloadHTMLDocuments;
-import './util.dart' show readServerAPIKey;
+// import './util.dart' show readServerAPIKey;
 
 void main() async {
   // Initialize Flutter bindings before calling runApp()
@@ -88,9 +88,9 @@ void main() async {
   HotwordDetector();
 
   // Immediately fetch token from server to prevent any delay when session starts
-  var cfg = EmblaSessionConfig();
-  cfg.apiKey = readServerAPIKey();
-  await EmblaSessionConfig().fetchToken();
+  // var cfg = EmblaSessionConfig();
+  // cfg.apiKey = readServerAPIKey();
+  // await EmblaSessionConfig().fetchToken();
 
   // Activate wakelock to prevent device from going to sleep.
   // This wakelock is disabled when leaving the main session route.
