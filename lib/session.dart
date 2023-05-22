@@ -196,7 +196,6 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   // Set text field string (and optionally, an associated image)
   void msg(String s, {String? imgURL}) {
     setState(() {
-      // TODO: Capitalization really should be handled server-side
       text = s.sentenceCapitalized();
       imageURL = imgURL;
     });
@@ -339,7 +338,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // }
 
     // Update text field with response
-    String t = "${resp["q"]}\n\n${resp["answer"]}";
+    String t = "${resp["q"].sentenceCapitalized()}\n\n${resp["answer"].sentenceCapitalized()}";
     if (resp['source'] != null && resp['source'] != '') {
       t += " (${resp['source']})";
     }

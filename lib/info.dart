@@ -78,7 +78,6 @@ Future<String> getUniqueDeviceIdentifier() async {
 
 /// Return canonical client type string (e.g. 'ios_native', 'android_flutter', etc.)
 /// that consists of the OS name and the implementation name.
-// TODO: Rethink! Do we need the implementation name? Should be obvious from version.
 Future<String> getClientType() async {
   final String impl = await _getImplementation();
   return "${Platform.operatingSystem.toLowerCase()}_${impl.toLowerCase()}";
