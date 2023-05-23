@@ -76,6 +76,10 @@ void main() async {
   if (Prefs().stringForKey("asr_engine") == null) {
     Prefs().setStringForKey("asr_engine", kDefaultASREngine);
   }
+  // Make sure query_server is set
+  if (Prefs().stringForKey("query_server") == null) {
+    Prefs().setStringForKey("query_server", kDefaultQueryServer);
+  }
 
   dlog("Shared prefs: ${Prefs()}");
 
