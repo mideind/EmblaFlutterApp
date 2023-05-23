@@ -22,6 +22,7 @@ import 'dart:async';
 // import 'dart:io';
 
 // import 'package:flutter/foundation.dart' show kDebugMode;
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -585,22 +586,23 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
   ];
 
   // Only include query server selection widget in debug builds
-  // if (kDebugMode) {
-  settingsWidgets.addAll([
-    // ASR engine selection
-    const SettingsASRSelectionWidget(label: 'Talgreining'),
-    divider,
-    // Ratatoskur server selection
-    const SettingsFullTextLabelWidget('Ratatoskur:'),
-    const SettingsServerSelectionWidget(
-        items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
-    divider,
-    // Query server selection
-    const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
-    const SettingsServerSelectionWidget(items: kQueryServerPresetOptions, prefKey: 'query_server'),
-    const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
-  ]);
-  // }
+  if (kDebugMode) {
+    settingsWidgets.addAll([
+      // ASR engine selection
+      const SettingsASRSelectionWidget(label: 'Talgreining'),
+      divider,
+      // Ratatoskur server selection
+      const SettingsFullTextLabelWidget('Ratatoskur:'),
+      const SettingsServerSelectionWidget(
+          items: kRatatoskurServerPresetOptions, prefKey: 'ratatoskur_server'),
+      divider,
+      // Query server selection
+      const SettingsFullTextLabelWidget('Fyrirspurnaþjónn:'),
+      const SettingsServerSelectionWidget(
+          items: kQueryServerPresetOptions, prefKey: 'query_server'),
+      const Padding(padding: EdgeInsets.only(top: 0, bottom: 0), child: Text(''))
+    ]);
+  }
 
   /// Make API call to clear user data
   void clearData({bool all = false}) async {
