@@ -1,5 +1,6 @@
 # TODO for Embla Flutter client
 
+* Performance profiling on both iOS and Android (what's the rendering frequency? how does it affect battery life?)
 * Fix audio level sampling rate issue in flutter_sound on iOS (fork flutter_sound)
 * Add more widget tests
 * Optimize animation redraws, or switch over to APNG for animation when Flutter adds support.

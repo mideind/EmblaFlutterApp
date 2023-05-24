@@ -19,9 +19,7 @@
 /// Settings route
 
 import 'dart:async';
-// import 'dart:io';
 
-// import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
