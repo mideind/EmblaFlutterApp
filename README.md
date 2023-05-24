@@ -1,6 +1,7 @@
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Language](https://img.shields.io/badge/language-dart-lightblue)]()
 ![Release](https://shields.io/github/v/release/mideind/EmblaFlutterApp?display_name=tag)
+[![App Store](https://img.shields.io/itunes/v/1485887184?label=App%20Store)](https://apps.apple.com/us/app/embla/id1485887184?platform=iphone)
 ![Play Store](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dis.mideind.embla%26l%3DPlay%2520Store%26m%3D%24version)
 [![Build](https://github.com/mideind/EmblaFlutterApp/actions/workflows/main.yml/badge.svg)]()
 
@@ -13,12 +14,14 @@ Embla is an Icelandic-language voice assistant app powered by the
 for the cross-platform Embla mobile client.
 
 The client is implemented in [Dart](https://dart.dev/) using the
-[Flutter](https://flutter.dev) framework, currently built to run on
-Android 8.1+ (SDK >= 27) and iOS 12+.
+[Flutter](https://flutter.dev) framework, and is currently built to
+run on iOS 12+ and Android 8.1+ (SDK >= 27).
 
-<a href="https://play.google.com/store/apps/details?id=is.mideind.embla">
-    <img alt="Download on Google Play" src="img/play_store.png" width="180">
-</a>
+<p float="left">
+    <a href="https://apps.apple.com/is/app/embla/id1485887184"><img alt="Download in App Store" src="img/app_store.png" width="162"></a>
+    <a href="https://play.google.com/store/apps/details?id=is.mideind.embla"><img alt="Download on Google Play" src="img/play_store.png" width="180">
+    </a>
+</p>
 
 ## Build instructions
 
@@ -26,8 +29,8 @@ Building the Embla client requires the Flutter framework:
 
 * [Install Flutter](https://flutter.dev/docs/get-started/install)
 
-Building for Android requires a recent version of Android Studio. Building for iOS
-requires a recent version of Xcode.
+Building for iOS requires a recent version of Xcode on macOS.
+Building for Android requires a recent version of Android Studio.
 
 Clone the repository:
 
@@ -36,7 +39,8 @@ git clone https://github.com/mideind/EmblaFlutterApp.git
 ```
 
 In order to work as intended, the app requires an API key for the Ratatoskur server
-backend. Save this key in a text file at the following path within the repository:
+backend. Obtain an API key from [Miðeind](https://mideind.is) and save it in a text
+file at the following path within the repository:
 
 ```keys/server.key```
 
@@ -49,14 +53,14 @@ bash keys/gen_keysfile.sh
 You should now be able to build and run the app:
 
 ```bash
-flutter run -d [device_id]
+flutter run -d [your_device_id]
 ```
 
 This should launch the app in development mode on your device.
 
 ## Debug build scripts
 
-To build an unsigned Android `apk` debug binary for arm64, run the following script:
+To build an unsigned Android `apk` debug binary, run the following script:
 
 ```bash
 bash build_apk.sh
