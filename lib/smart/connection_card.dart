@@ -66,7 +66,7 @@ void _pushWebRoute(BuildContext context, Function? navigationCallback, dynamic a
 class ConnectionCardState extends State<ConnectionCard> {
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
+    double width = MediaQuery.sizeOf(context).width;
     double cardWidth = (width < 500.0) ? (width * 0.34) : (width * 0.175);
 
     return Card(

@@ -127,7 +127,7 @@ const standardEdgeInsets = EdgeInsets.all(8);
 
 /// Get image for current theme
 AssetImage img4theme(String imgName, BuildContext context) {
-  if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
+  if (MediaQuery.platformBrightnessOf(context) == Brightness.dark) {
     imgName = "${imgName}_dark";
   }
   return AssetImage("assets/images/$imgName.png");
@@ -135,14 +135,14 @@ AssetImage img4theme(String imgName, BuildContext context) {
 
 /// Get the safe main color for the current theme
 Color color4ctx(BuildContext context) {
-  return MediaQuery.of(context).platformBrightness == Brightness.dark
+  return MediaQuery.platformBrightnessOf(context) == Brightness.dark
       ? darkMainColor
       : lightMainColor;
 }
 
 /// Get circle colors for current theme
 List<Color> circleColors4Context(var context) {
-  if (MediaQuery.of(context).platformBrightness == Brightness.dark) {
+  if (MediaQuery.platformBrightnessOf(context) == Brightness.dark) {
     final Color circleColor1 = HexColor.fromHex('#f0f0f0');
     final Color circleColor2 = HexColor.fromHex('#e4e4e4');
     final Color circleColor3 = HexColor.fromHex('#dcdcdc');

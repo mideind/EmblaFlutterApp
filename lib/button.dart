@@ -90,7 +90,7 @@ class SessionButtonWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final bool active = session != null && session!.isActive();
-    final double buttonSize = MediaQuery.of(context).size.width * kRestingButtonPropSize;
+    final double buttonSize = MediaQuery.sizeOf(context).width * kRestingButtonPropSize;
     final String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
 
     return Padding(

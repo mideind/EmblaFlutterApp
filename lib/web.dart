@@ -107,7 +107,7 @@ class WebViewRouteState extends State<WebViewRoute> {
   /// on network error. This ensures that at least *some* version of the
   /// document can be viewed even when the device is offline.
   InAppWebView _buildWebView(BuildContext context) {
-    final darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+    final darkMode = (MediaQuery.platformBrightnessOf(context) == Brightness.dark);
     final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
     final finalURL = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
     final initialData = darkMode ? loadingDarkHTMLData : loadingHTMLData;

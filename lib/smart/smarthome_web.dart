@@ -87,7 +87,7 @@ class WebViewRouteState extends State<WebViewRoute> {
     // Create web view that initially presents a "loading" document with
     // progress indicator. Then immediately fetch the actual remote
     // document. Falls back to loading local bundled HTML document on network error.
-    var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+    var darkMode = (MediaQuery.platformBrightnessOf(context) == Brightness.dark);
     var loadingURL = kLoadingHTMLFilePath;
     if (darkMode) {
       loadingURL = kLoadingDarkHTMLFilePath;
@@ -132,7 +132,7 @@ class WebViewRouteState extends State<WebViewRoute> {
             handlerName: "darkmode_handler",
             callback: (args) {
               dlog("darkmode_handler called from javascript!!! $args");
-              var darkMode = (MediaQuery.of(context).platformBrightness == Brightness.dark);
+              var darkMode = (MediaQuery.platformBrightnessOf(context) == Brightness.dark);
               dlog("darkMode: $darkMode");
               return darkMode;
             });

@@ -346,7 +346,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     msg(t, imgURL: resp['image']);
 
     // Open URL handling
-    if (resp['open_url'] != null) {
+    if (resp['open_url'] != null && resp['open_url'] != '') {
       final String url = resp['open_url'];
       bool validURL = Uri.tryParse(url)?.hasAbsolutePath ?? false;
       if (validURL) {
@@ -363,6 +363,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       String s = await JSExecutor().run(resp['command']);
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
+      // TODO: The API URL should really be handled by EmblaCore
       await EmblaAPI.synthesizeSpeech(s, config.apiKey!,
               voiceID: config.voiceID,
               voiceSpeed: config.voiceSpeed,
