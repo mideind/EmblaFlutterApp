@@ -160,7 +160,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     await Permission.microphone.isGranted.then((bool isGranted) async {
       if (isGranted == false) {
         dlog("Cannot start hotword detection, microphone permission refused");
-        AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
+        playNoMic();
         showMicPermissionErrorAlert(sessionContext!);
       } else if (Prefs().boolForKey('hotword_activation') == true &&
           inBackground == false &&
@@ -172,7 +172,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Show alert dialog explaining that microphone permission has not been granted
   void showMicPermissionErrorAlert(BuildContext context) async {
-    AudioPlayer().playNoMic(Prefs().stringForKey("voice_id") ?? kDefaultVoiceID);
+    playNoMic();
     showAlertDialog(
       context: context,
       barrierDismissible: false,
@@ -186,6 +186,12 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         OpenSettings.openPrivacySetting();
       },
     );
+  }
+
+  void playNoMic() {
+    AudioPlayer().playNoMic(
+        voiceID: Prefs().stringForKey("voice_id") ?? kDefaultVoiceID,
+        voiceSpeed: Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
   }
 
   Future<bool> isConnectedToInternet() async {
@@ -246,7 +252,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
     // Make sure we have microphone permission
     if (await Permission.microphone.isGranted == false) {
-      AudioPlayer().playNoMic(Prefs().stringForKey('voice_id') ?? kDefaultVoiceID);
+      playNoMic();
       showMicPermissionErrorAlert(sessionContext!);
       return;
     }
