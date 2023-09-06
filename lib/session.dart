@@ -370,9 +370,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
       // TODO: The API URL should really be handled by EmblaCore
+      var ttsOptions = SpeechOptions();
+      ttsOptions.voice = config.voiceID;
+      ttsOptions.speed = config.voiceSpeed;
       await EmblaAPI.synthesizeSpeech(s, config.apiKey!,
-              voiceID: config.voiceID,
-              voiceSpeed: config.voiceSpeed,
+              ttsOptions: ttsOptions,
+              transcriptionOptions: TranscriptionOptions(),
+              transcribe: true,
               apiURL: "${config.ratatoskurServer}/rat/v1/tts")
           .then((dynamic m) async {
         if (m == null) {

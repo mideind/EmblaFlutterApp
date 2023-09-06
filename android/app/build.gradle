@@ -33,6 +33,7 @@ if (keystorePropertiesFile.exists()) {
 
 android {
     compileSdkVersion 33
+    namespace = 'is.mideind.embla'
 
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
@@ -63,6 +64,7 @@ android {
             // signingConfig signingConfigs.release
         }
     }
+    namespace 'is.mideind.embla'
 }
 
 flutter {

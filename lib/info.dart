@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:platform_device_id/platform_device_id.dart';
+// import 'package:platform_device_id/platform_device_id.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:embla_core/embla_core.dart' show kEmblaCoreVersion;
 
@@ -73,7 +73,7 @@ Future<String> getMarketingVersion() async {
 /// On both iOS and Android, this is unique for all apps from
 /// a single vendor.
 Future<String> getUniqueDeviceIdentifier() async {
-  return await PlatformDeviceId.getDeviceId ?? "";
+  return "blergh"; //PlatformDeviceId.getDeviceId ?? "";
 }
 
 /// Return canonical client type string (e.g. 'ios_native', 'android_flutter', etc.)

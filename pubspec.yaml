@@ -17,7 +17,6 @@ dependencies:
   shared_preferences: '^2.1.1'
   geolocator: '^9.0.2'
   package_info_plus: '^3.1.2'
-  platform_device_id: '^1.0.1'
   device_info_plus: '^8.2.2'
   url_launcher: '^6.1.11'
   connectivity_plus: ^4.0.0
