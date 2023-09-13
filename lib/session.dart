@@ -377,7 +377,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
               ttsOptions: ttsOptions,
               transcriptionOptions: TranscriptionOptions(),
               transcribe: true,
-              apiURL: "${config.ratatoskurServer}/rat/v1/tts")
+              apiURL: "${config.ratatoskurServer}/rat/v2/tts")
           .then((dynamic m) async {
         if (m == null) {
           dlog("Error synthesizing audio. Response from server was: $m");
