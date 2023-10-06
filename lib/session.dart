@@ -26,7 +26,7 @@ import 'package:flutter/material.dart';
 
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
-import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:wakelock_plus/wakelock_plus.dart' show WakelockPlus;
 import 'package:flutter_fgbg/flutter_fgbg.dart' show FGBGEvents, FGBGType;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:open_settings/open_settings.dart';
@@ -443,7 +443,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       if (HotwordDetector().isActive()) {
         await HotwordDetector().stop();
       }
-      await Wakelock.disable();
+      await WakelockPlus.disable();
       // ignore: use_build_context_synchronously
       Navigator.push(
         context,
@@ -460,7 +460,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         }
         setState(() {});
         // Re-enable wakelock when returning to main route
-        await Wakelock.enable();
+        await WakelockPlus.enable();
         // Resume hotword detection (if enabled)
         if (Prefs().boolForKey('hotword_activation') == true) {
           await HotwordDetector().start(hotwordHandler);

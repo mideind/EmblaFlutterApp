@@ -21,7 +21,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:wakelock/wakelock.dart' show Wakelock;
+import 'package:wakelock_plus/wakelock_plus.dart' show WakelockPlus;
 import 'package:permission_handler/permission_handler.dart';
 import 'package:adaptive_theme/adaptive_theme.dart' show AdaptiveTheme, AdaptiveThemeMode;
 
@@ -98,7 +98,7 @@ void main() async {
 
   // Activate wakelock to prevent device from going to sleep.
   // This wakelock is disabled when leaving the main session route.
-  Wakelock.enable();
+  WakelockPlus.enable();
 
   // Request permissions.
   // We need microphone (and, ideally, location) permissions to function as expected.
