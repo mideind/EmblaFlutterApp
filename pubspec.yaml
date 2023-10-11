@@ -21,7 +21,7 @@ dependencies:
   url_launcher: '^6.1.14'
   platform_device_id:
     git:
-      url: git@github.com:tommysolsen/platform_device_id.git
+      url: https://github.com/tommysolsen/platform_device_id.git
       path: platform_device_id
   connectivity_plus: ^4.0.2
   flutter_inappwebview: '^5.7.2+3'
