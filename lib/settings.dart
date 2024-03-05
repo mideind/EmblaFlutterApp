@@ -58,8 +58,7 @@ class SettingsSwitchWidget extends StatefulWidget {
   final void Function()? onChanged; // Callback
 
   const SettingsSwitchWidget(
-      {Key? key, required this.label, required this.prefKey, this.enabled = true, this.onChanged})
-      : super(key: key);
+      {super.key, required this.label, required this.prefKey, this.enabled = true, this.onChanged});
 
   @override
   SettingsSwitchWidgetState createState() => SettingsSwitchWidgetState();
@@ -108,8 +107,7 @@ class SettingsPrivacySwitchWidget extends StatefulWidget {
   final void Function()? onChanged; // Callback
 
   const SettingsPrivacySwitchWidget(
-      {Key? key, required this.label, required this.prefKey, this.onChanged})
-      : super(key: key);
+      {super.key, required this.label, required this.prefKey, this.onChanged});
 
   @override
   SettingsPrivacySwitchWidgetState createState() => SettingsPrivacySwitchWidgetState();
@@ -182,14 +180,13 @@ class SettingsSliderWidget extends StatefulWidget {
   final void Function(double)? onChangeEnd;
 
   const SettingsSliderWidget(
-      {Key? key,
+      {super.key,
       required this.label,
       required this.prefKey,
       required this.minValue,
       required this.maxValue,
       required this.stepSize,
-      this.onChangeEnd})
-      : super(key: key);
+      this.onChangeEnd});
 
   @override
   SettingsSliderWidgetState createState() => SettingsSliderWidgetState();
@@ -244,12 +241,11 @@ class SettingsButtonPromptWidget extends StatelessWidget {
   final void Function() handler;
 
   const SettingsButtonPromptWidget(
-      {Key? key,
+      {super.key,
       required this.label,
       required this.alertText,
       required this.buttonTitle,
-      required this.handler})
-      : super(key: key);
+      required this.handler});
 
   Future<void> _showPromptDialog(BuildContext context) async {
     String? r = await showAlertDialog(
@@ -286,8 +282,7 @@ class SettingsServerSelectionWidget extends StatefulWidget {
   final List<List<String>> items;
   final String prefKey;
 
-  const SettingsServerSelectionWidget({Key? key, required this.items, required this.prefKey})
-      : super(key: key);
+  const SettingsServerSelectionWidget({super.key, required this.items, required this.prefKey});
 
   @override
   SettingsServerSelectionWidgetState createState() => SettingsServerSelectionWidgetState();
@@ -370,8 +365,7 @@ class SettingsLabelValueWidget extends StatelessWidget {
   final String value;
   final dynamic onTapRoute;
 
-  const SettingsLabelValueWidget(this.label, this.value, {this.onTapRoute, Key? key})
-      : super(key: key);
+  const SettingsLabelValueWidget(this.label, this.value, {this.onTapRoute, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -409,7 +403,7 @@ class SettingsLabelValueWidget extends StatelessWidget {
 class SettingsFullTextLabelWidget extends StatelessWidget {
   final String label;
 
-  const SettingsFullTextLabelWidget(this.label, {Key? key}) : super(key: key);
+  const SettingsFullTextLabelWidget(this.label, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -424,7 +418,7 @@ class SettingsFullTextLabelWidget extends StatelessWidget {
 class SettingsAsyncFullTextLabelWidget extends StatelessWidget {
   final Future<String> future;
 
-  const SettingsAsyncFullTextLabelWidget(this.future, {Key? key}) : super(key: key);
+  const SettingsAsyncFullTextLabelWidget(this.future, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -446,8 +440,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
   final Future<String> future;
   final Widget? onTapRoute;
 
-  const SettingsAsyncLabelValueWidget(this.label, this.future, {this.onTapRoute, Key? key})
-      : super(key: key);
+  const SettingsAsyncLabelValueWidget(this.label, this.future, {this.onTapRoute, super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -466,7 +459,7 @@ class SettingsAsyncLabelValueWidget extends StatelessWidget {
 class SettingsVoiceSelectionWidget extends StatefulWidget {
   final String label;
 
-  const SettingsVoiceSelectionWidget({Key? key, required this.label}) : super(key: key);
+  const SettingsVoiceSelectionWidget({super.key, required this.label});
 
   @override
   SettingsVoiceSelectionWidgetState createState() => SettingsVoiceSelectionWidgetState();
@@ -503,7 +496,7 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
 class SettingsASRSelectionWidget extends StatefulWidget {
   final String label;
 
-  const SettingsASRSelectionWidget({Key? key, required this.label}) : super(key: key);
+  const SettingsASRSelectionWidget({super.key, required this.label});
 
   @override
   SettingsASRSelectionWidgetState createState() => SettingsASRSelectionWidgetState();
@@ -640,7 +633,7 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
 
 /// The main settings route
 class SettingsRoute extends StatefulWidget {
-  const SettingsRoute({Key? key}) : super(key: key);
+  const SettingsRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => SettingsRouteState();

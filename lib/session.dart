@@ -66,7 +66,7 @@ BuildContext? sessionContext;
 
 // Main widget for session view
 class SessionRoute extends StatefulWidget {
-  const SessionRoute({Key? key}) : super(key: key);
+  const SessionRoute({super.key});
 
   @override
   State<StatefulWidget> createState() => SessionRouteState();
@@ -524,7 +524,7 @@ class SessionTextAreaWidget extends StatelessWidget {
   final String text;
   final String? imageURL;
 
-  const SessionTextAreaWidget(this.text, this.imageURL, {Key? key}) : super(key: key);
+  const SessionTextAreaWidget(this.text, this.imageURL, {super.key});
 
   @override
   Widget build(BuildContext context) {

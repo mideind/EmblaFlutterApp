@@ -51,7 +51,7 @@ Future<void> preloadHTMLDocuments() async {
 class WebViewRoute extends StatefulWidget {
   final String initialURL;
 
-  const WebViewRoute({Key? key, required this.initialURL}) : super(key: key);
+  const WebViewRoute({super.key, required this.initialURL});
 
   @override
   WebViewRouteState createState() => WebViewRouteState();

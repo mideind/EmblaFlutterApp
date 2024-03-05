@@ -54,7 +54,7 @@ Widget _buildASREngineList(BuildContext context) {
 }
 
 class ASRSelectionRoute extends StatelessWidget {
-  const ASRSelectionRoute({Key? key}) : super(key: key);
+  const ASRSelectionRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

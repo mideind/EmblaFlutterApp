@@ -60,7 +60,7 @@ Widget _buildVoiceList(BuildContext context) {
 }
 
 class VoiceSelectionRoute extends StatelessWidget {
-  const VoiceSelectionRoute({Key? key}) : super(key: key);
+  const VoiceSelectionRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

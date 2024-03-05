@@ -92,7 +92,7 @@ ListView _buildMenu(BuildContext context) {
 
 /// Menu route shown when user presses the hamburger menu in session route.
 class MenuRoute extends StatelessWidget {
-  const MenuRoute({Key? key}) : super(key: key);
+  const MenuRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

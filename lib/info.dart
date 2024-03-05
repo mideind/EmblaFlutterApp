@@ -188,7 +188,7 @@ ListView _buildVersionInfoWidgetList(BuildContext context) {
 
 /// Route for displaying app and device information
 class VersionRoute extends StatelessWidget {
-  const VersionRoute({Key? key}) : super(key: key);
+  const VersionRoute({super.key});
 
   @override
   Widget build(BuildContext context) {

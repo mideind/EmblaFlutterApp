@@ -85,7 +85,7 @@ class SessionButtonWidget extends StatelessWidget {
   final EmblaSession? session;
   final void Function() onTap;
 
-  const SessionButtonWidget(this.context, this.session, this.onTap, {Key? key}) : super(key: key);
+  const SessionButtonWidget(this.context, this.session, this.onTap, {super.key});
 
   @override
   Widget build(BuildContext context) {
