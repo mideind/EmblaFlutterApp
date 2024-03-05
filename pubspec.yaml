@@ -14,29 +14,29 @@ dependencies:
     sdk: flutter
   # Third-party
   http: '>=1.0.0'
-  shared_preferences: '^2.2.1'
-  geolocator: '^10.1.0'
-  package_info_plus: '^4.1.0'
-  device_info_plus: '^9.0.3'
-  url_launcher: '^6.1.14'
+  shared_preferences: '^2.2.2'
+  geolocator: '^11.0.0'
+  package_info_plus: '4.0.2'
+  device_info_plus: '^9.1.2'
+  url_launcher: '^6.2.5'
   platform_device_id:
     git:
       url: https://github.com/tommysolsen/platform_device_id.git
       path: platform_device_id
-  connectivity_plus: ^4.0.2
+  connectivity_plus: ^5.0.2
   flutter_inappwebview: '^5.7.2+3'
-  path_provider: '^2.1.1'
-  wakelock_plus: '^1.1.1'
-  permission_handler: '^11.0.1'
+  path_provider: '^2.1.2'
+  wakelock_plus: '1.1.1'
+  permission_handler: '^11.3.0'
   flutter_fgbg: '^0.3.0'
   logger: '^2.0.1'
-  adaptive_theme: '^3.4.1'
+  adaptive_theme: '^3.6.0'
   open_settings: '^2.0.2'
-  adaptive_dialog: '^1.9.0+2'
+  adaptive_dialog: '2.1.0'
   # fluttertoast: '^8.1.2'
   # flutter_spinkit: ^5.1.0
   # multicast_dns: '^0.3.2'
-  flutter_animate: '^4.2.0'
+  flutter_animate: '^4.5.0'
   # Ours
   flutter_snowboy: #'>=0.1.1'
     path: '../flutter_snowboy'
