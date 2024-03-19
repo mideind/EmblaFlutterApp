@@ -6,7 +6,7 @@ homepage: https://embla.is
 repository: https://github.com/mideind/EmblaFlutterApp
 
 environment:
-  sdk: '>=2.18.0 <3.0.0'
+  sdk: '>=3.0.0 <4.0.0'
   flutter: ">=3.10.0"
 
 dependencies:
@@ -18,7 +18,7 @@ dependencies:
   geolocator: '^11.0.0'
   package_info_plus: '4.0.2'
   device_info_plus: '^9.1.2'
-  url_launcher: '^6.2.5'
+  url_launcher: '^6.1.14'
   platform_device_id:
     git:
       url: https://github.com/tommysolsen/platform_device_id.git
@@ -27,7 +27,7 @@ dependencies:
   flutter_inappwebview: '^5.7.2+3'
   path_provider: '^2.1.2'
   wakelock_plus: '1.1.1'
-  permission_handler: '^11.3.0'
+  permission_handler: '^10.2.0'
   flutter_fgbg: '^0.3.0'
   logger: '^2.0.1'
   adaptive_theme: '^3.6.0'
