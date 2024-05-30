@@ -126,7 +126,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Start observing connectivity changes. If we lose connectivity while
     // a session is active, stop the session and let the user know that
     // the device has gone offline.
-    Connectivity().onConnectivityChanged.listen((ConnectivityResult event) async {
+    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> events) async {
+      var event = events.last;
       dlog("Connectivity changed: $event");
       if (event == ConnectivityResult.none && session != null && session!.isActive()) {
         await session!.stop();
