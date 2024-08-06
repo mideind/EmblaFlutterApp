@@ -5,15 +5,15 @@
 ![Play Store](https://img.shields.io/endpoint?color=green&logo=google-play&logoColor=green&url=https%3A%2F%2Fplay.cuzi.workers.dev%2Fplay%3Fi%3Dis.mideind.embla%26l%3DPlay%2520Store%26m%3D%24version)
 [![Build](https://github.com/mideind/EmblaFlutterApp/actions/workflows/main.yml/badge.svg)]()
 
-<img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
+# Embla Flutter App
 
-# Embla Flutter Client
+<img src="img/app_icon.png" align="right" width="200" height="200" style="margin-left:20px;">
 
 Embla is an Icelandic-language voice assistant app powered by the
 [Greynir](https://github.com/mideind/Greynir) query engine. This is the repository
-for the cross-platform Embla mobile client.
+for the cross-platform Embla mobile app.
 
-The client is implemented in [Dart](https://dart.dev/) using the
+The app is implemented in [Dart](https://dart.dev/) using the
 [Flutter](https://flutter.dev) framework, and is currently built to
 run on iOS 12+ and Android 8.1+ (SDK >= 27).
 
@@ -25,7 +25,7 @@ run on iOS 12+ and Android 8.1+ (SDK >= 27).
 
 ## Build instructions
 
-Building the Embla client requires the Flutter framework:
+Building the app requires the Flutter framework:
 
 * [Install Flutter](https://flutter.dev/docs/get-started/install)
 
@@ -84,14 +84,9 @@ in the Xcode project.
     <img src="img/screenshot_3.jpg" width="30%" alt="Embla Android screenshot 3">
 </p>
 
-## Acknowledgements
-
-The Embla client uses [Snowboy](https://github.com/seasalt-ai/snowboy) for hotword
-detection.
-
 ## License
 
-Embla is Copyright (C) 2019-2023 [Miðeind ehf.](https://mideind.is)
+Embla is Copyright (C) 2019-2024 [Miðeind ehf.](https://mideind.is)
 
 <a href="https://mideind.is"><img src="assets/images/mideind_logo.png" alt="Miðeind ehf."
 width="214" height="66" align="right" style="margin-left:20px; margin-bottom: 20px;"></a>
