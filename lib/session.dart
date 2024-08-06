@@ -445,28 +445,30 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         await HotwordDetector().stop();
       }
       await WakelockPlus.disable();
-      // ignore: use_build_context_synchronously
-      Navigator.push(
-        context,
-        CupertinoPageRoute(
-          builder: (context) => const MenuRoute(),
-        ),
-      ).then((val) async {
-        inMenu = false;
-        // Make sure we rebuild main route when menu route is popped in navigation
-        // stack. This ensures that the state of the hotword activation button is
-        // updated to reflect potential changes in Settings, etc.
-        if (text == '') {
-          msg(introMsg());
-        }
-        setState(() {});
-        // Re-enable wakelock when returning to main route
-        await WakelockPlus.enable();
-        // Resume hotword detection (if enabled)
-        if (Prefs().boolForKey('hotword_activation') == true) {
-          await HotwordDetector().start(hotwordHandler);
-        }
-      });
+
+      if (context.mounted) {
+        Navigator.push(
+          context,
+          CupertinoPageRoute(
+            builder: (context) => const MenuRoute(),
+          ),
+        ).then((val) async {
+          inMenu = false;
+          // Make sure we rebuild main route when menu route is popped in navigation
+          // stack. This ensures that the state of the hotword activation button is
+          // updated to reflect potential changes in Settings, etc.
+          if (text == '') {
+            msg(introMsg());
+          }
+          setState(() {});
+          // Re-enable wakelock when returning to main route
+          await WakelockPlus.enable();
+          // Resume hotword detection (if enabled)
+          if (Prefs().boolForKey('hotword_activation') == true) {
+            await HotwordDetector().start(hotwordHandler);
+          }
+        });
+      }
     }
 
     // Handle tap on microphone icon to toggle hotword activation
