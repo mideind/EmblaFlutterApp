@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Voice selection route. Subroute of SettingsRoute.
+// Voice selection route. Subroute of SettingsRoute.
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';

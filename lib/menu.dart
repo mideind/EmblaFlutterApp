@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Menu route
+// Menu route
 
 // import 'package:flutter/foundation.dart' show kDebugMode;
 import 'package:flutter/material.dart';

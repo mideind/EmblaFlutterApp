@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Configure app theme i.e. colors, fonts and other styling
+// Configure app theme i.e. colors, fonts and other styling
 
 import 'package:flutter/material.dart';
 
@@ -49,7 +49,7 @@ final lightThemeData = ThemeData(
   // useMaterial3: true,
   brightness: Brightness.light,
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.red, brightness: Brightness.light)
-      .copyWith(background: lightBgColor),
+      .copyWith(surface: lightBgColor),
   scaffoldBackgroundColor: lightBgColor,
   primaryColor: lightMainColor,
   cardColor: lightCardColor,
@@ -87,7 +87,7 @@ final darkThemeData = ThemeData(
   // useMaterial3: true,
   brightness: Brightness.dark,
   colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.grey, brightness: Brightness.dark)
-      .copyWith(background: darkBgColor),
+      .copyWith(surface: darkBgColor),
   scaffoldBackgroundColor: darkBgColor,
   primaryColor: darkMainColor,
   cardColor: darkCardColor,

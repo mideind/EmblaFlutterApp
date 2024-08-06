@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Singleton wrapper for location tracking.
+// Singleton wrapper for location tracking.
 
 import 'dart:async';
 

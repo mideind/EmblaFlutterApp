@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Animation frames
+// Animation frames
 
 import 'dart:ui' as ui;
 

@@ -16,8 +16,8 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Info route that shows detailed information about the client.
-/// Subroute of SettingsRoute, shown when the program version is tapped.
+// Info route that shows detailed information about the client.
+// Subroute of SettingsRoute, shown when the program version is tapped.
 
 import 'dart:io' show Platform;
 

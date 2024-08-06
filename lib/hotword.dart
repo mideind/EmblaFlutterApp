@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Singleton wrapper class for hotword detection ("Hæ Embla" activation)
+// Singleton wrapper class for hotword detection ("Hæ Embla" activation)
 
 import 'dart:io';
 import 'dart:typed_data';

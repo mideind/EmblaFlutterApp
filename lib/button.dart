@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Session button implementation.
+// Session button implementation.
 
 import 'dart:math' show min, max;
 import 'dart:ui' as ui;

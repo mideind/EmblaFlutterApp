@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Global constants and debug logging
+// Global constants and debug logging
 
 import 'package:flutter/foundation.dart' show kDebugMode;
 

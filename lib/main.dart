@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// App initialization and presentation of main (session) view.
+// App initialization and presentation of main (session) view.
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

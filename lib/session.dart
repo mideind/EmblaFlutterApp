@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Main session view
+// Main session view
 
 import 'dart:async';
 

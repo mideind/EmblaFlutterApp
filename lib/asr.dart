@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// ASR engine selection route. Subroute of SettingsRoute.
+// ASR engine selection route. Subroute of SettingsRoute.
 
 import 'package:flutter/material.dart';
 

@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-/// Various utility functions and custom class extensions
+// Various utility functions and custom class extensions
 
 import 'dart:convert';
 
