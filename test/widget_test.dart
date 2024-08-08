@@ -1,7 +1,7 @@
 // These are the tests for the project's widgets.
 
 import 'package:flutter/material.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart'; // ignore: depend_on_referenced_packages
 
 // import 'package:embla/main.dart';
 import 'package:embla/menu.dart';

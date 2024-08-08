@@ -100,7 +100,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     text = introMsg();
 
     // Start observing app state (foreground, background)
-    appStateSubscription = FGBGEvents.stream.listen((event) async {
+    appStateSubscription = FGBGEvents.instance.stream.listen((event) async {
       if (event == FGBGType.foreground) {
         dlog("App went into foreground");
         inBackground = false;
