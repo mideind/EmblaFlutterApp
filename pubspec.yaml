@@ -13,20 +13,20 @@ dependencies:
   flutter:
     sdk: flutter
   # Third-party
-  http: '>=1.2.1'
-  shared_preferences: '^2.2.3'
+  http: '>=1.2.2'
+  shared_preferences: '^2.3.1'
   geolocator: ^12.0.0
   package_info_plus: ^8.0.1
-  device_info_plus: 9.1.2
-  url_launcher: '^6.1.14'
+  device_info_plus: ^10.1.1
+  url_launcher: '^6.3.0'
   platform_device_id:
     git:
       url: https://github.com/tommysolsen/platform_device_id.git
       path: platform_device_id
   connectivity_plus: '>=5.0.2'
-  # flutter_inappwebview: '^5.8.0'
-  path_provider: '^2.1.2'
-  wakelock_plus: '>=1.1.1'
+  # flutter_inappwebview: '^6.0.0'
+  path_provider: '^2.1.4'
+  wakelock_plus: '^1.2.7'
   permission_handler: ^11.3.1
   flutter_fgbg: ^0.4.0
   logger: '^2.0.1'
@@ -49,6 +49,8 @@ dependencies:
     #   url: https://github.com/mideind/EmblaCoreFlutter.git
     #   ref: master
 
+dependency_overrides:
+  js: ^0.7.1
 
 dev_dependencies:
   # flutter_test:
