@@ -40,7 +40,7 @@ import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
-import './jsexec.dart' show JSExecutor;
+// import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
 import './loc.dart' show LocationTracker;
@@ -367,7 +367,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Execute Javascript payload
     else if (resp['command'] != null && resp['command'] != '') {
       // Evaluate JS
-      String s = await JSExecutor().run(resp['command']);
+      String s = ""; //await JSExecutor().run(resp['command']);
       msg(s);
       // Request speech synthesis of result, play audio and terminate session
       // TODO: The API URL should really be handled by EmblaCore

@@ -22,7 +22,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 
-import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+// import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:url_launcher/url_launcher.dart' show launchUrl, LaunchMode;
 
 import './theme.dart' show standardAppBar;
@@ -32,20 +32,20 @@ const String kDocsDir = 'docs';
 const String kLoadingHTMLFilePath = "$kDocsDir/loading.html";
 const String kLoadingDarkHTMLFilePath = "$kDocsDir/loading_dark.html";
 
-late InAppWebViewInitialData loadingHTMLData;
-late InAppWebViewInitialData loadingDarkHTMLData;
+// late InAppWebViewInitialData loadingHTMLData;
+// late InAppWebViewInitialData loadingDarkHTMLData;
 
-/// Preloads the "loading" HTML documents to prevent any initial
-/// lag when showing loading indicator for documentation pages.
-Future<void> preloadHTMLDocuments() async {
-  dlog("Preloading HTML loading documents");
-  loadingHTMLData =
-      InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingHTMLFilePath));
-  loadingHTMLData.baseUrl = Uri.parse("file:///");
-  loadingDarkHTMLData =
-      InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingDarkHTMLFilePath));
-  loadingDarkHTMLData.baseUrl = Uri.parse("file:///");
-}
+// /// Preloads the "loading" HTML documents to prevent any initial
+// /// lag when showing loading indicator for documentation pages.
+// Future<void> preloadHTMLDocuments() async {
+//   dlog("Preloading HTML loading documents");
+//   loadingHTMLData =
+//       InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingHTMLFilePath));
+//   loadingHTMLData.baseUrl = Uri.parse("file:///");
+//   loadingDarkHTMLData =
+//       InAppWebViewInitialData(data: await rootBundle.loadString(kLoadingDarkHTMLFilePath));
+//   loadingDarkHTMLData.baseUrl = Uri.parse("file:///");
+// }
 
 /// Standard web view route used for displaying HTML documentation files.
 class WebViewRoute extends StatefulWidget {
@@ -70,86 +70,84 @@ class WebViewRouteState extends State<WebViewRoute> {
     return "$url?dark=1";
   }
 
-  /// Fall back to local HTML document if error comes
-  /// up when fetching document from remote server.
-  void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
-    dlog("Page load error for $url: $errCode, $desc");
-    final String path = _fallbackAssetForURL(url.toString());
-    dlog("Falling back to local asset $path");
-    setState(() {
-      controller.loadFile(assetFilePath: path);
-    });
-  }
+  // /// Fall back to local HTML document if error comes
+  // /// up when fetching document from remote server.
+  // void errHandler(InAppWebViewController controller, Uri? url, int errCode, String desc) async {
+  //   dlog("Page load error for $url: $errCode, $desc");
+  //   final String path = _fallbackAssetForURL(url.toString());
+  //   dlog("Falling back to local asset $path");
+  //   setState(() {
+  //     controller.loadFile(assetFilePath: path);
+  //   });
+  // }
 
-  /// Handle clicks on links in HTML documentation.
-  /// These links should be opened in an external browser to
-  /// avoid screwing with the navigation stack of the app.
-  Future<NavigationActionPolicy> urlClickHandler(
-      InAppWebViewController controller, NavigationAction action) async {
-    final URLRequest req = action.request;
-    final String urlStr = req.url.toString();
-    final String fallbackFilename = _fallbackAssetForURL(urlStr);
+  // /// Handle clicks on links in HTML documentation.
+  // /// These links should be opened in an external browser to
+  // /// avoid screwing with the navigation stack of the app.
+  // Future<NavigationActionPolicy> urlClickHandler(
+  //     InAppWebViewController controller, NavigationAction action) async {
+  //   final URLRequest req = action.request;
+  //   final String urlStr = req.url.toString();
+  //   final String fallbackFilename = _fallbackAssetForURL(urlStr);
 
-    if (urlStr.startsWith(widget.initialURL) == false &&
-        urlStr.endsWith(fallbackFilename) == false) {
-      // It's not a local URL, so open it in an external browser
-      dlog("Opening external URL: ${req.url}");
-      await launchUrl(req.url!, mode: LaunchMode.externalApplication);
-      return NavigationActionPolicy.CANCEL;
-    }
+  //   if (urlStr.startsWith(widget.initialURL) == false &&
+  //       urlStr.endsWith(fallbackFilename) == false) {
+  //     // It's not a local URL, so open it in an external browser
+  //     dlog("Opening external URL: ${req.url}");
+  //     await launchUrl(req.url!, mode: LaunchMode.externalApplication);
+  //     return NavigationActionPolicy.CANCEL;
+  //   }
 
-    return NavigationActionPolicy.ALLOW;
-  }
+  //   return NavigationActionPolicy.ALLOW;
+  // }
 
-  /// Create web view that initially presents a "loading" document with
-  /// a progress indicator. Then immediately fetch the actual remote document.
-  /// Falls back to loading a local bundled HTML document with the same name
-  /// on network error. This ensures that at least *some* version of the
-  /// document can be viewed even when the device is offline.
-  InAppWebView _buildWebView(BuildContext context) {
-    final darkMode = (MediaQuery.platformBrightnessOf(context) == Brightness.dark);
-    final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
-    final finalURL = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
-    final initialData = darkMode ? loadingDarkHTMLData : loadingHTMLData;
+  // /// Create web view that initially presents a "loading" document with
+  // /// a progress indicator. Then immediately fetch the actual remote document.
+  // /// Falls back to loading a local bundled HTML document with the same name
+  // /// on network error. This ensures that at least *some* version of the
+  // /// document can be viewed even when the device is offline.
+  // InAppWebView _buildWebView(BuildContext context) {
+  //   final darkMode = (MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+  //   final loadingURL = darkMode ? kLoadingDarkHTMLFilePath : kLoadingHTMLFilePath;
+  //   final finalURL = darkMode ? _darkURLForURL(widget.initialURL) : widget.initialURL;
+  //   final initialData = darkMode ? loadingDarkHTMLData : loadingHTMLData;
 
-    final webViewOpts = InAppWebViewGroupOptions(
-        crossPlatform: InAppWebViewOptions(
-      clearCache: kDebugMode,
-      useShouldOverrideUrlLoading: true,
-      transparentBackground: true,
-    ));
+  //   final webViewOpts = InAppWebViewGroupOptions(
+  //       crossPlatform: InAppWebViewOptions(
+  //     clearCache: kDebugMode,
+  //     useShouldOverrideUrlLoading: true,
+  //     transparentBackground: true,
+  //   ));
 
-    // Create and configure web view
-    return InAppWebView(
-        initialData: initialData,
-        initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
-        initialOptions: webViewOpts,
-        onLoadStart: (InAppWebViewController controller, Uri? uri) {
-          dlog("Loading URL ${uri.toString()}");
-        },
-        onLoadStop: (InAppWebViewController controller, Uri? uri) async {
-          final String urlStr = uri.toString();
-          if (urlStr.endsWith(loadingURL) || urlStr == 'about:blank' || urlStr == 'file:///') {
-            // Loading of initial "loading" document is complete.
-            // Now load the actual remote document.
-            setState(() {
-              controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(finalURL)));
-            });
-          }
-        },
-        onLoadError: errHandler,
-        onLoadHttpError: errHandler,
-        shouldOverrideUrlLoading: urlClickHandler,
-        onConsoleMessage: (InAppWebViewController controller, ConsoleMessage msg) {
-          dlog("Web View Console message: ${msg.message}");
-        });
-  }
+  //   // Create and configure web view
+  //   return InAppWebView(
+  //       initialData: initialData,
+  //       initialUrlRequest: URLRequest(url: Uri.parse(finalURL)),
+  //       initialOptions: webViewOpts,
+  //       onLoadStart: (InAppWebViewController controller, Uri? uri) {
+  //         dlog("Loading URL ${uri.toString()}");
+  //       },
+  //       onLoadStop: (InAppWebViewController controller, Uri? uri) async {
+  //         final String urlStr = uri.toString();
+  //         if (urlStr.endsWith(loadingURL) || urlStr == 'about:blank' || urlStr == 'file:///') {
+  //           // Loading of initial "loading" document is complete.
+  //           // Now load the actual remote document.
+  //           setState(() {
+  //             controller.loadUrl(urlRequest: URLRequest(url: Uri.parse(finalURL)));
+  //           });
+  //         }
+  //       },
+  //       onLoadError: errHandler,
+  //       onLoadHttpError: errHandler,
+  //       shouldOverrideUrlLoading: urlClickHandler,
+  //       onConsoleMessage: (InAppWebViewController controller, ConsoleMessage msg) {
+  //         dlog("Web View Console message: ${msg.message}");
+  //       });
+  // }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: standardAppBar,
-      body: _buildWebView(context),
-    );
+    return Scaffold(appBar: standardAppBar, body: standardAppBar //buildWebView(context),
+        );
   }
 }

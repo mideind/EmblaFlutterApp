@@ -85,7 +85,7 @@ void main() async {
 
   // Init/preload these to prevent any lag after launching app
   await preloadAnimationFrames();
-  await preloadHTMLDocuments();
+  //await preloadHTMLDocuments();
   await EmblaSession.prepare();
 
   // Initialize singleton, loading hotword-related assets into memory

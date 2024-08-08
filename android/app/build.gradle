@@ -60,11 +60,15 @@ android {
 
     buildTypes {
         release {
+            // shrinkResources false
+            // minifyEnabled false
+
             signingConfig signingConfigs.debug
+
+
             // signingConfig signingConfigs.release
         }
     }
-    namespace 'is.mideind.embla'
 }
 
 flutter {

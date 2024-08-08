@@ -24,7 +24,7 @@ dependencies:
       url: https://github.com/tommysolsen/platform_device_id.git
       path: platform_device_id
   connectivity_plus: '>=5.0.2'
-  flutter_inappwebview: '^5.7.2+3'
+  # flutter_inappwebview: '^5.8.0'
   path_provider: '^2.1.2'
   wakelock_plus: '>=1.1.1'
   permission_handler: ^11.3.1
