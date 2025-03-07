@@ -6,8 +6,8 @@ homepage: https://embla.is
 repository: https://github.com/mideind/EmblaFlutterApp
 
 environment:
-  sdk: '>=3.3.0 <4.0.0'
-  flutter: ">=3.22.0"
+  sdk: '>=3.6.0 <4.0.0'
+  flutter: ">=3.29.1 <4.0.0"
 
 dependencies:
   flutter:
@@ -49,9 +49,9 @@ dependencies:
     #   url: https://github.com/mideind/EmblaCoreFlutter.git
     #   ref: master
 
-dependency_overrides:
-  js: ^0.7.1
-  web: ^0.5.0
+# dependency_overrides:
+#   js: ^0.7.1
+#   web: ^0.5.0
 
 dev_dependencies:
   # flutter_test:
