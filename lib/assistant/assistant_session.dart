@@ -137,7 +137,9 @@ class AssistantSession {
       text = await completer.future;
     } catch (e) {
       if (_cancelled) return;
-      await _error('Villa í talgreiningu: $e');
+      // ASR engines play their own error cue (embla_core does for the
+      // streaming engine), so don't double it here.
+      await _error('Villa í talgreiningu: $e', playSound: false);
       return;
     } finally {
       await _asrSub?.cancel();
@@ -300,11 +302,13 @@ class AssistantSession {
     );
   }
 
-  Future<void> _error(String message) async {
+  Future<void> _error(String message, {bool playSound = true}) async {
     dlog('AssistantSession error: $message');
     _endStage();
     config.tts.stop();
-    config.sounds.playError(voiceID: config.voiceID, speed: config.voiceSpeed);
+    if (playSound) {
+      config.sounds.playError(voiceID: config.voiceID, speed: config.voiceSpeed);
+    }
     _setState(AssistantState.error);
     config.onError?.call(message);
   }
