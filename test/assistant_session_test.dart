@@ -350,7 +350,7 @@ void main() {
     expect(h.states.first, AssistantState.listening);
   });
 
-  test('an ASR error is reported without the session's error sound', () async {
+  test('an ASR error is reported without the session error sound', () async {
     final h = Harness(
       llm: FakeLlm(const []),
       asr: FakeAsr(const [AsrError('hljóðnemi ekki tiltækur')]),
