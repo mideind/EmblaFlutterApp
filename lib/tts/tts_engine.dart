@@ -28,9 +28,13 @@ abstract class TtsEngine {
   /// Synthesizes `text` and plays it. `onDone(err)` is called when playback
   /// finishes (err == false) or when synthesis/playback failed (err == true).
   /// The returned future completes once playback has been *started* (or failed).
+  ///
+  /// The voice is not a parameter: each engine has its own voice namespace
+  /// (Icespeak takes names like "Guðrún", ElevenLabs takes opaque voice IDs)
+  /// and is handed the right one when it is constructed. Passing one engine's
+  /// voice to another only ever produces a bad request.
   Future<void> speak(
     String text, {
-    required String voice,
     required double speed,
     required void Function(bool err) onDone,
   });

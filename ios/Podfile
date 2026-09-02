@@ -29,6 +29,18 @@ flutter_ios_podfile_setup
 
 target 'Runner' do
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+
+  # Two independent pods need module maps under Xcode 26, so this is set
+  # globally rather than per-pod:
+  #   * flutter_sound (Swift) depends on flutter_sound_core, which does not
+  #     define modules, so it cannot be linked as a static library.
+  #   * permission_handler_apple 9.1.4 declares `enum ServiceStatus` against an
+  #     NSInteger typedef, which clang rejects unless the pod builds as a module.
+  # Only flutter_sound_core can be narrowed to `:modular_headers => true`;
+  # permission_handler_apple is a path pod from .symlinks/plugins, and
+  # redeclaring it conflicts with the one flutter_install_all_ios_pods adds.
+  # Revisit when permission_handler is upgraded from 10.4.5.
+  use_modular_headers!
 end
 
 post_install do |installer|

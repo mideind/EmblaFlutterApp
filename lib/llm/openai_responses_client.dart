@@ -45,7 +45,11 @@ class OpenAIResponsesClient implements LlmClient {
     required this.apiKey,
     this.model = kDefaultOpenAIModel,
     http.Client? client,
-    this.reasoningEffort = 'low',
+    // The Swift MVP runs with effort 'none': same accuracy on its test set and
+    // roughly a second faster. Our tool loop asks more of the model than its
+    // single classification does, so revert to 'low' if relative dates
+    // ("eftir hálftíma", "á morgun") start being misread.
+    this.reasoningEffort = 'none',
   }) : _client = client ?? http.Client();
 
   final String apiKey;

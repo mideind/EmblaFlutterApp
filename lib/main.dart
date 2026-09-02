@@ -72,24 +72,23 @@ void main() async {
   if (Prefs().stringForKey("ratatoskur_server") == null) {
     Prefs().setStringForKey("ratatoskur_server", kDefaultRatatoskurServer);
   }
-  // If user upgraded from pre-Ratatoskur client version, set default ASR engine
-  if (Prefs().stringForKey("asr_engine") == null) {
-    Prefs().setStringForKey("asr_engine", kDefaultASREngine);
-  }
   // Make sure query_server is set
   if (Prefs().stringForKey("query_server") == null) {
     Prefs().setStringForKey("query_server", kDefaultQueryServer);
   }
   // Backfill Embla 2.0 pipeline prefs for users upgrading from older versions
   const Map<String, String> newStringPrefDefaults = {
-    "asr_provider": kDefaultASRProvider,
     "tts_provider": kDefaultTTSProvider,
     "llm_provider": kDefaultLLMProvider,
     "llm_model": kDefaultOpenAIModel,
     "elevenlabs_voice_id": kDefaultElevenLabsVoiceID,
   };
   newStringPrefDefaults.forEach((String key, String defaultValue) {
-    if (Prefs().stringForKey(key) == null) {
+    // An empty string counts as unset for all of these: earlier builds wrote
+    // an empty default for elevenlabs_voice_id, and an empty voice ID silently
+    // disables the ElevenLabs path in createTtsEngine().
+    final String? current = Prefs().stringForKey(key);
+    if (current == null || current.isEmpty) {
       Prefs().setStringForKey(key, defaultValue);
     }
   });

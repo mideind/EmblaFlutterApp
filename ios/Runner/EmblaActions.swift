@@ -87,6 +87,23 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
             }
             scheduleAlarm(timer: nil, fixed: start, title: title ?? "Vekjari", result: result)
 
+        case "addShopping":
+            let items = (args["items"] as? [Any])?.compactMap { $0 as? String }
+                .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+                .filter { !$0.isEmpty } ?? []
+            guard !items.isEmpty else {
+                return result(invalidArgs("vantar items"))
+            }
+            let listName = (args["list"] as? String).flatMap { $0.isEmpty ? nil : $0 }
+                ?? "Innkaupalisti"
+            addShopping(items: items, list: listName, result: result)
+
+        case "listAlarms":
+            listAlarms(result: result)
+
+        case "cancelAlarms":
+            cancelAlarms(id: args["id"] as? String, result: result)
+
         default:
             result(FlutterMethodNotImplemented)
         }
@@ -123,6 +140,60 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
         }
     }
 
+    /// Adds items to a named Reminders list, creating it if needed. Reminders
+    /// is used because Notes has no public API for appending to a list.
+    private static func addShopping(items: [String], list: String,
+                                    result: @escaping FlutterResult) {
+        let store = EKEventStore()
+        requestRemindersAccess(store) { granted, error in
+            DispatchQueue.main.async {
+                guard granted else {
+                    return result(FlutterError(code: "permission_denied",
+                                               message: "Aðgangur að áminningum ekki leyfður",
+                                               details: error?.localizedDescription))
+                }
+                let calendar: EKCalendar
+                if let existing = store.calendars(for: .reminder).first(where: {
+                    $0.title.compare(list, options: .caseInsensitive) == .orderedSame
+                }) {
+                    calendar = existing
+                } else {
+                    guard let source = store.defaultCalendarForNewReminders()?.source else {
+                        return result(FlutterError(code: "save_failed",
+                                                   message: "Fann engan áminningalista",
+                                                   details: nil))
+                    }
+                    let created = EKCalendar(for: .reminder, eventStore: store)
+                    created.title = list
+                    created.source = source
+                    do {
+                        try store.saveCalendar(created, commit: true)
+                    } catch {
+                        return result(FlutterError(code: "save_failed",
+                                                   message: "Ekki tókst að búa til listann „\(list)“",
+                                                   details: error.localizedDescription))
+                    }
+                    calendar = created
+                }
+                do {
+                    // One commit for the whole batch rather than per item.
+                    for item in items {
+                        let reminder = EKReminder(eventStore: store)
+                        reminder.title = item
+                        reminder.calendar = calendar
+                        try store.save(reminder, commit: false)
+                    }
+                    try store.commit()
+                    result(["count": items.count, "list": calendar.title])
+                } catch {
+                    result(FlutterError(code: "save_failed",
+                                        message: "Ekki tókst að vista á innkaupalistann",
+                                        details: error.localizedDescription))
+                }
+            }
+        }
+    }
+
     private static func requestRemindersAccess(_ store: EKEventStore,
                                                _ completion: @escaping (Bool, Error?) -> Void) {
         if #available(iOS 17.0, *) {
@@ -130,6 +201,60 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
         } else {
             store.requestAccess(to: .reminder, completion: completion)
         }
+    }
+
+    // MARK: - Listing and cancelling timers/alarms
+
+    private static func listAlarms(result: @escaping FlutterResult) {
+        #if canImport(AlarmKit)
+        if #available(iOS 26.0, *) {
+            do {
+                let alarms = try pendingAlarms()
+                let known = labels()
+                // Drop labels for alarms that no longer exist.
+                let live = Set(alarms.map { $0.id.uuidString })
+                forgetLabels(known.keys.filter { !live.contains($0) })
+                result(alarms.map { describe($0, labels: known) })
+            } catch {
+                result(FlutterError(code: "alarm_failed",
+                                    message: "Ekki tókst að lesa vekjara",
+                                    details: error.localizedDescription))
+            }
+            return
+        }
+        #endif
+        result(unsupported())
+    }
+
+    /// Cancels one alarm by id, or every pending alarm when `id` is nil.
+    /// Returns the ids that were cancelled.
+    private static func cancelAlarms(id: String?, result: @escaping FlutterResult) {
+        #if canImport(AlarmKit)
+        if #available(iOS 26.0, *) {
+            do {
+                let targets: [Alarm]
+                if let id = id, let uuid = UUID(uuidString: id) {
+                    targets = try pendingAlarms().filter { $0.id == uuid }
+                } else if id != nil {
+                    return result(invalidArgs("ógilt id"))
+                } else {
+                    targets = try pendingAlarms()
+                }
+                for alarm in targets {
+                    try AlarmManager.shared.cancel(id: alarm.id)
+                }
+                let ids = targets.map { $0.id.uuidString }
+                forgetLabels(ids)
+                result(ids)
+            } catch {
+                result(FlutterError(code: "alarm_failed",
+                                    message: "Ekki tókst að hætta við vekjara",
+                                    details: error.localizedDescription))
+            }
+            return
+        }
+        #endif
+        result(unsupported())
     }
 
     // MARK: - Timers and alarms (AlarmKit, iOS 26+)
@@ -179,7 +304,48 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
         } else {
             throw AlarmScheduleError.notAuthorized
         }
-        _ = try await AlarmManager.shared.schedule(id: UUID(), configuration: config)
+        let id = UUID()
+        _ = try await AlarmManager.shared.schedule(id: id, configuration: config)
+        // Alarm does not carry its attributes back out, so keep the spoken
+        // label alongside the id in order to describe pending alarms later.
+        rememberLabel(title, for: id)
+    }
+
+    // MARK: - Listing and cancelling
+
+    /// id -> user-facing label, persisted so labels survive app restarts.
+    private static let labelsKey = "embla.alarmLabels"
+
+    private static func rememberLabel(_ label: String, for id: UUID) {
+        var map = UserDefaults.standard.dictionary(forKey: labelsKey) as? [String: String] ?? [:]
+        map[id.uuidString] = label
+        UserDefaults.standard.set(map, forKey: labelsKey)
+    }
+
+    private static func labels() -> [String: String] {
+        UserDefaults.standard.dictionary(forKey: labelsKey) as? [String: String] ?? [:]
+    }
+
+    private static func forgetLabels(_ ids: [String]) {
+        var map = labels()
+        for id in ids { map.removeValue(forKey: id) }
+        UserDefaults.standard.set(map, forKey: labelsKey)
+    }
+
+    @available(iOS 26.0, *)
+    private static func pendingAlarms() throws -> [Alarm] {
+        // Anything already fired or stopped is not something to cancel.
+        try AlarmManager.shared.alarms.filter { $0.state != .alerting }
+    }
+
+    @available(iOS 26.0, *)
+    private static func describe(_ alarm: Alarm, labels: [String: String]) -> [String: Any] {
+        var info: [String: Any] = [
+            "id": alarm.id.uuidString,
+            "kind": alarm.countdownDuration != nil ? "timer" : "alarm",
+        ]
+        if let label = labels[alarm.id.uuidString] { info["title"] = label }
+        return info
     }
 
     private enum AlarmScheduleError: Error {

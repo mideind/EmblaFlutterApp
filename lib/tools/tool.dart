@@ -56,9 +56,15 @@ class ToolResult {
   /// Optional URL the UI should open after the spoken reply.
   final Uri? openURL;
 
-  /// When true the turn ends right after the reply is spoken
-  /// (e.g. after handing off to another app).
+  /// When true the turn ends here: the session speaks [speech] and never asks
+  /// the model to phrase a confirmation. Set by tools that hand off to another
+  /// app, where the user is already looking at the result.
   final bool endsTurn;
+
+  /// Spoken Icelandic confirmation, used only when [endsTurn] is true. The
+  /// `summary` in [data] is written for the model and reads like a log line,
+  /// so it is not suitable for speech.
+  final String? speech;
 
   const ToolResult({
     required this.ok,
@@ -66,11 +72,18 @@ class ToolResult {
     this.imageURL,
     this.openURL,
     this.endsTurn = false,
+    this.speech,
   });
 
   factory ToolResult.success(Map<String, dynamic> data,
-          {String? imageURL, Uri? openURL, bool endsTurn = false}) =>
-      ToolResult(ok: true, data: {'ok': true, ...data}, imageURL: imageURL, openURL: openURL, endsTurn: endsTurn);
+          {String? imageURL, Uri? openURL, bool endsTurn = false, String? speech}) =>
+      ToolResult(
+          ok: true,
+          data: {'ok': true, ...data},
+          imageURL: imageURL,
+          openURL: openURL,
+          endsTurn: endsTurn,
+          speech: speech);
 
   factory ToolResult.failure(String error) => ToolResult(ok: false, data: {'ok': false, 'error': error});
 

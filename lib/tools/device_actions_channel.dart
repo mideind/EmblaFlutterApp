@@ -59,6 +59,18 @@ abstract class DeviceActions {
 
   /// Sets an alarm for an absolute local time.
   Future<void> setAlarm({required DateTime start, String? title});
+
+  /// Adds [items] to a named Reminders list, creating the list if needed.
+  /// Returns how many were added.
+  Future<int> addShopping({required List<String> items, required String list});
+
+  /// Pending timers and alarms this app scheduled. Each entry has `id`,
+  /// `kind` (`timer` or `alarm`) and, when known, `title`.
+  Future<List<Map<String, dynamic>>> listAlarms();
+
+  /// Cancels one pending alarm by `id`, or all of them when `id` is null.
+  /// Returns the ids that were cancelled.
+  Future<List<String>> cancelAlarms({String? id});
 }
 
 class DeviceActionsChannel implements DeviceActions {
@@ -88,9 +100,38 @@ class DeviceActionsChannel implements DeviceActions {
     });
   }
 
+  @override
+  Future<int> addShopping({required List<String> items, required String list}) async {
+    final Object? res =
+        await _invokeResult('addShopping', <String, dynamic>{'items': items, 'list': list});
+    if (res is Map && res['count'] is int) return res['count'] as int;
+    return items.length;
+  }
+
+  @override
+  Future<List<Map<String, dynamic>>> listAlarms() async {
+    final Object? res = await _invokeResult('listAlarms', const <String, dynamic>{});
+    if (res is! List) return const <Map<String, dynamic>>[];
+    return res
+        .whereType<Map<Object?, Object?>>()
+        .map((m) => m.map((k, v) => MapEntry(k.toString(), v)))
+        .toList(growable: false);
+  }
+
+  @override
+  Future<List<String>> cancelAlarms({String? id}) async {
+    final Object? res = await _invokeResult('cancelAlarms', <String, dynamic>{'id': id});
+    if (res is! List) return const <String>[];
+    return res.map((e) => e.toString()).toList(growable: false);
+  }
+
   Future<void> _invoke(String method, Map<String, dynamic> args) async {
+    await _invokeResult(method, args);
+  }
+
+  Future<Object?> _invokeResult(String method, Map<String, dynamic> args) async {
     try {
-      await _channel.invokeMethod<void>(method, args);
+      return await _channel.invokeMethod<Object?>(method, args);
     } on PlatformException catch (e) {
       dlog('Device action $method failed: $e');
       throw DeviceActionsException(e.code, e.message ?? e.code);

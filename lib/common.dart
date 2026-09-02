@@ -38,12 +38,11 @@ const String kDefaultRatatoskurServer = 'https://api.greynir.is';
 const String kDefaultQueryServer = 'https://greynir.is';
 
 // ASR
-const String kDefaultASREngine = 'Azure';
-const List<String> kASREngines = ['Azure', 'Google'];
 
 // Speech synthesis
 const List<String> kSpeechSynthesisVoices = ["Guðrún", "Gunnar"];
-const List<String> kSpeechSynthesisDebugVoices = ["Guðrún", "Gunnar", "Dóra", "Karl"];
+// Only these two are still served by /rat/v2/tts; Dóra and Karl now 504.
+const List<String> kSpeechSynthesisDebugVoices = ["Guðrún", "Gunnar"];
 const String kDefaultVoiceID = "Guðrún";
 const double kDefaultVoiceSpeed = 1.0;
 const double kVoiceSpeedMin = 0.7;
@@ -75,11 +74,8 @@ const String kLongASRPath = '/long_asr/';
 const String kQueryPath = '/rat/v1/query';
 const String kSpeechSynthesisPath = '/rat/v2/tts';
 
-const String kDefaultASRProvider = 'ratatoskur';
-const List<List<String>> kASRProviders = [
-  ['ratatoskur', 'Ratatoskur (streymi)'],
-  ['hreimur', 'Hreimur'],
-];
+// Reminders list that add_shopping writes to, overridable in Settings.
+const String kDefaultShoppingList = 'Innkaupalisti';
 const String kDefaultTTSProvider = 'icespeak';
 const List<List<String>> kTTSProviders = [
   ['icespeak', 'Miðeind (Icespeak)'],
@@ -92,7 +88,11 @@ const String kDefaultOpenAIModel = 'gpt-5.6-luna';
 
 const String kElevenLabsTTSURL = 'https://api.elevenlabs.io/v1/text-to-speech';
 const String kElevenLabsModel = 'eleven_v3';
-const String kDefaultElevenLabsVoiceID = '';
+// Sarah, one of the stock voices present on every ElevenLabs account.
+// Overridable in Settings. An empty default here silently disabled the
+// whole ElevenLabs path, since createTtsEngine() falls back to Icespeak
+// when the voice ID is blank.
+const String kDefaultElevenLabsVoiceID = 'EXAVITQu4vr4xnSDxMaL';
 
 const int kMaxToolIterations = 5;
 const int kMaxConversationUserTurns = 12;

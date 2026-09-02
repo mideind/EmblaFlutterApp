@@ -80,7 +80,6 @@ class FakeTts implements TtsEngine {
   @override
   Future<void> speak(
     String text, {
-    required String voice,
     required double speed,
     required void Function(bool err) onDone,
   }) async {
@@ -395,6 +394,31 @@ void main() {
     expect(h.openedURLs.single.toString(), 'https://embla.is/');
     expect(h.doneCount, 1);
   });
+
+  test('a hand-off tool speaks its own confirmation without a second LLM call', () async {
+    // endsTurn tools hand off to another app, so the user has already seen the
+    // outcome. Asking the model to phrase a confirmation only costs a round
+    // trip -- and used to let it answer "Ég veit það ekki" instead.
+    final registry = ToolRegistry()..register(_HandoffTool());
+    final h = Harness(
+      llm: FakeLlm([
+        const LlmResponse(toolCalls: [
+          ToolCall(id: 'call_3', name: 'handoff', arguments: {})
+        ]),
+        // Deliberately available: if the session asks for it, it short-circuited
+        // incorrectly and the spoken text below will not match.
+        const LlmResponse(text: kAnswerJSON),
+      ]),
+      tools: registry,
+    );
+    final session = h.build();
+
+    await session.submitText('settu fund í dagatalið');
+
+    expect(h.llm.calls, 1);
+    expect(h.tts.spoken, ['Viðburðurinn er kominn í dagatalið.']);
+    expect(h.doneCount, 1);
+  });
 }
 
 class _FailingLlm extends FakeLlm {
@@ -404,6 +428,25 @@ class _FailingLlm extends FakeLlm {
   Future<LlmResponse> complete(LlmRequest request,
           {Duration timeout = const Duration(seconds: 30)}) async =>
       throw const LlmException('Incorrect API key', statusCode: 401);
+}
+
+class _HandoffTool extends Tool {
+  @override
+  String get name => 'handoff';
+  @override
+  String get description => 'Réttir verkefnið yfir í annað forrit.';
+  @override
+  Map<String, dynamic> get parameters => {
+        'type': 'object',
+        'properties': <String, dynamic>{},
+        'required': <String>[],
+        'additionalProperties': false,
+      };
+
+  @override
+  Future<ToolResult> call(Map<String, dynamic> args, ToolContext ctx) async =>
+      ToolResult.success({'summary': 'Dagatal opnað'},
+          endsTurn: true, speech: 'Viðburðurinn er kominn í dagatalið.');
 }
 
 class _LinkTool extends Tool {

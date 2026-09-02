@@ -37,15 +37,12 @@ Future<AssistantSessionConfig> buildAssistantSessionConfig() async {
   final String serverURL = Prefs().stringForKey('ratatoskur_server') ?? kDefaultRatatoskurServer;
   final String serverAPIKey = readServerAPIKey();
 
-  final String asrProvider = Prefs().stringForKey('asr_provider') ?? kDefaultASRProvider;
-  final String asrEngine = (Prefs().stringForKey('asr_engine') ?? kDefaultASREngine).toLowerCase();
   final String ttsProvider = Prefs().stringForKey('tts_provider') ?? kDefaultTTSProvider;
   final String llmProvider = Prefs().stringForKey('llm_provider') ?? kDefaultLLMProvider;
   final String llmModel = Prefs().stringForKey('llm_model') ?? kDefaultOpenAIModel;
 
   final String voiceID = Prefs().stringForKey('voice_id') ?? kDefaultVoiceID;
   final double voiceSpeed = Prefs().doubleForKey('voice_speed') ?? kDefaultVoiceSpeed;
-  final bool privateMode = Prefs().boolForKey('privacy_mode');
 
   // Client info, only sent to our own servers.
   final String clientID = await getUniqueDeviceIdentifier();
@@ -55,16 +52,7 @@ Future<AssistantSessionConfig> buildAssistantSessionConfig() async {
   final tools = createToolRegistry(serverURL: serverURL, apiKey: serverAPIKey);
 
   return AssistantSessionConfig(
-    asr: createAsrEngine(
-      provider: asrProvider,
-      serverURL: serverURL,
-      apiKey: serverAPIKey,
-      engine: asrEngine,
-      privateMode: privateMode,
-      clientID: clientID,
-      clientType: clientType,
-      clientVersion: clientVersion,
-    ),
+    asr: createAsrEngine(serverURL: serverURL, apiKey: serverAPIKey),
     llm: createLlmClient(
       provider: llmProvider,
       model: llmModel,
@@ -74,6 +62,7 @@ Future<AssistantSessionConfig> buildAssistantSessionConfig() async {
       provider: ttsProvider,
       serverURL: serverURL,
       apiKey: serverAPIKey,
+      voiceID: voiceID,
     ),
     tools: tools,
     conversation: Conversation.shared,

@@ -87,11 +87,11 @@ class Prefs {
     setBoolForKey('privacy_mode', false);
     setDoubleForKey('voice_speed', kDefaultVoiceSpeed);
     setStringForKey('voice_id', kDefaultVoiceID);
+    setStringForKey('shopping_list', kDefaultShoppingList);
+    setBoolForKey('use_google_maps', false);
     setStringForKey('query_server', kDefaultQueryServer);
     setStringForKey('ratatoskur_server', kDefaultRatatoskurServer);
-    setStringForKey('asr_engine', kDefaultASREngine);
     // Embla 2.0 pipeline defaults
-    setStringForKey('asr_provider', kDefaultASRProvider);
     setStringForKey('tts_provider', kDefaultTTSProvider);
     setStringForKey('llm_provider', kDefaultLLMProvider);
     setStringForKey('llm_model', kDefaultOpenAIModel);

@@ -27,10 +27,8 @@ void main() {
   testWidgets('SettingsRoute contains ASR and TTS provider rows', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: SettingsRoute()));
 
-    expect(find.text('Talgreining'), findsOneWidget);
     expect(find.text('Talgerving'), findsOneWidget);
     // Default providers are displayed using their human-readable labels
-    expect(find.text(labelForValue(kASRProviders, kDefaultASRProvider)), findsOneWidget);
     expect(find.text(labelForValue(kTTSProviders, kDefaultTTSProvider)), findsOneWidget);
     // Privacy note about third-party processing
     expect(find.text(kExternalProcessingNote), findsOneWidget);
@@ -49,15 +47,17 @@ void main() {
     expect(find.text('ElevenLabs rödd'), findsOneWidget);
   });
 
-  testWidgets('Tapping the ASR row opens the provider selection route', (tester) async {
+  testWidgets('Tapping the TTS row opens the provider selection route', (tester) async {
+    // The ASR row is gone: Hreimur is the only engine in 2.0, so there is
+    // nothing to choose between until it gains streaming.
     await tester.pumpWidget(const MaterialApp(home: SettingsRoute()));
 
-    await tester.tap(find.text('Talgreining'));
+    await tester.tap(find.text('Talgerving'));
     await tester.pumpAndSettle();
 
     expect(find.byType(ProviderSelectionRoute), findsOneWidget);
-    // One list tile per ASR provider
-    expect(find.byType(ListTile), findsNWidgets(kASRProviders.length));
+    // One list tile per TTS provider
+    expect(find.byType(ListTile), findsNWidgets(kTTSProviders.length));
   });
 
   testWidgets('ProviderSelectionRoute writes the selected value to prefs', (tester) async {
@@ -85,7 +85,6 @@ void main() {
   });
 
   test('setDefaults sets all Embla 2.0 pipeline prefs', () {
-    expect(Prefs().stringForKey('asr_provider'), kDefaultASRProvider);
     expect(Prefs().stringForKey('tts_provider'), kDefaultTTSProvider);
     expect(Prefs().stringForKey('llm_provider'), kDefaultLLMProvider);
     expect(Prefs().stringForKey('llm_model'), kDefaultOpenAIModel);

@@ -104,14 +104,20 @@ class DraftMessageTool extends Tool {
     }
 
     final String summary;
+    final String speech;
     if (number != null) {
       summary = 'Skilaboð til $number opnuð í skilaboðaforriti';
+      speech = 'Ég opnaði skilaboðin, þú getur sent þau.';
     } else if (name != null) {
       summary = 'Skilaboð opnuð í skilaboðaforriti, en ég hef ekki símanúmer '
           '$name svo notandinn þarf að velja viðtakanda sjálfur';
+      speech = 'Ég opnaði skilaboðin en fann ekki símanúmer hjá $name, '
+          'þú þarft að velja viðtakanda.';
     } else {
       summary = 'Skilaboð opnuð í skilaboðaforriti';
+      speech = 'Ég opnaði skilaboðin.';
     }
-    return ToolResult.success(<String, dynamic>{'summary': summary}, endsTurn: true);
+    return ToolResult.success(
+        <String, dynamic>{'summary': summary}, endsTurn: true, speech: speech);
   }
 }

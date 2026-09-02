@@ -21,7 +21,6 @@
 
 import '../asr/asr_engine.dart';
 import '../asr/hreimur_batch_asr.dart';
-import '../asr/ratatoskur_streaming_asr.dart';
 import '../common.dart';
 import '../llm/llm_client.dart';
 import '../llm/openai_responses_client.dart';
@@ -37,31 +36,14 @@ import 'embla_core_sounds.dart';
 import 'prompt.dart';
 import 'session_sounds.dart';
 
+/// Hreimur is Miðeind's own Icelandic ASR and the only engine 2.0 uses. The
+/// Ratatoskur streaming path was Azure-backed; streaming returns here once
+/// Hreimur itself streams.
 AsrEngine createAsrEngine({
-  required String provider,
   required String serverURL,
   required String apiKey,
-  required String engine,
-  required bool privateMode,
-  String? clientID,
-  String? clientType,
-  String? clientVersion,
 }) {
-  switch (provider) {
-    case 'hreimur':
-      return HreimurBatchAsr(serverURL: serverURL, apiKey: apiKey);
-    case 'ratatoskur':
-    default:
-      return RatatoskurStreamingAsr(
-        serverURL: serverURL,
-        apiKey: apiKey,
-        engine: engine,
-        privateMode: privateMode,
-        clientID: clientID,
-        clientType: clientType,
-        clientVersion: clientVersion,
-      );
-  }
+  return HreimurBatchAsr(serverURL: serverURL, apiKey: apiKey);
 }
 
 LlmClient createLlmClient({
@@ -81,19 +63,24 @@ TtsEngine createTtsEngine({
   required String provider,
   required String serverURL,
   required String apiKey,
+  required String voiceID,
 }) {
   switch (provider) {
     case 'elevenlabs':
       final String voiceId = Prefs().stringForKey('elevenlabs_voice_id') ?? kDefaultElevenLabsVoiceID;
       final String key = readElevenLabsAPIKey();
       if (voiceId.isEmpty || key.isEmpty) {
-        dlog('ElevenLabs voice ID or API key missing, falling back to Icespeak');
-        return IcespeakTts(serverURL: serverURL, apiKey: apiKey);
+        // Silent fallback here is easy to mistake for ElevenLabs being broken,
+        // so say which half is missing.
+        dlog('TTS: falling back to Icespeak, ElevenLabs '
+            '${key.isEmpty ? "API key" : "voice ID"} is missing');
+        return IcespeakTts(serverURL: serverURL, apiKey: apiKey, voice: voiceID);
       }
+      dlog('TTS: ElevenLabs, voice $voiceId');
       return ElevenLabsTts(apiKey: key, voiceId: voiceId);
     case 'icespeak':
     default:
-      return IcespeakTts(serverURL: serverURL, apiKey: apiKey);
+      return IcespeakTts(serverURL: serverURL, apiKey: apiKey, voice: voiceID);
   }
 }
 

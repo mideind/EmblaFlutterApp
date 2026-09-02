@@ -112,6 +112,11 @@ String buildSystemPrompt({
       b.writeln('- Notaðu greynir_query fyrir veðurspár, almenningssamgöngur, '
           'gengi, opnunartíma, fréttir og annað sem er staðbundið eða breytist '
           'með tímanum. Sendu spurninguna á náttúrulegri íslensku.');
+      b.writeln('- greynir_query hefur EKKERT samtalsminni. Spurningin verður að '
+          'standa sjálfstætt: taktu samhengi úr fyrri svörum og skrifaðu hana '
+          'fulla út. Ef notandinn spyr „en á morgun?“ eftir spurningu um veðrið '
+          'í Reykjavík skaltu senda „hvernig er veðrið í Reykjavík á morgun“, '
+          'aldrei „en á morgun“.');
       b.writeln('- Ef greynir_query skilar valid=false hefur Greynir ekkert svar; '
           'svaraðu þá sjálf út frá eigin þekkingu ef þú getur.');
     }

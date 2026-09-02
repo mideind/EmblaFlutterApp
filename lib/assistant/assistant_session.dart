@@ -223,6 +223,7 @@ class AssistantSession {
         if (resp.hasToolCalls) {
           conv.addHistory(AssistantMessage(text: resp.text, toolCalls: resp.toolCalls));
           _setState(AssistantState.acting);
+          ToolResult? handoff;
           for (final call in resp.toolCalls) {
             if (_cancelled) return;
             final label = config.tools.lookup(call.name)?.activityLabel;
@@ -237,7 +238,25 @@ class AssistantSession {
             conv.addHistory(ToolResultMessage(callId: call.id, name: call.name, outputJson: result.toJson()));
             pendingImage = result.imageURL ?? pendingImage;
             pendingOpenURL = result.openURL ?? pendingOpenURL;
+            if (handoff == null && result.endsTurn && result.speech != null) {
+              handoff = result;
+            }
           }
+
+          // A tool that handed off to another app has already shown the user
+          // the outcome, so speak its own confirmation instead of spending a
+          // round trip asking the model to phrase one.
+          if (handoff != null) {
+            final String speech = handoff.speech!;
+            conv.addHistory(AssistantMessage(text: speech));
+            await _deliver(
+              AssistantReply(kind: ReplyKind.actionDone, speech: speech, display: speech),
+              imageURL: pendingImage,
+              openURL: pendingOpenURL,
+            );
+            return;
+          }
+
           _setState(AssistantState.thinking);
           continue;
         }
@@ -293,7 +312,6 @@ class AssistantSession {
     _beginStage('tts');
     await config.tts.speak(
       reply.speech,
-      voice: config.voiceID,
       speed: config.voiceSpeed,
       onDone: (err) {
         _endStage();

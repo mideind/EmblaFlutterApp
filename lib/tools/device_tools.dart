@@ -22,11 +22,14 @@ import 'package:add_2_calendar/add_2_calendar.dart' show Add2Calendar;
 import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatform;
 
 import '../common.dart' show dlog;
+import '../prefs.dart' show Prefs;
 import 'alarm_tool.dart';
 import 'calendar_tool.dart';
 import 'device_actions_channel.dart';
+import 'directions_tool.dart';
 import 'message_tool.dart';
 import 'reminder_tool.dart';
+import 'shopping_tool.dart';
 import 'tool.dart' show Tool;
 
 /// Builds the device action tools appropriate for [platform].
@@ -71,5 +74,17 @@ List<Tool> buildDeviceTools({
       launchIntent: launchIntent,
     ),
     DraftMessageTool(isIOS: isIOS, launchUri: launchUri),
+    // Android hands alarms to the clock app via an intent, so there is nothing
+    // to read back or cancel; only offer these where AlarmKit owns them.
+    // Apple Maps cannot auto-start navigation from a URL, so Android (and
+    // anyone who opts in) gets the Google form, which can.
+    GetDirectionsTool(
+      launchUri: launchUri,
+      preferGoogleMaps: () => !isIOS || Prefs().boolForKey('use_google_maps'),
+    ),
+    // Reminders lists are an Apple concept; Android has no equivalent target.
+    if (isIOS) AddShoppingTool(actions: deviceActions),
+    if (isIOS) ListAlarmsTool(actions: deviceActions),
+    if (isIOS) CancelAlarmsTool(actions: deviceActions),
   ];
 }

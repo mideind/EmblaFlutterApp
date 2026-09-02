@@ -33,10 +33,10 @@ const Duration kElevenLabsTimeout = Duration(seconds: 20);
 // Audio format requested from the API
 const String kElevenLabsOutputFormat = 'mp3_44100_128';
 
-// Language enforced for the model. The API docs describe language_code as
-// ISO 639-1, but the language list for the v3 models uses ISO 639-3 codes
-// ("Icelandic (isl)"). Codes the model doesn't support are ignored server-side.
-const String kElevenLabsLanguageCode = 'isl';
+// Language enforced for the model. The API wants ISO 639-1 here; "isl" is
+// rejected with a 400 by every model, Icelandic-capable ones included.
+// Only eleven_v3 and eleven_v3_conversational accept it at all.
+const String kElevenLabsLanguageCode = 'is';
 
 // Speech speed is only supported by the non-v3 models. Allowed range 0.25-4.0.
 const double kElevenLabsSpeedMin = 0.25;
@@ -82,13 +82,13 @@ class ElevenLabsTts implements TtsEngine {
   @override
   Future<void> speak(
     String text, {
-    required String voice,
     required double speed,
     required void Function(bool err) onDone,
   }) async {
-    // The "voice" for ElevenLabs is a voice ID. Fall back to the
-    // voice ID this engine was configured with.
-    final String vid = voice.isEmpty ? voiceId : voice;
+    // Always this engine's own voice ID. It used to accept a caller-supplied
+    // voice, which meant the Icespeak voice name ("Guðrún") arrived here and
+    // came back as 400 invalid_uid.
+    final String vid = voiceId;
     if (vid.isEmpty) {
       dlog('ElevenLabs TTS error: no voice ID configured');
       onDone(true);

@@ -35,7 +35,7 @@ void main() {
     expect(engine.voices, ['voice123']);
 
     await engine.speak('Halló heimur',
-        voice: '', speed: 1.0, onDone: (bool err) => doneErr = err);
+        speed: 1.0, onDone: (bool err) => doneErr = err);
 
     expect(captured, isNotNull);
     expect(captured!.method, 'POST');
@@ -47,7 +47,7 @@ void main() {
     final Map<String, dynamic> body = jsonDecode(captured!.body) as Map<String, dynamic>;
     expect(body['text'], 'Halló heimur');
     expect(body['model_id'], kElevenLabsModel);
-    expect(body['language_code'], 'isl');
+    expect(body['language_code'], 'is');
     // The v3 models don't support the speed parameter
     expect(body.containsKey('voice_settings'), false);
 
@@ -73,10 +73,12 @@ void main() {
       player: (String url, void Function(bool err) onDone) => onDone(false),
     );
 
-    await engine.speak('Hæ', voice: 'otherVoice', speed: 1.5, onDone: (bool err) {});
+    await engine.speak('Hæ', speed: 1.5, onDone: (bool err) {});
 
-    // The voice argument overrides the configured voice ID
-    expect(captured!.url.path.endsWith('/otherVoice'), true);
+    // The engine always uses the voice ID it was configured with. It used to
+    // accept a caller-supplied voice, so the Icespeak voice name reached the
+    // API and came back as 400 invalid_uid.
+    expect(captured!.url.path.endsWith('/v'), true);
     final Map<String, dynamic> body = jsonDecode(captured!.body) as Map<String, dynamic>;
     expect(body.containsKey('language_code'), false);
     expect((body['voice_settings'] as Map<String, dynamic>)['speed'], 1.5);
@@ -96,7 +98,7 @@ void main() {
       player: (String url, void Function(bool err) onDone) => played = true,
     );
 
-    await engine.speak('Hæ', voice: '', speed: 1.0, onDone: (bool err) => doneErr = err);
+    await engine.speak('Hæ', speed: 1.0, onDone: (bool err) => doneErr = err);
 
     expect(doneErr, true);
     expect(played, false);
@@ -115,7 +117,7 @@ void main() {
       player: (String url, void Function(bool err) onDone) => onDone(false),
     );
 
-    await engine.speak('Hæ', voice: '', speed: 1.0, onDone: (bool err) => doneErr = err);
+    await engine.speak('Hæ', speed: 1.0, onDone: (bool err) => doneErr = err);
 
     expect(doneErr, true);
   });
@@ -135,7 +137,7 @@ void main() {
       player: (String url, void Function(bool err) onDone) => onDone(false),
     );
 
-    await engine.speak('Hæ', voice: '', speed: 1.0, onDone: (bool err) => doneErr = err);
+    await engine.speak('Hæ', speed: 1.0, onDone: (bool err) => doneErr = err);
 
     expect(doneErr, true);
     expect(requested, false);

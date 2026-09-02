@@ -73,3 +73,21 @@ String readElevenLabsAPIKey() => readKey(elevenLabsAPIKey);
 
 /// Read and cache Anthropic API key
 String readAnthropicAPIKey() => readKey(anthropicAPIKey);
+
+/// Transliterate Icelandic characters to ASCII.
+///
+/// Ratatoskur's TTS service (/rat/v2/tts) rejects non-ASCII voice names with a
+/// 504 from the origin, so "Guðrún" has to go over the wire as "Gudrun".
+/// EmblaCore does the same thing for its bundled audio assets, but does not
+/// export its helper.
+String asciifyIcelandic(String s) {
+  const Map<String, String> icechar2ascii = {
+    "ð": "d", "Ð": "D", "á": "a", "Á": "A", "ú": "u", "Ú": "U",
+    "í": "i", "Í": "I", "é": "e", "É": "E", "þ": "th", "Þ": "TH",
+    "ó": "o", "Ó": "O", "ý": "y", "Ý": "Y", "ö": "o", "Ö": "O",
+    "æ": "ae", "Æ": "AE",
+  };
+  String out = s;
+  icechar2ascii.forEach((k, v) => out = out.replaceAll(k, v));
+  return out;
+}

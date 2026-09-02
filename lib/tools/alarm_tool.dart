@@ -202,3 +202,85 @@ class SetAlarmTool extends Tool {
     });
   }
 }
+
+/// Lists the timers and alarms this app has scheduled and not yet cancelled.
+/// iOS only: on Android alarms are handed to the clock app via an intent and
+/// cannot be read back.
+class ListAlarmsTool extends Tool {
+  final DeviceActions actions;
+
+  ListAlarmsTool({required this.actions});
+
+  @override
+  String get name => 'list_alarms';
+
+  @override
+  String get description =>
+      'Skilar þeim niðurteljurum og vekjurum sem Embla hefur stillt og eru enn virkir. '
+      'Notaðu þetta þegar notandinn spyr hvað sé í gangi, eða til að finna réttan '
+      'teljara áður en þú hættir við hann.';
+
+  @override
+  String? get activityLabel => 'Athuga vekjara…';
+
+  @override
+  Map<String, dynamic> get parameters => strictObjectSchema(const <String, Map<String, dynamic>>{});
+
+  @override
+  Future<ToolResult> call(Map<String, dynamic> args, ToolContext ctx) async {
+    try {
+      final List<Map<String, dynamic>> alarms = await actions.listAlarms();
+      return ToolResult.success(<String, dynamic>{
+        'count': alarms.length,
+        'alarms': alarms,
+      });
+    } on DeviceActionsException catch (e) {
+      return ToolResult.failure(e.message);
+    }
+  }
+}
+
+/// Cancels a pending timer or alarm. With no id, cancels all of them.
+class CancelAlarmsTool extends Tool {
+  final DeviceActions actions;
+
+  CancelAlarmsTool({required this.actions});
+
+  @override
+  String get name => 'cancel_alarms';
+
+  @override
+  String get description =>
+      'Hættir við niðurteljara eða vekjara sem Embla stillti. Skildu id eftir tómt '
+      'til að hætta við allt sem er virkt. Ef fleiri en eitt er virkt og notandinn '
+      'á við eitthvað eitt skaltu fyrst kalla á list_alarms og senda rétt id.';
+
+  @override
+  String? get activityLabel => 'Hætti við vekjara…';
+
+  @override
+  Map<String, dynamic> get parameters => strictObjectSchema(<String, Map<String, dynamic>>{
+        'id': optionalStringProperty(
+            'Auðkenni þess sem á að hætta við, úr list_alarms. Skilaðu null til að '
+            'hætta við allt sem er virkt.'),
+      });
+
+  @override
+  Future<ToolResult> call(Map<String, dynamic> args, ToolContext ctx) async {
+    try {
+      final List<String> cancelled = await actions.cancelAlarms(id: optionalString(args['id']));
+      if (cancelled.isEmpty) {
+        return ToolResult.success(const <String, dynamic>{
+          'cancelled': 0,
+          'summary': 'Enginn virkur teljari eða vekjari fannst til að hætta við',
+        });
+      }
+      return ToolResult.success(<String, dynamic>{
+        'cancelled': cancelled.length,
+        'ids': cancelled,
+      });
+    } on DeviceActionsException catch (e) {
+      return ToolResult.failure(e.message);
+    }
+  }
+}

@@ -27,7 +27,13 @@ dependencies:
   connectivity_plus: '>=5.0.2'
   flutter_inappwebview: '^5.7.2+3'
   path_provider: '^2.1.2'
-  wakelock_plus: '>=1.1.1'
+  # Pinned together with the dependency_override below: wakelock_plus 1.1.x's
+  # native iOS code registers the pre-prefix pigeon channels
+  # (dev.flutter.pigeon.WakelockPlusApi.*), which only
+  # wakelock_plus_platform_interface 1.1.0 calls. Anything newer resolves to
+  # prefixed channel names and every wakelock call throws
+  # "Unable to establish connection on channel" at runtime.
+  wakelock_plus: '1.1.1'
   permission_handler: '^10.2.0'
   flutter_fgbg: '^0.3.0'
   logger: '^2.0.1'
@@ -46,6 +52,10 @@ dependencies:
       ref: master
   add_2_calendar: ^3.1.1
   android_intent_plus: ^6.1.0
+
+dependency_overrides:
+  # See the note on wakelock_plus above.
+  wakelock_plus_platform_interface: '1.1.0'
 
 dev_dependencies:
   flutter_test:

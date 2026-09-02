@@ -54,7 +54,7 @@ void main() {
       expect(sent!['instructions'], 'Þú ert Embla.');
       expect(sent!['store'], false);
       expect(sent!['max_output_tokens'], 2000);
-      expect((sent!['reasoning'] as Map)['effort'], 'low');
+      expect((sent!['reasoning'] as Map)['effort'], 'none');
 
       final List<dynamic> input = sent!['input'] as List<dynamic>;
       expect(input.length, 4);

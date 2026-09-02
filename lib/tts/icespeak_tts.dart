@@ -25,13 +25,18 @@ import 'package:embla_core/embla_core.dart'
 
 import '../common.dart'
     show dlog, kDefaultVoiceID, kSpeechSynthesisPath, kSpeechSynthesisVoices;
+import '../util.dart' show asciifyIcelandic;
 import 'tts_engine.dart';
 
 class IcespeakTts implements TtsEngine {
-  IcespeakTts({required this.serverURL, required this.apiKey});
+  IcespeakTts({required this.serverURL, required this.apiKey, this.voice = kDefaultVoiceID});
 
   final String serverURL;
   final String apiKey;
+
+  /// Icespeak voice name, e.g. "Guðrún". Also the name EmblaCore uses to pick
+  /// the bundled audio assets, so it is stored with Icelandic spelling.
+  final String voice;
 
   @override
   String get id => 'icespeak';
@@ -42,12 +47,14 @@ class IcespeakTts implements TtsEngine {
   @override
   Future<void> speak(
     String text, {
-    required String voice,
     required double speed,
     required void Function(bool err) onDone,
   }) async {
-    // Voice IDs are sent verbatim, non-ASCII characters included ("Guðrún").
-    final String voiceID = voice.trim().isEmpty ? kDefaultVoiceID : voice;
+    // The service only accepts ASCII voice names; "Guðrún" makes the origin
+    // return 504. Prefs and the bundled audio assets keep the Icelandic
+    // spelling, so transliterate here, at the wire boundary.
+    final String voiceID =
+        asciifyIcelandic(voice.trim().isEmpty ? kDefaultVoiceID : voice);
 
     final String? url = await EmblaAPI.synthesizeSpeech(
       text,

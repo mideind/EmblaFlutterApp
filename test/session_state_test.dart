@@ -48,9 +48,7 @@ class FakeTtsEngine implements TtsEngine {
   List<String> get voices => const <String>[];
   @override
   Future<void> speak(String text,
-      {required String voice,
-      required double speed,
-      required void Function(bool err) onDone}) async {
+      {required double speed, required void Function(bool err) onDone}) async {
     onDone(false);
   }
 

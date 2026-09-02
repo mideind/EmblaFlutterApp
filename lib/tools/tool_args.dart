@@ -140,6 +140,24 @@ Map<String, dynamic> optionalStringProperty(String description) {
   };
 }
 
+/// Array-of-strings property. Strict schemas require every item to be typed.
+Map<String, dynamic> stringArrayProperty(String description) {
+  return <String, dynamic>{
+    'type': 'array',
+    'description': description,
+    'items': <String, dynamic>{'type': 'string'},
+  };
+}
+
+/// Non-empty, trimmed strings from a model-supplied array argument.
+List<String> stringList(dynamic value) {
+  if (value is! List) return const <String>[];
+  return value
+      .map((dynamic e) => optionalString(e))
+      .whereType<String>()
+      .toList(growable: false);
+}
+
 Map<String, dynamic> integerProperty(String description) {
   return <String, dynamic>{'type': 'integer', 'description': description};
 }

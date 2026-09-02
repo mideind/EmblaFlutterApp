@@ -23,6 +23,22 @@ void testUtil() {
     }
   });
 
+  // Ratatoskur's /rat/v2/tts rejects non-ASCII voice names: sending "Guðrún"
+  // makes the origin answer 504, which surfaced as "Villa við talgervingu"
+  // for every spoken reply.
+  test('asciifyIcelandic transliterates the TTS voice names the server takes', () {
+    expect(asciifyIcelandic('Guðrún'), 'Gudrun');
+    expect(asciifyIcelandic('Gunnar'), 'Gunnar');
+    // Already-ASCII input is untouched, so double-asciifying is safe.
+    expect(asciifyIcelandic(asciifyIcelandic('Guðrún')), 'Gudrun');
+  });
+
+  test('asciifyIcelandic covers every Icelandic character', () {
+    expect(asciifyIcelandic('áéíóúýðþæöÁÉÍÓÚÝÐÞÆÖ'), 'aeiouydthaeoAEIOUYDTHAEO');
+    // ASCII letters and punctuation pass through unchanged.
+    expect(asciifyIcelandic('abc XYZ 123 -_.'), 'abc XYZ 123 -_.');
+  });
+
   // Color extensions
   test('Color should be correctly generated from hex string', () {
     const Map<String, Color> colors = {

@@ -68,6 +68,7 @@ class OpenURLTool extends Tool {
       {'url': uri.toString()},
       openURL: uri,
       endsTurn: true,
+      speech: 'Ég opna slóðina.',
     );
   }
 }

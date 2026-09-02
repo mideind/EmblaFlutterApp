@@ -60,9 +60,9 @@ class HreimurBatchAsr implements AsrEngine {
     AsrAudioSource? audioSource,
     this.autoStop = true,
     this.silenceThreshold = kDefaultSilenceThreshold,
-    this.silenceDuration = const Duration(milliseconds: 1500),
+    this.silenceDuration = const Duration(milliseconds: 800),
     this.maxDuration = const Duration(seconds: 15),
-    this.pollInterval = const Duration(milliseconds: 500),
+    this.pollInterval = const Duration(milliseconds: 150),
     this.timeout = const Duration(seconds: 60),
     this.sampleInterval = const Duration(milliseconds: 100),
     this.minSpeechDuration = kMinSpeechDuration,
@@ -305,8 +305,14 @@ class HreimurBatchAsr implements AsrEngine {
   Future<void> _poll(String jobID, Stopwatch budget) async {
     final Uri uri = Uri.parse('$serverURL${kLongASRPath}status/$jobID');
 
+    bool firstCheck = true;
     while (budget.elapsed < timeout) {
-      await Future<void>.delayed(pollInterval);
+      // Check once immediately: waiting a full interval before the first
+      // status call added that much dead time to every single turn.
+      if (!firstCheck) {
+        await Future<void>.delayed(pollInterval);
+      }
+      firstCheck = false;
       if (_cancelled || _closed) {
         return;
       }

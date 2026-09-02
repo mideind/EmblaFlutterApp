@@ -101,15 +101,26 @@ class AddReminderTool extends Tool {
       // Only used on iOS, harmless here, but keeps the event self-describing.
       iosParams: const IOSParams(reminder: Duration.zero),
     );
-    final bool opened = await addToCalendar(event);
-    if (!opened) {
-      return ToolResult.failure('Ekki tókst að opna dagatalið.');
+    // As in add_calendar_event, false here means the user dismissed the sheet
+    // just as often as it means it failed to open.
+    final bool saved = await addToCalendar(event);
+    if (!saved) {
+      return ToolResult.success(
+        <String, dynamic>{
+          'saved': false,
+          'summary': 'Notandinn lokaði dagatalinu án þess að vista áminninguna „$title“.',
+        },
+        endsTurn: true,
+        speech: 'Allt í lagi, ég vistaði hana ekki.',
+      );
     }
     return ToolResult.success(
       <String, dynamic>{
-        'summary': 'Áminning „$title“ ${formatIcelandicDateTime(due)} opnuð í dagatali',
+        'saved': true,
+        'summary': 'Áminning „$title“ ${formatIcelandicDateTime(due)} vistuð í dagatali',
       },
       endsTurn: true,
+      speech: 'Áminningin „$title“ er komin í dagatalið.',
     );
   }
 }

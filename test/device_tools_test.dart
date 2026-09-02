@@ -28,9 +28,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:embla/tools/alarm_tool.dart';
 import 'package:embla/tools/calendar_tool.dart';
 import 'package:embla/tools/device_actions_channel.dart';
+import 'package:embla/tools/directions_tool.dart';
 import 'package:embla/tools/device_tools.dart';
 import 'package:embla/tools/message_tool.dart';
 import 'package:embla/tools/reminder_tool.dart';
+import 'package:embla/tools/shopping_tool.dart';
 import 'package:embla/tools/tool.dart';
 import 'package:embla/tools/tool_args.dart';
 
@@ -84,6 +86,33 @@ class FakeDeviceActions implements DeviceActions {
   }
 
   @override
+  Future<int> addShopping({required List<String> items, required String list}) async {
+    _maybeThrow();
+    calls.add(('addShopping', <String, dynamic>{'items': items, 'list': list}));
+    return items.length;
+  }
+
+  /// Pending alarms returned by [listAlarms].
+  List<Map<String, dynamic>> pending = <Map<String, dynamic>>[];
+
+  @override
+  Future<List<Map<String, dynamic>>> listAlarms() async {
+    _maybeThrow();
+    calls.add(('listAlarms', <String, dynamic>{}));
+    return pending;
+  }
+
+  @override
+  Future<List<String>> cancelAlarms({String? id}) async {
+    _maybeThrow();
+    calls.add(('cancelAlarms', <String, dynamic>{'id': id}));
+    final List<Map<String, dynamic>> hit =
+        id == null ? pending : pending.where((a) => a['id'] == id).toList();
+    pending = pending.where((a) => !hit.contains(a)).toList();
+    return hit.map((a) => a['id'].toString()).toList();
+  }
+
+  @override
   Future<void> addReminder({required String title, DateTime? due}) async {
     _maybeThrow();
     calls.add(('addReminder', <String, dynamic>{'title': title, 'due': due}));
@@ -114,21 +143,106 @@ void main() {
       ...buildDeviceTools(platform: TargetPlatform.android),
     ];
 
-    test('every tool is exposed on both platforms', () {
+    test('both platforms get the action tools; only iOS can read alarms back', () {
       final Set<String> ios =
           buildDeviceTools(platform: TargetPlatform.iOS).map((Tool t) => t.name).toSet();
       final Set<String> android =
           buildDeviceTools(platform: TargetPlatform.android).map((Tool t) => t.name).toSet();
-      expect(
-          ios,
-          <String>{
-            'add_calendar_event',
-            'add_reminder',
-            'set_timer',
-            'set_alarm',
-            'draft_message',
-          });
-      expect(android, ios);
+      const Set<String> shared = <String>{
+        'add_calendar_event',
+        'add_reminder',
+        'set_timer',
+        'set_alarm',
+        'draft_message',
+        'get_directions',
+      };
+      expect(android, shared);
+      // AlarmKit owns the alarms it schedules, so they can be listed and
+      // cancelled. Android hands them to the clock app via an intent, which is
+      // fire-and-forget -- offering the tools there would promise more than the
+      // platform can do.
+      // add_shopping writes to a Reminders list, which Android has no
+      // equivalent of.
+      expect(ios, shared.union(<String>{'add_shopping', 'list_alarms', 'cancel_alarms'}));
+    });
+
+    test('list_alarms reports what is pending', () async {
+      final FakeDeviceActions actions = FakeDeviceActions()
+        ..pending = [
+          <String, dynamic>{'id': 'a1', 'kind': 'timer', 'title': 'Teljari'},
+          <String, dynamic>{'id': 'a2', 'kind': 'alarm', 'title': 'Vekjari'},
+        ];
+      final ToolResult res = await ListAlarmsTool(actions: actions).call(const {}, ctx);
+      expect(res.ok, isTrue);
+      expect(res.data['count'], 2);
+      expect((res.data['alarms'] as List).first['id'], 'a1');
+    });
+
+    test('cancel_alarms cancels one by id, or all without one', () async {
+      final FakeDeviceActions actions = FakeDeviceActions()
+        ..pending = [
+          <String, dynamic>{'id': 'a1', 'kind': 'timer'},
+          <String, dynamic>{'id': 'a2', 'kind': 'alarm'},
+        ];
+      final CancelAlarmsTool tool = CancelAlarmsTool(actions: actions);
+
+      final ToolResult one = await tool.call(<String, dynamic>{'id': 'a1'}, ctx);
+      expect(one.data['cancelled'], 1);
+      expect(one.data['ids'], <String>['a1']);
+
+      final ToolResult rest = await tool.call(<String, dynamic>{'id': null}, ctx);
+      expect(rest.data['cancelled'], 1);
+      expect(actions.pending, isEmpty);
+    });
+
+    test('cancel_alarms says so when there is nothing to cancel', () async {
+      final ToolResult res =
+          await CancelAlarmsTool(actions: FakeDeviceActions()).call(<String, dynamic>{'id': null}, ctx);
+      expect(res.ok, isTrue);
+      expect(res.data['cancelled'], 0);
+      expect(res.data['summary'], contains('Enginn virkur'));
+    });
+
+    test('get_directions picks the map URL its platform can actually navigate', () async {
+      final List<Uri> opened = <Uri>[];
+      Future<bool> launch(Uri u) async {
+        opened.add(u);
+        return true;
+      }
+
+      final ToolResult apple = await GetDirectionsTool(
+              launchUri: launch, preferGoogleMaps: () => false)
+          .call(<String, dynamic>{'destination': 'Harpa'}, ctx);
+      expect(apple.ok, isTrue);
+      expect(apple.endsTurn, isTrue);
+      expect(opened.last.toString(), 'maps://?daddr=Harpa&dirflg=d');
+
+      await GetDirectionsTool(launchUri: launch, preferGoogleMaps: () => true)
+          .call(<String, dynamic>{'destination': 'Kringlan'}, ctx);
+      // dir_action=navigate is the reason Google is offered at all: the Apple
+      // URL cannot start turn-by-turn on its own.
+      expect(opened.last.toString(), contains('dir_action=navigate'));
+      expect(opened.last.toString(), contains('destination=Kringlan'));
+    });
+
+    test('add_shopping batches items onto the configured list', () async {
+      final FakeDeviceActions actions = FakeDeviceActions();
+      final ToolResult res = await AddShoppingTool(
+              actions: actions, listName: () => 'Innkaupalisti')
+          .call(<String, dynamic>{
+        'items': <dynamic>['mjólk', '  egg  ', '', null]
+      }, ctx);
+      expect(res.ok, isTrue);
+      expect(res.data['count'], 2);
+      expect(res.data['list'], 'Innkaupalisti');
+      // Blank and null entries are dropped rather than written as empty items.
+      expect(actions.calls.single.$2['items'], <String>['mjólk', 'egg']);
+    });
+
+    test('add_shopping fails cleanly with nothing to add', () async {
+      final ToolResult res = await AddShoppingTool(actions: FakeDeviceActions())
+          .call(<String, dynamic>{'items': <dynamic>[]}, ctx);
+      expect(res.ok, isFalse);
     });
 
     test('no device tools on unsupported platforms', () {
@@ -257,7 +371,8 @@ void main() {
 
       expect(res.ok, isTrue);
       expect(res.endsTurn, isTrue);
-      expect(res.data['summary'], 'Viðburður „Fundur“ 3. september 09:00–10:00 opnaður í dagatali');
+      expect(res.data['saved'], isTrue);
+      expect(res.data['summary'], 'Viðburður „Fundur“ 3. september 09:00–10:00 vistaður í dagatali');
       expect(cal.last.title, 'Fundur');
       expect(cal.last.startDate, DateTime(2026, 9, 3, 9));
       expect(cal.last.endDate, DateTime(2026, 9, 3, 10));
@@ -307,11 +422,16 @@ void main() {
       expect(cal.events, isEmpty);
     });
 
-    test('a calendar that will not open is reported as a failure', () async {
+    test('a dismissed calendar sheet is reported as not saved, not as an error', () async {
+      // add_2_calendar returns false for .canceled/.deleted as well as for a
+      // sheet that never opened. Treating that as an error made the model fall
+      // back to "Ég veit það ekki" when the user simply declined to save.
       final FakeCalendar cal = FakeCalendar()..result = false;
       final ToolResult res = await AddCalendarEventTool(addToCalendar: cal.add).call(
           <String, dynamic>{'title': 'Fundur', 'start': '2026-09-03T09:00:00'}, ctx);
-      expect(res.ok, isFalse);
+      expect(res.ok, isTrue);
+      expect(res.data['saved'], isFalse);
+      expect(res.data['summary'], contains('án þess að vista'));
     });
   });
 
@@ -361,7 +481,9 @@ void main() {
       expect(cal.last.title, 'Kaupa mjólk');
       expect(cal.last.startDate, DateTime(2026, 9, 3, 17));
       expect(cal.last.endDate, DateTime(2026, 9, 3, 17, 30));
-      expect(res.data['summary'], 'Áminning „Kaupa mjólk“ 3. september 17:00 opnuð í dagatali');
+      expect(res.data['saved'], isTrue);
+      expect(res.data['summary'], 'Áminning „Kaupa mjólk“ 3. september 17:00 vistuð í dagatali');
+      expect(res.speech, 'Áminningin „Kaupa mjólk“ er komin í dagatalið.');
     });
 
     test('Android without a due date fails', () async {

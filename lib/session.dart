@@ -37,7 +37,7 @@ import 'package:adaptive_dialog/adaptive_dialog.dart';
 // situations the assistant session never gets to see (offline, no mic),
 // the microphone signal strength for the waveform, and the streaming ASR
 // token prefetch.
-import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder, EmblaSessionConfig;
+import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder;
 
 import './animations.dart';
 import './assistant/assistant_session.dart';
@@ -107,14 +107,11 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // This is needed to make animations work when hot reloading during development
     Animate.restartOnHotReload = (kDebugMode == true);
 
-    prefetchStreamingASRToken();
-
     // Start observing app state (foreground, background)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
         dlog("App went into foreground");
         inBackground = false;
-        prefetchStreamingASRToken();
         await requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
@@ -163,14 +160,6 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   // Intro message varies depending on whether hotword detection is enabled
   String introMsg() {
     return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
-  }
-
-  /// Ask the server for a streaming ASR token ahead of time. This is cheap
-  /// and keeps the first streaming ASR session fast.
-  void prefetchStreamingASRToken() {
-    final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
-    final EmblaSessionConfig cfg = EmblaSessionConfig(server: server)..apiKey = readServerAPIKey();
-    cfg.fetchToken();
   }
 
   // Start hotword detection after gaining microphone permission

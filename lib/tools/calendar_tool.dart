@@ -86,15 +86,29 @@ class AddCalendarEventTool extends Tool {
       startDate: start,
       endDate: end,
     );
-    final bool opened = await addToCalendar(event);
-    if (!opened) {
-      return ToolResult.failure('Ekki tókst að opna dagatalið.');
+    // add_2_calendar reports the *outcome* of the edit sheet on iOS:
+    // .saved -> true, .canceled/.deleted -> false. A dismissed sheet is a
+    // deliberate user choice, not a failure, so say so plainly instead of
+    // claiming the calendar could not be opened.
+    final bool saved = await addToCalendar(event);
+    if (!saved) {
+      return ToolResult.success(
+        <String, dynamic>{
+          'saved': false,
+          'summary': 'Notandinn lokaði dagatalinu án þess að vista viðburðinn '
+              '„$title“. Staðfestu einungis að hann hafi ekki verið vistaður.',
+        },
+        endsTurn: true,
+        speech: 'Allt í lagi, ég vistaði hann ekki.',
+      );
     }
     return ToolResult.success(
       <String, dynamic>{
-        'summary': 'Viðburður „$title“ ${formatIcelandicRange(start, end)} opnaður í dagatali',
+        'saved': true,
+        'summary': 'Viðburður „$title“ ${formatIcelandicRange(start, end)} vistaður í dagatali',
       },
       endsTurn: true,
+      speech: 'Viðburðurinn „$title“ er kominn í dagatalið.',
     );
   }
 }

@@ -31,7 +31,6 @@ import 'package:embla_core/embla_core.dart' show AudioPlayer, EmblaAPI;
 import './common.dart';
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
-import './asr.dart' show ASRSelectionRoute;
 import './provider_selection.dart' show ProviderSelectionRoute, labelForValue;
 import './info.dart';
 import './theme.dart';
@@ -599,43 +598,6 @@ class SettingsTextFieldWidgetState extends State<SettingsTextFieldWidget> {
   }
 }
 
-/// ASR provider selection widget, presents the ASRSelectionRoute
-class SettingsASRSelectionWidget extends StatefulWidget {
-  final String label;
-
-  const SettingsASRSelectionWidget({super.key, required this.label});
-
-  @override
-  SettingsASRSelectionWidgetState createState() => SettingsASRSelectionWidgetState();
-}
-
-class SettingsASRSelectionWidgetState extends State<SettingsASRSelectionWidget> {
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-        title: Text(widget.label, style: menuTextStyle),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(labelForValue(kASRProviders, Prefs().stringForKey('asr_provider')),
-                style: Theme.of(context).textTheme.bodySmall),
-            const Icon(Icons.arrow_right),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            CupertinoPageRoute(
-              builder: (context) => const ASRSelectionRoute(),
-            ),
-          ).then((val) {
-            // Trigger re-render since ASR provider selection may have changed
-            setState(() {});
-          });
-        });
-  }
-}
-
 /// Play voice at the selected speed
 Timer? voiceSpeedTimer;
 void _playVoiceSpeed() {
@@ -678,8 +640,6 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
         onChangeEnd: (double val) {
           _playVoiceSpeed();
         }),
-    // ASR provider selection
-    const SettingsASRSelectionWidget(label: 'Talgreining'),
     // TTS provider selection
     SettingsProviderSelectionWidget(
         label: 'Talgerving',
@@ -704,11 +664,6 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
       // Language model selection
       const SettingsTextFieldWidget(
           label: 'Mállíkan', prefKey: 'llm_model', hintText: kDefaultOpenAIModel),
-      // Streaming ASR engine selection (Ratatoskur server-side engine)
-      SettingsProviderSelectionWidget(
-          label: 'Talgreiningarvél',
-          prefKey: 'asr_engine',
-          options: kASREngines.map((String e) => [e, e]).toList(growable: false)),
       divider,
       // Ratatoskur server selection
       const SettingsFullTextLabelWidget('Ratatoskur:'),
