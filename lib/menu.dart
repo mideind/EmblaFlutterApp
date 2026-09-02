@@ -26,7 +26,6 @@ import './common.dart';
 import './theme.dart' show img4theme, menuTextStyle, standardAppBar, standardEdgeInsets;
 import './settings.dart' show SettingsRoute;
 import './web.dart' show WebViewRoute;
-// import './smart/smarthome.dart' show SmarthomeRoute if (kDebugMode) "";
 
 void _pushWebRoute(BuildContext context, dynamic arg) {
   Navigator.push(
@@ -45,15 +44,6 @@ void _pushSettingsRoute(BuildContext context, dynamic arg) {
     ),
   );
 }
-
-// void _pushSmarthomeRoute(BuildContext context, dynamic arg) {
-//   Navigator.push(
-//     context,
-//     CupertinoPageRoute(
-//       builder: (context) => const SmarthomeRoute(),
-//     ),
-//   );
-// }
 
 // Generate a menu tile based on args
 ListTile _buildMenuTile(String name, String imageName,
@@ -76,13 +66,6 @@ ListView _buildMenu(BuildContext context) {
     _buildMenuTile('Leiðbeiningar', 'cube', _pushWebRoute, context, kInstructionsURL),
     _buildMenuTile('Persónuvernd', 'cube', _pushWebRoute, context, kPrivacyURL),
   ];
-
-  // Only show Smart Home menu tile in debug mode
-  // if (kDebugMode) {
-  //   final ListTile smarthomeTile =
-  //       _buildMenuTile('Snjallheimili', 'smarthome', _pushSmarthomeRoute, context, null);
-  //   menuItems.insert(1, smarthomeTile); // Insert below Settings menu item
-  // }
 
   return ListView(
     padding: standardEdgeInsets,

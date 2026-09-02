@@ -75,7 +75,7 @@ class SettingsSwitchWidgetState extends State<SettingsSwitchWidget> {
         title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
-          activeColor: Theme.of(context).primaryColor,
+          activeTrackColor: Theme.of(context).primaryColor,
           onChanged: (bool value) {
             if (!widget.enabled) {
               return;
@@ -144,7 +144,7 @@ class SettingsPrivacySwitchWidgetState extends State<SettingsPrivacySwitchWidget
         title: Text(widget.label),
         trailing: CupertinoSwitch(
           value: Prefs().boolForKey(prefKey),
-          activeColor: Theme.of(context).primaryColor,
+          activeTrackColor: Theme.of(context).primaryColor,
           onChanged: (bool value) async {
             if (value == true) {
               await _showPromptDialog(context);

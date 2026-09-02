@@ -72,7 +72,7 @@ final lightThemeData = ThemeData(
     headlineSmall: TextStyle(color: lightTextColor, fontSize: defaultFontSize),
   ),
   appBarTheme: AppBarTheme(
-    color: lightBgColor,
+    backgroundColor: lightBgColor,
     iconTheme: IconThemeData(color: lightMainColor),
   ),
 );
@@ -110,7 +110,7 @@ final darkThemeData = ThemeData(
     headlineSmall: TextStyle(color: darkMainColor, fontSize: defaultFontSize),
   ),
   appBarTheme: AppBarTheme(
-    color: darkBgColor,
+    backgroundColor: darkBgColor,
     iconTheme: IconThemeData(color: darkMainColor),
   ),
 );

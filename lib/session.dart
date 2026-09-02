@@ -40,7 +40,6 @@ import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
-import './jsexec.dart' show JSExecutor;
 import './theme.dart';
 import './button.dart';
 import './loc.dart' show LocationTracker;
@@ -196,7 +195,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   }
 
   Future<bool> isConnectedToInternet() async {
-    return (await Connectivity().checkConnectivity() != ConnectivityResult.none);
+    final results = await Connectivity().checkConnectivity();
+    return results.contains(ConnectivityResult.none) == false;
   }
 
   // Set text field string (and optionally, an associated image)
@@ -364,36 +364,6 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         dlog("Invalid open_url '$url' received from server.");
       }
     }
-    // Execute Javascript payload
-    else if (resp['command'] != null && resp['command'] != '') {
-      // Evaluate JS
-      String s = await JSExecutor().run(resp['command']);
-      msg(s);
-      // Request speech synthesis of result, play audio and terminate session
-      // TODO: The API URL should really be handled by EmblaCore
-      var ttsOptions = SpeechOptions();
-      ttsOptions.voice = config.voiceID;
-      ttsOptions.speed = config.voiceSpeed;
-      await EmblaAPI.synthesizeSpeech(s, config.apiKey!,
-              ttsOptions: ttsOptions,
-              transcriptionOptions: TranscriptionOptions(),
-              transcribe: true,
-              apiURL: "${config.ratatoskurServer}/rat/v2/tts")
-          .then((dynamic m) async {
-        if (m == null) {
-          dlog("Error synthesizing audio. Response from server was: $m");
-          await session!.stop();
-          AudioPlayer().playSound(
-              'err', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
-          msg(kServerErrorMessage);
-        } else {
-          AudioPlayer().stop();
-          AudioPlayer().playURL(m, (bool err) async {
-            await session!.stop();
-          });
-        }
-      });
-    }
   }
 
   // Session error handler
@@ -445,7 +415,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         await HotwordDetector().stop();
       }
       await WakelockPlus.disable();
-      // ignore: use_build_context_synchronously
+      if (!context.mounted) return;
       Navigator.push(
         context,
         CupertinoPageRoute(

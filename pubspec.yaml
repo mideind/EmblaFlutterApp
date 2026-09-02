@@ -30,29 +30,23 @@ dependencies:
   permission_handler: '^10.2.0'
   flutter_fgbg: '^0.3.0'
   logger: '^2.0.1'
-  adaptive_theme: '^3.6.0'
+  adaptive_theme: '>=3.6.0 <3.8.0'
   open_settings: '^2.0.2'
   adaptive_dialog: '^1.9.0+2'
-  # fluttertoast: '^8.1.2'
-  # flutter_spinkit: ^5.1.0
-  # multicast_dns: '^0.3.2'
   flutter_animate: '^4.5.0'
   # Ours
-  flutter_snowboy: #'>=0.1.2'
-    path: '../flutter_snowboy'
-    # git:
-    #   url: git://github.com/mideind/flutter_snowboy.git
-    #   ref: master
-  embla_core: #'>=1.0.8'
-    path: '../embla_core'
-    # git:
-    #   url: git://github.com/mideind/EmblaCoreFlutter.git
-    #   ref: master
-
+  flutter_snowboy:
+    git:
+      url: https://github.com/mideind/FlutterSnowboy.git
+      ref: master
+  embla_core:
+    git:
+      url: https://github.com/mideind/EmblaCoreFlutter.git
+      ref: master
 
 dev_dependencies:
-  # flutter_test:
-  #   sdk: flutter
+  flutter_test:
+    sdk: flutter
   test: '^1.21.5'
   flutter_lints: '^4.0.0'
 

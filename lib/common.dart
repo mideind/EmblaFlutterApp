@@ -70,6 +70,35 @@ const List<List<String>> kQueryServerPresetOptions = [
   ['Lókal', 'http://192.168.1.8:5000']
 ];
 
+// Embla 2.0: LLM pipeline
+const String kLongASRPath = '/long_asr/';
+const String kQueryPath = '/rat/v1/query';
+const String kSpeechSynthesisPath = '/rat/v2/tts';
+
+const String kDefaultASRProvider = 'ratatoskur';
+const List<List<String>> kASRProviders = [
+  ['ratatoskur', 'Ratatoskur (streymi)'],
+  ['hreimur', 'Hreimur'],
+];
+const String kDefaultTTSProvider = 'icespeak';
+const List<List<String>> kTTSProviders = [
+  ['icespeak', 'Miðeind (Icespeak)'],
+  ['elevenlabs', 'ElevenLabs'],
+];
+const String kDefaultLLMProvider = 'openai';
+
+const String kOpenAIResponsesURL = 'https://api.openai.com/v1/responses';
+const String kDefaultOpenAIModel = 'gpt-5.6-luna';
+
+const String kElevenLabsTTSURL = 'https://api.elevenlabs.io/v1/text-to-speech';
+const String kElevenLabsModel = 'eleven_v3';
+const String kDefaultElevenLabsVoiceID = '';
+
+const int kMaxToolIterations = 5;
+const int kMaxConversationUserTurns = 12;
+const Duration kConversationIdleReset = Duration(minutes: 10);
+const String kTimeZoneName = 'Atlantic/Reykjavik';
+
 /// Debug logging
 void dlog(dynamic msg) {
   if (kDebugMode) {
