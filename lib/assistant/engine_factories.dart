@@ -103,7 +103,7 @@ ToolRegistry createToolRegistry({
   return buildDefaultToolRegistry(serverURL: serverURL, apiKey: apiKey);
 }
 
-SessionSounds createSessionSounds() => EmblaCoreSessionSounds();
+SessionSounds createSessionSounds() => const EmblaCoreSessionSounds();
 
 String createSystemPrompt({
   required DateTime now,
