@@ -350,7 +350,7 @@ void main() {
     expect(h.states.first, AssistantState.listening);
   });
 
-  test('an ASR error is reported and plays the error sound', () async {
+  test('an ASR error is reported without the session's error sound', () async {
     final h = Harness(
       llm: FakeLlm(const []),
       asr: FakeAsr(const [AsrError('hljóðnemi ekki tiltækur')]),
@@ -360,7 +360,7 @@ void main() {
     await session.startVoice();
 
     expect(h.errors.single, contains('hljóðnemi ekki tiltækur'));
-    expect(h.sounds.errorCount, 1);
+    expect(h.sounds.errorCount, 0); // ASR engines play their own error cue
     expect(h.llm.calls, 0);
     expect(session.state, AssistantState.error);
   });
