@@ -16,24 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// The single seam between the session route (which only knows the abstract
-// contracts) and the concrete engines. Every function here is deliberately
-// unimplemented: the pipeline streams (ASR, LLM, TTS, tools, prompt) fill
-// them in at integration time, and no other UI code needs to change.
-//
-// Callers must be prepared for these to throw until then.
+// Engine factories: the single seam where the concrete ASR / LLM / TTS /
+// tool implementations are wired into the assistant pipeline.
 
-import '../asr/asr_engine.dart' show AsrEngine;
-import '../llm/llm_client.dart' show LlmClient;
-import '../tools/tool.dart' show ToolRegistry;
-import '../tts/tts_engine.dart' show TtsEngine;
-import 'session_sounds.dart' show SessionSounds;
+import '../asr/asr_engine.dart';
+import '../asr/hreimur_batch_asr.dart';
+import '../asr/ratatoskur_streaming_asr.dart';
+import '../common.dart';
+import '../llm/llm_client.dart';
+import '../llm/openai_responses_client.dart';
+import '../prefs.dart' show Prefs;
+import '../tools/default_tools.dart';
+import '../tools/tool.dart';
+import '../tts/elevenlabs_tts.dart';
+import '../tts/icespeak_tts.dart';
+import '../tts/tts_engine.dart';
+import '../util.dart' show readElevenLabsAPIKey, readOpenAIAPIKey;
+import 'embla_core_sounds.dart';
+import 'prompt.dart';
+import 'session_sounds.dart';
 
-const String _kUnimplemented = 'wired at integration';
-
-/// Creates the speech recognition engine selected in settings.
-/// [provider] is one of the ids in `kASRProviders` (`ratatoskur`, `hreimur`).
-/// [engine] is the server-side ASR engine for streaming ASR (e.g. `azure`).
 AsrEngine createAsrEngine({
   required String provider,
   required String serverURL,
@@ -44,42 +46,65 @@ AsrEngine createAsrEngine({
   String? clientType,
   String? clientVersion,
 }) {
-  throw UnimplementedError(_kUnimplemented);
+  switch (provider) {
+    case 'hreimur':
+      return HreimurBatchAsr(serverURL: serverURL, apiKey: apiKey);
+    case 'ratatoskur':
+    default:
+      return RatatoskurStreamingAsr(
+        serverURL: serverURL,
+        apiKey: apiKey,
+        engine: engine,
+        privateMode: privateMode,
+        clientID: clientID,
+        clientType: clientType,
+        clientVersion: clientVersion,
+      );
+  }
 }
 
-/// Creates the LLM client for [provider] (e.g. `openai`) and [model].
 LlmClient createLlmClient({
   required String provider,
   required String model,
   required String apiKey,
 }) {
-  throw UnimplementedError(_kUnimplemented);
+  switch (provider) {
+    case 'openai':
+    default:
+      // Anthropic adapter is a later phase; fall back to OpenAI.
+      return OpenAIResponsesClient(apiKey: apiKey, model: model);
+  }
 }
 
-/// Creates the speech synthesis engine for [provider]
-/// (one of the ids in `kTTSProviders`).
 TtsEngine createTtsEngine({
   required String provider,
   required String serverURL,
   required String apiKey,
 }) {
-  throw UnimplementedError(_kUnimplemented);
+  switch (provider) {
+    case 'elevenlabs':
+      final String voiceId = Prefs().stringForKey('elevenlabs_voice_id') ?? kDefaultElevenLabsVoiceID;
+      final String key = readElevenLabsAPIKey();
+      if (voiceId.isEmpty || key.isEmpty) {
+        dlog('ElevenLabs voice ID or API key missing, falling back to Icespeak');
+        return IcespeakTts(serverURL: serverURL, apiKey: apiKey);
+      }
+      return ElevenLabsTts(apiKey: key, voiceId: voiceId);
+    case 'icespeak':
+    default:
+      return IcespeakTts(serverURL: serverURL, apiKey: apiKey);
+  }
 }
 
-/// Creates the tool registry, platform-filtered.
 ToolRegistry createToolRegistry({
   required String serverURL,
   required String apiKey,
 }) {
-  throw UnimplementedError(_kUnimplemented);
+  return buildDefaultToolRegistry(serverURL: serverURL, apiKey: apiKey);
 }
 
-/// Creates the UI sound effects player (wraps `AudioPlayer` from embla_core).
-SessionSounds createSessionSounds() {
-  throw UnimplementedError(_kUnimplemented);
-}
+SessionSounds createSessionSounds() => EmblaCoreSessionSounds();
 
-/// Builds the Icelandic system prompt for a single turn.
 String createSystemPrompt({
   required DateTime now,
   List<double>? location,
@@ -87,12 +112,13 @@ String createSystemPrompt({
   required bool privateMode,
   required Iterable<String> toolNames,
 }) {
-  throw UnimplementedError(_kUnimplemented);
+  return buildSystemPrompt(
+    now: now,
+    location: location,
+    platform: platform,
+    privateMode: privateMode,
+    toolNames: toolNames,
+  );
 }
 
-/// Reads the API key for the LLM provider. Stand-in for the key reader that
-/// lives in `lib/util.dart` (e.g. `readOpenAIAPIKey()`), kept here so the UI
-/// does not have a compile-time dependency on it.
-String readLlmAPIKey() {
-  throw UnimplementedError(_kUnimplemented);
-}
+String readLlmAPIKey() => readOpenAIAPIKey();
