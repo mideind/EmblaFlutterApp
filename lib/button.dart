@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2026 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -24,8 +24,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import 'package:embla_core/embla_core.dart';
-
+import './assistant/assistant_session.dart' show AssistantSession, AssistantState, AssistantStateX;
 import './common.dart';
 import './theme.dart';
 import './animations.dart';
@@ -82,14 +81,14 @@ class Waveform {
 /// Widget for the session button
 class SessionButtonWidget extends StatelessWidget {
   final BuildContext context;
-  final EmblaSession? session;
+  final AssistantSession? session;
   final void Function() onTap;
 
   const SessionButtonWidget(this.context, this.session, this.onTap, {super.key});
 
   @override
   Widget build(BuildContext context) {
-    final bool active = session != null && session!.isActive();
+    final bool active = session?.isActive() == true;
     final double buttonSize = MediaQuery.sizeOf(context).width * kRestingButtonPropSize;
     final String buttonLabel = active ? kRestingButtonLabel : kExpandedButtonLabel;
 
@@ -115,7 +114,7 @@ class SessionButtonWidget extends StatelessWidget {
 
 /// Drawing code for the session button
 class SessionButtonPainter extends CustomPainter {
-  final EmblaSession? session;
+  final AssistantSession? session;
   late final BuildContext context;
 
   SessionButtonPainter(this.context, this.session);
@@ -227,14 +226,14 @@ class SessionButtonPainter extends CustomPainter {
     // We always draw the circles
     drawCircles(canvas, size);
 
-    var state = session?.state;
+    final AssistantState? state = session?.state;
 
     // Draw waveform bars during microphone input
-    if (state == EmblaSessionState.streaming || state == EmblaSessionState.starting) {
+    if (state?.showsWaveform == true) {
       drawWaveform(canvas, size);
     }
-    // Draw logo animation during answering phase
-    else if (state == EmblaSessionState.answering) {
+    // Draw logo animation while the assistant is working or speaking
+    else if (state?.showsAnimation == true) {
       drawLogoFrame(canvas, size, currFrame);
     }
     // Otherwise, draw non-animated Embla logo

@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2026 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -33,18 +33,23 @@ import 'package:open_settings/open_settings.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import 'package:adaptive_dialog/adaptive_dialog.dart';
 
-import 'package:embla_core/embla_core.dart';
+// Only the audio bits of embla_core are used here: UI sounds for the
+// situations the assistant session never gets to see (offline, no mic),
+// the microphone signal strength for the waveform, and the streaming ASR
+// token prefetch.
+import 'package:embla_core/embla_core.dart' show AudioPlayer, AudioRecorder, EmblaSessionConfig;
 
 import './animations.dart';
+import './assistant/assistant_session.dart';
+import './assistant/pipeline_factory.dart' show buildAssistantSessionConfig;
 import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
 import './theme.dart';
 import './button.dart';
-import './loc.dart' show LocationTracker;
+import './transcript_widget.dart' show TranscriptView, TextInputBar;
 import './util.dart';
-import './info.dart' show getClientType, getMarketingVersion, getUniqueDeviceIdentifier;
 
 // UI String constants
 const kIntroMessage = 'Segðu „Hæ, Embla“ eða smelltu á hnappinn til þess að tala við Emblu.';
@@ -56,6 +61,9 @@ const kNoMicPermissionMessage = 'Emblu vantar heimild til að nota hljóðnema.'
 // Hotword detection button accessibility labels
 const kDisableHotwordDetectionLabel = 'Slökkva á raddvirkjun';
 const kEnableHotwordDetectionLabel = 'Kveikja á raddvirkjun';
+
+// Style of the status line above the text input bar
+const kStatusTextStyle = TextStyle(fontSize: defaultFontSize * 0.8, fontStyle: FontStyle.italic);
 
 // Animation framerate
 const int msecPerFrame = (1000 ~/ 24);
@@ -72,14 +80,23 @@ class SessionRoute extends StatefulWidget {
 }
 
 class SessionRouteState extends State<SessionRoute> with SingleTickerProviderStateMixin {
-  EmblaSession? session;
-  late EmblaSessionConfig config;
+  AssistantSession? session;
+  AssistantSessionConfig? config;
   Timer? animationTimer;
-  String text = '';
-  String? imageURL;
+
+  // Status or error line shown above the text input bar
+  String statusText = '';
+  // Live (interim) transcript while the user is speaking
+  String? partialText;
+
   late StreamSubscription<FGBGType> appStateSubscription;
+  StreamSubscription<List<ConnectivityResult>>? connectivitySubscription;
   bool inBackground = false;
   bool inMenu = false;
+
+  // Owned by the route so that 24 fps rebuilds don't lose the typed text
+  final TextEditingController textController = TextEditingController();
+  final ScrollController transcriptScrollController = ScrollController();
 
   @protected
   @mustCallSuper
@@ -90,29 +107,21 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // This is needed to make animations work when hot reloading during development
     Animate.restartOnHotReload = (kDebugMode == true);
 
-    configureSession().then((c) {
-      config = c;
-      config.fetchToken();
-      session = EmblaSession(config);
-    });
-
-    text = introMsg();
+    prefetchStreamingASRToken();
 
     // Start observing app state (foreground, background)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
         dlog("App went into foreground");
         inBackground = false;
-        config.apiKey = readServerAPIKey();
-        config.fetchToken();
-        // App went into foreground
+        prefetchStreamingASRToken();
         await requestMicPermissionAndStartHotwordDetection();
       } else {
         // App went into background - FGBGType.background
         dlog("App went into background");
         inBackground = true;
-        if (session != null && session!.isActive()) {
-          await session!.stop();
+        if (session?.isActive() == true) {
+          await session!.cancel();
         } else {
           if (HotwordDetector().isActive()) {
             await HotwordDetector().stop();
@@ -125,16 +134,14 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Start observing connectivity changes. If we lose connectivity while
     // a session is active, stop the session and let the user know that
     // the device has gone offline.
-    Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> events) async {
-      var event = events.last;
+    connectivitySubscription =
+        Connectivity().onConnectivityChanged.listen((List<ConnectivityResult> events) async {
+      final ConnectivityResult event = events.last;
       dlog("Connectivity changed: $event");
-      if (event == ConnectivityResult.none && session != null && session!.isActive()) {
-        await session!.stop();
-        AudioPlayer().playSound(
-            'conn', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
-        setState(() {
-          msg(kNoInternetMessage);
-        });
+      if (event == ConnectivityResult.none && session?.isActive() == true) {
+        await session!.cancel();
+        playOfflineSound();
+        msg(kNoInternetMessage);
       }
     });
 
@@ -146,7 +153,10 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   @override
   void dispose() {
     appStateSubscription.cancel();
+    connectivitySubscription?.cancel();
     animationTimer?.cancel();
+    textController.dispose();
+    transcriptScrollController.dispose();
     super.dispose();
   }
 
@@ -155,19 +165,41 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     return Prefs().boolForKey('hotword_activation') ? kIntroMessage : kIntroNoHotwordMessage;
   }
 
+  /// Ask the server for a streaming ASR token ahead of time. This is cheap
+  /// and keeps the first streaming ASR session fast.
+  void prefetchStreamingASRToken() {
+    final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
+    final EmblaSessionConfig cfg = EmblaSessionConfig(server: server)..apiKey = readServerAPIKey();
+    cfg.fetchToken();
+  }
+
   // Start hotword detection after gaining microphone permission
   Future<void> requestMicPermissionAndStartHotwordDetection() async {
-    await Permission.microphone.isGranted.then((bool isGranted) async {
-      if (isGranted == false) {
-        dlog("Cannot start hotword detection, microphone permission refused");
-        playNoMic();
+    final bool isGranted = await Permission.microphone.isGranted;
+    if (isGranted == false) {
+      dlog("Cannot start hotword detection, microphone permission refused");
+      playNoMic();
+      if (sessionContext != null) {
         showMicPermissionErrorAlert(sessionContext!);
-      } else if (Prefs().boolForKey('hotword_activation') == true &&
-          inBackground == false &&
-          inMenu == false) {
-        await HotwordDetector().start(hotwordHandler);
       }
-    });
+      return;
+    }
+    await resumeHotwordIfAppropriate();
+  }
+
+  /// Resume hotword detection, if it is enabled and nothing else
+  /// is using the microphone.
+  Future<void> resumeHotwordIfAppropriate() async {
+    if (Prefs().boolForKey('hotword_activation') != true) {
+      return;
+    }
+    if (inBackground || inMenu) {
+      return;
+    }
+    if (session?.isActive() == true) {
+      return;
+    }
+    await HotwordDetector().start(hotwordHandler);
   }
 
   // Show alert dialog explaining that microphone permission has not been granted
@@ -194,16 +226,23 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         voiceSpeed: Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
   }
 
+  void playOfflineSound() {
+    AudioPlayer().playSound('conn', Prefs().stringForKey("voice_id") ?? kDefaultVoiceID, null,
+        Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed);
+  }
+
   Future<bool> isConnectedToInternet() async {
     final results = await Connectivity().checkConnectivity();
     return results.contains(ConnectivityResult.none) == false;
   }
 
-  // Set text field string (and optionally, an associated image)
-  void msg(String s, {String? imgURL}) {
+  // Set the status line above the text input bar
+  void msg(String s) {
+    if (mounted == false) {
+      return;
+    }
     setState(() {
-      text = s.sentenceCapitalized();
-      imageURL = imgURL;
+      statusText = s.sentenceCapitalized();
     });
   }
 
@@ -213,40 +252,53 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     start();
   }
 
-  /// Create session configuration
-  Future<EmblaSessionConfig> configureSession() async {
-    final String server = Prefs().stringForKey("ratatoskur_server") ?? kDefaultRatatoskurServer;
-    final cfg = EmblaSessionConfig(server: server);
-
-    // Settings
-    cfg.apiKey = readServerAPIKey();
-    cfg.voiceID = Prefs().stringForKey("voice_id") ?? kDefaultVoiceID;
-    cfg.voiceSpeed = Prefs().doubleForKey("voice_speed") ?? kDefaultVoiceSpeed;
-    cfg.privateMode = Prefs().boolForKey("privacy_mode");
-    cfg.queryServer = Prefs().stringForKey("query_server") ?? kDefaultQueryServer;
-    cfg.engine = (Prefs().stringForKey("asr_engine") ?? kDefaultASREngine).toLowerCase();
-    cfg.clientID = await getUniqueDeviceIdentifier();
-    cfg.clientType = await getClientType();
-    cfg.clientVersion = await getMarketingVersion();
-
-    // Handlers
-    cfg.onStartStreaming = handleStartStreaming;
-    cfg.onSpeechTextReceived = handleTextReceived;
-    cfg.onQueryAnswerReceived = handleQueryResponse;
-    // cfg.onStartAnswering;
+  /// Attach our handlers to a freshly built session configuration
+  void setSessionHandlers(AssistantSessionConfig cfg) {
+    cfg.onStateChanged = handleStateChanged;
+    cfg.onPartialTranscript = handlePartialTranscript;
+    cfg.onFinalTranscript = handleFinalTranscript;
+    cfg.onReply = handleReply;
+    cfg.onToolActivity = handleToolActivity;
+    cfg.onOpenURL = handleOpenURL;
     cfg.onDone = handleDone;
     cfg.onError = handleError;
-
-    cfg.getLocation = () {
-      return LocationTracker().location;
-    };
-
-    return cfg;
   }
 
-  /// Start session
-  void start() async {
-    if (session!.isActive()) {
+  /// Create a new session, with handlers attached, from current settings
+  Future<bool> prepareSession() async {
+    try {
+      final AssistantSessionConfig cfg = await buildAssistantSessionConfig();
+      if (mounted == false) {
+        return false;
+      }
+      setSessionHandlers(cfg);
+      config = cfg;
+      session = AssistantSession(cfg);
+      return true;
+    } catch (e) {
+      dlog('Error creating session: $e');
+      handleError(e.toString());
+      return false;
+    }
+  }
+
+  // Clear the transcript status lines and set off the animation timer
+  void startTicker() {
+    if (mounted == false) {
+      return;
+    }
+    setState(() {
+      statusText = '';
+      partialText = null;
+      Waveform().setDefaultSamples();
+      animationTimer?.cancel();
+      animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
+    });
+  }
+
+  /// Start a voice session
+  Future<void> start() async {
+    if (session?.isActive() == true) {
       dlog('Session start called during active pre-existing session!');
       return;
     }
@@ -254,145 +306,220 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Make sure we have microphone permission
     if (await Permission.microphone.isGranted == false) {
       playNoMic();
-      showMicPermissionErrorAlert(sessionContext!);
+      if (mounted && sessionContext != null) {
+        showMicPermissionErrorAlert(sessionContext!);
+      }
       return;
     }
 
     // Check for internet connectivity
     if (await isConnectedToInternet() == false) {
+      playOfflineSound();
       msg(kNoInternetMessage);
-      AudioPlayer().playSound(
-          'conn', Prefs().stringForKey("voice_id")!, null, Prefs().doubleForKey("voice_speed")!);
       return;
     }
 
     // OK, the conditions are right, let's start the session.
     await HotwordDetector().stop();
-    config = await configureSession();
-    session = EmblaSession(config);
+    if (await prepareSession() == false) {
+      return;
+    }
+    startTicker();
 
     try {
-      session!.start();
-
-      // Clear text and set off animation timer
-      setState(() {
-        text = '';
-        imageURL = null;
-        Waveform().setDefaultSamples();
-        animationTimer?.cancel();
-        animationTimer = Timer.periodic(durationPerFrame, (Timer t) => ticker());
-      });
+      await session!.startVoice();
     } catch (e) {
-      dlog('Error starting session: ${e.toString()}');
-      await session!.stop();
+      dlog('Error starting session: $e');
+      handleError(e.toString());
+    }
+  }
+
+  /// Submit a typed command instead of speaking it
+  Future<void> submitTyped(String text) async {
+    if (text.trim().isEmpty) {
+      return;
+    }
+    if (session?.isActive() == true) {
+      dlog('Text submitted during active pre-existing session!');
+      return;
+    }
+
+    // Check for internet connectivity
+    if (await isConnectedToInternet() == false) {
+      playOfflineSound();
+      msg(kNoInternetMessage);
+      return;
+    }
+
+    await HotwordDetector().stop();
+    if (await prepareSession() == false) {
+      return;
+    }
+    startTicker();
+
+    try {
+      await session!.submitText(text);
+    } catch (e) {
+      dlog('Error submitting text: $e');
+      handleError(e.toString());
     }
   }
 
   // User cancelled ongoing session by pressing the button
-  void cancel() {
+  Future<void> cancel() async {
     dlog('User initiated cancellation of session');
-    session!.cancel();
-    msg(introMsg());
+    await session?.cancel();
+    msg('');
   }
 
   // Session button pressed
   void toggle() async {
-    if (session!.isActive() == false) {
-      start();
-    } else {
-      cancel();
+    if (session?.isActive() != true) {
+      await start();
+      return;
     }
+    if (session!.state == AssistantState.listening && config?.asr.needsManualStop == true) {
+      // Batch ASR engines need to be told when the user is done speaking
+      await session!.finishListening();
+      return;
+    }
+    await cancel();
+  }
+
+  /// Start a new conversation, clearing the transcript
+  void newConversation() {
+    dlog('Starting new conversation');
+    Conversation.shared.reset();
+    if (mounted == false) {
+      return;
+    }
+    setState(() {
+      statusText = '';
+      partialText = null;
+    });
   }
 
   // Ticker to animate session button
   void ticker() {
-    if (session!.state == EmblaSessionState.answering) {
+    if (mounted == false) {
+      return;
+    }
+    final AssistantState? state = session?.state;
+    if (state == null) {
+      return;
+    }
+    if (state.showsWaveform) {
+      setState(() {
+        Waveform().addSample(AudioRecorder().signalStrength());
+      });
+    } else if (state.showsAnimation) {
       setState(() {
         currFrame += 1;
         if (currFrame >= animationFrames.length) {
           currFrame = 0; // Reset animation to first frame
         }
       });
-    } else if (session!.state == EmblaSessionState.streaming) {
-      setState(() {
-        Waveform().addSample(AudioRecorder().signalStrength());
-      });
     }
   }
 
-  /// Embla session handlers ///
+  /// Assistant session handlers ///
 
-  /// Session handshake completed and audio streaming has begun
-  void handleStartStreaming() {
-    // Trigger redraw
-    msg("");
+  // Session moved to a new stage. Triggers a redraw of the session button.
+  void handleStateChanged(AssistantState state) {
+    dlog("Session state: $state");
+    if (mounted == false) {
+      return;
+    }
+    setState(() {});
   }
 
-  // ASR text received
-  void handleTextReceived(String transcript, bool isFinal, Map<String, dynamic> data) {
-    if (isFinal) {
-      AudioPlayer().playSessionConfirm();
+  // Interim ASR transcript, shown live above the text input bar
+  void handlePartialTranscript(String partial) {
+    if (mounted == false) {
+      return;
     }
-    msg(transcript);
+    setState(() {
+      partialText = partial;
+    });
   }
 
-  // Process query response from query server
-  void handleQueryResponse(dynamic resp) async {
-    // if (resp == null || resp['error'] != null) {
-    //   dlog("Received bad query response: $resp");
-    //   return;
-    // }
-
-    // Update text field with response
-    final String q = "${resp['q']}".sentenceCapitalized();
-    final String a = "${resp['answer']}".sentenceCapitalized();
-    String t = "$q\n\n$a";
-    if (resp['source'] != null && resp['source'] != '') {
-      t += " (${resp['source']})";
+  // Final ASR transcript. The session adds it to the conversation and
+  // plays the confirmation sound, so we only clear the live line.
+  void handleFinalTranscript(String finalText) {
+    if (mounted == false) {
+      return;
     }
-    msg(t, imgURL: resp['image']);
+    setState(() {
+      partialText = null;
+    });
+  }
 
-    // Open URL handling
-    if (resp['open_url'] != null && resp['open_url'] != '') {
-      final String url = resp['open_url'];
-      bool validURL = Uri.tryParse(url)?.hasAbsolutePath ?? false;
-      if (validURL) {
-        await session!.stop();
-        dlog("Opening URL $url");
-        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-      } else {
-        dlog("Invalid open_url '$url' received from server.");
+  // The assistant's reply has been added to the conversation. The transcript
+  // view listens to the conversation itself, we only scroll it into view.
+  void handleReply(Turn reply) {
+    if (mounted == false) {
+      return;
+    }
+    scrollTranscriptToBottom();
+  }
+
+  // A tool started running. It is already shown in the transcript.
+  void handleToolActivity(String label) {
+    dlog("Tool activity: $label");
+    if (mounted == false) {
+      return;
+    }
+    scrollTranscriptToBottom();
+  }
+
+  // A tool asked us to open a URL
+  void handleOpenURL(Uri url) {
+    dlog("Opening URL $url");
+    launchUrl(url, mode: LaunchMode.externalApplication);
+  }
+
+  void scrollTranscriptToBottom() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted == false || transcriptScrollController.hasClients == false) {
+        return;
       }
-    }
+      transcriptScrollController.jumpTo(transcriptScrollController.position.maxScrollExtent);
+    });
   }
 
   // Session error handler
   void handleError(String errMsg) async {
-    var errStr = kDebugMode ? errMsg : kServerErrorMessage;
-    msg(errStr);
-
-    if (Prefs().boolForKey('hotword_activation') == true &&
-        inBackground == false &&
-        inMenu == false) {
-      await HotwordDetector().start(hotwordHandler);
+    final String errStr = kDebugMode ? errMsg : kServerErrorMessage;
+    animationTimer?.cancel();
+    if (mounted) {
+      setState(() {
+        partialText = null;
+        currFrame = kFullLogoAnimationFrame;
+        statusText = errStr.sentenceCapitalized();
+      });
     }
+    await resumeHotwordIfAppropriate();
   }
 
   // Session completion handler
   void handleDone() async {
-    setState(() {
-      animationTimer?.cancel();
-      currFrame = kFullLogoAnimationFrame;
-      if (text == '') {
-        text = introMsg();
-      }
-    });
-
-    if (Prefs().boolForKey('hotword_activation') == true &&
-        inBackground == false &&
-        inMenu == false) {
-      await HotwordDetector().start(hotwordHandler);
+    animationTimer?.cancel();
+    if (mounted) {
+      setState(() {
+        partialText = null;
+        currFrame = kFullLogoAnimationFrame;
+      });
     }
+    await resumeHotwordIfAppropriate();
+  }
+
+  /// The line shown above the text input bar: live transcript, if any,
+  /// otherwise a status or error message.
+  String? statusLine() {
+    if (partialText != null && partialText!.trim().isNotEmpty) {
+      return partialText!.sentenceCapitalized();
+    }
+    return statusText.isEmpty ? null : statusText;
   }
 
   @override
@@ -408,8 +535,8 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // Show menu route
     void pushMenu() async {
       inMenu = true;
-      if (session!.isActive()) {
-        await session!.stop();
+      if (session?.isActive() == true) {
+        await session!.cancel();
       }
       if (HotwordDetector().isActive()) {
         await HotwordDetector().stop();
@@ -426,16 +553,13 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
         // Make sure we rebuild main route when menu route is popped in navigation
         // stack. This ensures that the state of the hotword activation button is
         // updated to reflect potential changes in Settings, etc.
-        if (text == '') {
-          msg(introMsg());
+        if (mounted) {
+          setState(() {});
         }
-        setState(() {});
         // Re-enable wakelock when returning to main route
         await WakelockPlus.enable();
         // Resume hotword detection (if enabled)
-        if (Prefs().boolForKey('hotword_activation') == true) {
-          await HotwordDetector().start(hotwordHandler);
-        }
+        await resumeHotwordIfAppropriate();
       });
     }
 
@@ -444,18 +568,18 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       setState(() {
         final bool on = Prefs().boolForKey('hotword_activation');
         Prefs().setBoolForKey('hotword_activation', !on);
-        if (session!.state == EmblaSessionState.idle) {
-          msg(introMsg());
-        }
       });
       if (Prefs().boolForKey('hotword_activation')) {
-        if (session!.isActive() == false) {
+        if (session?.isActive() != true) {
           await HotwordDetector().start(hotwordHandler);
         }
       } else {
         await HotwordDetector().stop();
       }
     }
+
+    final String? status = statusLine();
+    final bool sessionActive = session?.isActive() == true;
 
     return Scaffold(
       // Top navigation bar
@@ -479,52 +603,30 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: <Widget>[
-          // Session text widget
-          Expanded(flex: 6, child: SessionTextAreaWidget(text, imageURL)),
+          // Conversation transcript
+          Expanded(
+              flex: 6,
+              child: TranscriptView(
+                  conversation: Conversation.shared,
+                  emptyMessage: introMsg(),
+                  scrollController: transcriptScrollController,
+                  onNewConversation: newConversation)),
+          // Status line (live transcript, offline or error message)
+          if (status != null)
+            Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 2),
+                child: SizedBox(
+                    width: double.infinity, child: Text(status, style: kStatusTextStyle))),
+          // Typed text input
+          TextInputBar(
+              controller: textController,
+              enabled: sessionActive == false,
+              onSubmit: submitTyped,
+              onNewConversation: newConversation),
           // Session button widget
           Expanded(flex: 8, child: SessionButtonWidget(context, session, toggle)),
         ],
       ),
     );
-  }
-}
-
-/// Widget for the top scrollable text area, which
-/// can also (optionally) display an image.
-class SessionTextAreaWidget extends StatelessWidget {
-  final String text;
-  final String? imageURL;
-
-  const SessionTextAreaWidget(this.text, this.imageURL, {super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> subWidgets = [
-      FractionallySizedBox(widthFactor: 1.0, child: SelectableText(text, style: sessionTextStyle))
-    ];
-    if (imageURL != null) {
-      subWidgets.add(Image.network(imageURL!)); // This is automatically cached for us
-    }
-    // Wrap the scroll view in a ShaderMask to create a linear gradient fade effect
-    return ShaderMask(
-        shaderCallback: (Rect rect) {
-          return const LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            // Purple color is not used concretely, only for the fractions of the vector
-            colors: [Colors.purple, Colors.transparent, Colors.transparent, Colors.purple],
-            stops: [0.0, 0.05, 0.95, 1.0],
-          ).createShader(rect);
-        },
-        blendMode: BlendMode.dstOut,
-        child: SingleChildScrollView(
-            scrollDirection: Axis.vertical,
-            clipBehavior: Clip.antiAlias,
-            padding: const EdgeInsets.only(left: 20, right: 20, top: 8, bottom: 0),
-            child: Padding(
-                padding: const EdgeInsets.only(bottom: 20),
-                child: Column(
-                  children: subWidgets,
-                ))));
   }
 }
