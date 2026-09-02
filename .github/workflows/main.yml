@@ -31,16 +31,13 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: stable
-          version: 3.22.0
       - name: Create dummy API keys
         run: |
-          touch keys/server.key
+          touch keys/server.key keys/openai.key keys/elevenlabs.key keys/anthropic.key
           bash keys/gen_keys.sh
           echo ${{ secrets.KEY_PROPERTIES }} >  android/key.properties
       - name: Install dependencies
         run: |
-          cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
-          cd ..; git clone https://github.com/mideind/flutter_snowboy; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
         # Android build runs the tests. No need to run the same tests again on iOS.
@@ -70,16 +67,12 @@ jobs:
         uses: flutter-actions/setup-flutter@v3
         with:
           channel: stable
-          version: 3.22.0
       - name: Create dummy API keys
         run: |
-          touch keys/gaccount.json
-          touch keys/query_api.key
+          touch keys/server.key keys/openai.key keys/elevenlabs.key keys/anthropic.key
           bash keys/gen_keys.sh
       - name: Install dependencies
         run: |
-          cd ..; git clone https://github.com/mideind/EmblaCore; mv EmblaCore embla_core; cd EmblaFlutterApp
-          cd ..; git clone https://github.com/mideind/flutter_snowboy; cd EmblaFlutterApp
           flutter config --no-analytics
           flutter pub get --suppress-analytics
           gem install xcpretty

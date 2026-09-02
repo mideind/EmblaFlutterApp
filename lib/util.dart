@@ -22,7 +22,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show serverAPIKey;
+import './keys.dart' show serverAPIKey, openAIAPIKey, elevenLabsAPIKey, anthropicAPIKey;
 
 /// String extensions
 extension StringExtension on String {
@@ -50,12 +50,26 @@ extension HexColor on Color {
   }
 }
 
-String _cachedServerAPIKey = '';
+// Cache of decoded API keys, keyed by their base64 representation
+final Map<String, String> _keyCache = {};
+
+/// Decode (and cache) a base64-encoded API key from the generated keys file.
+/// Returns an empty string if no key was baked into the build.
+String readKey(String b64) {
+  if (b64.isEmpty) {
+    return '';
+  }
+  return _keyCache[b64] ??= utf8.decode(base64.decode(b64)).trim();
+}
 
 /// Read and cache Ratatoskur server key
-String readServerAPIKey() {
-  if (_cachedServerAPIKey == '') {
-    _cachedServerAPIKey += utf8.decode(base64.decode(serverAPIKey)).trim();
-  }
-  return _cachedServerAPIKey;
-}
+String readServerAPIKey() => readKey(serverAPIKey);
+
+/// Read and cache OpenAI API key
+String readOpenAIAPIKey() => readKey(openAIAPIKey);
+
+/// Read and cache ElevenLabs API key
+String readElevenLabsAPIKey() => readKey(elevenLabsAPIKey);
+
+/// Read and cache Anthropic API key
+String readAnthropicAPIKey() => readKey(anthropicAPIKey);

@@ -32,6 +32,7 @@ import './common.dart';
 import './prefs.dart' show Prefs;
 import './voices.dart' show VoiceSelectionRoute;
 import './asr.dart' show ASRSelectionRoute;
+import './provider_selection.dart' show ProviderSelectionRoute, labelForValue;
 import './info.dart';
 import './theme.dart';
 import './util.dart' show readServerAPIKey;
@@ -49,6 +50,11 @@ const String kClearHistoryAlertText =
 const String kClearAllAlertText =
     'Þessi aðgerð hreinsar öll vistuð gögn sem tengjast þessu tæki. Gögnin eru '
     'einungis nýtt til þess að bæta svör.';
+
+const String kExternalProcessingNote =
+    'Texti fyrirspurna og svara er sendur til OpenAI til úrvinnslu, og til '
+    'ElevenLabs ef sú talgerving er valin. Í einkaham er staðsetningu aldrei '
+    'skeytt við fyrirspurnir.';
 
 /// Switch control widget associated with a boolean value in Prefs
 class SettingsSwitchWidget extends StatefulWidget {
@@ -492,7 +498,108 @@ class SettingsVoiceSelectionWidgetState extends State<SettingsVoiceSelectionWidg
   }
 }
 
-/// ASR engine selection widget
+/// Generic single-choice selection widget associated with a string value in
+/// Prefs. Presents a ProviderSelectionRoute with the given [options], which
+/// are [value, label] pairs.
+class SettingsProviderSelectionWidget extends StatefulWidget {
+  final String label;
+  final String prefKey;
+  final List<List<String>> options;
+  final String emptyLabel;
+  final void Function()? onChanged; // Callback
+
+  const SettingsProviderSelectionWidget({
+    super.key,
+    required this.label,
+    required this.prefKey,
+    required this.options,
+    this.emptyLabel = '(ekkert valið)',
+    this.onChanged,
+  });
+
+  @override
+  SettingsProviderSelectionWidgetState createState() => SettingsProviderSelectionWidgetState();
+}
+
+class SettingsProviderSelectionWidgetState extends State<SettingsProviderSelectionWidget> {
+  @override
+  Widget build(BuildContext context) {
+    final String? val = Prefs().stringForKey(widget.prefKey);
+    return ListTile(
+        title: Text(widget.label, style: menuTextStyle),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(val == null ? widget.emptyLabel : labelForValue(widget.options, val),
+                style: Theme.of(context).textTheme.bodySmall),
+            const Icon(Icons.arrow_right),
+          ],
+        ),
+        onTap: () {
+          Navigator.push(
+            context,
+            CupertinoPageRoute(
+              builder: (context) => ProviderSelectionRoute(
+                title: widget.label,
+                prefKey: widget.prefKey,
+                options: widget.options,
+              ),
+            ),
+          ).then((val) {
+            // Trigger re-render since the selection may have changed
+            setState(() {});
+            widget.onChanged?.call();
+          });
+        });
+  }
+}
+
+/// Text field associated with a string value in Prefs
+class SettingsTextFieldWidget extends StatefulWidget {
+  final String label;
+  final String prefKey;
+  final String hintText;
+
+  const SettingsTextFieldWidget(
+      {super.key, required this.label, required this.prefKey, this.hintText = ''});
+
+  @override
+  SettingsTextFieldWidgetState createState() => SettingsTextFieldWidgetState();
+}
+
+class SettingsTextFieldWidgetState extends State<SettingsTextFieldWidget> {
+  TextEditingController? textController;
+
+  @override
+  void initState() {
+    super.initState();
+    textController = TextEditingController(text: Prefs().stringForKey(widget.prefKey) ?? '');
+  }
+
+  @override
+  @protected
+  @mustCallSuper
+  void dispose() {
+    textController?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(widget.label, style: menuTextStyle),
+      subtitle: TextField(
+        controller: textController,
+        decoration: InputDecoration(hintText: widget.hintText),
+        onChanged: (String val) {
+          Prefs().setStringForKey(widget.prefKey, val.trim());
+        },
+      ),
+    );
+  }
+}
+
+/// ASR provider selection widget, presents the ASRSelectionRoute
 class SettingsASRSelectionWidget extends StatefulWidget {
   final String label;
 
@@ -510,7 +617,7 @@ class SettingsASRSelectionWidgetState extends State<SettingsASRSelectionWidget> 
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            Text(Prefs().stringForKey('asr_engine') ?? "(ekkert valið)",
+            Text(labelForValue(kASRProviders, Prefs().stringForKey('asr_provider')),
                 style: Theme.of(context).textTheme.bodySmall),
             const Icon(Icons.arrow_right),
           ],
@@ -522,7 +629,7 @@ class SettingsASRSelectionWidgetState extends State<SettingsASRSelectionWidget> 
               builder: (context) => const ASRSelectionRoute(),
             ),
           ).then((val) {
-            // Trigger re-render since ASR engine selection may have changed
+            // Trigger re-render since ASR provider selection may have changed
             setState(() {});
           });
         });
@@ -571,16 +678,37 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
         onChangeEnd: (double val) {
           _playVoiceSpeed();
         }),
+    // ASR provider selection
+    const SettingsASRSelectionWidget(label: 'Talgreining'),
+    // TTS provider selection
+    SettingsProviderSelectionWidget(
+        label: 'Talgerving',
+        prefKey: 'tts_provider',
+        options: kTTSProviders,
+        onChanged: refreshCallback),
+    // ElevenLabs voice ID, only relevant when ElevenLabs is the TTS provider
+    if (Prefs().stringForKey('tts_provider') == 'elevenlabs')
+      const SettingsTextFieldWidget(
+          label: 'ElevenLabs rödd', prefKey: 'elevenlabs_voice_id', hintText: 'Kenni raddar'),
+    // Note about text being sent to third-party services
+    const SettingsFullTextLabelWidget(kExternalProcessingNote),
     // Version
     SettingsAsyncLabelValueWidget('Útgáfa', getHumanFriendlyVersionString(),
         onTapRoute: const VersionRoute()),
   ];
 
-  // Only include query server selection widget in debug builds
+  // Only include these widgets in debug builds
   if (kDebugMode) {
     settingsWidgets.addAll([
-      // ASR engine selection
-      const SettingsASRSelectionWidget(label: 'Talgreining'),
+      divider,
+      // Language model selection
+      const SettingsTextFieldWidget(
+          label: 'Mállíkan', prefKey: 'llm_model', hintText: kDefaultOpenAIModel),
+      // Streaming ASR engine selection (Ratatoskur server-side engine)
+      SettingsProviderSelectionWidget(
+          label: 'Talgreiningarvél',
+          prefKey: 'asr_engine',
+          options: kASREngines.map((String e) => [e, e]).toList(growable: false)),
       divider,
       // Ratatoskur server selection
       const SettingsFullTextLabelWidget('Ratatoskur:'),
