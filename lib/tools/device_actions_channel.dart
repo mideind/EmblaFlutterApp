@@ -60,6 +60,15 @@ abstract class DeviceActions {
   /// Sets an alarm for an absolute local time.
   Future<void> setAlarm({required DateTime start, String? title});
 
+  /// Writes an event straight to the default calendar, with no editor UI.
+  Future<void> addCalendarEvent({
+    required String title,
+    required DateTime start,
+    required DateTime end,
+    String? notes,
+    String? location,
+  });
+
   /// Adds [items] to a named Reminders list, creating the list if needed.
   /// Returns how many were added.
   Future<int> addShopping({required List<String> items, required String list});
@@ -97,6 +106,23 @@ class DeviceActionsChannel implements DeviceActions {
     return _invoke('setAlarm', <String, dynamic>{
       'start': formatLocalISO8601(start),
       'title': title,
+    });
+  }
+
+  @override
+  Future<void> addCalendarEvent({
+    required String title,
+    required DateTime start,
+    required DateTime end,
+    String? notes,
+    String? location,
+  }) {
+    return _invoke('addEvent', <String, dynamic>{
+      'title': title,
+      'start': formatLocalISO8601(start),
+      'end': formatLocalISO8601(end),
+      'notes': notes,
+      'location': location,
     });
   }
 

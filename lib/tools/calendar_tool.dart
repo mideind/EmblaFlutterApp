@@ -25,6 +25,7 @@
 
 import 'package:add_2_calendar/add_2_calendar.dart' show Add2Calendar, Event;
 
+import 'device_actions_channel.dart';
 import 'tool.dart' show Tool, ToolContext, ToolResult;
 import 'tool_args.dart';
 
@@ -36,9 +37,19 @@ const Duration kDefaultEventDuration = Duration(hours: 1);
 
 class AddCalendarEventTool extends Tool {
   final AddToCalendar addToCalendar;
+  final DeviceActions? actions;
 
-  AddCalendarEventTool({AddToCalendar? addToCalendar})
-      : addToCalendar = addToCalendar ?? Add2Calendar.addEvent2Cal;
+  /// When true the event is written straight to the default calendar through
+  /// EventKit, with no editor to confirm. Hands-free is the point, but it also
+  /// means a misheard command lands in the calendar unreviewed. Android has no
+  /// equivalent silent path, so it keeps the editor.
+  final bool useNativeCalendar;
+
+  AddCalendarEventTool({
+    AddToCalendar? addToCalendar,
+    this.actions,
+    this.useNativeCalendar = false,
+  }) : addToCalendar = addToCalendar ?? Add2Calendar.addEvent2Cal;
 
   @override
   String get name => 'add_calendar_event';
@@ -77,6 +88,26 @@ class AddCalendarEventTool extends Tool {
     DateTime end = parseLocalDateTime(optionalString(args['end'])) ?? start.add(kDefaultEventDuration);
     if (!end.isAfter(start)) {
       end = start.add(kDefaultEventDuration);
+    }
+
+    if (useNativeCalendar && actions != null) {
+      try {
+        await actions!.addCalendarEvent(
+          title: title,
+          start: start,
+          end: end,
+          notes: optionalString(args['notes']),
+          location: optionalString(args['location']),
+        );
+      } on DeviceActionsException catch (e) {
+        return ToolResult.failure(e.message);
+      }
+      // Nothing was handed off to another app, so the model phrases the
+      // confirmation and can mention what it actually understood.
+      return ToolResult.success(<String, dynamic>{
+        'saved': true,
+        'summary': 'Viðburður „$title“ ${formatIcelandicRange(start, end)} vistaður í dagatali',
+      });
     }
 
     final Event event = Event(

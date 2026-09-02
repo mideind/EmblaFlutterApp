@@ -86,6 +86,24 @@ class FakeDeviceActions implements DeviceActions {
   }
 
   @override
+  Future<void> addCalendarEvent({
+    required String title,
+    required DateTime start,
+    required DateTime end,
+    String? notes,
+    String? location,
+  }) async {
+    _maybeThrow();
+    calls.add(('addCalendarEvent', <String, dynamic>{
+      'title': title,
+      'start': start,
+      'end': end,
+      'notes': notes,
+      'location': location,
+    }));
+  }
+
+  @override
   Future<int> addShopping({required List<String> items, required String list}) async {
     _maybeThrow();
     calls.add(('addShopping', <String, dynamic>{'items': items, 'list': list}));
@@ -420,6 +438,44 @@ void main() {
       expect(badStart.ok, isFalse);
       expect(badStart.data['error'], contains('start'));
       expect(cal.events, isEmpty);
+    });
+
+    test('iOS writes the event silently through EventKit, no editor', () async {
+      final FakeDeviceActions actions = FakeDeviceActions();
+      final FakeCalendar cal = FakeCalendar();
+      final ToolResult res = await AddCalendarEventTool(
+        addToCalendar: cal.add,
+        actions: actions,
+        useNativeCalendar: true,
+      ).call(<String, dynamic>{
+        'title': 'Fundur',
+        'start': '2026-09-03T09:00:00',
+        'end': null,
+        'notes': null,
+        'location': 'Kaffi Vest',
+      }, ctx);
+
+      expect(res.ok, isTrue);
+      expect(res.data['saved'], isTrue);
+      // The editor is never opened on this path.
+      expect(cal.events, isEmpty);
+      expect(actions.calls.single.$1, 'addCalendarEvent');
+      expect(actions.calls.single.$2['end'], DateTime(2026, 9, 3, 10));
+      expect(actions.calls.single.$2['location'], 'Kaffi Vest');
+      // Nothing was handed off, so the model phrases the confirmation.
+      expect(res.endsTurn, isFalse);
+      expect(res.speech, isNull);
+    });
+
+    test('a permission failure on the silent path is reported, not swallowed', () async {
+      final FakeDeviceActions actions = FakeDeviceActions()
+        ..error = const DeviceActionsException('permission_denied', 'Aðgangur ekki leyfður');
+      final ToolResult res = await AddCalendarEventTool(
+        addToCalendar: FakeCalendar().add,
+        actions: actions,
+        useNativeCalendar: true,
+      ).call(<String, dynamic>{'title': 'Fundur', 'start': '2026-09-03T09:00:00'}, ctx);
+      expect(res.ok, isFalse);
     });
 
     test('a dismissed calendar sheet is reported as not saved, not as an error', () async {

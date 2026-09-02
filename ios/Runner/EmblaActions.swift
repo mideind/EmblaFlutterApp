@@ -87,6 +87,19 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
             }
             scheduleAlarm(timer: nil, fixed: start, title: title ?? "Vekjari", result: result)
 
+        case "addEvent":
+            guard let title = title else {
+                return result(invalidArgs("vantar title"))
+            }
+            guard let start = parseDate(args["start"] as? String) else {
+                return result(invalidArgs("vantar eða ógilt start"))
+            }
+            let end = parseDate(args["end"] as? String) ?? start.addingTimeInterval(3600)
+            addEvent(title: title, start: start, end: end,
+                     notes: args["notes"] as? String,
+                     location: args["location"] as? String,
+                     result: result)
+
         case "addShopping":
             let items = (args["items"] as? [Any])?.compactMap { $0 as? String }
                 .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
@@ -137,6 +150,53 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
                                         details: error.localizedDescription))
                 }
             }
+        }
+    }
+
+    /// Writes an event straight to the default calendar. Write-only access
+    /// means the app can add events without being able to read the user's
+    /// calendar, so the prompt is the narrow one.
+    private static func addEvent(title: String, start: Date, end: Date,
+                                 notes: String?, location: String?,
+                                 result: @escaping FlutterResult) {
+        let store = EKEventStore()
+        requestCalendarWriteAccess(store) { granted, error in
+            DispatchQueue.main.async {
+                guard granted else {
+                    return result(FlutterError(code: "permission_denied",
+                                               message: "Aðgangur að dagatali ekki leyfður",
+                                               details: error?.localizedDescription))
+                }
+                guard let calendar = store.defaultCalendarForNewEvents else {
+                    return result(FlutterError(code: "save_failed",
+                                               message: "Fann ekkert sjálfgefið dagatal",
+                                               details: nil))
+                }
+                let event = EKEvent(eventStore: store)
+                event.title = title
+                event.startDate = start
+                event.endDate = end
+                event.calendar = calendar
+                if let notes = notes, !notes.isEmpty { event.notes = notes }
+                if let location = location, !location.isEmpty { event.location = location }
+                do {
+                    try store.save(event, span: .thisEvent, commit: true)
+                    result(["calendar": calendar.title])
+                } catch {
+                    result(FlutterError(code: "save_failed",
+                                        message: "Ekki tókst að vista viðburðinn",
+                                        details: error.localizedDescription))
+                }
+            }
+        }
+    }
+
+    private static func requestCalendarWriteAccess(_ store: EKEventStore,
+                                                   _ completion: @escaping (Bool, Error?) -> Void) {
+        if #available(iOS 17.0, *) {
+            store.requestWriteOnlyAccessToEvents(completion: completion)
+        } else {
+            store.requestAccess(to: .event, completion: completion)
         }
     }
 

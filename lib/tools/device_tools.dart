@@ -57,7 +57,11 @@ List<Tool> buildDeviceTools({
   final AddToCalendar calendar = addToCalendar ?? Add2Calendar.addEvent2Cal;
 
   return <Tool>[
-    AddCalendarEventTool(addToCalendar: calendar),
+    AddCalendarEventTool(
+      addToCalendar: calendar,
+      actions: deviceActions,
+      useNativeCalendar: isIOS,
+    ),
     AddReminderTool(
       actions: deviceActions,
       addToCalendar: calendar,
