@@ -44,10 +44,21 @@ file at the following path within the repository:
 
 ```keys/server.key```
 
-Then run the following script:
+The LLM-based pipeline additionally uses third-party API keys. These files are all
+optional; a missing file simply means the corresponding service is unavailable:
+
+| File | Used for |
+|---|---|
+| `keys/openai.key` | OpenAI, the default language model provider |
+| `keys/elevenlabs.key` | ElevenLabs speech synthesis (optional TTS provider) |
+| `keys/anthropic.key` | Anthropic, alternative language model provider |
+
+See [`keys/README.md`](keys/README.md) for details. Then run the following script to
+generate `lib/keys.dart` (neither the key files nor the generated file are checked
+into version control):
 
 ```bash
-bash keys/gen_keysfile.sh
+bash keys/gen_keys.sh
 ```
 
 You should now be able to build and run the app:
@@ -57,6 +68,24 @@ flutter run -d [your_device_id]
 ```
 
 This should launch the app in development mode on your device.
+
+## Settings
+
+In addition to the standard settings (voice activation, location sharing, private
+mode, voice and speech speed), the app lets you choose which services the
+assistant pipeline uses:
+
+* **Talgreining** — speech recognition provider: streaming ASR via Ratatoskur
+  (default) or batch ASR via Hreimur.
+* **Talgerving** — speech synthesis provider: Icespeak via Ratatoskur (default) or
+  ElevenLabs. When ElevenLabs is selected, an **ElevenLabs rödd** field specifies
+  the voice ID to use.
+* **Mállíkan** (debug builds only) — the language model identifier passed to the
+  LLM provider.
+
+Note that query and answer text is sent to the language model provider (and to
+ElevenLabs when that speech synthesis provider is selected) for processing.
+Private mode (*einkahamur*) keeps location out of requests.
 
 ## Debug build scripts
 

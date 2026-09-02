@@ -1,6 +1,6 @@
 /*
  * This file is part of the Embla Flutter app
- * Copyright (c) 2020-2023 Miðeind ehf. <mideind@mideind.is>
+ * Copyright (c) 2020-2026 Miðeind ehf. <mideind@mideind.is>
  * Original author: Sveinbjorn Thordarson
  *
  * This program is free software: you can redistribute it and/or modify
@@ -16,48 +16,24 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-// ASR engine selection route. Subroute of SettingsRoute.
+// ASR provider selection route. Subroute of SettingsRoute.
 
 import 'package:flutter/material.dart';
 
-import './prefs.dart' show Prefs;
 import './common.dart';
-import './theme.dart';
+import './provider_selection.dart' show ProviderSelectionRoute;
 
-/// Build a list view of available ASR engines
-/// TODO: This is a copy of the voice selection route. Refactor.
-Widget _buildASREngineList(BuildContext context) {
-  return ListView.builder(
-    itemCount: kASREngines.length,
-    itemBuilder: (BuildContext context, int index) {
-      return ListTile(
-        title: Text(kASREngines[index]),
-        leading: IconButton(
-            onPressed: null,
-            icon: ImageIcon(
-              img4theme('waveform', context),
-              color: color4ctx(context),
-            )),
-        trailing: (kASREngines[index] == Prefs().stringForKey("asr_engine"))
-            ? Icon(
-                Icons.done,
-                color: color4ctx(context),
-              ) // Checkmark
-            : null,
-        onTap: () {
-          Prefs().setStringForKey("asr_engine", kASREngines[index]);
-          Navigator.pop(context);
-        },
-      );
-    },
-  );
-}
-
+/// Speech recognition provider selection, i.e. streaming ASR via
+/// Ratatoskur vs. batch ASR via Hreimur.
 class ASRSelectionRoute extends StatelessWidget {
   const ASRSelectionRoute({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: standardAppBar, body: _buildASREngineList(context));
+    return const ProviderSelectionRoute(
+      title: 'Talgreining',
+      prefKey: 'asr_provider',
+      options: kASRProviders,
+    );
   }
 }

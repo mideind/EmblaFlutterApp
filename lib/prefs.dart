@@ -90,6 +90,12 @@ class Prefs {
     setStringForKey('query_server', kDefaultQueryServer);
     setStringForKey('ratatoskur_server', kDefaultRatatoskurServer);
     setStringForKey('asr_engine', kDefaultASREngine);
+    // Embla 2.0 pipeline defaults
+    setStringForKey('asr_provider', kDefaultASRProvider);
+    setStringForKey('tts_provider', kDefaultTTSProvider);
+    setStringForKey('llm_provider', kDefaultLLMProvider);
+    setStringForKey('llm_model', kDefaultOpenAIModel);
+    setStringForKey('elevenlabs_voice_id', kDefaultElevenLabsVoiceID);
   }
 
   /// Generate a human-readable string representation

@@ -80,6 +80,19 @@ void main() async {
   if (Prefs().stringForKey("query_server") == null) {
     Prefs().setStringForKey("query_server", kDefaultQueryServer);
   }
+  // Backfill Embla 2.0 pipeline prefs for users upgrading from older versions
+  const Map<String, String> newStringPrefDefaults = {
+    "asr_provider": kDefaultASRProvider,
+    "tts_provider": kDefaultTTSProvider,
+    "llm_provider": kDefaultLLMProvider,
+    "llm_model": kDefaultOpenAIModel,
+    "elevenlabs_voice_id": kDefaultElevenLabsVoiceID,
+  };
+  newStringPrefDefaults.forEach((String key, String defaultValue) {
+    if (Prefs().stringForKey(key) == null) {
+      Prefs().setStringForKey(key, defaultValue);
+    }
+  });
 
   dlog("Shared prefs: ${Prefs()}");
 
