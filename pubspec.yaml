@@ -43,6 +43,8 @@ dependencies:
     git:
       url: https://github.com/mideind/EmblaCoreFlutter.git
       ref: master
+  add_2_calendar: ^3.1.1
+  android_intent_plus: ^6.1.0
 
 dev_dependencies:
   flutter_test:
