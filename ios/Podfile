@@ -35,9 +35,10 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
     target.build_configurations.each do |config|
-      config.build_settings['SWIFT_VERSION'] = '5.0'  # required by simple_permission
+      config.build_settings['SWIFT_VERSION'] = '5.0'
       config.build_settings['ENABLE_BITCODE'] = 'NO'
-      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '12.0'
+      # Must not be lower than the app target (see platform :ios above).
+      config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.0'
       config.build_settings['ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES'] = 'Yes'
       config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= [
         '$(inherited)',
