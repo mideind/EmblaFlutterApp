@@ -27,6 +27,7 @@ import '../llm/llm_client.dart';
 import '../llm/openai_responses_client.dart';
 import '../prefs.dart' show Prefs;
 import '../tools/default_tools.dart';
+import '../tools/device_tools.dart';
 import '../tools/tool.dart';
 import '../tts/elevenlabs_tts.dart';
 import '../tts/icespeak_tts.dart';
@@ -100,7 +101,10 @@ ToolRegistry createToolRegistry({
   required String serverURL,
   required String apiKey,
 }) {
-  return buildDefaultToolRegistry(serverURL: serverURL, apiKey: apiKey);
+  final ToolRegistry registry = buildDefaultToolRegistry(serverURL: serverURL, apiKey: apiKey);
+  // Device actions (calendar, reminders, timers/alarms, message drafts)
+  registry.registerAll(buildDeviceTools());
+  return registry;
 }
 
 SessionSounds createSessionSounds() => const EmblaCoreSessionSounds();
