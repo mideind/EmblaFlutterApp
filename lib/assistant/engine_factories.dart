@@ -23,6 +23,7 @@ import '../asr/asr_engine.dart';
 import '../asr/hreimur_batch_asr.dart';
 import '../common.dart';
 import '../llm/llm_client.dart';
+import '../llm/gemini_client.dart';
 import '../llm/openai_responses_client.dart';
 import '../prefs.dart' show Prefs;
 import '../tools/default_tools.dart';
@@ -31,7 +32,7 @@ import '../tools/tool.dart';
 import '../tts/elevenlabs_tts.dart';
 import '../tts/icespeak_tts.dart';
 import '../tts/tts_engine.dart';
-import '../util.dart' show readElevenLabsAPIKey, readOpenAIAPIKey;
+import '../util.dart' show readElevenLabsAPIKey, readGeminiAPIKey, readOpenAIAPIKey;
 import 'embla_core_sounds.dart';
 import 'prompt.dart';
 import 'session_sounds.dart';
@@ -52,6 +53,18 @@ LlmClient createLlmClient({
   required String apiKey,
 }) {
   switch (provider) {
+    case 'gemini':
+      final String key = readGeminiAPIKey();
+      if (key.isEmpty) {
+        // Silently answering with the wrong provider is how the ElevenLabs
+        // fallback hid a bug for a whole session, so say which key is missing.
+        dlog('LLM: falling back to OpenAI, Gemini API key is missing');
+        return OpenAIResponsesClient(apiKey: apiKey, model: kDefaultOpenAIModel);
+      }
+      final String geminiModel =
+          model.startsWith('gemini') ? model : kDefaultGeminiModel;
+      dlog('LLM: Gemini, model $geminiModel');
+      return GeminiClient(apiKey: key, model: geminiModel);
     case 'openai':
     default:
       // Anthropic adapter is a later phase; fall back to OpenAI.

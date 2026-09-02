@@ -13,6 +13,7 @@ KEYS=(
     "openAIAPIKey:openai.key"
     "elevenLabsAPIKey:elevenlabs.key"
     "anthropicAPIKey:anthropic.key"
+    "geminiAPIKey:gemini.key"
 )
 
 OUTFILE="../lib/keys.dart"

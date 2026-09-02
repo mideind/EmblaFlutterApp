@@ -664,6 +664,11 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
       // Language model selection
       const SettingsTextFieldWidget(
           label: 'Mállíkan', prefKey: 'llm_model', hintText: kDefaultOpenAIModel),
+      SettingsProviderSelectionWidget(
+          label: 'Mállíkansveita',
+          prefKey: 'llm_provider',
+          options: kLLMProviders,
+          onChanged: refreshCallback),
       divider,
       // Ratatoskur server selection
       const SettingsFullTextLabelWidget('Ratatoskur:'),

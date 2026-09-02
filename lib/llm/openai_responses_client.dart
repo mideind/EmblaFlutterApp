@@ -155,6 +155,11 @@ class OpenAIResponsesClient implements LlmClient {
     final List<Map<String, dynamic>> items = [];
     for (final ChatMessage m in messages) {
       switch (m) {
+        case UserAudioMessage():
+          // The Responses API takes text; audio input is the fused Gemini
+          // path's job. Failing loudly beats silently dropping the turn.
+          throw const LlmException(
+              'OpenAI tekur ekki við hljóði; notaðu Gemini fyrir sameinaða hljóðleið');
         case UserMessage(:final text):
           items.add({'role': 'user', 'content': text});
         case AssistantMessage(:final text, :final toolCalls):

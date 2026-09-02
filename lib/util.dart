@@ -22,7 +22,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show serverAPIKey, openAIAPIKey, elevenLabsAPIKey, anthropicAPIKey;
+import './keys.dart' show serverAPIKey, openAIAPIKey, elevenLabsAPIKey, anthropicAPIKey, geminiAPIKey;
 
 /// String extensions
 extension StringExtension on String {
@@ -73,6 +73,9 @@ String readElevenLabsAPIKey() => readKey(elevenLabsAPIKey);
 
 /// Read and cache Anthropic API key
 String readAnthropicAPIKey() => readKey(anthropicAPIKey);
+
+/// Read and cache Gemini API key
+String readGeminiAPIKey() => readKey(geminiAPIKey);
 
 /// Transliterate Icelandic characters to ASCII.
 ///

@@ -25,6 +25,8 @@
 
 import 'dart:convert' show jsonEncode;
 
+import 'dart:typed_data' show Uint8List;
+
 /// A message in the LLM-facing conversation history.
 sealed class ChatMessage {
   const ChatMessage();
@@ -34,6 +36,15 @@ sealed class ChatMessage {
 class UserMessage extends ChatMessage {
   final String text;
   const UserMessage(this.text);
+}
+
+/// Recorded speech handed to the model directly, instead of being transcribed
+/// first. Only providers that accept audio input can consume this; the others
+/// throw, since silently dropping the user's turn would be worse.
+class UserAudioMessage extends ChatMessage {
+  final Uint8List bytes;
+  final String mimeType;
+  const UserAudioMessage(this.bytes, {this.mimeType = 'audio/wav'});
 }
 
 /// A reply from the model: free text and/or tool calls.
@@ -103,7 +114,12 @@ class LlmResponse {
 
   /// Provider-specific usage info, for debug logging only.
   final Map<String, dynamic>? usage;
-  const LlmResponse({this.text, this.toolCalls = const [], this.usage});
+
+  /// What the model heard, when the turn was sent as audio rather than text.
+  /// Null for text turns and for providers that do not transcribe.
+  final String? transcript;
+  const LlmResponse(
+      {this.text, this.toolCalls = const [], this.usage, this.transcript});
 
   bool get hasToolCalls => toolCalls.isNotEmpty;
 }

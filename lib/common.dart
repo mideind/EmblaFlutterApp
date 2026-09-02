@@ -82,9 +82,16 @@ const List<List<String>> kTTSProviders = [
   ['elevenlabs', 'ElevenLabs'],
 ];
 const String kDefaultLLMProvider = 'openai';
+const List<List<String>> kLLMProviders = [
+  ['openai', 'OpenAI'],
+  ['gemini', 'Gemini (hljóð beint)'],
+];
 
 const String kOpenAIResponsesURL = 'https://api.openai.com/v1/responses';
 const String kDefaultOpenAIModel = 'gpt-5.6-luna';
+// Gemini takes the recorded audio directly, replacing the separate ASR step.
+const String kGeminiBaseURL = 'https://generativelanguage.googleapis.com/v1beta/models';
+const String kDefaultGeminiModel = 'gemini-2.5-flash';
 
 const String kElevenLabsTTSURL = 'https://api.elevenlabs.io/v1/text-to-speech';
 const String kElevenLabsModel = 'eleven_v3';
