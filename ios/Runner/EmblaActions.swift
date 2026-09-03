@@ -63,6 +63,43 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
         EmblaLaunchClock.markLaunch()
     }
 
+    /// Asks Dart to run one voice turn and waits for the result.
+    ///
+    /// Mirrors the embla-2.0 contract: always a dictionary with `action` of
+    /// `done` or `none`, never a thrown error, so a shortcut can branch on it
+    /// instead of dying mid-run.
+    static func runVoiceTurn() async -> [String: Any] {
+        guard let channel = channel else {
+            return ["action": "none", "reason": "Embla er ekki tilbúin"]
+        }
+        return await withCheckedContinuation { (cont: CheckedContinuation<[String: Any], Never>) in
+            let resumed = ResumeGuard()
+            DispatchQueue.main.async {
+                channel.invokeMethod("runVoiceTurn", arguments: nil) { value in
+                    guard resumed.claim() else { return }
+                    if let dict = value as? [String: Any] {
+                        cont.resume(returning: dict)
+                    } else {
+                        cont.resume(returning: ["action": "none", "reason": "Ekkert svar frá Emblu"])
+                    }
+                }
+            }
+        }
+    }
+
+    /// Resuming a continuation twice traps, and a channel reply is not
+    /// guaranteed to arrive exactly once.
+    final class ResumeGuard {
+        private var done = false
+        private let l = NSLock()
+        func claim() -> Bool {
+            l.lock(); defer { l.unlock() }
+            if done { return false }
+            done = true
+            return true
+        }
+    }
+
     // MARK: - Dispatch
 
     private static func handle(_ call: FlutterMethodCall, _ result: @escaping FlutterResult) {
@@ -519,6 +556,36 @@ import AppIntents
 
 /// Spike, not the finished feature: it reports the cold-start cost rather than
 /// recording anything. App Intents need iOS 16; the app targets 15.
+/// The Shortcuts entry point. Assign a shortcut running this to the Action
+/// Button, or put it on the home screen.
+@available(iOS 16.0, *)
+struct InterpretCommandIntent: AppIntent {
+    static var title: LocalizedStringResource = "Túlka raddskipun"
+    static var description = IntentDescription(
+        "Ræsir Emblu, hlustar á raddskipun og skilar niðurstöðunni.")
+
+    // Microphone capture cannot start from the background, so the app has to
+    // come forward. That also means the device must be unlocked.
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
+        guard await EmblaLaunchClock.waitForReady() != nil else {
+            return Self.reply(["action": "none", "reason": "Embla ræsti ekki í tæka tíð"])
+        }
+        return Self.reply(await EmblaActions.runVoiceTurn())
+    }
+
+    /// Shortcuts gets the whole dictionary as JSON to branch on, and the user
+    /// hears the one line that matters.
+    private static func reply(_ dict: [String: Any])
+        -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
+        let spoken = (dict["speech"] as? String) ?? (dict["reason"] as? String) ?? ""
+        let json = (try? JSONSerialization.data(withJSONObject: dict))
+            .flatMap { String(data: $0, encoding: .utf8) } ?? "{\"action\":\"none\"}"
+        return .result(value: json, dialog: IntentDialog(stringLiteral: spoken))
+    }
+}
+
 @available(iOS 16.0, *)
 struct EmblaLaunchProbeIntent: AppIntent {
     static var title: LocalizedStringResource = "Mæla ræsingu Emblu"

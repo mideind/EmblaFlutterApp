@@ -46,6 +46,7 @@ import './common.dart';
 import './hotword.dart' show HotwordDetector;
 import './menu.dart' show MenuRoute;
 import './prefs.dart' show Prefs;
+import './shortcuts_bridge.dart' show ShortcutsBridge;
 import './theme.dart';
 import './button.dart';
 import './transcript_widget.dart' show TranscriptView, TextInputBar;
@@ -107,6 +108,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
     // This is needed to make animations work when hot reloading during development
     Animate.restartOnHotReload = (kDebugMode == true);
 
+    // Let a Shortcut drive one turn and read the result.
+    ShortcutsBridge().register(start);
+
     // Start observing app state (foreground, background)
     appStateSubscription = FGBGEvents.stream.listen((event) async {
       if (event == FGBGType.foreground) {
@@ -149,6 +153,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   @mustCallSuper
   @override
   void dispose() {
+    ShortcutsBridge().unregister();
     appStateSubscription.cancel();
     connectivitySubscription?.cancel();
     animationTimer?.cancel();
@@ -446,6 +451,11 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   // The assistant's reply has been added to the conversation. The transcript
   // view listens to the conversation itself, we only scroll it into view.
   void handleReply(Turn reply) {
+    // Report before the mounted check: a shortcut-driven turn is still waiting
+    // on an answer even if the route has gone away.
+    // Turn keeps only the display text; the speech/display split lives in
+    // AssistantReply and is not retained past delivery.
+    ShortcutsBridge().reportReply(speech: reply.text, display: reply.text);
     if (mounted == false) {
       return;
     }
@@ -479,6 +489,7 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
   // Session error handler
   void handleError(String errMsg) async {
     final String errStr = kDebugMode ? errMsg : kServerErrorMessage;
+    ShortcutsBridge().reportNone(errStr);
     animationTimer?.cancel();
     if (mounted) {
       setState(() {
@@ -492,6 +503,9 @@ class SessionRouteState extends State<SessionRoute> with SingleTickerProviderSta
 
   // Session completion handler
   void handleDone() async {
+    // Only fires if nothing was answered: reportReply already settled the
+    // turn otherwise, and settling twice is a no-op.
+    ShortcutsBridge().reportNone('Ekkert svar');
     animationTimer?.cancel();
     if (mounted) {
       setState(() {
