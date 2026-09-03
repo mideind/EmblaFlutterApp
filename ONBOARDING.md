@@ -88,8 +88,8 @@ and that feature degrades rather than breaking the build:
 ```bash
 printf '%s' 'YOUR_MIDEIND_KEY' > keys/server.key      # required: ASR + TTS
 printf '%s' 'YOUR_OPENAI_KEY' > keys/openai.key       # required: the LLM
+printf '%s' 'YOUR_ELEVENLABS_KEY' > keys/elevenlabs.key  # default voice
 printf '%s' 'YOUR_GEMINI_KEY' > keys/gemini.key       # optional: fused audio
-printf '%s' 'YOUR_ELEVENLABS_KEY' > keys/elevenlabs.key  # optional: alt TTS
 bash keys/gen_keys.sh
 flutter pub get
 ```
