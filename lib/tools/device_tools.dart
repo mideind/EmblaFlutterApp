@@ -26,6 +26,7 @@ import '../prefs.dart' show Prefs;
 import 'alarm_tool.dart';
 import 'calendar_tool.dart';
 import 'device_actions_channel.dart';
+import 'device_contacts.dart';
 import 'directions_tool.dart';
 import 'message_tool.dart';
 import 'reminder_tool.dart';
@@ -44,6 +45,7 @@ List<Tool> buildDeviceTools({
   AddToCalendar? addToCalendar,
   LaunchAndroidIntent? launchIntent,
   LaunchUri? launchUri,
+  LookupContacts? lookupContacts,
 }) {
   final TargetPlatform target = platform ?? defaultTargetPlatform;
   final bool isIOS = target == TargetPlatform.iOS;
@@ -77,7 +79,11 @@ List<Tool> buildDeviceTools({
       useNativeAlarms: isIOS,
       launchIntent: launchIntent,
     ),
-    DraftMessageTool(isIOS: isIOS, launchUri: launchUri),
+    DraftMessageTool(
+      isIOS: isIOS,
+      launchUri: launchUri,
+      lookupContacts: lookupContacts ?? deviceContacts,
+    ),
     // Android hands alarms to the clock app via an intent, so there is nothing
     // to read back or cancel; only offer these where AlarmKit owns them.
     // Apple Maps cannot auto-start navigation from a URL, so Android (and

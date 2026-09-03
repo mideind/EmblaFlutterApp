@@ -27,6 +27,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:embla/tools/alarm_tool.dart';
 import 'package:embla/tools/calendar_tool.dart';
+import 'package:embla/tools/contact_match.dart';
 import 'package:embla/tools/device_actions_channel.dart';
 import 'package:embla/tools/directions_tool.dart';
 import 'package:embla/tools/device_tools.dart';
@@ -219,6 +220,96 @@ void main() {
       expect(res.ok, isTrue);
       expect(res.data['cancelled'], 0);
       expect(res.data['summary'], contains('Enginn virkur'));
+    });
+
+    test('draft_message resolves a declined recipient name to a number', () async {
+      final List<Uri> opened = <Uri>[];
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async {
+          opened.add(u);
+          return true;
+        },
+        lookupContacts: () async => const [
+          ContactCandidate(displayName: 'Kári Steinn', phoneNumbers: ['5551234']),
+          ContactCandidate(displayName: 'Jón Jónsson', phoneNumbers: ['5559999']),
+        ],
+      );
+
+      final ToolResult res = await tool.call(<String, dynamic>{
+        'recipient_name': 'Kára Steini',
+        'phone_number': null,
+        'body': 'ég kem heim eftir hálftíma',
+      }, ctx);
+
+      expect(res.ok, isTrue);
+      expect(opened.single.toString(), contains('5551234'));
+      expect(res.speech, contains('Kári Steinn'));
+    });
+
+    test('draft_message asks which contact rather than guessing', () async {
+      final List<Uri> opened = <Uri>[];
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async {
+          opened.add(u);
+          return true;
+        },
+        lookupContacts: () async => const [
+          ContactCandidate(displayName: 'Jón Jónsson', phoneNumbers: ['111']),
+          ContactCandidate(displayName: 'Jón Sigurðsson', phoneNumbers: ['222']),
+        ],
+      );
+
+      final ToolResult res = await tool.call(<String, dynamic>{
+        'recipient_name': 'Jóni',
+        'phone_number': null,
+        'body': 'hæ',
+      }, ctx);
+
+      expect(res.data['ambiguous'], isTrue);
+      expect(res.data['candidates'], hasLength(2));
+      // The composer must not open, or the user could send to the wrong person.
+      expect(opened, isEmpty);
+      expect(res.endsTurn, isFalse);
+    });
+
+    test('an explicit phone number skips contact lookup entirely', () async {
+      var looked = false;
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async => true,
+        lookupContacts: () async {
+          looked = true;
+          return const [];
+        },
+      );
+      await tool.call(<String, dynamic>{
+        'recipient_name': 'Kára',
+        'phone_number': '555-1234',
+        'body': 'hæ',
+      }, ctx);
+      expect(looked, isFalse);
+    });
+
+    test('no matching contact still opens the composer', () async {
+      final List<Uri> opened = <Uri>[];
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async {
+          opened.add(u);
+          return true;
+        },
+        lookupContacts: () async => const [ContactCandidate(displayName: 'Jón Jónsson')],
+      );
+      final ToolResult res = await tool.call(<String, dynamic>{
+        'recipient_name': 'Kára',
+        'phone_number': null,
+        'body': 'hæ',
+      }, ctx);
+      // Degrades to today's behaviour: the user picks the recipient.
+      expect(res.ok, isTrue);
+      expect(opened, hasLength(1));
     });
 
     test('get_directions picks the map URL its platform can actually navigate', () async {

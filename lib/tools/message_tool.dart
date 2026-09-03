@@ -25,6 +25,7 @@
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
 import 'tool.dart' show Tool, ToolContext, ToolResult;
+import 'contact_match.dart';
 import 'tool_args.dart';
 
 /// Injectable side effect: opens [uri] in the appropriate app.
@@ -58,11 +59,19 @@ String? sanitizePhoneNumber(String? raw) {
   return international ? '+$digits' : digits;
 }
 
+/// Injectable side effect: the device address book. Returns an empty list when
+/// permission is refused, so a missing permission degrades to "no recipient
+/// found" rather than an error.
+typedef LookupContacts = Future<List<ContactCandidate>> Function();
+
 class DraftMessageTool extends Tool {
   final LaunchUri launchUri;
   final bool isIOS;
 
-  DraftMessageTool({required this.isIOS, LaunchUri? launchUri})
+  /// Null when contact lookup is unavailable on this platform or build.
+  final LookupContacts? lookupContacts;
+
+  DraftMessageTool({required this.isIOS, LaunchUri? launchUri, this.lookupContacts})
       : launchUri = launchUri ?? defaultLaunchUri;
 
   @override
@@ -95,7 +104,32 @@ class DraftMessageTool extends Tool {
       return ToolResult.failure('Vantar texta skilaboðanna (body).');
     }
     final String? name = optionalString(args['recipient_name']);
-    final String? number = sanitizePhoneNumber(optionalString(args['phone_number']));
+    String? number = sanitizePhoneNumber(optionalString(args['phone_number']));
+
+    // A spoken name arrives declined ("Kára Steini") while the address book
+    // stores the nominative ("Kári Steinn"), so resolve it rather than handing
+    // the composer a name it cannot use as a recipient.
+    String? resolvedName;
+    if (number == null && name != null && lookupContacts != null) {
+      final ContactMatch match = matchContact(name, await lookupContacts!());
+      switch (match) {
+        case ContactResolved(:final contact):
+          resolvedName = contact.displayName;
+          number = sanitizePhoneNumber(
+              contact.phoneNumbers.isEmpty ? null : contact.phoneNumbers.first);
+        case ContactAmbiguous(:final candidates):
+          // Sending to the wrong person is worse than one more question, so
+          // stop here without opening the composer.
+          return ToolResult.success(<String, dynamic>{
+            'ambiguous': true,
+            'candidates': candidates.map((ContactCandidate c) => c.displayName).toList(),
+            'summary': 'Fleiri en einn tengiliður passar við „$name“. Spurðu notandann '
+                'hvern hann meinar og nefndu valkostina.',
+          });
+        case ContactNotFound():
+          break;
+      }
+    }
 
     final Uri uri = buildSmsUri(phoneNumber: number, body: body, isIOS: isIOS);
     final bool opened = await launchUri(uri);
@@ -106,8 +140,12 @@ class DraftMessageTool extends Tool {
     final String summary;
     final String speech;
     if (number != null) {
-      summary = 'Skilaboð til $number opnuð í skilaboðaforriti';
-      speech = 'Ég opnaði skilaboðin, þú getur sent þau.';
+      summary = resolvedName == null
+          ? 'Skilaboð til $number opnuð í skilaboðaforriti'
+          : 'Skilaboð til $resolvedName ($number) opnuð í skilaboðaforriti';
+      speech = resolvedName == null
+          ? 'Ég opnaði skilaboðin, þú getur sent þau.'
+          : 'Ég opnaði skilaboð til $resolvedName, þú getur sent þau.';
     } else if (name != null) {
       summary = 'Skilaboð opnuð í skilaboðaforriti, en ég hef ekki símanúmer '
           '$name svo notandinn þarf að velja viðtakanda sjálfur';
