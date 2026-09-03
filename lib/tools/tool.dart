@@ -90,6 +90,12 @@ class ToolResult {
   String toJson() => jsonEncode(data);
 }
 
+/// Injectable side effect: offers an action to a waiting Shortcut, which then
+/// carries it out itself. Returns false when none is waiting.
+typedef ShortcutHandoff = bool Function(Map<String, dynamic> result);
+
+bool noShortcutHandoff(Map<String, dynamic> result) => false;
+
 abstract class Tool {
   String get name;
 

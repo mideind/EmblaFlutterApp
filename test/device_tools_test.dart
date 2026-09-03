@@ -185,6 +185,48 @@ void main() {
       expect(ios, shared.union(<String>{'add_shopping', 'list_alarms', 'cancel_alarms'}));
     });
 
+    test('set_timer hands the timer to a waiting shortcut instead of AlarmKit', () async {
+      final FakeDeviceActions actions = FakeDeviceActions();
+      Map<String, dynamic>? handed;
+      final ToolResult res = await SetTimerTool(
+        actions: actions,
+        useNativeAlarms: true,
+        handOff: (Map<String, dynamic> r) {
+          handed = r;
+          return true;
+        },
+      ).call(<String, dynamic>{'seconds': 300, 'title': 'pasta'}, ctx);
+      expect(handed, {'action': 'set_timer', 'seconds': 300, 'title': 'pasta'});
+      // The Clock app timer is the one the user can see and cancel, so no
+      // invisible AlarmKit twin.
+      expect(actions.calls, isEmpty);
+      expect(res.endsTurn, isTrue);
+      expect(res.speech, contains('teljara'));
+    });
+
+    test('set_alarm hands a time of day to a waiting shortcut', () async {
+      final FakeDeviceActions actions = FakeDeviceActions();
+      Map<String, dynamic>? handed;
+      final ToolResult res = await SetAlarmTool(
+        actions: actions,
+        useNativeAlarms: true,
+        handOff: (Map<String, dynamic> r) {
+          handed = r;
+          return true;
+        },
+      ).call(<String, dynamic>{'time': '7:30', 'title': null, 'date': null}, ctx);
+      expect(handed, {'action': 'set_alarm', 'time': '07:30', 'title': kDefaultAlarmTitle});
+      expect(actions.calls, isEmpty);
+      expect(res.endsTurn, isTrue);
+    });
+
+    test('with no shortcut waiting timers still go through AlarmKit', () async {
+      final FakeDeviceActions actions = FakeDeviceActions();
+      await SetTimerTool(actions: actions, useNativeAlarms: true, handOff: (_) => false)
+          .call(<String, dynamic>{'seconds': 60, 'title': null}, ctx);
+      expect(actions.calls.single.$1, 'setTimer');
+    });
+
     test('list_alarms reports what is pending', () async {
       final FakeDeviceActions actions = FakeDeviceActions()
         ..pending = [
@@ -259,8 +301,8 @@ void main() {
         lookupContacts: () async => const [
           ContactCandidate(displayName: 'Kári Steinn', phoneNumbers: ['5551234']),
         ],
-        sendViaShortcut: ({String? recipientName, String? phoneNumber, required String body}) {
-          handed = {'recipient_name': recipientName, 'phone_number': phoneNumber, 'body': body};
+        handOff: (Map<String, dynamic> result) {
+          handed = result;
           return true;
         },
       );
@@ -277,6 +319,7 @@ void main() {
       // The shortcut's Find Contacts wants the nominative, and the number
       // lets it skip the lookup altogether.
       expect(handed, {
+        'action': 'send_message',
         'recipient_name': 'Kári Steinn',
         'phone_number': '5551234',
         'body': 'ég kem heim eftir hálftíma',
@@ -292,7 +335,7 @@ void main() {
           opened.add(u);
           return true;
         },
-        sendViaShortcut: ({String? recipientName, String? phoneNumber, required String body}) => true,
+        handOff: (Map<String, dynamic> result) => true,
       );
       await tool.call(<String, dynamic>{'recipient_name': null, 'phone_number': null, 'body': 'hæ'}, ctx);
       // A shortcut cannot send to nobody, so the user picks the recipient.

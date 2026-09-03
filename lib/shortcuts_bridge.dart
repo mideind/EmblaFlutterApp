@@ -100,20 +100,16 @@ class ShortcutsBridge {
     });
   }
 
-  /// Hands a message to the shortcut, which sends it with its own Send Message
-  /// action: the app cannot send SMS itself. Mirrors the embla-2.0 contract.
-  /// Returns false when no shortcut is waiting, so the caller falls back to
-  /// opening the composer.
-  bool reportSendMessage({String? recipientName, String? phoneNumber, required String body}) {
+  /// Hands an action to the shortcut to carry out with its own actions, for
+  /// what the app cannot do or cannot do visibly: send an SMS, or put a timer
+  /// or alarm in the Clock app. [result] carries the `action` name and its
+  /// fields, mirroring the embla-2.0 contract. Returns false when no shortcut
+  /// is waiting, so the caller does the in-app version instead.
+  bool handOff(Map<String, dynamic> result) {
     if (!isAwaitingTurn) {
       return false;
     }
-    _settle(<String, dynamic>{
-      'action': 'send_message',
-      'recipient_name': recipientName,
-      if (phoneNumber != null) 'phone_number': phoneNumber,
-      'body': body,
-    });
+    _settle(result);
     return true;
   }
 

@@ -74,17 +74,19 @@ List<Tool> buildDeviceTools({
       actions: deviceActions,
       useNativeAlarms: isIOS,
       launchIntent: launchIntent,
+      handOff: ShortcutsBridge().handOff,
     ),
     SetAlarmTool(
       actions: deviceActions,
       useNativeAlarms: isIOS,
       launchIntent: launchIntent,
+      handOff: ShortcutsBridge().handOff,
     ),
     DraftMessageTool(
       isIOS: isIOS,
       launchUri: launchUri,
       lookupContacts: lookupContacts ?? deviceContacts,
-      sendViaShortcut: ShortcutsBridge().reportSendMessage,
+      handOff: ShortcutsBridge().handOff,
     ),
     // Android hands alarms to the clock app via an intent, so there is nothing
     // to read back or cancel; only offer these where AlarmKit owns them.

@@ -75,8 +75,12 @@ void main() {
     ShortcutsBridge().register(() async {
       scheduleMicrotask(() {
         expect(
-            ShortcutsBridge().reportSendMessage(
-                recipientName: 'María', phoneNumber: '5551234', body: 'ég kem heim'),
+            ShortcutsBridge().handOff(<String, dynamic>{
+              'action': 'send_message',
+              'recipient_name': 'María',
+              'phone_number': '5551234',
+              'body': 'ég kem heim',
+            }),
             isTrue);
         // The session still reports the spoken confirmation afterwards; the
         // shortcut must keep the message, not the confirmation.
@@ -93,7 +97,7 @@ void main() {
 
   test('with no shortcut waiting a message is not taken', () async {
     ShortcutsBridge().register(() async {});
-    expect(ShortcutsBridge().reportSendMessage(recipientName: 'María', body: 'hæ'), isFalse);
+    expect(ShortcutsBridge().handOff(<String, dynamic>{'action': 'send_message', 'body': 'hæ'}), isFalse);
   });
 
   test('only the first report settles the turn', () async {

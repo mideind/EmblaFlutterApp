@@ -65,14 +65,28 @@ written against the Swift app keep working: always a dictionary with `action` of
 `done` or `none`, and failures are `none` with a `reason` rather than a thrown
 error. Nothing on that path throws.
 
-`draft_message` follows your `send_message` split: in a shortcut-driven turn the
-tool does not open the composer but settles the turn with
-`{"action": "send_message", "recipient_name": ..., "phone_number": ..., "body": ...}`
-and the shortcut's Send Message action does the sending. `recipient_name` is the
-nominative from Contacts when the lookup matched, so your Find Contacts step
-works as before; `phone_number` is present when known and can be used as the
-recipient directly. Outside a shortcut (hotword, button) the composer opens
-prefilled, since nothing else on iOS can send an SMS.
+Three tools hand their action back to a waiting shortcut instead of doing it
+in-app, extending your `send_message` split:
+
+```json
+{"action": "send_message", "recipient_name": "Kári Steinn", "phone_number": "5551234", "body": "ég kem heim"}
+{"action": "set_timer", "seconds": 300, "title": "pasta"}
+{"action": "set_alarm", "time": "07:30", "title": "Vekjari"}
+```
+
+- `send_message`: the shortcut's Send Message action sends. `recipient_name` is
+  the nominative from Contacts when the lookup matched, so your Find Contacts
+  step works as before; `phone_number` is present when known and can be used
+  as the recipient directly.
+- `set_timer` / `set_alarm`: use Clock's **Start Timer** and **Create Alarm**
+  actions. AlarmKit alarms scheduled by the app never appear in the Clock app,
+  so the user cannot cancel them there; Clock's own do. `date` is included on
+  `set_alarm` when the user named a day, but Create Alarm only takes a time of
+  day, so it fires the next time that hour comes round.
+
+Outside a shortcut (hotword, button) the in-app versions run: the composer
+opens prefilled, and timers/alarms go through AlarmKit, where `list_alarms` and
+`cancel_alarms` can still manage them.
 
 `openAppWhenRun` is true for the same reason as yours — mic capture cannot start
 in the background, which also means the device must be unlocked.

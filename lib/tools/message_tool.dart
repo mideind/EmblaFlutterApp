@@ -25,7 +25,7 @@
 
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
-import 'tool.dart' show Tool, ToolContext, ToolResult;
+import 'tool.dart' show ShortcutHandoff, Tool, ToolContext, ToolResult, noShortcutHandoff;
 import 'contact_match.dart';
 import 'tool_args.dart';
 
@@ -65,25 +65,18 @@ String? sanitizePhoneNumber(String? raw) {
 /// found" rather than an error.
 typedef LookupContacts = Future<List<ContactCandidate>> Function();
 
-/// Injectable side effect: offers the message to a waiting Shortcut. Returns
-/// false when none is waiting.
-typedef SendViaShortcut = bool Function(
-    {String? recipientName, String? phoneNumber, required String body});
-
-bool noShortcut({String? recipientName, String? phoneNumber, required String body}) => false;
-
 class DraftMessageTool extends Tool {
   final LaunchUri launchUri;
   final bool isIOS;
 
   /// Null when contact lookup is unavailable on this platform or build.
   final LookupContacts? lookupContacts;
-  final SendViaShortcut sendViaShortcut;
+  final ShortcutHandoff handOff;
 
   DraftMessageTool(
-      {required this.isIOS, LaunchUri? launchUri, this.lookupContacts, SendViaShortcut? sendViaShortcut})
+      {required this.isIOS, LaunchUri? launchUri, this.lookupContacts, ShortcutHandoff? handOff})
       : launchUri = launchUri ?? defaultLaunchUri,
-        sendViaShortcut = sendViaShortcut ?? noShortcut;
+        handOff = handOff ?? noShortcutHandoff;
 
   @override
   String get name => 'draft_message';
@@ -144,7 +137,12 @@ class DraftMessageTool extends Tool {
     // A shortcut-driven turn: the shortcut sends, the app only confirms.
     final String? recipient = resolvedName ?? name;
     if ((recipient != null || number != null) &&
-        sendViaShortcut(recipientName: recipient, phoneNumber: number, body: body)) {
+        handOff(<String, dynamic>{
+          'action': 'send_message',
+          'recipient_name': recipient,
+          if (number != null) 'phone_number': number,
+          'body': body,
+        })) {
       final String who = recipient ?? number!;
       return ToolResult.success(<String, dynamic>{'summary': 'Skilaboð til $who afhent flýtileið til sendingar'},
           endsTurn: true, speech: 'Ég sendi skilaboð til $who.');

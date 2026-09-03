@@ -22,11 +22,16 @@
 // installed. SKIP_UI keeps the user in Embla.
 // iOS: AlarmKit through our own method channel, which requires iOS 26. On
 // older versions the channel returns `unsupported` and we say so.
+//
+// AlarmKit alarms belong to the app and never show in Apple's Clock app, so
+// the user cannot cancel them there. In a shortcut-driven turn the tool hands
+// the timer/alarm to the shortcut instead, whose Clock actions ("Start Timer",
+// "Create Alarm") make one the user can see and cancel in Clock.
 
 import 'package:android_intent_plus/android_intent.dart' show AndroidIntent;
 
 import 'device_actions_channel.dart' show DeviceActions, DeviceActionsException;
-import 'tool.dart' show Tool, ToolContext, ToolResult;
+import 'tool.dart' show ShortcutHandoff, Tool, ToolContext, ToolResult, noShortcutHandoff;
 import 'tool_args.dart';
 
 /// Injectable side effect: fires an Android intent.
@@ -62,12 +67,15 @@ class SetTimerTool extends Tool {
 
   /// True on iOS, where timers go through AlarmKit instead of an intent.
   final bool useNativeAlarms;
+  final ShortcutHandoff handOff;
 
   SetTimerTool({
     required this.actions,
     required this.useNativeAlarms,
     LaunchAndroidIntent? launchIntent,
-  }) : launchIntent = launchIntent ?? defaultLaunchAndroidIntent;
+    ShortcutHandoff? handOff,
+  })  : launchIntent = launchIntent ?? defaultLaunchAndroidIntent,
+        handOff = handOff ?? noShortcutHandoff;
 
   @override
   String get name => 'set_timer';
@@ -98,6 +106,12 @@ class SetTimerTool extends Tool {
       return ToolResult.failure('Teljarinn má ekki vera lengri en einn dagur.');
     }
     final String title = optionalString(args['title']) ?? kDefaultTimerTitle;
+    final String duration = formatIcelandicDuration(seconds);
+
+    if (handOff(<String, dynamic>{'action': 'set_timer', 'seconds': seconds, 'title': title})) {
+      return ToolResult.success(<String, dynamic>{'summary': 'Teljari ($duration) afhentur flýtileið'},
+          endsTurn: true, speech: 'Ég stillti teljara á $duration.');
+    }
 
     if (useNativeAlarms) {
       try {
@@ -116,7 +130,7 @@ class SetTimerTool extends Tool {
       ));
     }
     return ToolResult.success(<String, dynamic>{
-      'summary': 'Teljari ræstur: ${formatIcelandicDuration(seconds)}',
+      'summary': 'Teljari ræstur: $duration',
     });
   }
 }
@@ -127,12 +141,15 @@ class SetAlarmTool extends Tool {
 
   /// True on iOS, where alarms go through AlarmKit instead of an intent.
   final bool useNativeAlarms;
+  final ShortcutHandoff handOff;
 
   SetAlarmTool({
     required this.actions,
     required this.useNativeAlarms,
     LaunchAndroidIntent? launchIntent,
-  }) : launchIntent = launchIntent ?? defaultLaunchAndroidIntent;
+    ShortcutHandoff? handOff,
+  })  : launchIntent = launchIntent ?? defaultLaunchAndroidIntent,
+        handOff = handOff ?? noShortcutHandoff;
 
   @override
   String get name => 'set_alarm';
@@ -177,6 +194,20 @@ class SetAlarmTool extends Tool {
     if (day == null && !start.isAfter(ctx.now)) {
       start = start.add(const Duration(days: 1));
     }
+    final String when = formatIcelandicDateTime(start);
+
+    // Clock's Create Alarm takes a time of day, so a dated alarm still fires
+    // the next time that hour comes round; `date` is passed for a shortcut
+    // that wants to do better.
+    if (handOff(<String, dynamic>{
+      'action': 'set_alarm',
+      'time': '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}',
+      if (rawDate != null) 'date': rawDate,
+      'title': title,
+    })) {
+      return ToolResult.success(<String, dynamic>{'summary': 'Vekjari ($when) afhentur flýtileið'},
+          endsTurn: true, speech: 'Ég setti vekjara á $when.');
+    }
 
     if (useNativeAlarms) {
       try {
@@ -198,7 +229,7 @@ class SetAlarmTool extends Tool {
       ));
     }
     return ToolResult.success(<String, dynamic>{
-      'summary': 'Vekjari settur á ${formatIcelandicDateTime(start)}',
+      'summary': 'Vekjari settur á $when',
     });
   }
 }
