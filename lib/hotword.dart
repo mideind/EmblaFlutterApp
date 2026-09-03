@@ -67,6 +67,13 @@ class HotwordDetector {
         applyFrontend: kHotwordApplyFrontend);
   }
 
+  /// A start that has been asked for but has not taken the microphone yet.
+  ///
+  /// [isActive] can only report on a recorder that is already running, so
+  /// without this a [stop] issued during startup is a no-op and the pending
+  /// start then grabs the microphone out from under whatever stopped it.
+  Future<void>? _pendingStart;
+
   /// Start hotword detection.
   Future<void> start(void Function() hwHandler) async {
     if (isActive() == true) {
@@ -81,6 +88,18 @@ class HotwordDetector {
       return;
     }
 
+    final Future<void> starting = _start(hwHandler);
+    _pendingStart = starting;
+    try {
+      await starting;
+    } finally {
+      if (identical(_pendingStart, starting)) {
+        _pendingStart = null;
+      }
+    }
+  }
+
+  Future<void> _start(void Function() hwHandler) async {
     dlog('Starting hotword detection');
     detector.hotwordHandler = hwHandler;
 
@@ -92,8 +111,20 @@ class HotwordDetector {
     });
   }
 
-  /// Stop hotword detection
+  /// Stop hotword detection.
+  ///
+  /// Waits out a start that is still in flight, so that callers which stop
+  /// hotword in order to take the microphone themselves actually get it.
   Future<void> stop() async {
+    final Future<void>? starting = _pendingStart;
+    if (starting != null) {
+      dlog('Waiting for in-flight hotword start before stopping');
+      try {
+        await starting;
+      } catch (e) {
+        dlog('In-flight hotword start failed: $e');
+      }
+    }
     if (isActive() == false) {
       return;
     }

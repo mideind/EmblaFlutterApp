@@ -568,21 +568,22 @@ struct InterpretCommandIntent: AppIntent {
     // come forward. That also means the device must be unlocked.
     static var openAppWhenRun: Bool = true
 
-    func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
         guard await EmblaLaunchClock.waitForReady() != nil else {
             return Self.reply(["action": "none", "reason": "Embla ræsti ekki í tæka tíð"])
         }
         return Self.reply(await EmblaActions.runVoiceTurn())
     }
 
-    /// Shortcuts gets the whole dictionary as JSON to branch on, and the user
-    /// hears the one line that matters.
+    /// Returns the dictionary as JSON for the shortcut to branch on, and
+    /// nothing else. No dialog: the app is in the foreground and has already
+    /// spoken the answer and shown it in the transcript, so a confirmation
+    /// sheet on top of that is one dismissal for no information.
     private static func reply(_ dict: [String: Any])
-        -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
-        let spoken = (dict["speech"] as? String) ?? (dict["reason"] as? String) ?? ""
+        -> some IntentResult & ReturnsValue<String> {
         let json = (try? JSONSerialization.data(withJSONObject: dict))
             .flatMap { String(data: $0, encoding: .utf8) } ?? "{\"action\":\"none\"}"
-        return .result(value: json, dialog: IntentDialog(stringLiteral: spoken))
+        return .result(value: json)
     }
 }
 
