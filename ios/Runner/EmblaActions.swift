@@ -60,6 +60,7 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
             handle(call, result)
         }
         self.channel = channel
+        EmblaLaunchClock.markLaunch()
     }
 
     // MARK: - Dispatch
@@ -86,6 +87,10 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
                 return result(invalidArgs("vantar eða ógilt start"))
             }
             scheduleAlarm(timer: nil, fixed: start, title: title ?? "Vekjari", result: result)
+
+        case "signalReady":
+            EmblaLaunchClock.markReady()
+            result(nil)
 
         case "addEvent":
             guard let title = title else {
@@ -439,3 +444,95 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
                      details: nil)
     }
 }
+
+// MARK: - Launch timing and the Shortcuts entry point
+//
+// The Action Button runs a Shortcut, the Shortcut runs this intent, and the
+// intent has to bring the app to the foreground because microphone capture
+// cannot start from the background. In a native app that is instant. Here it
+// also has to boot a Flutter engine and run main() before anything can
+// listen, so the question this measures is whether the wait is short enough
+// for the feature to be worth building.
+@objc public class EmblaLaunchClock: NSObject {
+    private static var launchedAt: Date?
+    private static var readyAt: Date?
+    private static var waiters: [(TimeInterval) -> Void] = []
+    private static let lock = NSLock()
+
+    /// Called from the plugin registrar, i.e. at app launch.
+    @objc public static func markLaunch() {
+        lock.lock(); defer { lock.unlock() }
+        if launchedAt == nil { launchedAt = Date() }
+    }
+
+    /// Called from Dart once the app is actually able to take a command.
+    @objc public static func markReady() {
+        var toCall: [(TimeInterval) -> Void] = []
+        lock.lock()
+        if readyAt == nil { readyAt = Date() }
+        let elapsed = readyAt!.timeIntervalSince(launchedAt ?? readyAt!)
+        toCall = waiters
+        waiters.removeAll()
+        lock.unlock()
+        for w in toCall { w(elapsed) }
+    }
+
+    /// Seconds from app launch to Dart being ready. Resolves immediately when
+    /// the app was already running, which is the warm case.
+    static func waitForReady(timeout: TimeInterval = 10) async -> TimeInterval? {
+        lock.lock()
+        if let readyAt = readyAt {
+            let elapsed = readyAt.timeIntervalSince(launchedAt ?? readyAt)
+            lock.unlock()
+            return elapsed
+        }
+        lock.unlock()
+
+        return await withCheckedContinuation { (cont: CheckedContinuation<TimeInterval?, Never>) in
+            let resumed = ResumeOnce()
+            lock.lock()
+            waiters.append { elapsed in
+                if resumed.claim() { cont.resume(returning: elapsed) }
+            }
+            lock.unlock()
+            DispatchQueue.global().asyncAfter(deadline: .now() + timeout) {
+                if resumed.claim() { cont.resume(returning: nil) }
+            }
+        }
+    }
+
+    /// Guards against a continuation being resumed twice, which traps.
+    private final class ResumeOnce {
+        private var done = false
+        private let l = NSLock()
+        func claim() -> Bool {
+            l.lock(); defer { l.unlock() }
+            if done { return false }
+            done = true
+            return true
+        }
+    }
+}
+
+#if canImport(AppIntents)
+import AppIntents
+
+/// Spike, not the finished feature: it reports the cold-start cost rather than
+/// recording anything. App Intents need iOS 16; the app targets 15.
+@available(iOS 16.0, *)
+struct EmblaLaunchProbeIntent: AppIntent {
+    static var title: LocalizedStringResource = "Mæla ræsingu Emblu"
+    static var description = IntentDescription(
+        "Þróunartól: mælir hve lengi Embla er að verða tilbúin eftir ræsingu.")
+
+    // Microphone capture cannot start from the background.
+    static var openAppWhenRun: Bool = true
+
+    func perform() async throws -> some IntentResult & ReturnsValue<String> {
+        guard let seconds = await EmblaLaunchClock.waitForReady() else {
+            return .result(value: "Embla varð ekki tilbúin innan 10 s")
+        }
+        return .result(value: String(format: "Tilbúin á %.2f s", seconds))
+    }
+}
+#endif

@@ -168,3 +168,17 @@ class DeviceActionsChannel implements DeviceActions {
     }
   }
 }
+
+/// Tells the native side that the app can now take a command.
+///
+/// Deliberately not part of [DeviceActions]: this is launch timing for the
+/// Shortcuts entry point, not a device action, and the tools have no business
+/// knowing about it. Failures are ignored — the app works fine whether or not
+/// anything is listening.
+Future<void> signalAppReady() async {
+  try {
+    await const MethodChannel(kDeviceActionsChannelName).invokeMethod<void>('signalReady');
+  } catch (e) {
+    dlog('signalReady failed (harmless): $e');
+  }
+}

@@ -34,6 +34,7 @@ import './prefs.dart' show Prefs;
 import './session.dart' show SessionRoute;
 import './theme.dart' show lightThemeData, darkThemeData;
 import './hotword.dart' show HotwordDetector;
+import './tools/device_actions_channel.dart' show signalAppReady;
 import './web.dart' show preloadHTMLDocuments;
 // import './util.dart' show readServerAPIKey;
 
@@ -134,6 +135,11 @@ void main() async {
 
   // Launch app
   runApp(const EmblaApp());
+
+  // Tell the native side once there is actually a UI able to take a command.
+  // The Shortcuts entry point waits on this, so it has to be the real ready
+  // moment rather than the end of main().
+  WidgetsBinding.instance.addPostFrameCallback((_) => signalAppReady());
 }
 
 class EmblaApp extends StatelessWidget {
