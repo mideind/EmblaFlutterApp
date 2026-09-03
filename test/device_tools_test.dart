@@ -247,6 +247,58 @@ void main() {
       expect(res.speech, contains('Kári Steinn'));
     });
 
+    test('draft_message hands the message to a waiting shortcut instead of the composer', () async {
+      final List<Uri> opened = <Uri>[];
+      Map<String, dynamic>? handed;
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async {
+          opened.add(u);
+          return true;
+        },
+        lookupContacts: () async => const [
+          ContactCandidate(displayName: 'Kári Steinn', phoneNumbers: ['5551234']),
+        ],
+        sendViaShortcut: ({String? recipientName, String? phoneNumber, required String body}) {
+          handed = {'recipient_name': recipientName, 'phone_number': phoneNumber, 'body': body};
+          return true;
+        },
+      );
+
+      final ToolResult res = await tool.call(<String, dynamic>{
+        'recipient_name': 'Kára Steini',
+        'phone_number': null,
+        'body': 'ég kem heim eftir hálftíma',
+      }, ctx);
+
+      expect(res.ok, isTrue);
+      expect(res.endsTurn, isTrue);
+      expect(res.speech, contains('sendi'));
+      // The shortcut's Find Contacts wants the nominative, and the number
+      // lets it skip the lookup altogether.
+      expect(handed, {
+        'recipient_name': 'Kári Steinn',
+        'phone_number': '5551234',
+        'body': 'ég kem heim eftir hálftíma',
+      });
+      expect(opened, isEmpty);
+    });
+
+    test('draft_message with no recipient at all falls back to the composer even under a shortcut', () async {
+      final List<Uri> opened = <Uri>[];
+      final tool = DraftMessageTool(
+        isIOS: true,
+        launchUri: (Uri u) async {
+          opened.add(u);
+          return true;
+        },
+        sendViaShortcut: ({String? recipientName, String? phoneNumber, required String body}) => true,
+      );
+      await tool.call(<String, dynamic>{'recipient_name': null, 'phone_number': null, 'body': 'hæ'}, ctx);
+      // A shortcut cannot send to nobody, so the user picks the recipient.
+      expect(opened, hasLength(1));
+    });
+
     test('draft_message asks which contact rather than guessing', () async {
       final List<Uri> opened = <Uri>[];
       final tool = DraftMessageTool(

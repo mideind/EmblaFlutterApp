@@ -16,11 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// draft_message: opens the messaging app with the text prefilled.
+// draft_message: sends a text message.
 //
-// Nothing is ever sent automatically: the user has to tap send. Contact lookup
-// by name is out of scope, so a name without a number opens an empty
-// recipient field.
+// The app cannot send SMS itself. When a Shortcut drives the turn, the
+// recipient and body go back to it as `action: send_message` and its Send
+// Message action does the sending. Otherwise the messaging app opens with the
+// text prefilled and the user taps send.
 
 import 'package:url_launcher/url_launcher.dart' show launchUrl;
 
@@ -64,28 +65,37 @@ String? sanitizePhoneNumber(String? raw) {
 /// found" rather than an error.
 typedef LookupContacts = Future<List<ContactCandidate>> Function();
 
+/// Injectable side effect: offers the message to a waiting Shortcut. Returns
+/// false when none is waiting.
+typedef SendViaShortcut = bool Function(
+    {String? recipientName, String? phoneNumber, required String body});
+
+bool noShortcut({String? recipientName, String? phoneNumber, required String body}) => false;
+
 class DraftMessageTool extends Tool {
   final LaunchUri launchUri;
   final bool isIOS;
 
   /// Null when contact lookup is unavailable on this platform or build.
   final LookupContacts? lookupContacts;
+  final SendViaShortcut sendViaShortcut;
 
-  DraftMessageTool({required this.isIOS, LaunchUri? launchUri, this.lookupContacts})
-      : launchUri = launchUri ?? defaultLaunchUri;
+  DraftMessageTool(
+      {required this.isIOS, LaunchUri? launchUri, this.lookupContacts, SendViaShortcut? sendViaShortcut})
+      : launchUri = launchUri ?? defaultLaunchUri,
+        sendViaShortcut = sendViaShortcut ?? noShortcut;
 
   @override
   String get name => 'draft_message';
 
   @override
   String get description =>
-      'Opnar skilaboðaforrit tækisins með útfylltum texta. Skilaboðin eru aldrei '
-      'send sjálfkrafa, notandinn þarf sjálfur að ýta á senda. Ekki er hægt að '
-      'fletta upp símanúmeri eftir nafni: ef aðeins nafn viðtakanda er þekkt '
-      'opnast skilaboðin án viðtakanda og notandinn velur hann sjálfur.';
+      'Sendir SMS/iMessage á viðtakanda. Viðtakandi er fundinn í tengiliðum eftir '
+      'nafni eða með símanúmeri. Ef enginn viðtakandi er nefndur opnast skilaboðin '
+      'án viðtakanda og notandinn velur hann sjálfur.';
 
   @override
-  String? get activityLabel => 'Opna skilaboð…';
+  String? get activityLabel => 'Sendi skilaboð…';
 
   @override
   Map<String, dynamic> get parameters => strictObjectSchema(<String, Map<String, dynamic>>{
@@ -129,6 +139,15 @@ class DraftMessageTool extends Tool {
         case ContactNotFound():
           break;
       }
+    }
+
+    // A shortcut-driven turn: the shortcut sends, the app only confirms.
+    final String? recipient = resolvedName ?? name;
+    if ((recipient != null || number != null) &&
+        sendViaShortcut(recipientName: recipient, phoneNumber: number, body: body)) {
+      final String who = recipient ?? number!;
+      return ToolResult.success(<String, dynamic>{'summary': 'Skilaboð til $who afhent flýtileið til sendingar'},
+          endsTurn: true, speech: 'Ég sendi skilaboð til $who.');
     }
 
     final Uri uri = buildSmsUri(phoneNumber: number, body: body, isIOS: isIOS);

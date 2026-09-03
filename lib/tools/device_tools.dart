@@ -23,6 +23,7 @@ import 'package:flutter/foundation.dart' show TargetPlatform, defaultTargetPlatf
 
 import '../common.dart' show dlog;
 import '../prefs.dart' show Prefs;
+import '../shortcuts_bridge.dart' show ShortcutsBridge;
 import 'alarm_tool.dart';
 import 'calendar_tool.dart';
 import 'device_actions_channel.dart';
@@ -83,6 +84,7 @@ List<Tool> buildDeviceTools({
       isIOS: isIOS,
       launchUri: launchUri,
       lookupContacts: lookupContacts ?? deviceContacts,
+      sendViaShortcut: ShortcutsBridge().reportSendMessage,
     ),
     // Android hands alarms to the clock app via an intent, so there is nothing
     // to read back or cancel; only offer these where AlarmKit owns them.

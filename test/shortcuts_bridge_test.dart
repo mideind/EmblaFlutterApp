@@ -71,6 +71,31 @@ void main() {
     expect(await invokeRunVoiceTurn(), isNull);
   });
 
+  test('a message is handed to the shortcut as action send_message', () async {
+    ShortcutsBridge().register(() async {
+      scheduleMicrotask(() {
+        expect(
+            ShortcutsBridge().reportSendMessage(
+                recipientName: 'María', phoneNumber: '5551234', body: 'ég kem heim'),
+            isTrue);
+        // The session still reports the spoken confirmation afterwards; the
+        // shortcut must keep the message, not the confirmation.
+        ShortcutsBridge().reportReply(speech: 'Ég sendi skilaboð.', display: 'Ég sendi skilaboð.');
+      });
+    });
+
+    final res = await invokeRunVoiceTurn();
+    expect(res!['action'], 'send_message');
+    expect(res['recipient_name'], 'María');
+    expect(res['phone_number'], '5551234');
+    expect(res['body'], 'ég kem heim');
+  });
+
+  test('with no shortcut waiting a message is not taken', () async {
+    ShortcutsBridge().register(() async {});
+    expect(ShortcutsBridge().reportSendMessage(recipientName: 'María', body: 'hæ'), isFalse);
+  });
+
   test('only the first report settles the turn', () async {
     ShortcutsBridge().register(() async {
       scheduleMicrotask(() {

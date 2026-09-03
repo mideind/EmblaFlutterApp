@@ -100,6 +100,23 @@ class ShortcutsBridge {
     });
   }
 
+  /// Hands a message to the shortcut, which sends it with its own Send Message
+  /// action: the app cannot send SMS itself. Mirrors the embla-2.0 contract.
+  /// Returns false when no shortcut is waiting, so the caller falls back to
+  /// opening the composer.
+  bool reportSendMessage({String? recipientName, String? phoneNumber, required String body}) {
+    if (!isAwaitingTurn) {
+      return false;
+    }
+    _settle(<String, dynamic>{
+      'action': 'send_message',
+      'recipient_name': recipientName,
+      if (phoneNumber != null) 'phone_number': phoneNumber,
+      'body': body,
+    });
+    return true;
+  }
+
   /// Called when the turn ended without an answer: nothing heard, cancelled,
   /// or an error. Never an exception, so the shortcut can branch on `reason`.
   void reportNone(String reason) => _settle(_none(reason));

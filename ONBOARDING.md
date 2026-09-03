@@ -65,6 +65,15 @@ written against the Swift app keep working: always a dictionary with `action` of
 `done` or `none`, and failures are `none` with a `reason` rather than a thrown
 error. Nothing on that path throws.
 
+`draft_message` follows your `send_message` split: in a shortcut-driven turn the
+tool does not open the composer but settles the turn with
+`{"action": "send_message", "recipient_name": ..., "phone_number": ..., "body": ...}`
+and the shortcut's Send Message action does the sending. `recipient_name` is the
+nominative from Contacts when the lookup matched, so your Find Contacts step
+works as before; `phone_number` is present when known and can be used as the
+recipient directly. Outside a shortcut (hotword, button) the composer opens
+prefilled, since nothing else on iOS can send an SMS.
+
 `openAppWhenRun` is true for the same reason as yours — mic capture cannot start
 in the background, which also means the device must be unlocked.
 
