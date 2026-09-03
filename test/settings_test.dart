@@ -24,17 +24,21 @@ void main() {
     Prefs().setDefaults();
   });
 
-  testWidgets('SettingsRoute contains ASR and TTS provider rows', (tester) async {
+  testWidgets('SettingsRoute contains the TTS and LLM provider rows', (tester) async {
     await tester.pumpWidget(const MaterialApp(home: SettingsRoute()));
 
     expect(find.text('Talgerving'), findsOneWidget);
     // Default providers are displayed using their human-readable labels
     expect(find.text(labelForValue(kTTSProviders, kDefaultTTSProvider)), findsOneWidget);
+    // The LLM provider is reachable in a normal build, not just in debug:
+    // choosing Gemini also switches voice turns to the fused path.
+    expect(find.text('Mállíkansveita'), findsOneWidget);
     // Privacy note about third-party processing
     expect(find.text(kExternalProcessingNote), findsOneWidget);
-    // ElevenLabs voice row is only shown when ElevenLabs is selected
-    expect(find.text('ElevenLabs rödd'), findsNothing);
-    // Language model row is debug-only, and tests run in debug mode
+    // The voice ID row follows the selected provider, and ElevenLabs is now
+    // the default, so it is shown.
+    expect(find.text('ElevenLabs rödd'), findsOneWidget);
+    // The raw model name stays debug-only, and tests run in debug mode
     await tester.dragUntilVisible(
         find.text('Mállíkan'), find.byType(ListView), const Offset(0, -100));
     expect(find.text('Mállíkan'), findsOneWidget);

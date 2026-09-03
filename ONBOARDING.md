@@ -8,15 +8,23 @@ UI, animations, hotword and settings, and runs on both platforms.
 ## What the pipeline does
 
 ```
-mic → Hreimur (/long_asr/) → OpenAI gpt-5.6-luna + tools → Icespeak TTS
+mic → Hreimur (/long_asr/) → OpenAI gpt-5.6-luna + tools → ElevenLabs TTS
 ```
 
-Typed input skips the first stage. Both TTS and LLM are switchable in Settings:
-ElevenLabs instead of Icespeak, and Gemini instead of OpenAI — where Gemini is
-the **fused path**, taking the recording directly and transcribing plus
-answering in one call. On one 2.88 s Icelandic clip that measured 2.03 s against
-3.12 s for Hreimur transcribing alone, with an exact transcript. It is not the
-default yet.
+Typed input skips the first stage. Both TTS and LLM are switchable in Settings.
+
+**Voice**: ElevenLabs is the default. Without `keys/elevenlabs.key` it falls
+back to Icespeak and logs which half is missing, so the app still talks if you
+have not set that key up.
+
+**LLM**: OpenAI by default, Gemini selectable. Choosing Gemini also switches
+voice turns to the **fused path**, where the model takes the recording directly
+and transcribes plus answers in one call. On one 2.88 s Icelandic clip that
+measured 2.03 s against 3.12 s for Hreimur transcribing alone, with an exact
+transcript, and it called `greynir_query` rather than inventing an answer. It is
+not the default: it has been exercised on a handful of utterances, and routing
+all Icelandic audio to Google rather than Miðeind's own stack is a decision
+nobody has taken yet.
 
 Differences from the Swift MVP worth knowing before you look for things:
 

@@ -650,6 +650,13 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
     if (Prefs().stringForKey('tts_provider') == 'elevenlabs')
       const SettingsTextFieldWidget(
           label: 'ElevenLabs rödd', prefKey: 'elevenlabs_voice_id', hintText: 'Kenni raddar'),
+    // LLM provider. Not debug-only: choosing Gemini also switches voice turns
+    // to the fused path, where the model transcribes and answers in one call.
+    SettingsProviderSelectionWidget(
+        label: 'Mállíkansveita',
+        prefKey: 'llm_provider',
+        options: kLLMProviders,
+        onChanged: refreshCallback),
     // Note about text being sent to third-party services
     const SettingsFullTextLabelWidget(kExternalProcessingNote),
     // Version
@@ -664,11 +671,6 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
       // Language model selection
       const SettingsTextFieldWidget(
           label: 'Mállíkan', prefKey: 'llm_model', hintText: kDefaultOpenAIModel),
-      SettingsProviderSelectionWidget(
-          label: 'Mállíkansveita',
-          prefKey: 'llm_provider',
-          options: kLLMProviders,
-          onChanged: refreshCallback),
       divider,
       // Ratatoskur server selection
       const SettingsFullTextLabelWidget('Ratatoskur:'),

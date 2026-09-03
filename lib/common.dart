@@ -76,7 +76,9 @@ const String kSpeechSynthesisPath = '/rat/v2/tts';
 
 // Reminders list that add_shopping writes to, overridable in Settings.
 const String kDefaultShoppingList = 'Innkaupalisti';
-const String kDefaultTTSProvider = 'icespeak';
+// ElevenLabs is the default voice. Without keys/elevenlabs.key or a voice ID
+// createTtsEngine falls back to Icespeak and logs which half is missing.
+const String kDefaultTTSProvider = 'elevenlabs';
 const List<List<String>> kTTSProviders = [
   ['icespeak', 'Miðeind (Icespeak)'],
   ['elevenlabs', 'ElevenLabs'],
