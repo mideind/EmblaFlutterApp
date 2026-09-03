@@ -68,9 +68,16 @@ class HreimurBatchAsr implements AsrEngine {
     this.minSpeechDuration = kMinSpeechDuration,
     this.sampleRate = 16000,
     this.playSounds = true,
+    this.onCapturedWav,
   })  : _client = client ?? http.Client(),
         _ownsClient = client == null,
         _audio = audioSource ?? const RecorderAudioSource();
+
+  /// When set, the recorded WAV is handed here instead of being uploaded, and
+  /// no transcript is produced. This is how the fused audio-LLM path reuses
+  /// the recording and silence detection without a second copy of the timing
+  /// logic, which is delicate enough that two copies would drift.
+  final void Function(Uint8List wav)? onCapturedWav;
 
   /// Server hosting `/long_asr/`, e.g. `https://api.greynir.is`.
   final String serverURL;
@@ -181,9 +188,21 @@ class HreimurBatchAsr implements AsrEngine {
       return;
     }
 
+    final Uint8List wav = wavFromPcm16(pcm, sampleRate: sampleRate);
+
+    final void Function(Uint8List)? handOff = onCapturedWav;
+    if (handOff != null) {
+      handOff(wav);
+      // The caller transcribes; emit an empty final so the session's ASR stage
+      // completes rather than waiting on a transcript that never arrives.
+      _emit(const AsrFinal(''));
+      _close();
+      return;
+    }
+
     final Stopwatch budget = Stopwatch()..start();
     try {
-      final String jobID = await _submit(wavFromPcm16(pcm, sampleRate: sampleRate));
+      final String jobID = await _submit(wav);
       if (_cancelled) {
         return;
       }

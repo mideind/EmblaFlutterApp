@@ -43,8 +43,15 @@ import 'session_sounds.dart';
 AsrEngine createAsrEngine({
   required String serverURL,
   required String apiKey,
+  CapturedAudio? capturedAudio,
 }) {
-  return HreimurBatchAsr(serverURL: serverURL, apiKey: apiKey);
+  return HreimurBatchAsr(
+    serverURL: serverURL,
+    apiKey: apiKey,
+    // In fused mode Hreimur still does the recording and silence detection --
+    // it just hands the WAV over instead of uploading it.
+    onCapturedWav: capturedAudio == null ? null : (wav) => capturedAudio.wav = wav,
+  );
 }
 
 LlmClient createLlmClient({

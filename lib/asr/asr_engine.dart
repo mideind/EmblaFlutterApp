@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+import 'dart:typed_data' show Uint8List;
+
 // Speech recognition engine contract.
 //
 // Implementations own the microphone while `listen()` is active. The caller
@@ -41,6 +43,12 @@ class AsrFinal extends AsrEvent {
 class AsrError extends AsrEvent {
   final String message;
   const AsrError(this.message);
+}
+
+/// Where a capture-only ASR run leaves its recording, for the fused
+/// audio-LLM path to pick up.
+class CapturedAudio {
+  Uint8List? wav;
 }
 
 abstract class AsrEngine {

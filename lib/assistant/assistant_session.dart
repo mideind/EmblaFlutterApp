@@ -25,6 +25,7 @@
 // long-lived object is the [Conversation].
 
 import 'dart:async';
+import 'dart:typed_data' show Uint8List;
 
 import '../asr/asr_engine.dart';
 import '../common.dart' show dlog, kMaxToolIterations;
@@ -62,6 +63,9 @@ class AssistantSessionConfig {
   ToolContext Function() buildToolContext;
 
   String voiceID;
+
+  /// Non-null when the ASR engine only records and the LLM transcribes.
+  final CapturedAudio? capturedAudio;
   double voiceSpeed;
 
   // Handlers
@@ -87,6 +91,7 @@ class AssistantSessionConfig {
     required this.sounds,
     required this.buildSystemPrompt,
     required this.buildToolContext,
+    this.capturedAudio,
     this.voiceID = '',
     this.voiceSpeed = 1.0,
   });
@@ -154,6 +159,16 @@ class AssistantSession {
       return;
     }
     config.sounds.playConfirm();
+
+    // Fused path: the engine recorded but did not transcribe, so hand the
+    // audio to the model and let it do both.
+    final Uint8List? wav = config.capturedAudio?.wav;
+    if (wav != null) {
+      config.capturedAudio?.wav = null;
+      await _runTurn(null, audio: UserAudioMessage(wav));
+      return;
+    }
+
     config.onFinalTranscript?.call(text);
     await _runTurn(text);
   }
@@ -194,11 +209,20 @@ class AssistantSession {
 
   // ---------------------------------------------------------------------
 
-  Future<void> _runTurn(String userText) async {
+  /// Runs one turn. Exactly one of [userText] and [audio] is given: [audio] is
+  /// the fused path, where the model transcribes and answers in one call.
+  Future<void> _runTurn(String? userText, {UserAudioMessage? audio}) async {
     _setState(AssistantState.thinking);
     final conv = config.conversation;
     conv.resetIfStale();
-    conv.addUser(userText);
+    if (userText != null) {
+      conv.addUser(userText);
+    }
+
+    // The audio is only ever sent on the first call. Once the model has told
+    // us what it heard, the transcript takes its place in the history: resending
+    // the WAV on every tool round trip costs about a second each time.
+    UserAudioMessage? pendingAudio = audio;
 
     String? pendingImage;
     Uri? pendingOpenURL;
@@ -213,12 +237,27 @@ class AssistantSession {
         _beginStage('llm${i > 0 ? i : ''}');
         final resp = await config.llm.complete(LlmRequest(
           instructions: instructions,
-          messages: List.unmodifiable(conv.history),
+          messages: List.unmodifiable(<ChatMessage>[
+            ...conv.history,
+            if (pendingAudio != null) pendingAudio,
+          ]),
           tools: tools,
           responseSchema: AssistantReply.schema,
         ));
         _endStage();
         if (_cancelled) return;
+
+        if (pendingAudio != null) {
+          final String heard = resp.transcript?.trim() ?? '';
+          if (heard.isEmpty) {
+            dlog('Fused audio turn returned no transcript');
+            await _error('Ekkert heyrðist');
+            return;
+          }
+          conv.addUser(heard);
+          config.onFinalTranscript?.call(heard);
+          pendingAudio = null;
+        }
 
         if (resp.hasToolCalls) {
           conv.addHistory(AssistantMessage(text: resp.text, toolCalls: resp.toolCalls));

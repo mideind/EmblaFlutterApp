@@ -164,6 +164,68 @@ void main() {
     expect(contents[2]['parts'][0]['functionResponse']['response'], {'ok': true});
   });
 
+  test('on a tool turn the transcript arrives as a prefix and is stripped', () async {
+    http.Request? captured;
+    final client = MockClient((req) async {
+      captured = req;
+      return _ok({
+        'candidates': [
+          {
+            'content': {
+              'parts': [
+                {'text': 'TRANSCRIPT: hvernig er veðrið í Reykjavík\nSvarið kemur hér.'},
+                {
+                  'functionCall': {
+                    'name': 'greynir_query',
+                    'args': {'query': 'veðrið í Reykjavík'}
+                  }
+                },
+              ]
+            }
+          }
+        ]
+      });
+    });
+
+    final res = await GeminiClient(apiKey: 'k', client: client).complete(LlmRequest(
+      instructions: 'Þú ert Embla.',
+      messages: [UserAudioMessage(Uint8List.fromList([1, 2]))],
+      tools: const [
+        ToolSpec(
+            name: 'greynir_query',
+            description: 'Greynir.',
+            parameters: {'type': 'object', 'properties': {}, 'required': []}),
+      ],
+    ));
+
+    // Tools are present, so no response schema is possible and the transcript
+    // has to come back as a prefix instead.
+    expect(res.transcript, 'hvernig er veðrið í Reykjavík');
+    // The scaffolding must not reach the reply parser.
+    expect(res.text, isNot(contains('TRANSCRIPT:')));
+    expect(res.text, contains('Svarið kemur hér.'));
+    expect(res.toolCalls.single.name, 'greynir_query');
+    // And the instruction asking for it is only added when it is needed.
+    final sys = (jsonDecode(captured!.body) as Map)['system_instruction'];
+    expect(sys['parts'][0]['text'], contains('TRANSCRIPT: '));
+  });
+
+  test('the transcript instruction is not added when there are no tools', () async {
+    http.Request? captured;
+    final client = MockClient((req) async {
+      captured = req;
+      return _ok(_reply('{}'));
+    });
+    await GeminiClient(apiKey: 'k', client: client).complete(LlmRequest(
+      instructions: 'Þú ert Embla.',
+      messages: [UserAudioMessage(Uint8List.fromList([1]))],
+      tools: const [],
+      responseSchema: replySchema,
+    ));
+    final sys = (jsonDecode(captured!.body) as Map)['system_instruction'];
+    expect(sys['parts'][0]['text'], 'Þú ert Embla.');
+  });
+
   group('schema translation', () {
     test('nullable unions become nullable, types are upper-cased', () {
       final out = geminiSchema({

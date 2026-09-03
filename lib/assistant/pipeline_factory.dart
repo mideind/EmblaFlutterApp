@@ -27,7 +27,8 @@ import '../info.dart' show getClientType, getMarketingVersion, getUniqueDeviceId
 import '../loc.dart' show LocationTracker;
 import '../prefs.dart' show Prefs;
 import '../tools/tool.dart' show ToolContext;
-import '../util.dart' show readServerAPIKey;
+import '../asr/asr_engine.dart' show CapturedAudio;
+import '../util.dart' show readGeminiAPIKey, readServerAPIKey;
 import 'assistant_session.dart';
 import 'engine_factories.dart';
 
@@ -51,8 +52,13 @@ Future<AssistantSessionConfig> buildAssistantSessionConfig() async {
 
   final tools = createToolRegistry(serverURL: serverURL, apiKey: serverAPIKey);
 
+  // Gemini takes the recording directly, so the ASR engine only captures.
+  final CapturedAudio? capturedAudio =
+      llmProvider == 'gemini' && readGeminiAPIKey().isNotEmpty ? CapturedAudio() : null;
+
   return AssistantSessionConfig(
-    asr: createAsrEngine(serverURL: serverURL, apiKey: serverAPIKey),
+    asr: createAsrEngine(
+        serverURL: serverURL, apiKey: serverAPIKey, capturedAudio: capturedAudio),
     llm: createLlmClient(
       provider: llmProvider,
       model: llmModel,
@@ -83,6 +89,7 @@ Future<AssistantSessionConfig> buildAssistantSessionConfig() async {
       clientType: clientType,
       clientVersion: clientVersion,
     ),
+    capturedAudio: capturedAudio,
     voiceID: voiceID,
     voiceSpeed: voiceSpeed,
   );

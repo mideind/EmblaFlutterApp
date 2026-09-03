@@ -25,6 +25,9 @@ import 'package:http/http.dart' as http;
 import '../common.dart' show dlog, kDefaultGeminiModel, kGeminiBaseURL;
 import 'llm_client.dart';
 
+/// Marks the transcript on turns where a response schema is not allowed.
+const String kTranscriptPrefix = 'TRANSCRIPT: ';
+
 /// Gemini's schema dialect uses upper-case type names, has no
 /// `additionalProperties`, and expresses optionality with `nullable`.
 Map<String, dynamic> geminiSchema(Map<String, dynamic> jsonSchema) {
@@ -92,7 +95,7 @@ class GeminiClient implements LlmClient {
       'contents': _contents(request.messages),
       'system_instruction': <String, dynamic>{
         'parts': <dynamic>[
-          <String, dynamic>{'text': request.instructions}
+          <String, dynamic>{'text': _instructions(request, hasAudio: hasAudio)}
         ],
       },
       // Reasoning tokens buy little on this task and cost latency.
@@ -160,6 +163,18 @@ class GeminiClient implements LlmClient {
       throw LlmException(resp.body, statusCode: resp.statusCode);
     }
     return _parse(utf8.decode(resp.bodyBytes));
+  }
+
+  /// On a turn with tools the API refuses a response schema, so the transcript
+  /// cannot be a schema field. Ask for it as a line prefix instead, which the
+  /// model does reliably and [_transcript] reads back.
+  String _instructions(LlmRequest request, {required bool hasAudio}) {
+    if (!hasAudio || request.tools.isEmpty) {
+      return request.instructions;
+    }
+    return '${request.instructions}\n'
+        '- Byrjaðu ALLTAF svarið á nákvæmri umritun raddskipunarinnar á forminu '
+        '"$kTranscriptPrefix<umritun>" og síðan línuskil.';
   }
 
   List<Map<String, dynamic>> _contents(List<ChatMessage> messages) {
@@ -256,11 +271,17 @@ class GeminiClient implements LlmClient {
       if (p['text'] != null) text.write(p['text']);
     }
 
-    final String? out = text.isEmpty ? null : text.toString();
+    String? out = text.isEmpty ? null : text.toString();
+    final String? heard = _transcript(out);
+    // The prefix is our own scaffolding; it must not reach the reply parser.
+    if (heard != null && out != null && out.contains(kTranscriptPrefix)) {
+      out = out.replaceFirst(RegExp('$kTranscriptPrefix.*(\r?\n|\$)'), '').trim();
+      if (out.isEmpty) out = null;
+    }
     return LlmResponse(
       text: out,
       toolCalls: calls,
-      transcript: _transcript(out),
+      transcript: heard,
       usage: (json['usageMetadata'] as Map?)?.cast<String, dynamic>(),
     );
   }
@@ -269,6 +290,12 @@ class GeminiClient implements LlmClient {
   /// read back out of the JSON rather than from a field of its own.
   String? _transcript(String? text) {
     if (text == null) return null;
+    // Tool turns carry it as a line prefix, since they cannot use a schema.
+    final RegExpMatch? m = RegExp('$kTranscriptPrefix(.*)').firstMatch(text);
+    if (m != null) {
+      final String t = (m.group(1) ?? '').trim();
+      if (t.isNotEmpty) return t;
+    }
     try {
       final Object? decoded = jsonDecode(text);
       if (decoded is Map && decoded['transcript'] is String) {
