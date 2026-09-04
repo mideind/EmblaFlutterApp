@@ -23,10 +23,12 @@
 // iOS: AlarmKit through our own method channel, which requires iOS 26. On
 // older versions the channel returns `unsupported` and we say so.
 //
-// AlarmKit alarms belong to the app and never show in Apple's Clock app, so
-// the user cannot cancel them there. In a shortcut-driven turn the tool hands
-// the timer/alarm to the shortcut instead, whose Clock actions ("Start Timer",
-// "Create Alarm") make one the user can see and cancel in Clock.
+// AlarmKit alarms belong to the app and never show in Apple's Clock app. A
+// timer is still visible: its countdown is a Live Activity (Dynamic Island and
+// Lock Screen, with a stop button) drawn by the EmblaAlarmWidget extension. A
+// fixed alarm has no such surface until it fires, so in a shortcut-driven turn
+// set_alarm hands the alarm to the shortcut, whose Clock "Create Alarm" action
+// makes one the user can see and cancel in Clock.
 
 import 'package:android_intent_plus/android_intent.dart' show AndroidIntent;
 
@@ -67,15 +69,12 @@ class SetTimerTool extends Tool {
 
   /// True on iOS, where timers go through AlarmKit instead of an intent.
   final bool useNativeAlarms;
-  final ShortcutHandoff handOff;
 
   SetTimerTool({
     required this.actions,
     required this.useNativeAlarms,
     LaunchAndroidIntent? launchIntent,
-    ShortcutHandoff? handOff,
-  })  : launchIntent = launchIntent ?? defaultLaunchAndroidIntent,
-        handOff = handOff ?? noShortcutHandoff;
+  }) : launchIntent = launchIntent ?? defaultLaunchAndroidIntent;
 
   @override
   String get name => 'set_timer';
@@ -106,13 +105,6 @@ class SetTimerTool extends Tool {
       return ToolResult.failure('Teljarinn má ekki vera lengri en einn dagur.');
     }
     final String title = optionalString(args['title']) ?? kDefaultTimerTitle;
-    final String duration = formatIcelandicDuration(seconds);
-
-    if (handOff(<String, dynamic>{'action': 'set_timer', 'seconds': seconds, 'title': title})) {
-      return ToolResult.success(<String, dynamic>{'summary': 'Teljari ($duration) afhentur flýtileið'},
-          endsTurn: true, speech: 'Ég stillti teljara á $duration.');
-    }
-
     if (useNativeAlarms) {
       try {
         await actions.setTimer(seconds: seconds, title: title);
@@ -130,7 +122,7 @@ class SetTimerTool extends Tool {
       ));
     }
     return ToolResult.success(<String, dynamic>{
-      'summary': 'Teljari ræstur: $duration',
+      'summary': 'Teljari ræstur: ${formatIcelandicDuration(seconds)}',
     });
   }
 }

@@ -39,11 +39,6 @@ import AlarmKit
 import SwiftUI
 #endif
 
-#if canImport(AlarmKit)
-@available(iOS 26.0, *)
-private struct EmblaAlarmMetadata: AlarmMetadata {}
-#endif
-
 @objc public class EmblaActions: NSObject {
 
     private static let channelName = "is.mideind.embla/actions"
@@ -386,18 +381,24 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
     }
 
     #if canImport(AlarmKit)
-    // ponytail: no countdown Live Activity (that needs a widget extension);
-    // the alert itself still fires.
+    /// A timer gets a countdown presentation, which is what makes the system
+    /// show it as a Live Activity; the EmblaAlarmWidget extension draws it.
+    /// A fixed alarm has nothing to count down, so only the alert.
     @available(iOS 26.0, *)
     private static func schedule(timer seconds: Double?, fixed date: Date?, title: String) async throws {
         guard try await AlarmManager.shared.requestAuthorization() == .authorized else {
             throw AlarmScheduleError.notAuthorized
         }
+        let id = UUID()
+        let name = LocalizedStringResource(stringLiteral: title)
         let alert = AlarmPresentation.Alert(
-            title: LocalizedStringResource(stringLiteral: title),
+            title: name,
             stopButton: AlarmButton(text: "Stöðva", textColor: .white, systemImageName: "stop.circle"))
+        let presentation = seconds == nil
+            ? AlarmPresentation(alert: alert)
+            : AlarmPresentation(alert: alert, countdown: AlarmPresentation.Countdown(title: name))
         let attributes = AlarmAttributes<EmblaAlarmMetadata>(
-            presentation: AlarmPresentation(alert: alert), tintColor: .orange)
+            presentation: presentation, metadata: EmblaAlarmMetadata(alarmID: id), tintColor: .orange)
         let config: AlarmManager.AlarmConfiguration<EmblaAlarmMetadata>
         if let seconds = seconds {
             config = .timer(duration: seconds, attributes: attributes)
@@ -406,7 +407,6 @@ private struct EmblaAlarmMetadata: AlarmMetadata {}
         } else {
             throw AlarmScheduleError.notAuthorized
         }
-        let id = UUID()
         _ = try await AlarmManager.shared.schedule(id: id, configuration: config)
         // Alarm does not carry its attributes back out, so keep the spoken
         // label alongside the id in order to describe pending alarms later.

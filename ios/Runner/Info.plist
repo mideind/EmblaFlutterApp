@@ -59,6 +59,8 @@
 	<string>Embla býr til áminningar samkvæmt raddskipunum.</string>
 	<key>NSRemindersUsageDescription</key>
 	<string>Embla býr til áminningar samkvæmt raddskipunum.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UISceneConfigurations</key>

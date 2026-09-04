@@ -65,12 +65,11 @@ written against the Swift app keep working: always a dictionary with `action` of
 `done` or `none`, and failures are `none` with a `reason` rather than a thrown
 error. Nothing on that path throws.
 
-Three tools hand their action back to a waiting shortcut instead of doing it
+Two tools hand their action back to a waiting shortcut instead of doing it
 in-app, extending your `send_message` split:
 
 ```json
 {"action": "send_message", "recipient_name": "Kári Steinn", "phone_number": "5551234", "body": "ég kem heim"}
-{"action": "set_timer", "seconds": 300, "title": "pasta"}
 {"action": "set_alarm", "time": "07:30", "title": "Vekjari"}
 ```
 
@@ -78,15 +77,21 @@ in-app, extending your `send_message` split:
   the nominative from Contacts when the lookup matched, so your Find Contacts
   step works as before; `phone_number` is present when known and can be used
   as the recipient directly.
-- `set_timer` / `set_alarm`: use Clock's **Start Timer** and **Create Alarm**
-  actions. AlarmKit alarms scheduled by the app never appear in the Clock app,
-  so the user cannot cancel them there; Clock's own do. `date` is included on
-  `set_alarm` when the user named a day, but Create Alarm only takes a time of
-  day, so it fires the next time that hour comes round.
+- `set_alarm`: use Clock's **Create Alarm** action. AlarmKit alarms scheduled
+  by the app never appear in the Clock app, so the user could not cancel them
+  there; Clock's own do. `date` is included when the user named a day, but
+  Create Alarm only takes a time of day, so it fires the next time that hour
+  comes round.
 
 Outside a shortcut (hotword, button) the in-app versions run: the composer
-opens prefilled, and timers/alarms go through AlarmKit, where `list_alarms` and
+opens prefilled, and alarms go through AlarmKit, where `list_alarms` and
 `cancel_alarms` can still manage them.
+
+Timers always go through AlarmKit. They are visible anyway: the countdown is a
+Live Activity in the Dynamic Island and on the Lock Screen, with a stop button,
+drawn by the `EmblaAlarmWidget` extension target (`ios/EmblaAlarmWidget/`). The
+`EmblaAlarmMetadata.swift` file is compiled into both targets because the
+attributes type and the stop intent must match on both sides.
 
 `openAppWhenRun` is true for the same reason as yours — mic capture cannot start
 in the background, which also means the device must be unlocked.
@@ -118,7 +123,10 @@ flutter pub get
 ```
 
 Signing: open `ios/Runner.xcworkspace`, set your team and a bundle identifier
-you can sign. **Do not commit that** — see gotchas.
+you can sign, for both the Runner and EmblaAlarmWidget targets (the extension's
+identifier must stay prefixed by the app's). One sed does both:
+`sed -i '' 's/is.mideind.Embla/is.mideind.Embla.dev/g; s/XT9WMG6U47/YOURTEAM/g' ios/Runner.xcodeproj/project.pbxproj`.
+**Do not commit that** — see gotchas.
 
 ```bash
 flutter run -d <your-device-id>     # flutter devices to list

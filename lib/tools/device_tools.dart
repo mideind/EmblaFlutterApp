@@ -74,7 +74,6 @@ List<Tool> buildDeviceTools({
       actions: deviceActions,
       useNativeAlarms: isIOS,
       launchIntent: launchIntent,
-      handOff: ShortcutsBridge().handOff,
     ),
     SetAlarmTool(
       actions: deviceActions,

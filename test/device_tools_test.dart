@@ -185,25 +185,6 @@ void main() {
       expect(ios, shared.union(<String>{'add_shopping', 'list_alarms', 'cancel_alarms'}));
     });
 
-    test('set_timer hands the timer to a waiting shortcut instead of AlarmKit', () async {
-      final FakeDeviceActions actions = FakeDeviceActions();
-      Map<String, dynamic>? handed;
-      final ToolResult res = await SetTimerTool(
-        actions: actions,
-        useNativeAlarms: true,
-        handOff: (Map<String, dynamic> r) {
-          handed = r;
-          return true;
-        },
-      ).call(<String, dynamic>{'seconds': 300, 'title': 'pasta'}, ctx);
-      expect(handed, {'action': 'set_timer', 'seconds': 300, 'title': 'pasta'});
-      // The Clock app timer is the one the user can see and cancel, so no
-      // invisible AlarmKit twin.
-      expect(actions.calls, isEmpty);
-      expect(res.endsTurn, isTrue);
-      expect(res.speech, contains('teljara'));
-    });
-
     test('set_alarm hands a time of day to a waiting shortcut', () async {
       final FakeDeviceActions actions = FakeDeviceActions();
       Map<String, dynamic>? handed;
@@ -218,13 +199,6 @@ void main() {
       expect(handed, {'action': 'set_alarm', 'time': '07:30', 'title': kDefaultAlarmTitle});
       expect(actions.calls, isEmpty);
       expect(res.endsTurn, isTrue);
-    });
-
-    test('with no shortcut waiting timers still go through AlarmKit', () async {
-      final FakeDeviceActions actions = FakeDeviceActions();
-      await SetTimerTool(actions: actions, useNativeAlarms: true, handOff: (_) => false)
-          .call(<String, dynamic>{'seconds': 60, 'title': null}, ctx);
-      expect(actions.calls.single.$1, 'setTimer');
     });
 
     test('list_alarms reports what is pending', () async {
