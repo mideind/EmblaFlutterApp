@@ -2,6 +2,7 @@
 // that no platform plugin (audio, prefs, location) is ever touched.
 
 import 'dart:async';
+import 'dart:typed_data' show Uint8List;
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -154,12 +155,14 @@ class Harness {
     required this.llm,
     FakeAsr? asr,
     ToolRegistry? tools,
+    this.capturedAudio,
   })  : asr = asr ?? FakeAsr(),
         tools = tools ?? ToolRegistry();
 
   final FakeLlm llm;
   final FakeAsr asr;
   final ToolRegistry tools;
+  final CapturedAudio? capturedAudio;
   final FakeTts tts = FakeTts();
   final CountingSounds sounds = CountingSounds();
   final Conversation conversation = Conversation();
@@ -182,6 +185,7 @@ class Harness {
         sounds: sounds,
         buildSystemPrompt: () => 'kerfisboð',
         buildToolContext: () => ToolContext(now: DateTime.utc(2026, 9, 2, 14, 35)),
+        capturedAudio: capturedAudio,
         voiceID: 'Guðrún',
         voiceSpeed: 1.0,
       )
@@ -328,6 +332,29 @@ void main() {
     expect(h.llm.calls, 0);
     expect(h.tts.spoken, isEmpty);
     expect(h.doneCount, 1);
+    expect(session.state, AssistantState.done);
+  });
+
+  test('fused turn: an empty final with captured audio still reaches the model', () async {
+    // In fused mode the ASR engine hands over the WAV and emits an empty
+    // final. That must not be mistaken for silence.
+    final CapturedAudio captured = CapturedAudio()..wav = Uint8List.fromList([1, 2, 3]);
+    final h = Harness(
+      llm: FakeLlm([const LlmResponse(text: kAnswerJSON, transcript: 'hvernig er veðrið?')]),
+      asr: FakeAsr(const [AsrFinal('')]),
+      capturedAudio: captured,
+    );
+    final session = h.build();
+
+    await session.startVoice();
+
+    expect(h.llm.calls, 1);
+    expect(h.llm.requests.single.messages.last, isA<UserAudioMessage>());
+    expect(h.finals, ['hvernig er veðrið?']);
+    expect(h.sounds.confirmCount, 1);
+    expect(h.tts.spoken, isNotEmpty);
+    // The WAV is consumed so the next turn cannot replay it.
+    expect(captured.wav, isNull);
     expect(session.state, AssistantState.done);
   });
 

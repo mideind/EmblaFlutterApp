@@ -153,22 +153,23 @@ class AssistantSession {
     }
     if (_cancelled) return;
 
+    // Fused path: the engine recorded but did not transcribe, so its final
+    // transcript is empty by design and the audio goes to the model instead.
+    // This has to come before the empty-transcript check below.
+    final Uint8List? wav = config.capturedAudio?.wav;
+    if (wav != null) {
+      config.capturedAudio?.wav = null;
+      config.sounds.playConfirm();
+      await _runTurn(null, audio: UserAudioMessage(wav));
+      return;
+    }
+
     if (text == null || text.trim().isEmpty) {
       dlog('Nothing heard, ending turn');
       _finish();
       return;
     }
     config.sounds.playConfirm();
-
-    // Fused path: the engine recorded but did not transcribe, so hand the
-    // audio to the model and let it do both.
-    final Uint8List? wav = config.capturedAudio?.wav;
-    if (wav != null) {
-      config.capturedAudio?.wav = null;
-      await _runTurn(null, audio: UserAudioMessage(wav));
-      return;
-    }
-
     config.onFinalTranscript?.call(text);
     await _runTurn(text);
   }
