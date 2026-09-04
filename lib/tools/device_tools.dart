@@ -32,6 +32,8 @@ import 'directions_tool.dart';
 import 'message_tool.dart';
 import 'reminder_tool.dart';
 import 'shopping_tool.dart';
+import 'spotify_tools.dart';
+import '../spotify_client.dart' show SpotifyClient;
 import 'tool.dart' show Tool;
 
 /// Builds the device action tools appropriate for [platform].
@@ -47,6 +49,7 @@ List<Tool> buildDeviceTools({
   LaunchAndroidIntent? launchIntent,
   LaunchUri? launchUri,
   LookupContacts? lookupContacts,
+  SpotifyClient? spotify,
 }) {
   final TargetPlatform target = platform ?? defaultTargetPlatform;
   final bool isIOS = target == TargetPlatform.iOS;
@@ -97,7 +100,13 @@ List<Tool> buildDeviceTools({
     ),
     // Reminders lists are an Apple concept; Android has no equivalent target.
     if (isIOS) AddShoppingTool(actions: deviceActions),
+    // Spotify needs the iOS SDK for playback and a client ID in the build.
+    if (isIOS) ...spotifyTools(spotify ?? SpotifyClient.fromKeys(actions: deviceActions)),
     if (isIOS) ListAlarmsTool(actions: deviceActions),
     if (isIOS) CancelAlarmsTool(actions: deviceActions),
   ];
 }
+
+List<Tool> spotifyTools(SpotifyClient spotify) => spotify.isConfigured
+    ? <Tool>[PlayMusicTool(spotify), QueueMusicTool(spotify), ControlMusicTool(spotify)]
+    : const <Tool>[];

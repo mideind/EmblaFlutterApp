@@ -154,6 +154,21 @@ import SwiftUI
         case "cancelAlarms":
             cancelAlarms(id: args["id"] as? String, result: result)
 
+        case "webAuth":
+            guard let url = (args["url"] as? String).flatMap(URL.init(string:)),
+                  let scheme = args["scheme"] as? String else {
+                return result(invalidArgs("vantar url/scheme"))
+            }
+            EmblaSpotify.webAuth(url: url, scheme: scheme, result: result)
+
+        case "spotifyPlay":
+            guard let clientID = args["clientId"] as? String,
+                  let redirect = (args["redirectUri"] as? String).flatMap(URL.init(string:)),
+                  let uri = args["uri"] as? String else {
+                return result(invalidArgs("vantar clientId/redirectUri/uri"))
+            }
+            EmblaSpotify.play(clientID: clientID, redirectURI: redirect, uri: uri, result: result)
+
         default:
             result(FlutterMethodNotImplemented)
         }

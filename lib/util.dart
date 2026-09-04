@@ -22,7 +22,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart' show Color;
 
-import './keys.dart' show serverAPIKey, openAIAPIKey, elevenLabsAPIKey, anthropicAPIKey, geminiAPIKey;
+import './keys.dart'
+    show serverAPIKey, openAIAPIKey, elevenLabsAPIKey, anthropicAPIKey, geminiAPIKey, spotifyClientID, spotifyClientSecret;
 
 /// String extensions
 extension StringExtension on String {
@@ -73,6 +74,10 @@ String readElevenLabsAPIKey() => readKey(elevenLabsAPIKey);
 
 /// Read and cache Anthropic API key
 String readAnthropicAPIKey() => readKey(anthropicAPIKey);
+
+/// Spotify app credentials (developer.spotify.com), redirect URI embla://spotify
+String readSpotifyClientID() => readKey(spotifyClientID);
+String readSpotifyClientSecret() => readKey(spotifyClientSecret);
 
 /// Read and cache Gemini API key
 String readGeminiAPIKey() => readKey(geminiAPIKey);

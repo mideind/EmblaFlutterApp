@@ -18,8 +18,8 @@
 
 // Method channel for device actions that have no Flutter plugin.
 //
-// Implemented natively in ios/Runner/EmblaActions.swift: EventKit reminders
-// and AlarmKit timers/alarms. There is no Android implementation; the tools
+// Implemented natively in ios/Runner/EmblaActions.swift: EventKit reminders,
+// AlarmKit timers/alarms, a web login sheet and Spotify playback. There is no Android implementation; the tools
 // fall back to intents and calendar events there.
 
 import 'package:flutter/services.dart' show MethodChannel, MissingPluginException, PlatformException;
@@ -80,6 +80,13 @@ abstract class DeviceActions {
   /// Cancels one pending alarm by `id`, or all of them when `id` is null.
   /// Returns the ids that were cancelled.
   Future<List<String>> cancelAlarms({String? id});
+
+  /// Shows a system login sheet for [url] and returns the callback URL once
+  /// the site redirects to [callbackScheme]. Throws if the user cancels.
+  Future<Uri> webAuth({required Uri url, required String callbackScheme});
+
+  /// Opens the Spotify app and starts playing [uri] (Spotify iOS SDK).
+  Future<void> spotifyPlay({required String clientID, required String redirectUri, required String uri});
 }
 
 class DeviceActionsChannel implements DeviceActions {
@@ -149,6 +156,19 @@ class DeviceActionsChannel implements DeviceActions {
     final Object? res = await _invokeResult('cancelAlarms', <String, dynamic>{'id': id});
     if (res is! List) return const <String>[];
     return res.map((e) => e.toString()).toList(growable: false);
+  }
+
+  @override
+  Future<Uri> webAuth({required Uri url, required String callbackScheme}) async {
+    final Object? res = await _invokeResult(
+        'webAuth', <String, dynamic>{'url': url.toString(), 'scheme': callbackScheme});
+    return Uri.parse(res.toString());
+  }
+
+  @override
+  Future<void> spotifyPlay({required String clientID, required String redirectUri, required String uri}) {
+    return _invoke('spotifyPlay',
+        <String, dynamic>{'clientId': clientID, 'redirectUri': redirectUri, 'uri': uri});
   }
 
   Future<void> _invoke(String method, Map<String, dynamic> args) async {

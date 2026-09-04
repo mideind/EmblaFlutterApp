@@ -55,7 +55,16 @@ native surface is one file.
 Tools present: `greynir_query`, `get_datetime`, `get_location`, `open_url`,
 `add_calendar_event`, `add_reminder`, `set_timer`, `set_alarm`, `draft_message`,
 `list_alarms`, `cancel_alarms`, `get_directions`, `add_shopping`.
-Missing versus your repo: **Spotify**.
+Spotify is `play_music` (track or playlist), `queue_music` and `control_music`
+(next/pause/resume), all in `lib/tools/spotify_tools.dart` on top of
+`lib/spotify_client.dart`, a port of your `Spotify` enum. They are only offered
+when `keys/spotify_client_id.key` is in the build. The Swift side is just the
+login sheet and the SDK hand-off (`ios/Runner/EmblaSpotify.swift`, package
+`SpotifyiOS` 5.0.1 via SPM); the redirect URI is still `embla://spotify`, so the
+same Spotify app registration works. One difference: when the user is logged in
+and a device is active, playback starts over the Web API and Embla stays in
+front; only otherwise does the Spotify app open. Login is the "Tengja Spotify"
+button at the bottom of settings.
 
 ## Shortcuts
 
@@ -118,6 +127,8 @@ printf '%s' 'YOUR_MIDEIND_KEY' > keys/server.key      # required: ASR + TTS
 printf '%s' 'YOUR_OPENAI_KEY' > keys/openai.key       # required: the LLM
 printf '%s' 'YOUR_ELEVENLABS_KEY' > keys/elevenlabs.key  # default voice
 printf '%s' 'YOUR_GEMINI_KEY' > keys/gemini.key       # optional: fused audio
+printf '%s' 'SPOTIFY_CLIENT_ID' > keys/spotify_client_id.key          # optional: music
+printf '%s' 'SPOTIFY_CLIENT_SECRET' > keys/spotify_client_secret.key
 bash keys/gen_keys.sh
 flutter pub get
 ```

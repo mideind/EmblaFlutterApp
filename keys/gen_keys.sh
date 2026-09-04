@@ -14,6 +14,8 @@ KEYS=(
     "elevenLabsAPIKey:elevenlabs.key"
     "anthropicAPIKey:anthropic.key"
     "geminiAPIKey:gemini.key"
+    "spotifyClientID:spotify_client_id.key"
+    "spotifyClientSecret:spotify_client_secret.key"
 )
 
 OUTFILE="../lib/keys.dart"

@@ -78,6 +78,11 @@ class Prefs {
     _sp?.setString(key, val);
   }
 
+  void remove(String key) {
+    dlog("Removing pref key '$key'");
+    _sp?.remove(key);
+  }
+
   /// Set default starting values for prefs.
   void setDefaults() {
     dlog('Setting prefs to default values');

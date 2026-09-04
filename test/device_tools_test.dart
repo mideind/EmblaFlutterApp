@@ -76,6 +76,19 @@ class FakeUriLauncher {
 class FakeDeviceActions implements DeviceActions {
   final List<(String, Map<String, dynamic>)> calls = <(String, Map<String, dynamic>)>[];
 
+  @override
+  Future<Uri> webAuth({required Uri url, required String callbackScheme}) async {
+    _maybeThrow();
+    calls.add(('webAuth', <String, dynamic>{'url': url, 'scheme': callbackScheme}));
+    return Uri.parse('$callbackScheme://spotify?code=abc');
+  }
+
+  @override
+  Future<void> spotifyPlay({required String clientID, required String redirectUri, required String uri}) async {
+    _maybeThrow();
+    calls.add(('spotifyPlay', <String, dynamic>{'uri': uri}));
+  }
+
   /// When set, every call throws this instead of recording.
   DeviceActionsException? error;
 

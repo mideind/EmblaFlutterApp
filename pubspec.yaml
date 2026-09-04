@@ -14,6 +14,7 @@ dependencies:
     sdk: flutter
   # Third-party
   http: '>=1.2.1'
+  crypto: '^3.0.3' # PKCE code challenge for the Spotify login (lib/spotify_client.dart)
   http_parser: '^4.0.2' # MediaType for multipart uploads (lib/asr/hreimur_batch_asr.dart)
   shared_preferences: '^2.2.3'
   geolocator: '^11.0.0'

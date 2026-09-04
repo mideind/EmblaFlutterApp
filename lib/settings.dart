@@ -35,6 +35,7 @@ import './provider_selection.dart' show ProviderSelectionRoute, labelForValue;
 import './info.dart';
 import './theme.dart';
 import './util.dart' show readServerAPIKey;
+import './spotify_client.dart' show SpotifyClient;
 
 // UI string constants
 const String kPrivacyModeMessage =
@@ -278,6 +279,44 @@ class SettingsButtonPromptWidget extends StatelessWidget {
           padding: const EdgeInsets.only(top: 15, bottom: 15),
           child: Text(label, style: const TextStyle(fontSize: defaultFontSize))),
     );
+  }
+}
+
+/// One-time Spotify login. Only shown when a client ID is in the build.
+class SettingsSpotifyWidget extends StatefulWidget {
+  const SettingsSpotifyWidget({super.key});
+
+  @override
+  SettingsSpotifyWidgetState createState() => SettingsSpotifyWidgetState();
+}
+
+class SettingsSpotifyWidgetState extends State<SettingsSpotifyWidget> {
+  final SpotifyClient spotify = SpotifyClient.fromKeys();
+  String? status;
+
+  Future<void> _connect() async {
+    try {
+      await spotify.connect();
+      setState(() => status = null);
+    } catch (e) {
+      dlog('Spotify connect failed: $e');
+      setState(() => status = 'Tenging mistókst: $e');
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bool connected = spotify.isConnected;
+    return Column(children: [
+      TextButton(
+        onPressed: _connect,
+        child: Padding(
+            padding: const EdgeInsets.only(top: 15, bottom: 15),
+            child: Text(connected ? 'Spotify tengt – tengja aftur' : 'Tengja Spotify',
+                style: const TextStyle(fontSize: defaultFontSize))),
+      ),
+      if (status != null) Text(status!, style: const TextStyle(color: Colors.red)),
+    ]);
   }
 }
 
@@ -693,6 +732,10 @@ List<Widget> _settings(BuildContext context, void Function() refreshCallback) {
       allData: all,
       serverURL: Prefs().stringForKey('ratatoskur_server') ?? kDefaultRatatoskurServer,
     );
+  }
+
+  if (SpotifyClient.fromKeys().isConfigured) {
+    settingsWidgets.addAll([divider, const SettingsSpotifyWidget()]);
   }
 
   // Add clear data buttons at the bottom

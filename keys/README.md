@@ -15,6 +15,9 @@ the corresponding constant, and the feature that needs it is simply unavailable.
 | `openai.key` | `openAIAPIKey` | `readOpenAIAPIKey()` | OpenAI (default LLM provider) |
 | `elevenlabs.key` | `elevenLabsAPIKey` | `readElevenLabsAPIKey()` | ElevenLabs speech synthesis (optional TTS provider) |
 | `anthropic.key` | `anthropicAPIKey` | `readAnthropicAPIKey()` | Anthropic (alternative LLM provider) |
+| `gemini.key` | `geminiAPIKey` | `readGeminiAPIKey()` | Gemini (optional fused audio-LLM mode) |
+| `spotify_client_id.key` | `spotifyClientID` | `readSpotifyClientID()` | Spotify app (developer.spotify.com); redirect URI `embla://spotify` |
+| `spotify_client_secret.key` | `spotifyClientSecret` | `readSpotifyClientSecret()` | Spotify catalog search |
 
 Generate `lib/keys.dart` after adding or changing any key file:
 

@@ -140,6 +140,11 @@ Map<String, dynamic> optionalStringProperty(String description) {
   };
 }
 
+/// One of a fixed set of strings.
+Map<String, dynamic> enumProperty(List<String> values, String description) {
+  return <String, dynamic>{'type': 'string', 'enum': values, 'description': description};
+}
+
 /// Array-of-strings property. Strict schemas require every item to be typed.
 Map<String, dynamic> stringArrayProperty(String description) {
   return <String, dynamic>{
